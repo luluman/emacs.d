@@ -9,7 +9,7 @@
 Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
 
 #+BEGIN_SRC emacs-lisp
-  (load-file "./.emacs.d/sensible-defaults.el")
+  (load-file "~/.emacs.d/sensible-defaults.el")
   (sensible-defaults/use-all-settings)
   (sensible-defaults/use-all-keybindings)
   (sensible-defaults/backup-to-temp-directory)
@@ -223,8 +223,7 @@ I don't usually use the menu or scroll bar, and they take up useful space.
 #+BEGIN_SRC emacs-lisp
   (tool-bar-mode 0)
   (menu-bar-mode 0)
-  (when window-system
-    (scroll-bar-mode -1))
+  (scroll-bar-mode -1)
 #+END_SRC
 
 The default frame title isn't useful. This binds it to the name of the current
