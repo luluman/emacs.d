@@ -196,9 +196,10 @@ the line, respectively."
 respectively."
   (define-key global-map (kbd "C-)") 'sensible-defaults/reset-text-size)
   (define-key global-map (kbd "C-+") 'text-scale-increase)
-  (define-key global-map (kbd "C-=") 'text-scale-increase)
+  ;;  (define-key global-map (kbd "C-=") 'text-scale-increase)
   (define-key global-map (kbd "C-_") 'text-scale-decrease)
-  (define-key global-map (kbd "C--") 'text-scale-decrease))
+  ;;  (define-key global-map (kbd "C--") 'text-scale-decrease)
+  )
 
 (defun sensible-defaults/use-all-keybindings ()
   "Use all of the sensible-defaults keybindings."

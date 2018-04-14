@@ -345,7 +345,7 @@ Note that this overrides the default font-related keybindings from
   ;;  (define-key global-map (kbd "C-=") 'MattLu/increase-font-size)
     (define-key global-map (kbd "C-_") 'MattLu/decrease-font-size)
   ;; (define-key global-map (kbd "C--") 'MattLu/decrease-font-size)
-   (define-key global-map (kbd "C--") nil)
+  ;; (define-key global-map (kbd "C--") nil)
 
     (MattLu/reset-font-size)
 #+END_SRC
@@ -927,7 +927,7 @@ of an index file (my main todo list), and archive finished tasks in
 =~/org/archive.org=.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-directory "~/documents/org")
+  (setq org-directory "~/Documents/org")
 
   (defun org-file-path (filename)
     "Return the absolute address of an org file, given its relative name."
@@ -1022,9 +1022,9 @@ Define a few common tasks as capture templates. Specifically, I frequently:
            (file+headline (org-file-path "vocabulary.org") "Letters")
            "* %?\n %i\n %U")
 
-          ("l" "links"
+          ("L" "links"
            entry
-           (file+headline org-notes-file "Quick notes")
+           (file+headline org-notes-file "Links")
            "* TODO [#C] %?\n  %i\n %a \n %U"
            :empty-lines 1)
 
@@ -1464,7 +1464,7 @@ Enable Org-style tables and list manipulation.
 Check my spelling while I'm writing.
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
+  (add-hook 'mu4e-compose-mode-hook pell-mode)
 #+END_SRC
 
 Once I've sent an email, kill the associated buffer instead of just burying it.
@@ -1562,6 +1562,7 @@ Don't try to do address completion with mu4e. Use BBDB instead:
   (setq mu4e-compose-complete-addresses nil)
 #+END_SRC
 
+
 * Writing prose
 
   ** Look up definitions in Webster 1913
@@ -1607,9 +1608,8 @@ I'm prefixing them with =@= to avoid collisions with real words.
 
 #+BEGIN_SRC emacs-lisp
   (define-abbrev-table 'global-abbrev-table
-    '(("@name" "Harry R. Schwartz")
-      ("@email" "hello@harryrschwartz.com")
-      ("@site" "http://harryrschwartz.com")))
+    '(("@name" "MattLu")
+      ("@email" "lu.man@outlook.com")))
 #+END_SRC
 
 Always enable =abbrev-mode=:
@@ -1704,6 +1704,7 @@ Use flycheck in the appropriate buffers:
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
   (setq-default TeX-master nil)
+  (add-hook 'text-mode-hook 'turn-on-flyspell)
 #+END_SRC
 
 ** Set some usefull commands of latex
@@ -1794,6 +1795,7 @@ Use flycheck in the appropriate buffers:
    (add-hook 'LaTeX-mode-hook 'turn-on-reftex) ; with Auctex Latex mode
    (add-hook 'latex-mode-hook 'turn-on-reftex) ; with Emacs latex mode
    (setq reftex-plug-into-AUCTeX t)
+   (require 'org-ref)
  #+END_SRC
 
 * =dired=

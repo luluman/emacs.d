@@ -72,6 +72,7 @@
 (depends-on "org-bullets")
 (depends-on "org-plus-contrib")
 (depends-on "org-pomodoro")
+(depends-on "org-ref")
 (depends-on "ox-twbs")
 (depends-on "package-build")
 (depends-on "pallet")
