@@ -17,10 +17,6 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 
 * Configure =use-package=
 
-I'm currently using Cask to manage my dependencies, but I'm gradually moving to
-=use-package=. I'm planning on converting packages lazily, as I need them, so
-expect to see a somewhat inconsistent state for a while. =)
-
 #+BEGIN_SRC emacs-lisp
   (unless (package-installed-p 'use-package)
     (package-install 'use-package))
@@ -31,12 +27,22 @@ expect to see a somewhat inconsistent state for a while. =)
   (require 'use-package)
 #+END_SRC
 
+use auto-package-update to keep your packages updated automatically
+
+#+BEGIN_SRC emacs-lisp
+(use-package auto-package-update
+  :config
+  (setq auto-package-update-delete-old-versions t)
+  (setq auto-package-update-hide-results t)
+  (auto-package-update-maybe))
+#+END_SRC
+
 Always compile packages, and use the newest version available.
 
 #+BEGIN_SRC emacs-lisp
   (use-package auto-compile
-    :config (auto-compile-on-load-mode))
-  (setq load-prefer-newer t)
+    :config (auto-compile-on-load-mode)
+    (setq load-prefer-newer t))
 #+END_SRC
 
 * Set personal information
@@ -67,38 +73,10 @@ Always compile packages, and use the newest version available.
     (cadr (netrc-credentials machine)))
 #+END_SRC
 
-* COMMENT Add =resources= to =load-path=
+* Add =resources= to =load-path=
 
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/resources/")
-#+END_SRC
-
-* COMMENT =evil-mode=
-
-I'd prefer not to expand abbrevs when I hit escape. That's always jarring and
-usually not what I want. In particular, it makes working with Coq really
-frustrating.
-
-#+BEGIN_SRC emacs-lisp
-  (setq evil-want-abbrev-expand-on-insert-exit nil)
-#+END_SRC
-
-Use =evil=.
-
-#+BEGIN_SRC emacs-lisp
-  (evil-mode 1)
-#+END_SRC
-
-Enable =surround= everywhere.
-
-#+BEGIN_SRC emacs-lisp
-  (global-evil-surround-mode 1)
-#+END_SRC
-
-Bind =C-p= to fuzzy-finding files in the current project.
-
-#+BEGIN_SRC emacs-lisp
-  (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
 #+END_SRC
 
 * Utility functions
@@ -230,7 +208,9 @@ The default frame title isn't useful. This binds it to the name of the current
 project:
 
 #+BEGIN_SRC emacs-lisp
-  (setq frame-title-format '((:eval (projectile-project-name))))
+  (use-package projectile
+  :config
+  (setq frame-title-format '((:eval (projectile-project-name)))))
 #+END_SRC
 
 ** Use fancy lambdas
@@ -261,11 +241,13 @@ If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
 frame is themed appropriately.
 
 #+BEGIN_SRC emacs-lisp
+(use-package solarized-theme
+  :config
   (if (daemonp)
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
                     (MattLu/apply-solarized-theme)))
-    (MattLu/apply-solarized-theme))
+    (MattLu/apply-solarized-theme)))
 #+END_SRC
 
 ** COMMENT Disable visual bell
@@ -350,6 +332,20 @@ Note that this overrides the default font-related keybindings from
     (MattLu/reset-font-size)
 #+END_SRC
 
+** Maintain consistent line height with Unicode characters
+
+Depending on the font, including a Unicode character on a line sometimes makes
+that line bizarrely huge, which is super ugly. My preferred font (Inconsolata)
+doesn't seem to handle Unicode especially well.
+
+Luckily, the =unicode-fonts= package can totally mitigate this problem! I don't
+really know how it works, but I can't argue with the results.
+
+#+BEGIN_SRC emacs-lisp
+(use-package unicode-fonts
+   :config
+   (unicode-fonts-setup))
+#+END_SRC
 
 ** Highlight the current line
 
@@ -369,7 +365,8 @@ either hides or "renames" a variety of major or minor modes using the =diminish=
 package.
 
 #+BEGIN_SRC emacs-lisp
-  (defmacro diminish-minor-mode (filename mode &optional abbrev)
+ (use-package diminish)
+ (defmacro diminish-minor-mode (filename mode &optional abbrev)
     `(eval-after-load (symbol-name ,filename)
        '(diminish ,mode ,abbrev)))
 
@@ -406,11 +403,9 @@ Use the =diff-hl= package to highlight changed-and-uncommitted lines when
 programming.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'diff-hl)
-
-  (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
-  (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode)
-#+END_SRC
+  (use-package diff-hl
+   :hook ((prog-mode vc-dir-mode) . turn-on-diff-hl-mode))
+ #+END_SRC
 
 ** Change frame apperience
 
@@ -429,13 +424,20 @@ If emacs shwo on GUI, than apply this code.
       (MattLu/change-frame-alpha))
 #+END_SRC
 
+** Display line number
+
+#+BEGIN_SRC emacs-lisp
+  (setq display-line-numbers-type 'relative)
+  (global-display-line-numbers-mode)
+#+END_SRC
+
 * Programming customizations
 
 I like shallow indentation, but tabs are displayed as 8 characters by default.
 This reduces that.
 
 #+BEGIN_SRC emacs-lisp
-  (setq-default tab-width 2)
+  (setq-default tab-width 4)
 #+END_SRC
 
 Treating terms in CamelCase symbols as separate words makes editing a little
@@ -463,10 +465,13 @@ I also like to disable =abbrev-mode=; it has a ton of abbreviations for Coq, but
 they've always been unpleasant surprises for me.
 
 #+BEGIN_SRC emacs-lisp
+(use-package company-coq
+  :commands company-coq-mode
+  :init
   (add-hook 'coq-mode-hook
             (lambda ()
               (company-coq-mode)
-              (abbrev-mode 0)))
+              (abbrev-mode 0))))
 #+END_SRC
 
 The default Proof General layout stacks the code, goal, and response buffers on
@@ -484,24 +489,22 @@ time.
   (setq proof-splash-enable nil)
 #+END_SRC
 
-** COMMENT CSS and Sass
+** CSS and Sass
 
-Indent 2 spaces and use =rainbow-mode= to display color-related words in the
-color they describe.
+Indent 2 spaces.
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'css-mode-hook
-            (lambda ()
-              (rainbow-mode)
-              (setq css-indent-offset 2)))
-
-  (add-hook 'scss-mode-hook 'rainbow-mode)
+  (use-package css-mode
+    :config
+    (setq css-indent-offset 2))
 #+END_SRC
 
-Don't compile the current file every time I save.
+Don't compile the current SCSS file every time I save.
 
 #+BEGIN_SRC emacs-lisp
-  (setq scss-compile-at-save nil)
+  (use-package scss-mode
+    :config
+    (setq scss-compile-at-save nil))
 #+END_SRC
 
 ** COMMENT Golang
@@ -551,11 +554,13 @@ use smart indentation.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
+(use-package haskell-mode
+  :init
   (add-hook 'haskell-mode-hook
             (lambda ()
               (haskell-doc-mode)
               (turn-on-haskell-indent)
-              (ghc-init)))
+              (ghc-init))))
 #+END_SRC
 
 ** JavaScript and CoffeeScript
@@ -579,24 +584,24 @@ more!), =rainbow-delimiters= to color matching parentheses, and highlighting the
 whole expression when point is on a paren.
 
 #+BEGIN_SRC emacs-lisp
-  (setq lispy-mode-hooks
-        '(clojure-mode-hook
-          emacs-lisp-mode-hook
-          lisp-mode-hook
-          scheme-mode-hook))
+  (use-package paredit
+    :hook ((clojure-mode
+          emacs-lisp-mode
+          lisp-mode
+          scheme-mode) . paredit-mode))
 
-  (dolist (hook lispy-mode-hooks)
-    (add-hook hook (lambda ()
-                     (setq show-paren-style 'expression)
-                     (paredit-mode)
-                     (rainbow-delimiters-mode))))
+  (use-package rainbow-delimiters
+    :hook ((clojure-mode
+          emacs-lisp-mode
+          lisp-mode
+          scheme-mode) . rainbow-delimiters-mode))
 #+END_SRC
 
 If I'm writing in Emacs lisp I'd like to use =eldoc-mode= to display
 documentation.
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+ (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 #+END_SRC
 
 My own silly language ([[https://github.com/hrs/blueprint][blueprint]]) is close enough to Scheme that it can use the
@@ -608,32 +613,33 @@ same mode.
 
 ** Magit
 
- I bring up the status menu with =C-x g=:
 
- #+BEGIN_SRC emacs-lisp
-   (global-set-key (kbd "C-x g") 'magit-status)
- #+END_SRC
+I bring up the status menu with =C-x g=.
 
- The default behavior of =magit= is to ask before pushing. I haven't had any
- problems with accidentally pushing, so I'd rather not confirm that every time.
+Use =evil= keybindings with =magit=.
 
- #+BEGIN_SRC emacs-lisp
-   (setq magit-push-always-verify nil)
- #+END_SRC
+The default behavior of =magit= is to ask before pushing. I haven't had any
+problems with accidentally pushing, so I'd rather not confirm that every time.
 
- Enable spellchecking when writing commit messages:
+Per [[http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html][tpope's suggestions]], highlight commit text in the summary line that goes
+beyond 50 characters.
 
- #+BEGIN_SRC emacs-lisp
-   (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
- #+END_SRC
+Enable spellchecking when writing commit messages.
 
+I sometimes use =git= from the terminal, and I'll use =emacsclient --tty= to
+write commits. I'd like to be in the insert state when my editor pops open for
+that.
 
-** COMMENT Prolog
-
-I don't write a lot of Prolog, but (oddly enough) I write more Prolog than Perl.
+I'd like to start in the insert state when writing a commit message.
 
 #+BEGIN_SRC emacs-lisp
-  (MattLu/add-auto-mode 'prolog-mode "\\.pl$")
+  (use-package magit
+    :bind ("C-x g" . magit-status)
+
+    :config
+    (setq magit-push-always-verify nil)
+    (setq git-commit-summary-max-length 50)
+    (add-hook 'git-commit-mode-hook 'turn-on-flyspell))
 #+END_SRC
 
 ** Projectile
@@ -642,30 +648,29 @@ Projectile's default binding of =projectile-ag= to =C-c p s s= is clunky enough
 that I rarely use it (and forget it when I need it). This binds the
 easier-to-type =C-c C-v= and =C-c v= to useful searches.
 
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/search-project-for-symbol-at-point ()
-    "Use `projectile-ag' to search the current project for `symbol-at-point'."
-    (interactive)
-    (projectile-ag (projectile-symbol-at-point)))
-
-  (global-set-key (kbd "C-c v") 'projectile-ag)
-  (global-set-key (kbd "C-c C-v") 'MattLu/search-project-for-symbol-at-point)
-#+END_SRC
-
 When I visit a project with =projectile-switch-project=, the default action is
 to search for a file in that project. I'd rather just open up the top-level
 directory of the project in =dired= and find (or create) new files from there.
-
-#+BEGIN_SRC emacs-lisp
-  (setq projectile-switch-project-action 'projectile-dired)
-#+END_SRC
 
 I'd like to /always/ be able to recursively fuzzy-search for files, not just
 when I'm in a Projecile-defined project. This uses the current directory as a
 project root (if I'm not in a "real" project).
 
 #+BEGIN_SRC emacs-lisp
-  (setq projectile-require-project-root nil)
+
+ (use-package projectile
+    :init
+    (defun MattLu/search-project-for-symbol-at-point ()
+    "Use `projectile-ag' to search the current project for `symbol-at-point'."
+         (interactive)
+         (projectile-ag (projectile-symbol-at-point)))
+
+    :bind (("C-c v" . projectile-ag)
+           ( "C-c C-v" . MattLu/search-project-for-symbol-at-point))
+    :config
+
+    (setq projectile-switch-project-action 'projectile-dired)
+    (setq projectile-require-project-root nil))
 #+END_SRC
 
 ** Python
@@ -673,8 +678,8 @@ project root (if I'm not in a "real" project).
 Set ipython as interpreter
 
 #+BEGIN_SRC emacs-lisp
-;  (setq python-shell-interpreter "ipython")
-;  (setq python-shell-interpreter-args "--simple-prompt -i")
+  (setq python-shell-interpreter "ipython3")
+  (setq python-shell-interpreter-args "--simple-prompt -i")
   (setq py-shell-name "ipython3")
   (setq py-ipython-command-args "--simple-prompt -i")
 #+END_SRC
@@ -689,79 +694,26 @@ Indent 2 spaces.
 Using jedi as python backend
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/python-mode-hook ()
-    (add-to-list 'company-backends 'company-jedi))
-  (add-hook 'python-mode-hook 'MattLu/python-mode-hook)
-  (global-set-key (kbd "C-c d") 'jedi:show-doc)
+  (use-package elpy
+    :config
+    (elpy-enable))
+
+   (use-package flycheck
+     :hook (elpy-mode . flycheck-mode))
+
+   (use-package py-autopep8
+     :init
+    (add-hook 'elpy-mode-hook #'py-autopep8-enable-on-save))
+
+   (use-package company-jedi
+     :bind ("C-c d" . jedi:show-doc)
+
+     :config
+     (add-to-list 'company-backends 'company-jedi)
+     (add-hook 'python-mode-hook 'jedi:setup)
+     (setq jedi:complete-on-dot t))
+
   (setq python-shell-completion-native-enable nil) ;; disable warring in python promote bug
-#+END_SRC
-
-** COMMENT Ruby and RSpec
-
-I use =chruby= to switch between versions of Ruby. This sets a default version
-to use within Emacs (for things like =xmp= or =rspec=).
-
-#+BEGIN_SRC emacs-lisp
-  (chruby "ruby-2.4.0")
-#+END_SRC
-
-=rcodetools= provides =xmp=, which lets me evaluate a Ruby buffer and display
-the results in "magic" (=# =>=) comments.
-
-I disable warnings in Ruby because I disagree with a few of them (complaining
-about private =attr_reader=, especially) and they gunk up my buffer.
-
-#+BEGIN_SRC emacs-lisp
-  (setq xmpfilter-command-name
-        "ruby -S xmpfilter --no-warnings --dev --fork --detect-rbtest")
-  (require 'rcodetools)
-#+END_SRC
-
-There are a bunch of things I'd like to do when I open a Ruby buffer:
-
-- I don't want to insert an encoding comment.
-- I want to enable =yas=, =rspec=, =yard=, =flycheck=, and =projectile-rails=.
-- I'd like my RSpec tests to be run in a random order, and I'd like the output
-  to be colored.
-- Chruby should automatically determine the correct version for me.
-- =C-c C-c= should run =xmp=, to do that nifty "eval into comments" trick.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'ruby-mode-hook
-            (lambda ()
-              (setq ruby-insert-encoding-magic-comment nil)
-              (yas-minor-mode)
-              (rspec-mode)
-              (yard-mode)
-              (flycheck-mode)
-              (local-set-key "\r" 'newline-and-indent)
-              (setq rspec-command-options "--color --order random")
-              (chruby-use-corresponding)
-              (define-key ruby-mode-map (kbd "C-c C-c") 'xmp)
-              (projectile-rails-mode)))
-#+END_SRC
-
-I associate =ruby-mode= with Gemfiles, gemspecs, Rakefiles, and Vagrantfiles.
-
-#+BEGIN_SRC emacs-lisp
-  (MattLu/add-auto-mode
-   'ruby-mode
-   "\\Gemfile$"
-   "\\.rake$"
-   "\\.gemspec$"
-   "\\Guardfile$"
-   "\\Rakefile$"
-   "\\Vagrantfile$"
-   "\\Vagrantfile.local$")
-#+END_SRC
-
-When running RSpec tests I'd like to scroll to the first error.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'rspec-compilation-mode-hook
-            (lambda ()
-              (make-local-variable 'compilation-scroll-output)
-              (setq compilation-scroll-output 'first-error)))
 #+END_SRC
 
 ** =sh=
@@ -793,39 +745,29 @@ If I'm in =web-mode=, I'd like to:
 - Indent everything with 2 spaces.
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (rainbow-mode)
-              (rspec-mode)
-              (setq web-mode-markup-indent-offset 2)))
+ (use-package web-mode
+    :init
+    (use-package rainbow-mode)
+    (use-package rspec-mode)
+    :config
+    (add-hook 'web-mode-hook 'rainbow-mode)
+    (add-hook 'web-mode-hook 'rspec-mode)
+    (setq web-mode-markup-indent-offset 2)
+    :mode "\\.erb$"
+           "\\.html$"
+           "\\.php$"
+           "\\.rhtml$")
 #+END_SRC
 
 Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
-
-#+BEGIN_SRC emacs-lisp
-  (MattLu/add-auto-mode
-   'web-mode
-   "\\.erb$"
-   "\\.html$"
-   "\\.php$"
-   "\\.rhtml$")
-#+END_SRC
-
-** COMMENT YAML
-
-If I'm editing YAML I'm usually in a Rails project. I'd like to be able to run
-the tests from any buffer.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'yaml-mode-hook 'rspec-mode)
-#+END_SRC
 
 * Terminal
 
 I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-c t") 'multi-term)
+  (use-package multi-term
+    :bind ("C-c t" . multi-term))
 #+END_SRC
 
 Use a login shell:
@@ -833,15 +775,6 @@ Use a login shell:
 #+BEGIN_SRC emacs-lisp
   (setq multi-term-program-switches "--login")
 #+END_SRC
-
-** COMMENT Evil mode
- I'd rather not use Evil in the terminal. It's not especially useful (I don't use
- vi bindings in xterm) and it shadows useful keybindings (=C-d= for EOF, for
- example).
-
- #+BEGIN_SRC emacs-lisp
-   (evil-set-initial-state 'term-mode 'emacs)
- #+END_SRC
 
 ** Go on
  I add a bunch of hooks to =term-mode=:
@@ -876,9 +809,9 @@ Use a login shell:
 I like to see an outline of pretty bullets instead of a list of asterisks.
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (org-bullets-mode t)))
+  (use-package org-bullets
+    :init
+    (add-hook 'org-mode-hook #'org-bullets-mode))
 #+END_SRC
 
 I like seeing a little downward-pointing arrow instead of the usual ellipsis
@@ -1234,75 +1167,6 @@ I'm usually actually in an org document.
               (setq TeX-master t)))
 #+END_SRC
 
-** COMMENT Add links to Instapaper
-
-I sometimes use [[https://instapaper.com][Instapaper]] to store articles I want to read later. The
-=instapaper.el= library sends my URLs there.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'instapaper)
-
-  (setq instapaper-username (netrc-username "instapaper.com")
-        instapaper-password (netrc-password "instapaper.com"))
-#+END_SRC
-
-* COMMENT Blogging
-
-I maintain a blog written in Jekyll. There are plenty of command-line tools to
-automate creating a new post, but staying in my editor minimizes friction and
-encourages me to write.
-
-This defines a =MattLu/new-blog-post= function, which prompts the user for a title
-and creates a new post (with a timestamped and slugged file name) in the blog's
-=_posts/= directory. The new post includes appropriate YAML header information.
-
-#+BEGIN_SRC emacs-lisp
-  (defvar MattLu/jekyll-posts-directory "~/documents/blog/_posts/")
-  (defvar MattLu/jekyll-post-extension ".md")
-
-  (defun MattLu/replace-unusual-characters (title)
-    "Replace characters that aren't alphanumeric with hyphens."
-    (replace-regexp-in-string " " "-"
-                              (downcase (replace-regexp-in-string "[^A-Za-z0-9 ]" " " title))))
-
-  (defun MattLu/slug-for (title)
-    "Given a blog post title, return a convenient URL slug.
-    Downcase letters and remove special characters."
-    (let ((slug (MattLu/replace-unusual-characters title)))
-      (while (string-match "--" slug)
-        (setq slug (replace-regexp-in-string "--" "-" slug)))
-      slug))
-
-  (defun MattLu/timestamped-slug-for (title)
-    "Turn a string into a slug with a timestamp and title."
-    (concat (format-time-string "%Y-%m-%d")
-            "-"
-            (MattLu/slug-for title)))
-
-  (defun MattLu/jekyll-yaml-template (title)
-    "Return the YAML header information appropriate for a blog
-    post. Include the title, the current date, the post layout, and
-    an empty list of tags."
-    (concat
-     "---\n"
-     "title: " title "\n"
-     "date: " (format-time-string "%Y-%m-%d") "\n"
-     "layout: post\n"
-     "tags: []\n"
-     "---\n\n"))
-
-  (defun MattLu/new-blog-post (title)
-    "Create a new blog post in Jekyll."
-    (interactive "sPost title: ")
-    (let ((post (concat MattLu/jekyll-posts-directory
-                        (MattLu/timestamped-slug-for title)
-                        MattLu/jekyll-post-extension)))
-      (if (file-exists-p post)
-          (find-file post)
-        (find-file post)
-        (insert (MattLu/jekyll-yaml-template title)))))
-#+END_SRC
-
 * TODO COMMENT Daily checklist
 
 There are certain things I want to do regularly. I store those in a checklist.
@@ -1346,365 +1210,30 @@ Open the checklist and my TODO list side-by-side:
   (global-set-key (kbd "C-c d") 'MattLu/dashboard)
 #+END_SRC
 
-* COMMENT Email with =mu4e=
-
-Use the =evil= bindings for navigation. They're very similar to the =mutt=
-bindings, which matches my muscle memory nicely. =)
-
-#+BEGIN_SRC emacs-lisp
-  (require 'evil-mu4e)
-#+END_SRC
-
-** Where's my mail? Who am I?
-
-I keep my mail in =~/.mail=. The default maildir would be =~/Maildir=, but I'd
-rather hide it; I don't poke around in there manually very often.
-
-This setting matches the paths in my =mbsync= configuration.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-maildir "~/.mail")
-#+END_SRC
-
-I only have one context at the moment. If I had another email account, though,
-I'd define it in here with an additional =make-mu4e-context= block.
-
-My full name is defined earlier in this configuration file.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-contexts
-        `(,(make-mu4e-context
-            :name "personal"
-            :match-func (lambda (msg)
-                          (when msg
-                            (string-prefix-p "/personal" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "hello@harryrschwartz.com")
-                    (mu4e-trash-folder . "/personal/archive")
-                    (mu4e-refile-folder . "/personal/archive")
-                    (mu4e-sent-folder . "/personal/sent")
-                    (mu4e-drafts-folder . "/personal/drafts")))))
-#+END_SRC
-
-** Fetching new mail
-
-I fetch my email with =mbsync=. I've also bound "o" to fetch new mail.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-get-mail-command "killall mbsync; mbsync inboxes")
-
-  (define-key mu4e-headers-mode-map (kbd "o") 'mu4e-update-mail-and-index)
-#+END_SRC
-
-Rename files when moving them between directories. =mbsync= supposedly prefers
-this; I'm cargo-culting.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-change-filenames-when-moving t)
-#+END_SRC
-
-Poll the server for new mail every 5 minutes.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-update-interval 300)
-#+END_SRC
-
-** Viewing mail
-
-I check my email pretty often! Probably more than I should. This binds =C-c m=
-to close any other windows and open my personal inbox.
-
-In practice, I keep an =*mu4e-headers*= buffer in its own frame, full-screen, on
-a dedicated =i3= workspace.
-
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/visit-inbox ()
-    (interactive)
-    (delete-other-windows)
-    (mu4e~headers-jump-to-maildir "/personal/inbox"))
-
-  (global-set-key (kbd "C-c m") 'MattLu/visit-inbox)
-#+END_SRC
-
-Open my inbox and sent messages folders with =J-i= and =J-s=, respectively.
-These are the only two folders I visit regularly enough to warrant shortcuts.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-maildir-shortcuts '(("/personal/inbox" . ?i)
-                                 ("/personal/sent" . ?s)))
-#+END_SRC
-
-=mu4e= starts approximately instantaneously, so I don't know why I'd want to
-reconsider quitting it.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-confirm-quit nil)
-#+END_SRC
-
-** Composing a new message
-
-When I'm composing a new email, default to using the first context.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-compose-context-policy 'pick-first)
-#+END_SRC
-
-Compose new messages (as with =C-x m=) using =mu4e-user-agent=.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mail-user-agent 'mu4e-user-agent)
-#+END_SRC
-
-Enable Org-style tables and list manipulation.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'message-mode-hook 'turn-on-orgtbl)
-  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
-#+END_SRC
-
-Check my spelling while I'm writing.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'mu4e-compose-mode-hook pell-mode)
-#+END_SRC
-
-Once I've sent an email, kill the associated buffer instead of just burying it.
-
-#+BEGIN_SRC emacs-lisp
-  (setq message-kill-buffer-on-exit t)
-#+END_SRC
-
-** Reading an email
-
-Display the sender's email address along with their name.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-view-show-addresses t)
-#+END_SRC
-
-Save attachments in my =~/downloads= directory, not my home directory.
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-attachment-dir "~/downloads")
-#+END_SRC
-
-Hit =C-c C-o= to open a URL in the browser.
-
-#+BEGIN_SRC emacs-lisp
-  (define-key mu4e-view-mode-map (kbd "C-c C-o") 'mu4e~view-browse-url-from-binding)
-#+END_SRC
-
-While HTML emails are undeniably sinful, we often have to read them. That's
-sometimes best done in a browser. This effectively binds =a h= to open the
-current email in my default Web browser.
-
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'mu4e-view-actions '("html in browser" . mu4e-action-view-in-browser) t)
-#+END_SRC
-
-** Encryption
-
-If a message is encrypted, my reply should always be encrypted, too.
-
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/encrypt-responses ()
-    (let ((msg mu4e-compose-parent-message))
-      (when msg
-        (when (member 'encrypted (mu4e-message-field msg :flags))
-          (mml-secure-message-encrypt-pgpmime)))))
-
-  (add-hook 'mu4e-compose-mode-hook 'MattLu/encrypt-responses)
-#+END_SRC
-
-** Sending mail over SMTP
-
-I send my email through =msmtp=. It's very fast, and I've already got it
-configured from using =mutt=. These settings describe how to send a message:
-
-- Use a sendmail program instead of sending directly from Emacs,
-- Tell =msmtp= to infer the correct account from the =From:= address,
-- Don't add a "=-f username=" flag to the =msmtp= command, and
-- Use =/usr/bin/msmtp=!
-
-#+BEGIN_SRC emacs-lisp
-  (setq message-send-mail-function 'message-send-mail-with-sendmail)
-  (setq message-sendmail-extra-arguments '("--read-envelope-from"))
-  (setq message-sendmail-f-is-evil 't)
-  (setq sendmail-program "msmtp")
-#+END_SRC
-
-** Org integration
-
-=org-mu4e= lets me store links to emails. I use this to reference emails in my
-TODO list while keeping my inbox empty.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'org-mu4e)
-#+END_SRC
-
-When storing a link to a message in the headers view, link to the message
-instead of the search that resulted in that view.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-mu4e-link-query-in-headers-mode nil)
-#+END_SRC
-
-** Configure BBDB with mu4e
-
-Use BBDB to handle my address book.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'bbdb-mu4e)
-#+END_SRC
-
-Don't try to do address completion with mu4e. Use BBDB instead:
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-compose-complete-addresses nil)
-#+END_SRC
-
-
-* Writing prose
-
-  ** Look up definitions in Webster 1913
-
-I look up definitions by hitting =C-x w=, which shells out to =sdcv=. I've
-loaded that with the (beautifully lyrical) 1913 edition of Webster's dictionary,
-so these definitions are a lot of fun.
-
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/dictionary-prompt ()
-    (read-string
-     (format "Word (%s): " (or (MattLu/region-or-word) ""))
-     nil
-     nil
-     (MattLu/region-or-word)))
-
-  (defun MattLu/dictionary-define-word ()
-    (interactive)
-    (let* ((word (MattLu/dictionary-prompt))
-           (buffer-name (concat "Definition: " word)))
-      (with-output-to-temp-buffer buffer-name
-        (shell-command (format "sdcv -n %s" word) buffer-name))))
-
-  (define-key global-map (kbd "C-x w") 'MattLu/dictionary-define-word)
-#+END_SRC
-
-** Look up words in a thesaurus
-
-Synosaurus is hooked up to wordnet to provide access to a thesaurus. Hitting
-=C-c s= summons it.
-
-#+BEGIN_SRC emacs-lisp
-  (setq-default synosaurus-backend 'synosaurus-backend-wordnet)
-  (add-hook 'after-init-hook #'synosaurus-mode)
-#+END_SRC
-
-** Configure =abbrev-mode=
-
-My email address is too long, so I like to keep some personal information as
-abbreviations.
-
-I'm prefixing them with =@= to avoid collisions with real words.
-
-#+BEGIN_SRC emacs-lisp
-  (define-abbrev-table 'global-abbrev-table
-    '(("@name" "MattLu")
-      ("@email" "lu.man@outlook.com")))
-#+END_SRC
-
-Always enable =abbrev-mode=:
-
-#+BEGIN_SRC emacs-lisp
-  (setq-default abbrev-mode t)
-#+END_SRC
-
-** Editing with Markdown
-
-Because I can't always use =org=.
-
-I'd like spell-checking running when editing Markdown.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'gfm-mode-hook 'flyspell-mode)
-#+END_SRC
-
-Associate =.md= files with GitHub-flavored Markdown.
-
-#+BEGIN_SRC emacs-lisp
-  (MattLu/add-auto-mode 'gfm-mode "\\.md$")
-#+END_SRC
-
-Use =pandoc= to render the results.
-
-#+BEGIN_SRC emacs-lisp
-  (setq markdown-command "pandoc --standalone --mathjax --from=markdown")
-#+END_SRC
-
-** Wrap paragraphs automatically
-
-=AutoFillMode= automatically wraps paragraphs, kinda like hitting =M-q=. I wrap
-a lot of paragraphs, so this automatically wraps 'em when I'm writing text,
-Markdown, or Org.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'text-mode-hook 'turn-on-auto-fill)
-  (add-hook 'gfm-mode-hook 'turn-on-auto-fill)
-  (add-hook 'org-mode-hook 'turn-on-auto-fill)
-#+END_SRC
-
-Sometimes, though, I don't wanna wrap text. This toggles wrapping with =C-c q=:
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-c q") 'auto-fill-mode)
-#+END_SRC
-
-** Linting prose
-
-I use [[http://proselint.com/][proselint]] to check my prose for common errors. This creates a flycheck
-checker that runs proselint in texty buffers and displays my errors.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'flycheck)
-
-  (flycheck-define-checker proselint
-    "A linter for prose."
-    :command ("proselint" source-inplace)
-    :error-patterns
-    ((warning line-start (file-name) ":" line ":" column ": "
-              (id (one-or-more (not (any " "))))
-              (message (one-or-more not-newline)
-                       (zero-or-more "\n" (any " ") (one-or-more not-newline)))
-              line-end))
-    :modes (text-mode markdown-mode gfm-mode org-mode))
-
-  (add-to-list 'flycheck-checkers 'proselint)
-#+END_SRC
-
-Use flycheck in the appropriate buffers:
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'markdown-mode-hook #'flycheck-mode)
-  (add-hook 'gfm-mode-hook #'flycheck-mode)
-  (add-hook 'text-mode-hook #'flycheck-mode)
-  (add-hook 'org-mode-hook #'flycheck-mode)
-#+END_SRC
-
-** Enable region case modification
-
-#+BEGIN_SRC emacs-lisp
-  (put 'downcase-region 'disabled nil)
-  (put 'upcase-region 'disabled nil)
-#+END_SRC
-
 * Writing thesis
 
  Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
 
 #+BEGIN_SRC emacs-lisp
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq-default TeX-master nil)
-  (add-hook 'text-mode-hook 'turn-on-flyspell)
+  (use-package auctex
+    :defer t
+    :ensure t
+    :config
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t)
+    (setq-default TeX-master nil)
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    (setq reftex-plug-into-AUCTeX t)
+    (add-hook 'text-mode-hook 'turn-on-flyspell))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+ (use-package company-auctex
+   :config
+   (company-auctex-init))
 #+END_SRC
 
 ** Set some usefull commands of latex
@@ -1782,40 +1311,28 @@ Use flycheck in the appropriate buffers:
          '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
  #+END_SRC
 
-** Using company-auctex as backend
-
- #+BEGIN_SRC emacs-lisp
-   (require 'company-auctex)
-   (company-auctex-init)
- #+END_SRC
 
 ** Set [[https://www.gnu.org/software/auctex/reftex.html][reftex]]  References, labels, citations
 
  #+BEGIN_SRC emacs-lisp
+   (use-package org-ref)
    (add-hook 'LaTeX-mode-hook 'turn-on-reftex) ; with Auctex Latex mode
    (add-hook 'latex-mode-hook 'turn-on-reftex) ; with Emacs latex mode
    (setq reftex-plug-into-AUCTeX t)
-   (require 'org-ref)
  #+END_SRC
 
 * =dired=
 
-Load up the assorted =dired= extensions.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'dired-x)
-  (require 'dired+)
-  (require 'dired-open)
-#+END_SRC
-
 Open media with the appropriate programs.
 
 #+BEGIN_SRC emacs-lisp
-  (setq dired-open-extensions
-        '(("pdf" . "preivew")
-          ("mkv" . "mpv")
-          ("mp4" . "mpv")
-          ("avi" . "mpv")))
+  (use-package dired-open
+    :config
+    (setq dired-open-extensions
+          '(("pdf" . "evince")
+            ("mkv" . "vlc")
+            ("mp4" . "vlc")
+            ("avi" . "vlc"))))
 #+END_SRC
 
 These are the switches that get passed to =ls= when =dired= gets a list of
@@ -1831,11 +1348,6 @@ files. We're using:
 #+END_SRC
 
 Use "j" and "k" to move around in =dired=.
-
-#+BEGIN_SRC emacs-lisp
-;  (evil-define-key 'normal dired-mode-map (kbd "j") 'dired-next-line)
-;  (evil-define-key 'normal dired-mode-map (kbd "k") 'dired-previous-line)
-#+END_SRC
 
 Kill buffers of files/directories that are deleted in =dired=.
 
@@ -1904,11 +1416,13 @@ Add system path to emacs.
 ** Use =company-mode= everywhere
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook 'global-company-mode)
-  (setq company-tooltip-limit 10)                      ; bigger popup window
-  (setq company-idle-delay .3)                         ; decrease delay before autocompletion popup shows
-  (setq company-echo-delay 0)                          ; remove annoying blinking
-  (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
+  (use-package company
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-tooltip-limit 10)                      ; bigger popup window
+    (setq company-idle-delay .3)                         ; decrease delay before autocompletion popup shows
+    (setq company-echo-delay 0)                          ; remove annoying blinking
+    (setq company-transformers '(company-sort-by-occurrence))) ; weight by frequency
 #+END_SRC
 
 Set TAB for complete cycle
@@ -1934,8 +1448,10 @@ I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippe
 enabled.
 
 #+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+   :config
   (setq yas-snippet-dirs '("~/.emacs.d/snippets/text-mode"))
-  (yas-global-mode 1)
+  (yas-global-mode 1))
 #+END_SRC
 
 I /don’t/ want =ido= to automatically indent the snippets it inserts. Sometimes
@@ -1949,23 +1465,32 @@ at the correct indentation for Python).
 ** Configure =ido=
 
 #+BEGIN_SRC emacs-lisp
-  (setq ido-enable-flex-matching t)
-  (setq ido-everywhere t)
-  (ido-mode 1)
-  (ido-ubiquitous-mode 1)
-  (flx-ido-mode 1) ; better/faster matching
-  (setq ido-create-new-buffer 'always) ; don't confirm to create new buffers
-  (ido-vertical-mode 1)
-  (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+  (use-package ido-completing-read+
+    :config
+    (setq ido-enable-flex-matching t)
+    (setq ido-everywhere t)
+    (ido-mode 1)
+    (ido-ubiquitous-mode 1)
+    (setq ido-create-new-buffer 'always)) ; don't confirm to create new buffers
+
+  (use-package flx-ido
+    :config
+     (flx-ido-mode 1)) ; better/faster matching
+
+    (use-package ido-vertical-mode
+      :config
+      (ido-vertical-mode 1)
+      (setq ido-vertical-define-keys 'C-n-and-C-p-only))
 #+END_SRC
 
 ** Use =smex= to handle =M-x= with =ido=
 
 #+BEGIN_SRC emacs-lisp
-  (smex-initialize)
-
-  (global-set-key (kbd "M-x") 'smex)
-  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+  (use-package smex
+   :config
+   (smex-initialize)
+   :bind  ("M-x" . smex)
+          ("M-X" . smex-major-mode-commands))
 #+END_SRC
 
 ** Switch and rebalance windows when splitting
@@ -2013,9 +1538,11 @@ results and =C-c C-c= to stop, just like in =dired=.
 ** Configure =wrap-region=
 
 #+BEGIN_SRC emacs-lisp
-  (wrap-region-global-mode t)
-  (wrap-region-add-wrapper "/" "/" nil 'ruby-mode)
-  (wrap-region-add-wrapper "`" "`" nil '(markdown-mode ruby-mode))
+  (use-package wrap-region
+    :config
+    (wrap-region-global-mode t)
+    (wrap-region-add-wrapper "/" "/" nil 'ruby-mode)
+    (wrap-region-add-wrapper "`" "`" nil '(markdown-mode ruby-mode)))
 #+END_SRC
 
 ** Split horizontally for temporary buffers
@@ -2035,6 +1562,7 @@ handy for handling temporary buffers (like compilation or test output).
 ** Use projectile everywhere
 
 #+BEGIN_SRC emacs-lisp
+
   (projectile-global-mode)
 #+END_SRC
 
@@ -2043,7 +1571,7 @@ handy for handling temporary buffers (like compilation or test output).
 Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few useful engines.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'engine-mode)
+  (use-package engine-mode)
 
   (defengine duckduckgo
     "https://duckduckgo.com/?q=%s"
@@ -2083,11 +1611,11 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
 Set multiple cursors for better marker words
 
 #+BEGIN_SRC emacs-lisp
-  (require 'multiple-cursors)
-  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+  (use-package multiple-cursors
+   :bind ("C-S-c C-S-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<"  . mc/mark-all-like-this))
 #+END_SRC
 
 ** Use expand region
@@ -2096,8 +1624,8 @@ Expand region increases the selected region by semantic units.
 Just keep pressing the key until it selects what you want.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'expand-region)
-  (global-set-key (kbd "C-=") 'er/expand-region)
+  (use-package expand-region
+   :bind  ("C-=" . er/expand-region))
 #+END_SRC
 * Set custom keybindings
 
