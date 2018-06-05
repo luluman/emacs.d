@@ -463,6 +463,10 @@ Use =company-coq-mode=, which really helps make Proof General a more useful IDE.
 
 I also like to disable =abbrev-mode=; it has a ton of abbreviations for Coq, but
 they've always been unpleasant surprises for me.
+#+BEGIN_SRC emacs-lisp
+  ;; Open .v files with Proof General's Coq mode
+  (load "~/.emacs.d/lisp/PG/generic/proof-site")
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-coq
