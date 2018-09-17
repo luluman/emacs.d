@@ -10,5 +10,3 @@
   (require 'use-package))
 
 (org-babel-load-file "~/.emacs.d/configuration.org")
-
-

@@ -427,7 +427,7 @@ If emacs shwo on GUI, than apply this code.
 ** Display line number
 
 #+BEGIN_SRC emacs-lisp
-  (setq display-line-numbers-type 'relative)
+  (setq display-line-numbers-type 'visual)
   (global-display-line-numbers-mode)
 #+END_SRC
 
@@ -463,19 +463,15 @@ Use =company-coq-mode=, which really helps make Proof General a more useful IDE.
 
 I also like to disable =abbrev-mode=; it has a ton of abbreviations for Coq, but
 they've always been unpleasant surprises for me.
-#+BEGIN_SRC emacs-lisp
-  ;; Open .v files with Proof General's Coq mode
-  (load "~/.emacs.d/lisp/PG/generic/proof-site")
-#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package company-coq
-  :commands company-coq-mode
-  :init
-  (add-hook 'coq-mode-hook
-            (lambda ()
-              (company-coq-mode)
-              (abbrev-mode 0))))
+  (use-package company-coq
+    :init
+    (add-hook 'coq-mode-hook
+              (lambda ()
+                (company-coq-mode)
+                (abbrev-mode 0)))
+    :requires proof-general)
 #+END_SRC
 
 The default Proof General layout stacks the code, goal, and response buffers on
@@ -558,13 +554,13 @@ use smart indentation.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package haskell-mode
-  :init
-  (add-hook 'haskell-mode-hook
-            (lambda ()
-              (haskell-doc-mode)
-              (turn-on-haskell-indent)
-              (ghc-init))))
+  (use-package haskell-mode
+    :init
+    (add-hook 'haskell-mode-hook
+              (lambda ()
+                (haskell-doc-mode)
+                (interactive-haskell-mode)
+                (turn-on-haskell-indent))))
 #+END_SRC
 
 ** JavaScript and CoffeeScript
@@ -639,10 +635,17 @@ I'd like to start in the insert state when writing a commit message.
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :bind ("C-x g" . magit-status)
-
     :config
     (setq magit-push-always-verify nil)
     (setq git-commit-summary-max-length 50)
+    (setq magit-refresh-status-buffer nil)
+    (setq auto-revert-buffer-list-filter
+        'magit-auto-revert-repository-buffers-p)
+    (setq magit-diff-refine-hunk nil)
+    (setq magit-highlight-indentation nil)
+    (setq magit-highlight-trailing-whitespace nil)
+    (setq magit-highlight-whitespace nil)
+    (setq magit-use-overlays t)
     (add-hook 'git-commit-mode-hook 'turn-on-flyspell))
 #+END_SRC
 
@@ -765,6 +768,13 @@ If I'm in =web-mode=, I'd like to:
 
 Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 
+** Tags
+
+   using GNU Global to generate Tags
+   #+BEGIN_SRC emacs-lisp
+     (use-package ggtags
+       :hook ((c-mode c++-mode java-mode) . ggtags-mode))
+   #+END_SRC
 * Terminal
 
 I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
@@ -978,7 +988,7 @@ Define a few common tasks as capture templates. Specifically, I frequently:
 
           ("t" "Todo"
            entry
-           (file+headline org-gtd-files "Workspace")
+           (file+headline org-gtd-file "Workspace")
            "* TODO [#B] %?\n %i\n"
            :empty-lines 1)))
 #+END_SRC
@@ -1248,12 +1258,12 @@ Open the checklist and my TODO list side-by-side:
                    '(("XeLaTeX_SyncteX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil
                       (latex-mode doctex-mode)
                       :help "Run XeLaTeX")
-                     ("TeX" "%(PDF)%(tex) %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil
-                      (plain-tex-mode texinfo-mode ams-tex-mode)
-                      :help "Run plain TeX")
-                     ("LaTeX" "%`%l%(mode)%' %t" TeX-run-TeX nil
-                      (latex-mode doctex-mode)
-                      :help "Run LaTeX")
+                  ;;   ("TeX" "%(PDF)%(tex) %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil
+                  ;;    (plain-tex-mode texinfo-mode ams-tex-mode)
+                  ;;    :help "Run plain TeX")
+                   ;;  ("LaTeX" "%`%l%(mode)%' %t" TeX-run-TeX nil
+                   ;;   (latex-mode doctex-mode)
+                   ;;   :help "Run LaTeX")
                      ("Makeinfo" "makeinfo %t" TeX-run-compile nil
                       (texinfo-mode)
                       :help "Run Makeinfo with Info output")
@@ -1631,6 +1641,19 @@ Just keep pressing the key until it selects what you want.
   (use-package expand-region
    :bind  ("C-=" . er/expand-region))
 #+END_SRC
+
+** Use ace-jump
+
+Use ace-jump-mode to quick jump to words or char
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-pinyin
+    :bind ("C-c j" . ace-pinyin-jump-char)
+    :config
+    ;; (setq ace-pinyin-use-avy nil)
+    (ace-pinyin-global-mode +1))
+#+END_SRC
+
 * Set custom keybindings
 
 Just a few handy functions.
@@ -1645,4 +1668,8 @@ Remap when working in terminal Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (define-key input-decode-map "\e[1;2A" [S-up])
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (setq ns-right-option-modifier 'super)
 #+END_SRC
