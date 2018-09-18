@@ -433,6 +433,7 @@ If emacs shwo on GUI, than apply this code.
 
 * Programming customizations
 
+
 I like shallow indentation, but tabs are displayed as 8 characters by default.
 This reduces that.
 
@@ -456,6 +457,54 @@ output.
   (setq compilation-scroll-output t)
 #+END_SRC
 
+YouCompltedMe setup
+#+BEGIN_SRC emacs-lisp
+  (use-package ycmd
+    :hook (after-init-hook . global-ycmd-mode)
+    :config
+    (set-variable 'ycmd-server-command `("python3" "-u" ,(file-truename "~/Matt_Installed_package/ycmd/ycmd")))
+    (set-variable 'ycmd-global-config (file-truename "~/Matt_Installed_package/ycmd/.ycm_extra_conf.py")))
+
+   (use-package company-ycmd
+     :init
+     (company-ycmd-setup))
+
+   (use-package flycheck-ycmd
+     :config
+     (flycheck-ycmd-setup)
+     ((when (not (display-graphic-p))
+        (setq flycheck-indication-mode nil)))
+     :requires flycheck)
+#+END_SRC
+
+** C++
+
+   Use =rtags=
+#+BEGIN_SRC emacs-lisp
+  (use-package rtags
+  :config
+  (setq rtags-autostart-diagnostics t)
+  (rtags-diagnostics)
+  (setq rtags-completions-enabled t)
+  (push 'company-rtags company-backends)
+  :requires company)
+#+END_SRC
+
+   Use =company-irony=
+#+BEGIN_SRC emacs-lisp
+  (use-package company-irony
+    :config
+    (push 'company-irony company-backends)
+    :requires company)
+#+END_SRC
+
+   Use =company-c-headers=
+#+BEGIN_SRC emacs-lisp
+  (use-package company-c-headers
+    :config
+    (push 'company-c-headers company-backends)
+    :requires company)
+#+END_SRC
 
 ** Coq
 
