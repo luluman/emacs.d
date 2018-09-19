@@ -221,34 +221,45 @@ Why not?
   (global-prettify-symbols-mode t)
 #+END_SRC
 
-** Custom solarized-dark theme
+** Load up a theme
 
-I like the solarized-dark theme. I prefer keeping all the characters in the same
-side and font, though.
+I'm currently using the "nord" theme. I've got a scenic wallpaper, so just a
+hint of transparency looks lovely and isn't distracting or hard to read.
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/apply-solarized-theme ()
-    (setq solarized-use-variable-pitch nil)
-    (setq solarized-height-plus-1 1.0)
-    (setq solarized-height-plus-2 1.0)
-    (setq solarized-height-plus-3 1.0)
-    (setq solarized-height-plus-4 1.0)
-    (setq solarized-high-contrast-mode-line t)
-    (load-theme 'solarized-dark t)) ;;light
+  (defun transparency (value)
+    "Sets the transparency of the frame window. 0=transparent/100=opaque."
+    (interactive "nTransparency Value 0 - 100 opaque:")
+    (set-frame-parameter (selected-frame) 'alpha value))
+
+  (defun MattLu/apply-theme ()
+    "Apply the `nord' theme and make frames just slightly transparent."
+    (interactive)
+    (load-theme 'nord t)
+    (transparency 90))
 #+END_SRC
 
 If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
 frame is themed appropriately.
 
 #+BEGIN_SRC emacs-lisp
-(use-package solarized-theme
+  (use-package nord-theme
   :config
   (if (daemonp)
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
-                    (MattLu/apply-solarized-theme)))
-    (MattLu/apply-solarized-theme)))
+                  (with-selected-frame frame (MattLu/apply-theme))))
+    (MattLu/apply-theme)))
 #+END_SRC
+
+** Configure =powerline-evil=
+
+#+BEGIN_SRC emacs-lisp
+  (use-package powerline-evil
+    :ensure t
+    :config
+    (powerline-evil-center-color-theme))
+#+end_SRC
 
 ** COMMENT Disable visual bell
 
@@ -325,7 +336,7 @@ Note that this overrides the default font-related keybindings from
     (define-key global-map (kbd "C-)") 'MattLu/reset-font-size)
     (define-key global-map (kbd "C-+") 'MattLu/increase-font-size)
   ;;  (define-key global-map (kbd "C-=") 'MattLu/increase-font-size)
-    (define-key global-map (kbd "C-_") 'MattLu/decrease-font-size)
+    (define-key global-map (kbd "C--") 'MattLu/decrease-font-size)
   ;; (define-key global-map (kbd "C--") 'MattLu/decrease-font-size)
   ;; (define-key global-map (kbd "C--") nil)
 
