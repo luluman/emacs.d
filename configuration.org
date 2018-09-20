@@ -236,7 +236,7 @@ hint of transparency looks lovely and isn't distracting or hard to read.
     "Apply the `nord' theme and make frames just slightly transparent."
     (interactive)
     (load-theme 'nord t)
-    (transparency 90))
+    (transparency 96))
 #+END_SRC
 
 If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
@@ -252,13 +252,13 @@ frame is themed appropriately.
     (MattLu/apply-theme)))
 #+END_SRC
 
-** Configure =powerline-evil=
+** Configure =powerline=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package powerline-evil
+  (use-package powerline
     :ensure t
     :config
-    (powerline-evil-center-color-theme))
+    (powerline-center-theme))
 #+end_SRC
 
 ** COMMENT Disable visual bell
@@ -294,8 +294,8 @@ Note that this overrides the default font-related keybindings from
 =sensible-defaults=.
 
 #+BEGIN_SRC emacs-lisp
-    (setq MattLu/default-font "Inziu IosevkaCC SC")
-    (setq MattLu/default-font-size 12)
+    (setq MattLu/default-font "Ubuntu Mono")
+    (setq MattLu/default-font-size 11)
     (setq MattLu/current-font-size MattLu/default-font-size)
 
     (setq MattLu/font-change-increment 1.1)
@@ -336,8 +336,7 @@ Note that this overrides the default font-related keybindings from
     (define-key global-map (kbd "C-)") 'MattLu/reset-font-size)
     (define-key global-map (kbd "C-+") 'MattLu/increase-font-size)
   ;;  (define-key global-map (kbd "C-=") 'MattLu/increase-font-size)
-    (define-key global-map (kbd "C--") 'MattLu/decrease-font-size)
-  ;; (define-key global-map (kbd "C--") 'MattLu/decrease-font-size)
+;;    (define-key global-map (kbd "C-c -") 'MattLu/decrease-font-size)
   ;; (define-key global-map (kbd "C--") nil)
 
     (MattLu/reset-font-size)
@@ -365,8 +364,7 @@ containing point. It makes it a bit easier to find point, and it's useful when
 pairing or presenting code.
 
 #+BEGIN_SRC emacs-lisp
-  (when window-system
-    (global-hl-line-mode))
+  (global-hl-line-mode)
 #+END_SRC
 
 ** Hide certain modes from the modeline
@@ -471,7 +469,8 @@ output.
 YouCompltedMe setup
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
-    :hook (after-init-hook . global-ycmd-mode)
+    :init
+    (add-hook 'after-init-hook #'global-ycmd-mode)
     :config
     (set-variable 'ycmd-server-command `("python3" "-u" ,(file-truename "~/Matt_Installed_package/ycmd/ycmd")))
     (set-variable 'ycmd-global-config (file-truename "~/Matt_Installed_package/ycmd/.ycm_extra_conf.py")))
@@ -498,6 +497,9 @@ YouCompltedMe setup
   (rtags-diagnostics)
   (setq rtags-completions-enabled t)
   (push 'company-rtags company-backends)
+  :init
+  (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
+  (add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
   :requires company)
 #+END_SRC
 
@@ -1455,7 +1457,6 @@ Open a file with an external program (that is, through =xdg-open=) by hitting
 #+END_SRC
 
 * Editing settings
-
 ** Quickly visit Emacs
 configuration
 
@@ -1476,6 +1477,18 @@ Assume that I always want to kill the current buffer when hitting =C-x k=.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-x k") 'MattLu/kill-current-buffer)
+#+END_SRC
+
+** Set up =helpful=
+
+The =helpful= package provides, among other things, more context in Help
+buffers.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helpful)
+  (global-set-key (kbd "C-h f") #'helpful-callable)
+  (global-set-key (kbd "C-h v") #'helpful-variable)
+  (global-set-key (kbd "C-h k") #'helpful-key)
 #+END_SRC
 
 ** Look for executables in =/usr/local/bin=.
@@ -1714,12 +1727,19 @@ Use ace-jump-mode to quick jump to words or char
     (ace-pinyin-global-mode +1))
 #+END_SRC
 
+** Use buffer-move
+
+  Use buffer move to swipe buffers
+#+BEGIN_SRC emacs-lisp
+  (use-package buffer-move)
+#+END_SRC
+
 * Set custom keybindings
 
 Just a few handy functions.
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-w") 'backward-kill-word)
+;;  (global-set-key (kbd "C-w") 'backward-kill-word)
   (global-set-key (kbd "M-/") 'hippie-expand)
   (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
@@ -1732,4 +1752,8 @@ Remap when working in terminal Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (setq ns-right-option-modifier 'super)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-_") 'undo)
 #+END_SRC
