@@ -487,6 +487,20 @@ YouCompltedMe setup
      :requires flycheck)
 #+END_SRC
 
+ Displays parameters scattered on multiple lines
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+  (semantic-mode 1)
+  (use-package stickyfunc-enhance)
+#+END_SRC
+
+Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c-mode-common-hook   'hs-minor-mode)
+#+END_SRC
+
+
+
 ** C++
 
    Use =rtags=
@@ -496,17 +510,17 @@ YouCompltedMe setup
   (setq rtags-autostart-diagnostics t)
   (rtags-diagnostics)
   (setq rtags-completions-enabled t)
-  (push 'company-rtags company-backends)
   :init
   (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
   (add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
+  (push  'company-rtags company-backends)
   :requires company)
 #+END_SRC
 
    Use =company-irony=
 #+BEGIN_SRC emacs-lisp
   (use-package company-irony
-    :config
+    :init
     (push 'company-irony company-backends)
     :requires company)
 #+END_SRC
@@ -514,7 +528,7 @@ YouCompltedMe setup
    Use =company-c-headers=
 #+BEGIN_SRC emacs-lisp
   (use-package company-c-headers
-    :config
+    :init
     (push 'company-c-headers company-backends)
     :requires company)
 #+END_SRC
@@ -727,38 +741,46 @@ project root (if I'm not in a "real" project).
 
 #+BEGIN_SRC emacs-lisp
 
- (use-package projectile
-    :init
-    (defun MattLu/search-project-for-symbol-at-point ()
-    "Use `projectile-ag' to search the current project for `symbol-at-point'."
-         (interactive)
-         (projectile-ag (projectile-symbol-at-point)))
+  (use-package projectile
+     :init
+     (defun MattLu/search-project-for-symbol-at-point ()
+     "Use `projectile-ag' to search the current project for `symbol-at-point'."
+          (interactive)
+          (projectile-ag (projectile-symbol-at-point)))
 
-    :bind (("C-c v" . projectile-ag)
-           ( "C-c C-v" . MattLu/search-project-for-symbol-at-point))
-    :config
+     :bind (("C-c v" . projectile-ag)
+            ( "C-c C-v" . MattLu/search-project-for-symbol-at-point))
+     :config
 
-    (setq projectile-switch-project-action 'projectile-dired)
-    (setq projectile-require-project-root nil))
+     (setq projectile-switch-project-action 'projectile-dired)
+     (setq projectile-require-project-root nil)
+     :requires ag)
 #+END_SRC
 
+
 ** Python
+
+#+BEGIN_SRC emacs-lisp
+;;  (setq python-environment-directory  '("/home/man.lu/local_python3"))
+  (setq python-environment-virtualenv '("/home/man.lu/local_python3/bin/virtualenv"))
+#+END_SRC
+
 
 Set ipython as interpreter
 
 #+BEGIN_SRC emacs-lisp
-  (setq python-shell-interpreter "ipython3")
+  (setq python-shell-interpreter "/home/man.lu/local_python3/bin/ipython3")
   (setq python-shell-interpreter-args "--simple-prompt -i")
   (setq py-shell-name "ipython3")
   (setq py-ipython-command-args "--simple-prompt -i")
 #+END_SRC
 
-
 Indent 2 spaces.
 
 #+BEGIN_SRC emacs-lisp
-  (setq python-indent 2)
+  (setq python-indent 4)
 #+END_SRC
+
 
 Using jedi as python backend
 
@@ -767,23 +789,26 @@ Using jedi as python backend
     :config
     (elpy-enable))
 
-   (use-package flycheck
-     :hook (elpy-mode . flycheck-mode))
+  (use-package flycheck
+    :hook (elpy-mode . flycheck-mode))
 
-   (use-package py-autopep8
-     :init
+  (use-package py-autopep8
+    :init
     (add-hook 'elpy-mode-hook #'py-autopep8-enable-on-save))
 
-   (use-package company-jedi
-     :bind ("C-c d" . jedi:show-doc)
+  (use-package company-jedi
+    :bind ("C-c d" . jedi:show-doc)
+    :init
+    (add-hook 'python-mode-hook 'jedi:setup)
+    (push 'company-jedi company-backends)
+    :config
+    (setq jedi:complete-on-dot t))
 
-     :config
-     (add-to-list 'company-backends 'company-jedi)
-     (add-hook 'python-mode-hook 'jedi:setup)
-     (setq jedi:complete-on-dot t))
 
   (setq python-shell-completion-native-enable nil) ;; disable warring in python promote bug
 #+END_SRC
+
+
 
 ** =sh=
 
@@ -837,6 +862,13 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
      (use-package ggtags
        :hook ((c-mode c++-mode java-mode) . ggtags-mode))
    #+END_SRC
+** protocol buffer
+
+   add Google protocol buffer support
+#+BEGIN_SRC emacs-lisp
+  (use-package protobuf-mode)
+#+END_SRC
+
 * Terminal
 
 I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
@@ -1537,9 +1569,10 @@ enabled.
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
    :config
-  (setq yas-snippet-dirs '("~/.emacs.d/snippets/text-mode"))
+  (setq yas-snippet-dirs '("/home/man.lu/.emacs.d/snippets/text-mode"))
   (yas-global-mode 1))
 #+END_SRC
+
 
 I /don’t/ want =ido= to automatically indent the snippets it inserts. Sometimes
 this looks pretty bad (when indenting org-mode, for example, or trying to guess
