@@ -433,6 +433,12 @@ If emacs shwo on GUI, than apply this code.
       (MattLu/change-frame-alpha))
 #+END_SRC
 
+** Set Emacs background color
+
+#+BEGIN_SRC emacs-lisp
+  (set-face-background 'default "nord3")
+#+END_SRC
+
 ** Display line number
 
 #+BEGIN_SRC emacs-lisp
@@ -441,7 +447,7 @@ If emacs shwo on GUI, than apply this code.
 #+END_SRC
 
 * Programming customizations
-
+** common settings
 
 I like shallow indentation, but tabs are displayed as 8 characters by default.
 This reduces that.
@@ -487,11 +493,22 @@ YouCompltedMe setup
      :requires flycheck)
 #+END_SRC
 
- Displays parameters scattered on multiple lines
+
+To show the function in the HeaderLine
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
-  (semantic-mode 1)
-  (use-package stickyfunc-enhance)
+  (use-package which-func
+    :init
+    (which-function-mode)
+    (setq which-func-unknown "n/a")
+    ;;  Show the current function name in the header line
+    (setq mode-line-format (delete (assoc 'which-func-mode
+                                        mode-line-format) mode-line-format)
+          which-func-header-line-format '(which-func-mode ("" which-func-format)))
+    (defadvice which-func-ff-hook (after header-line activate)
+      (when which-func-mode
+        (setq mode-line-format (delete (assoc 'which-func-mode
+                                              mode-line-format) mode-line-format)
+              header-line-format which-func-header-line-format))))
 #+END_SRC
 
 Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
@@ -499,22 +516,22 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
   (add-hook 'c-mode-common-hook   'hs-minor-mode)
 #+END_SRC
 
-
-
 ** C++
 
    Use =rtags=
 #+BEGIN_SRC emacs-lisp
+  (use-package company-rtags
+    :init
+    (push  'company-rtags company-backends))
   (use-package rtags
-  :config
-  (setq rtags-autostart-diagnostics t)
-  (rtags-diagnostics)
-  (setq rtags-completions-enabled t)
-  :init
-  (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
-  (add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
-  (push  'company-rtags company-backends)
-  :requires company)
+    :config
+;;    (set-variable 'rtags-path (file-truename "~/Matt_Installed_package/rtags/build/bin"))
+    (setq rtags-autostart-diagnostics t)
+    (rtags-diagnostics)
+    (setq rtags-completions-enabled t)
+    :init
+    (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
+    (add-hook 'c++-mode-hook 'rtags-start-process-unless-running))
 #+END_SRC
 
    Use =company-irony=
@@ -531,6 +548,13 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
     :init
     (push 'company-c-headers company-backends)
     :requires company)
+#+END_SRC
+
+  Use =smartparens=
+#+BEGIN_SRC emacs-lisp
+  (use-package smartparens
+    :init
+    (smartparens-global-mode 1))
 #+END_SRC
 
 ** Coq
@@ -753,10 +777,8 @@ project root (if I'm not in a "real" project).
      :config
 
      (setq projectile-switch-project-action 'projectile-dired)
-     (setq projectile-require-project-root nil)
-     :requires ag)
+     (setq projectile-require-project-root nil))
 #+END_SRC
-
 
 ** Python
 
@@ -868,6 +890,70 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 #+BEGIN_SRC emacs-lisp
   (use-package protobuf-mode)
 #+END_SRC
+** jump and tags
+
+Rtags fall back to other taggers
+#+BEGIN_SRC emacs-lisp
+  (defun use-rtags (&optional useFileManager)
+    (and (rtags-executable-find "rc")
+         (cond ((not (gtags-get-rootpath)) t)
+               ((and (not (eq major-mode 'c++-mode))
+                     (not (eq major-mode 'c-mode))) (rtags-has-filemanager))
+               (useFileManager (rtags-has-filemanager))
+               (t (rtags-is-indexed)))))
+
+  (defun tags-find-symbol-at-point (&optional prefix)
+    (interactive "P")
+    (if (and (not (rtags-find-symbol-at-point prefix)) rtags-last-request-not-indexed)
+        (gtags-find-tag)))
+  (defun tags-find-references-at-point (&optional prefix)
+    (interactive "P")
+    (if (and (not (rtags-find-references-at-point prefix)) rtags-last-request-not-indexed)
+        (gtags-find-rtag)))
+  (defun tags-find-symbol ()
+    (interactive)
+    (call-interactively (if (use-rtags) 'rtags-find-symbol 'gtags-find-symbol)))
+  (defun tags-find-references ()
+    (interactive)
+    (call-interactively (if (use-rtags) 'rtags-find-references 'gtags-find-rtag)))
+  (defun tags-find-file ()
+    (interactive)
+    (call-interactively (if (use-rtags t) 'rtags-find-file 'gtags-find-file)))
+  (defun tags-imenu ()
+    (interactive)
+    (call-interactively (if (use-rtags t) 'rtags-imenu 'idomenu)))
+
+  (define-key c-mode-base-map (kbd "M-.") (function tags-find-symbol-at-point))
+  (define-key c-mode-base-map (kbd "M-,") (function tags-find-references-at-point))
+  (define-key c-mode-base-map (kbd "M-;") (function tags-find-file))
+  (define-key c-mode-base-map (kbd "C-.") (function tags-find-symbol))
+  (define-key c-mode-base-map (kbd "C-,") (function tags-find-references))
+  (define-key c-mode-base-map (kbd "C-<") (function rtags-find-virtuals-at-point))
+  (define-key c-mode-base-map (kbd "M-i") (function tags-imenu))
+
+  (define-key global-map (kbd "M-.") (function tags-find-symbol-at-point))
+  (define-key global-map (kbd "M-,") (function tags-find-references-at-point))
+  (define-key global-map (kbd "M-;") (function tags-find-file))
+  (define-key global-map (kbd "C-.") (function tags-find-symbol))
+  (define-key global-map (kbd "C-,") (function tags-find-references))
+  (define-key global-map (kbd "C-<") (function rtags-find-virtuals-at-point))
+  (define-key global-map (kbd "M-i") (function tags-imenu))
+#+END_SRC
+** imenu-list
+
+show function and variable tree in side buffer
+#+BEGIN_SRC emacs-lisp
+  (use-package imenu-list
+    :bind ("C-c i" . imenu-list-minor-mode)
+    :config
+    (setq imenu-list-focus-after-activation t))
+#+END_SRC
+** =GBD=
+
+using Realgud to debug source code
+#+BEGIN_SRC emacs-lisp
+  (use-package realgud)
+#+END_SRC
 
 * Terminal
 
@@ -961,6 +1047,9 @@ Enable spell-checking in Org-mode.
   (add-hook 'org-mode-hook 'flyspell-mode)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package org-pomodoro)
+#+END_SRC
 ** Task and org-capture management
 
 Store my org files in =~/org=, maintain an inbox in Dropbox, define the location
@@ -1145,11 +1234,11 @@ Hit =M-n= to quickly open up a capture template for a new todo.
     (interactive)
     (org-capture :keys "t"))
 
-  (global-set-key (kbd "M-n") 'org-capture-todo)
-  (add-hook 'gfm-mode-hook
-            (lambda () (local-set-key (kbd "M-n") 'org-capture-todo)))
-  (add-hook 'haskell-mode-hook
-            (lambda () (local-set-key (kbd "M-n") 'org-capture-todo)))
+;;  (global-set-key (kbd "C-c t d") 'org-capture-todo)
+;;  (add-hook 'gfm-mode-hook
+;;            (lambda () (local-set-key (kbd "M-n") 'org-capture-todo)))
+;;  (add-hook 'haskell-mode-hook
+;;            (lambda () (local-set-key (kbd "M-n") 'org-capture-todo)))
 #+END_SRC
 
 ** Exporting
@@ -1566,13 +1655,25 @@ Never use tabs. Tabs are the devil’s whitespace.
 I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippet=
 enabled.
 
+ Add yasnippet support for all company backends TOO slowly for rtags
 #+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
-   :config
-  (setq yas-snippet-dirs '("/home/man.lu/.emacs.d/snippets/text-mode"))
-  (yas-global-mode 1))
+;; (defvar company-mode/enable-yas
+;;   "Enable yasnippet for all backends.")
+;; (defun company-mode/backend-with-yas (backend)
+;;   (if (or (not company-mode/enable-yas)
+;;           (and (listp backend) (member 'company-yasnippet backend)))
+;;       backend
+;;     (append (if (consp backend) backend (list backend))
+;;             '(:with company-yasnippet))))
+;; (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+   :init
+   (setq yas-snippet-dirs '("/home/man.lu/.emacs.d/snippets"))
+   (yas-global-mode 1))
+#+END_SRC
 
 I /don’t/ want =ido= to automatically indent the snippets it inserts. Sometimes
 this looks pretty bad (when indenting org-mode, for example, or trying to guess
@@ -1745,7 +1846,7 @@ Just keep pressing the key until it selects what you want.
 
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region
-   :bind  ("C-=" . er/expand-region))
+   :bind  ("C-c q" . er/expand-region))
 #+END_SRC
 
 ** Use ace-jump
@@ -1760,11 +1861,15 @@ Use ace-jump-mode to quick jump to words or char
     (ace-pinyin-global-mode +1))
 #+END_SRC
 
-** Use buffer-move
+** windows switch
 
-  Use buffer move to swipe buffers
 #+BEGIN_SRC emacs-lisp
-  (use-package buffer-move)
+  (use-package ace-window
+    :config
+    (global-set-key (kbd "M-o") 'ace-window)
+    (setq aw-scope 'frame)   ; only the windows of the current frame
+    (setq aw-background nil) ;turn off the gray background
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
 
 * Set custom keybindings
@@ -1774,7 +1879,7 @@ Just a few handy functions.
 #+BEGIN_SRC emacs-lisp
 ;;  (global-set-key (kbd "C-w") 'backward-kill-word)
   (global-set-key (kbd "M-/") 'hippie-expand)
-  (global-set-key (kbd "M-o") 'other-window)
+;;  (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
 
 Remap when working in terminal Emacs.
@@ -1789,4 +1894,9 @@ Remap when working in terminal Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-_") 'undo)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "M-s") 'select-frame-by-name)
+  (global-set-key (kbd "C-c n") 'set-frame-name)
 #+END_SRC

@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: math
-# key: \[
-# --
-\[
-$0
-\]
