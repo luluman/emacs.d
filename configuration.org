@@ -831,7 +831,16 @@ Using jedi as python backend
 #+END_SRC
 
 
-
+** MATLAB
+#+BEGIN_SRC emacs-lisp
+  (use-package matlab-mode
+    :init
+    (add-to-list
+     'auto-mode-alist
+     '("\\.m$" . matlab-mode))
+    (setq matlab-indent-function t)
+    (setq matlab-shell-command "/data/mat/MATLAB/R2017b/bin/matlab"))
+#+END_SRC
 ** =sh=
 
 Indent with 2 spaces.
