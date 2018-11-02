@@ -783,15 +783,18 @@ project root (if I'm not in a "real" project).
 ** Python
 
 #+BEGIN_SRC emacs-lisp
-;;  (setq python-environment-directory  '("/home/man.lu/local_python3"))
-  (setq python-environment-virtualenv '("/home/man.lu/local_python3/bin/virtualenv"))
+  (use-package virtualenvwrapper
+    :init
+    (venv-initialize-interactive-shells) ;; if you want interactive shell support
+    (venv-initialize-eshell) ;; if you want eshell support
+    (setq venv-location "~/EnvPy/"))
 #+END_SRC
 
 
 Set ipython as interpreter
 
 #+BEGIN_SRC emacs-lisp
-  (setq python-shell-interpreter "/home/man.lu/local_python3/bin/ipython3")
+  (setq python-shell-interpreter (file-truename "~/EnvPy/my_py/bin/ipython3"))
   (setq python-shell-interpreter-args "--simple-prompt -i")
   (setq py-shell-name "ipython3")
   (setq py-ipython-command-args "--simple-prompt -i")
@@ -807,16 +810,6 @@ Indent 2 spaces.
 Using jedi as python backend
 
 #+BEGIN_SRC emacs-lisp
-  (use-package elpy
-    :config
-    (elpy-enable))
-
-  (use-package flycheck
-    :hook (elpy-mode . flycheck-mode))
-
-  (use-package py-autopep8
-    :init
-    (add-hook 'elpy-mode-hook #'py-autopep8-enable-on-save))
 
   (use-package company-jedi
     :bind ("C-c d" . jedi:show-doc)
@@ -1876,7 +1869,7 @@ Use ace-jump-mode to quick jump to words or char
     :config
     (global-set-key (kbd "M-o") 'ace-window)
     (setq aw-scope 'frame)   ; only the windows of the current frame
-    (setq aw-background nil) ;turn off the gray background
+;    (setq aw-background nil) ;turn off the gray background
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
 
