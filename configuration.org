@@ -516,6 +516,11 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
   (add-hook 'c-mode-common-hook   'hs-minor-mode)
 #+END_SRC
 
+format-all for Emacs
+#+BEGIN_SRC emacs-lisp
+  (use-package format-all)
+#+END_SRC
+
 ** C++
 
    Use =rtags=
@@ -808,14 +813,6 @@ Indent 2 spaces.
 
 
 Using anaconda as python backend
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/annotation-function (candidate)
-    (let ((description (get-text-property 0 'description candidate)))
-      (when description
-        (concat "<" (substring description 0 1) ">"))))
-
-  (setq company-anaconda-annotation-function 'MattLu/annotation-function)
-#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
   (use-package company-anaconda
@@ -825,6 +822,15 @@ Using anaconda as python backend
     (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
 
 ;;  (setq python-shell-completion-native-enable nil) ;; disable warring in python promote bug
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun MattLu/annotation-function (candidate)
+    (let ((description (get-text-property 0 'description candidate)))
+      (when description
+        (concat "<" (substring description 0 1) ">"))))
+
+  (setq company-anaconda-annotation-function 'MattLu/annotation-function)
 #+END_SRC
 
 
