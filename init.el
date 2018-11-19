@@ -7,6 +7,7 @@
 ;; =configuration.org= file.
 
 (eval-when-compile
-  (require 'use-package))
+  (require 'use-package)
+  (require 'bind-key))
 
 (org-babel-load-file "~/.emacs.d/configuration.org")

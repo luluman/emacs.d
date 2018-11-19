@@ -799,9 +799,8 @@ project root (if I'm not in a "real" project).
 Set ipython as interpreter
 
 #+BEGIN_SRC emacs-lisp
-  (setq python-shell-interpreter (file-truename "~/EnvPy/my_py/bin/ipython3"))
+  (setq python-shell-interpreter "ipython")
   (setq python-shell-interpreter-args "--simple-prompt -i")
-  (setq py-shell-name "ipython3")
   (setq py-ipython-command-args "--simple-prompt -i")
 #+END_SRC
 
@@ -812,27 +811,23 @@ Indent 2 spaces.
 #+END_SRC
 
 
-Using anaconda as python backend
+Using jedi as python backend
 
 #+BEGIN_SRC emacs-lisp
-  (use-package company-anaconda
+  (use-package company-jedi
+    :bind ("C-c d" . jedi:show-doc)
     :init
-    (push  '(company-anaconda :with company-capf) company-backends)
-    (add-hook 'python-mode-hook 'anaconda-mode)
-    (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+    (push 'company-jedi company-backends)
+    :config
+    (setq jedi:complete-on-dot t))
 
-;;  (setq python-shell-completion-native-enable nil) ;; disable warring in python promote bug
+  (setq python-shell-completion-native-enable nil) ;; disable warring in python promote bug
 #+END_SRC
 
+set realgud python debug command
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/annotation-function (candidate)
-    (let ((description (get-text-property 0 'description candidate)))
-      (when description
-        (concat "<" (substring description 0 1) ">"))))
-
-  (setq company-anaconda-annotation-function 'MattLu/annotation-function)
+  (setq realgud:pdb-command-name "python -m pdb")
 #+END_SRC
-
 
 ** MATLAB
 #+BEGIN_SRC emacs-lisp
@@ -964,6 +959,19 @@ show function and variable tree in side buffer
 using Realgud to debug source code
 #+BEGIN_SRC emacs-lisp
   (use-package realgud)
+#+END_SRC
+
+** Shell connfig
+
+Force open shell in the current buffer
+#+BEGIN_SRC emacs-lisp
+  (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
+#+END_SRC
+
+Add shell completion
+#+BEGIN_SRC emacs-lisp
+  (use-package bash-completion
+    :init (bash-completion-setup))
 #+END_SRC
 
 * Terminal
@@ -1877,7 +1885,7 @@ Use ace-jump-mode to quick jump to words or char
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
     :config
-    (global-set-key (kbd "M-o") 'ace-window)
+    (bind-key* "M-o" 'ace-window)
     (setq aw-scope 'frame)   ; only the windows of the current frame
 ;    (setq aw-background nil) ;turn off the gray background
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
@@ -1888,9 +1896,7 @@ Use ace-jump-mode to quick jump to words or char
 Just a few handy functions.
 
 #+BEGIN_SRC emacs-lisp
-;;  (global-set-key (kbd "C-w") 'backward-kill-word)
   (global-set-key (kbd "M-/") 'hippie-expand)
-;;  (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
 
 Remap when working in terminal Emacs.
@@ -1908,6 +1914,7 @@ Remap when working in terminal Emacs.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-s") 'select-frame-by-name)
-  (global-set-key (kbd "C-c n") 'set-frame-name)
+  (bind-keys*
+   ("M-s" . select-frame-by-name)
+   ("C-c n" . set-frame-name))
 #+END_SRC
