@@ -530,7 +530,6 @@ format-all for Emacs
     (push  'company-rtags company-backends))
   (use-package rtags
     :config
-;;    (set-variable 'rtags-path (file-truename "~/Matt_Installed_package/rtags/build/bin"))
     (setq rtags-autostart-diagnostics t)
     (rtags-diagnostics)
     (setq rtags-completions-enabled t)
@@ -886,10 +885,13 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 ** Tags
 
    using GNU Global to generate Tags
-   #+BEGIN_SRC emacs-lisp
-     (use-package ggtags
-       :hook ((c-mode c++-mode java-mode) . ggtags-mode))
-   #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (use-package ggtags
+    :hook ((c-mode c++-mode java-mode) . ggtags-mode)
+    :config
+    ;; Remove the default binding for `M-o' in `ggtags-navigation-map'
+    (bind-key "M-o" nil ggtags-navigation-map))
+#+END_SRC
 ** protocol buffer
 
    add Google protocol buffer support
@@ -936,14 +938,6 @@ Rtags fall back to other taggers
   (define-key c-mode-base-map (kbd "C-,") (function tags-find-references))
   (define-key c-mode-base-map (kbd "C-<") (function rtags-find-virtuals-at-point))
   (define-key c-mode-base-map (kbd "M-i") (function tags-imenu))
-
-  (define-key global-map (kbd "M-.") (function tags-find-symbol-at-point))
-  (define-key global-map (kbd "M-,") (function tags-find-references-at-point))
-  (define-key global-map (kbd "M-;") (function tags-find-file))
-  (define-key global-map (kbd "C-.") (function tags-find-symbol))
-  (define-key global-map (kbd "C-,") (function tags-find-references))
-  (define-key global-map (kbd "C-<") (function rtags-find-virtuals-at-point))
-  (define-key global-map (kbd "M-i") (function tags-imenu))
 #+END_SRC
 ** imenu-list
 
@@ -1717,10 +1711,10 @@ at the correct indentation for Python).
     :config
      (flx-ido-mode 1)) ; better/faster matching
 
-    (use-package ido-vertical-mode
-      :config
-      (ido-vertical-mode 1)
-      (setq ido-vertical-define-keys 'C-n-and-C-p-only))
+  (use-package ido-vertical-mode
+    :config
+    (ido-vertical-mode 1)
+    (setq ido-vertical-define-keys 'C-n-and-C-p-only))
 #+END_SRC
 
 ** Use =smex= to handle =M-x= with =ido=
@@ -1887,7 +1881,6 @@ Use ace-jump-mode to quick jump to words or char
     :config
     (bind-key* "M-o" 'ace-window)
     (setq aw-scope 'frame)   ; only the windows of the current frame
-;    (setq aw-background nil) ;turn off the gray background
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
 
