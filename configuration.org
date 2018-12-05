@@ -446,9 +446,9 @@ If emacs shwo on GUI, than apply this code.
   (global-display-line-numbers-mode)
 #+END_SRC
 
-* Programming customizations
+* Programming customization
 ** common settings
-
+*** Editing
 I like shallow indentation, but tabs are displayed as 8 characters by default.
 This reduces that.
 
@@ -472,6 +472,8 @@ output.
   (setq compilation-scroll-output t)
 #+END_SRC
 
+*** Complete engines
+
 YouCompltedMe setup
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
@@ -493,6 +495,7 @@ YouCompltedMe setup
      :requires flycheck)
 #+END_SRC
 
+*** Show function name
 
 To show the function in the HeaderLine
 #+BEGIN_SRC emacs-lisp
@@ -519,6 +522,20 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
 format-all for Emacs
 #+BEGIN_SRC emacs-lisp
   (use-package format-all)
+#+END_SRC
+
+*** Highlight variables
+
+#+BEGIN_SRC emacs-lisp
+  (use-package symbol-overlay
+    :diminish
+    :bind (("M-i" . symbol-overlay-put)
+           ("M-n" . symbol-overlay-jump-next)
+           ("M-p" . symbol-overlay-jump-prev)
+           ("M-N" . symbol-overlay-switch-forward)
+           ("M-P" . symbol-overlay-switch-backward)
+           ("M-C" . symbol-overlay-remove-all))
+    :hook (prog-mode . symbol-overlay-mode))
 #+END_SRC
 
 ** C++
@@ -966,6 +983,7 @@ Add shell completion
 #+BEGIN_SRC emacs-lisp
   (use-package bash-completion
     :init (bash-completion-setup))
+(bash-completion-setup)
 #+END_SRC
 
 * Terminal
@@ -1867,11 +1885,8 @@ Just keep pressing the key until it selects what you want.
 Use ace-jump-mode to quick jump to words or char
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ace-pinyin
-    :bind ("C-c j" . ace-pinyin-jump-char)
-    :config
-    ;; (setq ace-pinyin-use-avy nil)
-    (ace-pinyin-global-mode +1))
+  (use-package avy
+    :bind ("C-c j" . avy-goto-word-or-subword-1))
 #+END_SRC
 
 ** windows switch
