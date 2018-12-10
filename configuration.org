@@ -971,7 +971,7 @@ show function and variable tree in side buffer
     :config
     (setq imenu-list-focus-after-activation t))
 #+END_SRC
-** =GBD=
+** =GDB=
 
 using Realgud to debug source code
 #+BEGIN_SRC emacs-lisp
