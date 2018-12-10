@@ -261,6 +261,12 @@ frame is themed appropriately.
     (powerline-center-theme))
 #+end_SRC
 
+ Powerline in terminal may not using the right color
+#+BEGIN_SRC emacs-lisp
+ (set-face-attribute 'mode-line-inactive  t :background "black")
+ (set-face-attribute 'powerline-inactive1 nil :background "brightblack")
+ (set-face-attribute 'powerline-inactive2 nil :background "brightblack")
+#+END_SRC
 ** COMMENT Disable visual bell
 
 =sensible-defaults= replaces the audible bell with a visual one, but I really
@@ -954,7 +960,7 @@ Rtags fall back to other taggers
   (define-key c-mode-base-map (kbd "C-.") (function tags-find-symbol))
   (define-key c-mode-base-map (kbd "C-,") (function tags-find-references))
   (define-key c-mode-base-map (kbd "C-<") (function rtags-find-virtuals-at-point))
-  (define-key c-mode-base-map (kbd "M-i") (function tags-imenu))
+;;  (define-key c-mode-base-map (kbd "M-i") (function tags-imenu))
 #+END_SRC
 ** imenu-list
 
