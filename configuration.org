@@ -267,6 +267,8 @@ frame is themed appropriately.
  (set-face-attribute 'powerline-inactive1 nil :background "brightblack")
  (set-face-attribute 'powerline-inactive2 nil :background "brightblack")
 #+END_SRC
+
+
 ** COMMENT Disable visual bell
 
 =sensible-defaults= replaces the audible bell with a visual one, but I really
@@ -442,7 +444,7 @@ If emacs shwo on GUI, than apply this code.
 ** Set Emacs background color
 
 #+BEGIN_SRC emacs-lisp
-  (set-face-background 'default "nord3")
+  (set-face-background 'default "dark")
 #+END_SRC
 
 ** Display line number
@@ -1903,6 +1905,33 @@ Use ace-jump-mode to quick jump to words or char
     (bind-key* "M-o" 'ace-window)
     (setq aw-scope 'frame)   ; only the windows of the current frame
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+#+END_SRC
+
+** Workspace config
+
+#+BEGIN_SRC emacs-lisp
+  (use-package workgroups
+    :diminish workgroups-mode
+    :config
+    (setq wg-prefix-key (kbd "C-c w"))
+    (setq wg-morph-on nil)
+    (workgroups-mode 1)
+    (setq wg-mode-line-on nil)
+    (wg-load "~/.emacs.d/workgroups"))
+#+END_SRC
+** COMMENT Workspace2 config
+
+#+BEGIN_SRC emacs-lisp
+  (use-package workgroups2
+    :diminish workgroups-mode
+    :init
+    (setq wg-prefix-key (kbd "C-c w")
+          wg-session-file "~/.emacs.d/workgroups2"
+          wg-mode-line-display-on nil
+          ;; What to do on Emacs exit / workgroups-mode exit?
+          wg-emacs-exit-save-behavior           'save      ; Options: 'save 'ask nil
+          wg-workgroups-mode-exit-save-behavior 'save)
+    (workgroups-mode 1))
 #+END_SRC
 
 * Set custom keybindings
