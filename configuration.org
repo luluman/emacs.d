@@ -209,8 +209,8 @@ project:
 
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
-  :config
-  (setq frame-title-format '((:eval (projectile-project-name)))))
+    :config
+    (setq frame-title-format '((:eval (projectile-project-name)))))
 #+END_SRC
 
 ** Use fancy lambdas
@@ -1722,7 +1722,7 @@ at the correct indentation for Python).
   (setq yas/indent-line nil)
 #+END_SRC
 
-** Configure =ido=
+** COMMENT Configure =ido=
 
 #+BEGIN_SRC emacs-lisp
   (use-package ido-completing-read+
@@ -1743,7 +1743,7 @@ at the correct indentation for Python).
     (setq ido-vertical-define-keys 'C-n-and-C-p-only))
 #+END_SRC
 
-** Use =smex= to handle =M-x= with =ido=
+** COMMENT Use =smex= to handle =M-x= with =ido=
 
 #+BEGIN_SRC emacs-lisp
   (use-package smex
@@ -1751,6 +1751,32 @@ at the correct indentation for Python).
    (smex-initialize)
    :bind  ("M-x" . smex)
           ("M-X" . smex-major-mode-commands))
+#+END_SRC
+
+** Helm-mode comes back
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm
+    :defer t
+    :bind (("C-c h" . helm-mini)
+           ("M-x" . helm-M-x)
+           ("M-y" . helm-show-kill-ring)
+           ("C-c f" . helm-recentf)
+           ("C-x C-f" . helm-find-files)
+           ("C-c <SPC>" . helm-all-mark-rings)
+           ("C-s" . helm-occur)
+           ("C-h C-f" . helm-apropos)
+           ("C-c w" . helm-man-woman)
+           ("M-g a" . helm-do-grep-ag))
+    :config
+    (setq helm-display-header-line nil)
+    (set-face-attribute 'helm-source-header nil :height 0.1)
+    (setq helm-split-window-in-side-p t)
+    (setq  helm-echo-input-in-header-line t)
+    (helm-mode 1)
+    (setq helm-autoresize-max-height 0)
+    (setq helm-autoresize-min-height 20)
+    (helm-autoresize-mode 1))
 #+END_SRC
 
 ** Switch and rebalance windows when splitting
@@ -1773,8 +1799,8 @@ makes that automatic.
     (balance-windows)
     (other-window 1))
 
-  (global-set-key (kbd "C-x 2") 'MattLu/split-window-below-and-switch)
-  (global-set-key (kbd "C-x 3") 'MattLu/split-window-right-and-switch)
+ ; (global-set-key (kbd "C-x 2") 'MattLu/split-window-below-and-switch)
+ ; (global-set-key (kbd "C-x 3") 'MattLu/split-window-right-and-switch)
 #+END_SRC
 
 ** Mass editing of =grep= results
@@ -1907,32 +1933,36 @@ Use ace-jump-mode to quick jump to words or char
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
 
-** Workspace config
+** Multiple desktop config
 
 #+BEGIN_SRC emacs-lisp
-  (use-package workgroups
-    :diminish workgroups-mode
-    :config
-    (setq wg-prefix-key (kbd "C-c w"))
-    (setq wg-morph-on nil)
-    (workgroups-mode 1)
-    (setq wg-mode-line-on nil)
-    (wg-load "~/.emacs.d/workgroups"))
+  (bind-keys*
+   ("M-s" . select-frame-by-name)
+   ("C-c n" . set-frame-name))
 #+END_SRC
-** COMMENT Workspace2 config
 
 #+BEGIN_SRC emacs-lisp
-  (use-package workgroups2
-    :diminish workgroups-mode
-    :init
-    (setq wg-prefix-key (kbd "C-c w")
-          wg-session-file "~/.emacs.d/workgroups2"
-          wg-mode-line-display-on nil
-          ;; What to do on Emacs exit / workgroups-mode exit?
-          wg-emacs-exit-save-behavior           'save      ; Options: 'save 'ask nil
-          wg-workgroups-mode-exit-save-behavior 'save)
-    (workgroups-mode 1))
+  (when (fboundp 'winner-mode)
+    (winner-mode 1))
 #+END_SRC
+
+# #+BEGIN_SRC emacs-lisp
+#   (setq desktop-restore-frames t)
+#   (setq desktop-restore-in-current-display t)
+#   (setq desktop-restore-forces-onscreen nil)
+#   (desktop-save-mode 1)
+# #+END_SRC
+
+# #+BEGIN_SRC emacs-lisp
+#   (add-hook 'after-make-frame-functions
+#             (lambda (frame)
+#               (with-selected-frame frame
+#                 (unless desktop-save-mode
+#                   ;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=17693
+#                   (if (daemonp) (setq desktop-restore-frames nil))
+#                   (desktop-save-mode 1)
+#                   (desktop-read)))))
+# #+END_SRC
 
 * Set custom keybindings
 
@@ -1954,10 +1984,4 @@ Remap when working in terminal Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-_") 'undo)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (bind-keys*
-   ("M-s" . select-frame-by-name)
-   ("C-c n" . set-frame-name))
 #+END_SRC
