@@ -268,7 +268,6 @@ frame is themed appropriately.
  (set-face-attribute 'powerline-inactive2 nil :background "brightblack")
 #+END_SRC
 
-
 ** COMMENT Disable visual bell
 
 =sensible-defaults= replaces the audible bell with a visual one, but I really
@@ -1767,8 +1766,12 @@ at the correct indentation for Python).
            ("C-s" . helm-occur)
            ("C-h C-f" . helm-apropos)
            ("C-c w" . helm-man-woman)
-           ("M-g a" . helm-do-grep-ag))
+           ("M-g a" . helm-do-grep-ag)
+           ("C-x b" . helm-buffers-list))
     :config
+    (setq helm-buffers-fuzzy-matching t) ;; buffer list fuzzy matching
+    (setq helm-recentf-fuzzy-match t)
+    (setq helm-M-x-fuzzy-match t)        ;; M-x fuzzy matching
     (setq helm-display-header-line nil)
     (set-face-attribute 'helm-source-header nil :height 0.1)
     (setq helm-split-window-in-side-p t)
@@ -1920,7 +1923,10 @@ Use ace-jump-mode to quick jump to words or char
 
 #+BEGIN_SRC emacs-lisp
   (use-package avy
-    :bind ("C-c j" . avy-goto-word-or-subword-1))
+    :bind
+    ("C-c j" . avy-goto-word-or-subword-1)
+    :config
+    (setq avy-all-windows t)) ;; jump in current frame
 #+END_SRC
 
 ** windows switch
@@ -1930,6 +1936,7 @@ Use ace-jump-mode to quick jump to words or char
     :config
     (bind-key* "M-o" 'ace-window)
     (setq aw-scope 'frame)   ; only the windows of the current frame
+    (setq aw-background nil)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
 
