@@ -223,6 +223,36 @@ Why not?
 
 ** Load up a theme
 
+***  COMMENT new package but some bugs have not be fixed
+I like the solarized-dark theme. I prefer keeping all the characters in the same
+side and font, though.
+
+#+BEGIN_SRC emacs-lisp
+  (defun MattLu/apply-solarized-theme ()
+    (setq solarized-use-variable-pitch nil)
+    (setq solarized-height-plus-1 1.0)
+    (setq solarized-height-plus-2 1.0)
+    (setq solarized-height-plus-3 1.0)
+    (setq solarized-height-plus-4 1.0)
+    (setq solarized-high-contrast-mode-line t)
+    (load-theme 'solarized-dark t)) ;;light
+#+END_SRC
+
+If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
+frame is themed appropriately.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package solarized-theme
+    :custom (solarized-termcolors 16)
+    :config
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                      (MattLu/apply-solarized-theme)))
+      (MattLu/apply-solarized-theme)))
+#+END_SRC
+
+*** nord theme
 I'm currently using the "nord" theme. I've got a scenic wallpaper, so just a
 hint of transparency looks lovely and isn't distracting or hard to read.
 
@@ -236,7 +266,7 @@ hint of transparency looks lovely and isn't distracting or hard to read.
     "Apply the `nord' theme and make frames just slightly transparent."
     (interactive)
     (load-theme 'nord t)
-    (transparency 96))
+    (transparency 100))
 #+END_SRC
 
 If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
@@ -502,7 +532,7 @@ YouCompltedMe setup
      :requires flycheck)
 #+END_SRC
 
-*** Show function name
+*** COMMENT Show function name
 
 To show the function in the HeaderLine
 #+BEGIN_SRC emacs-lisp
@@ -1769,8 +1799,10 @@ at the correct indentation for Python).
            ("M-g a" . helm-do-grep-ag)
            ("C-x b" . helm-buffers-list))
     :config
-    (setq helm-buffers-fuzzy-matching t) ;; buffer list fuzzy matching
-    (setq helm-recentf-fuzzy-match t)
+  ;; globally enable fuzzy matching for helm-mode
+    (setq helm-mode-fuzzy-match t)
+    (setq helm-completion-in-region-fuzzy-match t)
+    ;; (setq helm-candidate-number-limit 50) ; for faster fuzzy matching
     (setq helm-M-x-fuzzy-match t)        ;; M-x fuzzy matching
     (setq helm-display-header-line nil)
     (set-face-attribute 'helm-source-header nil :height 0.1)
@@ -1946,6 +1978,8 @@ Use ace-jump-mode to quick jump to words or char
   (bind-keys*
    ("M-s" . select-frame-by-name)
    ("C-c n" . set-frame-name))
+  (global-unset-key (kbd "C-x 5 1"))
+  (local-unset-key (kbd "C-x 5 1"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
