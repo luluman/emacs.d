@@ -1019,8 +1019,7 @@ Force open shell in the current buffer
 Add shell completion
 #+BEGIN_SRC emacs-lisp
   (use-package bash-completion
-    :init (bash-completion-setup))
-(bash-completion-setup)
+    :config (bash-completion-setup))
 #+END_SRC
 
 * Terminal
@@ -1803,6 +1802,8 @@ at the correct indentation for Python).
     (setq helm-mode-fuzzy-match t)
     (setq helm-completion-in-region-fuzzy-match t)
     ;; (setq helm-candidate-number-limit 50) ; for faster fuzzy matching
+    (setq helm-recentf-fuzzy-match t)
+    (setq helm-buffers-fuzzy-matching t)
     (setq helm-M-x-fuzzy-match t)        ;; M-x fuzzy matching
     (setq helm-display-header-line nil)
     (set-face-attribute 'helm-source-header nil :height 0.1)
