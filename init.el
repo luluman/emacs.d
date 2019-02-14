@@ -10,4 +10,8 @@
   (require 'use-package)
   (require 'bind-key))
 
+(require 'org)
+(setq org-hide-leading-stars t)
+(set-face-attribute 'org-hide  t :foreground "black")
+
 (org-babel-load-file "~/.emacs.d/configuration.org")

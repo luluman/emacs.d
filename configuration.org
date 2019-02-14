@@ -572,7 +572,13 @@ format-all for Emacs
            ("M-N" . symbol-overlay-switch-forward)
            ("M-P" . symbol-overlay-switch-backward)
            ("M-C" . symbol-overlay-remove-all))
-    :hook (prog-mode . symbol-overlay-mode))
+    :hook (prog-mode . symbol-overlay-mode)
+    :config
+    (set-face-attribute 'symbol-overlay-default-face
+                        t
+                        :inherit nil
+                        :background "blue"
+                        :foreground "black"))
 #+END_SRC
 
 ** C++
@@ -1812,6 +1818,7 @@ at the correct indentation for Python).
     (helm-mode 1)
     (setq helm-autoresize-max-height 0)
     (setq helm-autoresize-min-height 20)
+    (setq helm-prevent-escaping-from-minibuffer nil)
     (helm-autoresize-mode 1))
 #+END_SRC
 
