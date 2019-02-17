@@ -1791,6 +1791,7 @@ at the correct indentation for Python).
    ivy configuration
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
+    :diminish (ivy-mode . "")
     :config
     (ivy-mode 1)
     (setq ivy-use-virtual-buffers t
@@ -1919,20 +1920,6 @@ results and =C-c C-c= to stop, just like in =dired=.
     (wrap-region-global-mode t)
     (wrap-region-add-wrapper "/" "/" nil 'ruby-mode)
     (wrap-region-add-wrapper "`" "`" nil '(markdown-mode ruby-mode)))
-#+END_SRC
-
-** Split horizontally for temporary buffers
-
-Horizonal splits are nicer for me, since I usually use a wide monitor. This is
-handy for handling temporary buffers (like compilation or test output).
-
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/split-horizontally-for-temp-buffers ()
-    (when (one-window-p t)
-      (split-window-horizontally)))
-
-  (add-hook 'temp-buffer-window-setup-hook
-            'MattLu/split-horizontally-for-temp-buffers)
 #+END_SRC
 
 ** Use projectile everywhere
