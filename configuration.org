@@ -1787,7 +1787,54 @@ at the correct indentation for Python).
           ("M-X" . smex-major-mode-commands))
 #+END_SRC
 
-** Helm-mode comes back
+** ivy + counsel + swiper
+   ivy configuration
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :config
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t
+          ivy-count-format "%d/%d "
+          enable-recursive-minibuffers t)
+    (setq ivy-re-builders-alist
+      '((swiper . ivy--regex-plus)
+        (t . ivy--regex-fuzzy)))
+  ; set face for terminal
+    (set-face-attribute 'isearch
+                        t :background "brightcyan" :foreground "black")
+    (set-face-attribute 'ivy-minibuffer-match-face-1
+                        t :background "green" :foreground "black")
+    (set-face-attribute 'ivy-minibuffer-match-face-2
+                        t :background "yellow" :foreground "black" :weight 'bold)
+    (set-face-attribute 'ivy-minibuffer-match-face-3
+                        t :background "cyan" :foreground "black" :weight 'bold)
+    (set-face-attribute 'ivy-minibuffer-match-face-4
+                        t :background "#ffbbff" :foreground "black" :weight 'bold))
+#+END_SRC
+   counsel configuration (counsel package replay on swiper)
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :config
+    (global-set-key "\C-s" 'swiper)
+    (global-set-key (kbd "C-c C-r") 'ivy-resume)
+    (global-set-key (kbd "M-x") 'counsel-M-x)
+    (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+    (global-set-key (kbd "C-c k") 'counsel-ag)
+    (global-set-key (kbd "C-c f") 'counsel-recentf)
+    (global-set-key (kbd "C-c b") 'counsel-bookmark))
+#+END_SRC
+   better information for ivy switch buffer
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-rich
+    :config
+    (ivy-rich-mode 1)
+    (setq ivy-format-function #'ivy-format-function-line)
+    (setq ivy-rich-path-style 'abbrev)
+    :requires
+    ivy)
+#+END_SRC
+
+** COMMENT Helm-mode comes back
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm
