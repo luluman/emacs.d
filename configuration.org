@@ -1703,7 +1703,9 @@ Add system path to emacs.
     (setq company-tooltip-limit 10)                      ; bigger popup window
     (setq company-idle-delay .3)                         ; decrease delay before autocompletion popup shows
     (setq company-echo-delay 0)                          ; remove annoying blinking
-    (setq company-transformers '(company-sort-by-occurrence))) ; weight by frequency
+    (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
+    (set-face-attribute 'company-preview-common
+                        t :background "brightcyan" :foreground "black"))
 #+END_SRC
 
 Set TAB for complete cycle
@@ -1712,7 +1714,14 @@ Set TAB for complete cycle
   (eval-after-load 'company
     '(progn
        (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-       (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)))
+       (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+       (define-key company-active-map (kbd "C-n") 'company-select-next)
+       (define-key company-active-map (kbd "C-o") 'company-other-backend)
+       (define-key company-active-map (kbd "C-p") 'company-select-previous)
+       (define-key company-active-map (kbd "C-v") 'company-next-page)
+       (define-key company-active-map (kbd "M-v") 'company-previous-page)
+       (define-key company-active-map (kbd "M-<") 'company-select-first)
+       (define-key company-active-map (kbd "M->") 'company-select-last)))
 #+END_SRC
 
 ** Always indent with spaces
@@ -1800,7 +1809,8 @@ at the correct indentation for Python).
     (setq ivy-re-builders-alist
       '((swiper . ivy--regex-plus)
         (t . ivy--regex-fuzzy)))
-  ; set face for terminal
+    (setq ivy-initial-inputs-alist nil)
+    ;; set face for terminal
     (set-face-attribute 'isearch
                         t :background "brightcyan" :foreground "black")
     (set-face-attribute 'ivy-minibuffer-match-face-1
@@ -1810,7 +1820,8 @@ at the correct indentation for Python).
     (set-face-attribute 'ivy-minibuffer-match-face-3
                         t :background "cyan" :foreground "black" :weight 'bold)
     (set-face-attribute 'ivy-minibuffer-match-face-4
-                        t :background "#ffbbff" :foreground "black" :weight 'bold))
+                        t :background "#ffbbff" :foreground "black" :weight 'bold)
+    :requires flx)
 #+END_SRC
    counsel configuration (counsel package replay on swiper)
 #+BEGIN_SRC emacs-lisp
