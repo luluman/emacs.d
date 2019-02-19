@@ -483,6 +483,46 @@ If emacs shwo on GUI, than apply this code.
   (global-display-line-numbers-mode)
 #+END_SRC
 
+** Modify =ediff= face for better contrast
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'ediff-load-hook
+            (lambda ()
+              (set-face-foreground
+               ediff-current-diff-face-A "color-88")
+              (set-face-foreground
+               ediff-current-diff-face-B "color-22")
+              (set-face-foreground
+               ediff-current-diff-face-C "color-94")
+              (set-face-foreground
+               ediff-even-diff-face-A "black")
+              (set-face-foreground
+               ediff-even-diff-face-B "black")
+              (set-face-foreground
+               ediff-even-diff-face-C "black")
+              (set-face-foreground
+               ediff-fine-diff-face-A "color-88")
+              (set-face-foreground
+               ediff-fine-diff-face-B "color-28")
+              (set-face-foreground
+               ediff-fine-diff-face-C "color-58")
+              (set-face-foreground
+               ediff-odd-diff-face-A "black")
+              (set-face-foreground
+               ediff-odd-diff-face-B "black")
+              (set-face-foreground
+               ediff-odd-diff-face-C "black")
+
+              (set-face-attribute 'ediff-current-diff-Ancestor
+                                  t :background "#cfdeee" :foreground "grey30")
+              (set-face-attribute 'ediff-even-diff-Ancestor
+                                  t :background "Grey" :foreground "black")
+              (set-face-attribute 'ediff-fine-diff-Ancestor
+                                  t :background "#00c5c0" :foreground "color-17")
+              (set-face-attribute  'ediff-odd-diff-Ancestor
+                                   t :background "gray40" :foreground "brightwhite")))
+#+END_SRC
+
 * Programming customization
 ** common settings
 *** Editing
