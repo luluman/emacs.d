@@ -208,9 +208,7 @@ The default frame title isn't useful. This binds it to the name of the current
 project:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :config
-    (setq frame-title-format '((:eval (projectile-project-name)))))
+    (setq frame-title-format '((:eval (projectile-project-name))))
 #+END_SRC
 
 ** Use fancy lambdas
@@ -285,17 +283,19 @@ frame is themed appropriately.
 ** Configure =powerline=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package powerline
-    :ensure t
-    :config
-    (powerline-center-theme))
+   (use-package powerline
+     :ensure t
+     :config
+     (powerline-center-theme)
+     (set-face-attribute 'mode-line-inactive  t :background "black")
+     (set-face-attribute 'powerline-inactive1 nil :background "brightblack")
+     (set-face-attribute 'powerline-inactive2 nil :background "brightblack")
+     (set-face-attribute 'mode-line t :background "brightgreen" :foreground "black"))
 #+end_SRC
 
  Powerline in terminal may not using the right color
 #+BEGIN_SRC emacs-lisp
- (set-face-attribute 'mode-line-inactive  t :background "black")
- (set-face-attribute 'powerline-inactive1 nil :background "brightblack")
- (set-face-attribute 'powerline-inactive2 nil :background "brightblack")
+
 #+END_SRC
 
 ** COMMENT Disable visual bell
@@ -879,7 +879,9 @@ project root (if I'm not in a "real" project).
      :bind (("C-c v" . projectile-ag)
             ( "C-c C-v" . MattLu/search-project-for-symbol-at-point))
      :config
-
+     (projectile-mode +1)
+     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+     (setq projectile-completion-system 'ivy)
      (setq projectile-switch-project-action 'projectile-dired)
      (setq projectile-require-project-root nil))
 #+END_SRC
@@ -1068,6 +1070,14 @@ Add shell completion
     :config (bash-completion-setup))
 #+END_SRC
 
+** org-mode programming
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (python . t)))
+#+END_SRC
 * Terminal
 
 I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
@@ -2070,8 +2080,6 @@ Use ace-jump-mode to quick jump to words or char
   (bind-keys*
    ("M-s" . select-frame-by-name)
    ("C-c n" . set-frame-name))
-  (global-unset-key (kbd "C-x 5 1"))
-  (local-unset-key (kbd "C-x 5 1"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -2097,6 +2105,13 @@ Use ace-jump-mode to quick jump to words or char
 #                   (desktop-read)))))
 # #+END_SRC
 
+** show more recent file
+
+#+BEGIN_SRC emacs-lisp
+  (run-at-time nil (* 5 60) 'recentf-save-list)
+  (setq recentf-max-saved-items 50)
+#+END_SRC
+
 * Set custom keybindings
 
 Just a few handy functions.
@@ -2117,4 +2132,11 @@ Remap when working in terminal Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-_") 'undo)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (global-unset-key (kbd "C-x 5 1"))
+  (local-unset-key (kbd "C-x 5 1"))
+  (global-unset-key (kbd "C-c t"))
+  (local-unset-key (kbd "C-c t"))
 #+END_SRC
