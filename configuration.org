@@ -283,14 +283,23 @@ frame is themed appropriately.
 ** Configure =powerline=
 
 #+BEGIN_SRC emacs-lisp
-   (use-package powerline
-     :ensure t
-     :config
-     (powerline-center-theme)
-     (set-face-attribute 'mode-line-inactive  t :background "black")
-     (set-face-attribute 'powerline-inactive1 nil :background "brightblack")
-     (set-face-attribute 'powerline-inactive2 nil :background "brightblack")
-     (set-face-attribute 'mode-line t :background "brightgreen" :foreground "black"))
+  (defun MattLu/apply-powerline ()
+    (interactive)
+    (powerline-center-theme)
+    (set-face-attribute 'mode-line-inactive  nil :background "black")
+    (set-face-attribute 'powerline-inactive1 nil :background "brightblack")
+    (set-face-attribute 'powerline-inactive2 nil :background "brightblack")
+    (set-face-attribute 'mode-line nil :background "brightgreen" :foreground "black"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package powerline
+    :config
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                    (MattLu/apply-powerline)))
+      (MattLu/apply-powerline)))
 #+end_SRC
 
  Powerline in terminal may not using the right color
@@ -1071,13 +1080,17 @@ Add shell completion
 #+END_SRC
 
 ** org-mode programming
+ob-async enables asynchronous execution of org-babel src blocks, using :async
 #+BEGIN_SRC emacs-lisp
+  (use-package ob-async
+    :after org)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
      (shell . t)
      (python . t)))
 #+END_SRC
+
 * Terminal
 
 I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
@@ -1754,8 +1767,21 @@ Add system path to emacs.
     (setq company-idle-delay .3)                         ; decrease delay before autocompletion popup shows
     (setq company-echo-delay 0)                          ; remove annoying blinking
     (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
-    (set-face-attribute 'company-preview-common
-                        t :background "brightcyan" :foreground "black"))
+    (setq company-show-numbers t)
+    (set-face-attribute 'company-echo-common t :background "brightblack")
+    (set-face-attribute 'company-preview-common t :background "#1a4b77")
+    (set-face-attribute 'company-template-field t :background "cyan" :foreground "black")
+    (set-face-attribute 'company-tooltip t :background "black" :foreground "white")
+    (set-face-attribute 'company-preview-search
+                        t :background "brightcyan" :foreground "black")
+    (set-face-attribute 'company-scrollbar-bg
+                        t :background "brightblack" :foreground "brightblack")
+    (set-face-attribute 'company-scrollbar-fg t :background "cyan" :foreground "cyan")
+
+    (set-face-attribute 'company-tooltip-common-selection
+                        t :background "brightcyan" :foreground "black")
+    (set-face-attribute 'company-tooltip-selection
+                        t :background "brightcyan" :foreground "black" :weight bold))
 #+END_SRC
 
 Set TAB for complete cycle
@@ -2087,6 +2113,7 @@ Use ace-jump-mode to quick jump to words or char
     (winner-mode 1))
 #+END_SRC
 
+
 # #+BEGIN_SRC emacs-lisp
 #   (setq desktop-restore-frames t)
 #   (setq desktop-restore-in-current-display t)
@@ -2109,7 +2136,8 @@ Use ace-jump-mode to quick jump to words or char
 
 #+BEGIN_SRC emacs-lisp
   (run-at-time nil (* 5 60) 'recentf-save-list)
-  (setq recentf-max-saved-items 50)
+  (setq auto-revert-verbose nil)
+  (setq recentf-max-saved-items 100)
 #+END_SRC
 
 * Set custom keybindings
@@ -2132,6 +2160,11 @@ Remap when working in terminal Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-_") 'undo)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c w") 'ediff-regions-wordwise)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
