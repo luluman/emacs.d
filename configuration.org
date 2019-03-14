@@ -1768,20 +1768,15 @@ Add system path to emacs.
     (setq company-echo-delay 0)                          ; remove annoying blinking
     (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
     (setq company-show-numbers t)
-    (set-face-attribute 'company-echo-common t :background "brightblack")
-    (set-face-attribute 'company-preview-common t :background "#1a4b77")
-    (set-face-attribute 'company-template-field t :background "cyan" :foreground "black")
-    (set-face-attribute 'company-tooltip t :background "black" :foreground "white")
-    (set-face-attribute 'company-preview-search
-                        t :background "brightcyan" :foreground "black")
-    (set-face-attribute 'company-scrollbar-bg
-                        t :background "brightblack" :foreground "brightblack")
-    (set-face-attribute 'company-scrollbar-fg t :background "cyan" :foreground "cyan")
-
-    (set-face-attribute 'company-tooltip-common-selection
-                        t :background "brightcyan" :foreground "black")
-    (set-face-attribute 'company-tooltip-selection
-                        t :background "brightcyan" :foreground "black" :weight bold))
+    :custom-face
+    (company-echo-common ((t (:background "brightblack"))))
+    (company-preview-common ((t (:background "#1a4b77"))))
+    (company-tooltip ((t (:background "black" :foreground "white"))))
+    (company-scrollbar-bg ((t (:background "brightblack" :foreground "brightblack"))))
+    (company-scrollbar-fg ((t (:background "cyan" :foreground "cyan"))))
+    (company-tooltip-common-selection ((t (:background "brightcyan" :foreground "black"))))
+    (company-tooltip-selection
+                        ((t (:background "brightcyan" :foreground "black" :weight bold)))))
 #+END_SRC
 
 Set TAB for complete cycle
