@@ -1083,12 +1083,13 @@ Add shell completion
 ob-async enables asynchronous execution of org-babel src blocks, using :async
 #+BEGIN_SRC emacs-lisp
   (use-package ob-async
-    :after org)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (shell . t)
-     (python . t)))
+    :after org
+    :config
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (shell . t)
+       (python . t))))
 #+END_SRC
 
 * Terminal
@@ -1791,8 +1792,8 @@ Set TAB for complete cycle
        (define-key company-active-map (kbd "C-p") 'company-select-previous)
        (define-key company-active-map (kbd "C-v") 'company-next-page)
        (define-key company-active-map (kbd "M-v") 'company-previous-page)
-       (define-key company-active-map (kbd "M-<") 'company-select-first)
-       (define-key company-active-map (kbd "M->") 'company-select-last)))
+       (define-key company-active-map (kbd "M-\<") 'company-select-first)
+       (define-key company-active-map (kbd "M-\>") 'company-select-last)))
 #+END_SRC
 
 ** Always indent with spaces
@@ -2080,8 +2081,12 @@ Use ace-jump-mode to quick jump to words or char
   (use-package avy
     :bind
     ("C-c j" . avy-goto-word-or-subword-1)
+    ("C-'"   . avy-goto-char-timer)
+    ("M-g f" . avy-goto-line)
     :config
-    (setq avy-all-windows t)) ;; jump in current frame
+    (setq avy-all-windows nil)
+    (setq avy-background t)
+    (unbind-key "C-'" org-mode-map)) ;; jump in current frame
 #+END_SRC
 
 ** windows switch
@@ -2091,7 +2096,7 @@ Use ace-jump-mode to quick jump to words or char
     :config
     (bind-key* "M-o" 'ace-window)
     (setq aw-scope 'frame)   ; only the windows of the current frame
-    (setq aw-background nil)
+    (setq aw-background t)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
 
