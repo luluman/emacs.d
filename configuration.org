@@ -1892,6 +1892,7 @@ at the correct indentation for Python).
      ((t (:background "cyan" :foreground "black" :weight bold))))
     (ivy-minibuffer-match-face-4
      ((t (:background "#ffbbff" :foreground "black" :weight bold))))
+    (ivy-remote ((t (:foreground "color-202"))))
     :ensure flx)
 #+END_SRC
    counsel configuration (counsel package replay on swiper)
