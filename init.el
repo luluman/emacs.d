@@ -14,5 +14,6 @@
 (setq org-hide-leading-stars t)
 (set-face-attribute 'org-hide  t :foreground "black")
 (setq org-cycle-include-plain-lists 'integrate)
+(put 'narrow-to-region 'disabled nil)
 
 (org-babel-load-file "~/.emacs.d/configuration.org")

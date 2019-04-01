@@ -600,11 +600,22 @@ To show the function in the HeaderLine
               header-line-format which-func-header-line-format))))
 #+END_SRC
 
+** Fold and unfold code blocks
+
 Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'c-mode-common-hook   'hs-minor-mode)
+  (defun toggle-fold ()
+    (interactive)
+    (save-excursion
+      (end-of-line)
+      (hs-toggle-hiding)))
+
+  (use-package hideshow
+    :hook ((prog-mode . hs-minor-mode))
+    :bind ("C-c h" . toggle-fold))
 #+END_SRC
 
+** Format code
 format-all for Emacs
 #+BEGIN_SRC emacs-lisp
   (use-package format-all)
@@ -1837,37 +1848,6 @@ at the correct indentation for Python).
   (setq yas/indent-line nil)
 #+END_SRC
 
-** COMMENT Configure =ido=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ido-completing-read+
-    :config
-    (setq ido-enable-flex-matching t)
-    (setq ido-everywhere t)
-    (ido-mode 1)
-    (ido-ubiquitous-mode 1)
-    (setq ido-create-new-buffer 'always)) ; don't confirm to create new buffers
-
-  (use-package flx-ido
-    :config
-     (flx-ido-mode 1)) ; better/faster matching
-
-  (use-package ido-vertical-mode
-    :config
-    (ido-vertical-mode 1)
-    (setq ido-vertical-define-keys 'C-n-and-C-p-only))
-#+END_SRC
-
-** COMMENT Use =smex= to handle =M-x= with =ido=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package smex
-   :config
-   (smex-initialize)
-   :bind  ("M-x" . smex)
-          ("M-X" . smex-major-mode-commands))
-#+END_SRC
-
 ** ivy + counsel + swiper
    ivy configuration
 #+BEGIN_SRC emacs-lisp
@@ -1915,41 +1895,6 @@ at the correct indentation for Python).
     (ivy-rich-mode 1)
     (setq ivy-format-function #'ivy-format-function-line)
     (setq ivy-rich-path-style 'abbrev))
-#+END_SRC
-
-** COMMENT Helm-mode comes back
-
-#+BEGIN_SRC emacs-lisp
-  (use-package helm
-    :defer t
-    :bind (("C-c h" . helm-mini)
-           ("M-x" . helm-M-x)
-           ("M-y" . helm-show-kill-ring)
-           ("C-c f" . helm-recentf)
-           ("C-x C-f" . helm-find-files)
-           ("C-c <SPC>" . helm-all-mark-rings)
-           ("C-s" . helm-occur)
-           ("C-h C-f" . helm-apropos)
-           ("C-c w" . helm-man-woman)
-           ("M-g a" . helm-do-grep-ag)
-           ("C-x b" . helm-buffers-list))
-    :config
-  ;; globally enable fuzzy matching for helm-mode
-    (setq helm-mode-fuzzy-match t)
-    (setq helm-completion-in-region-fuzzy-match t)
-    ;; (setq helm-candidate-number-limit 50) ; for faster fuzzy matching
-    (setq helm-recentf-fuzzy-match t)
-    (setq helm-buffers-fuzzy-matching t)
-    (setq helm-M-x-fuzzy-match t)        ;; M-x fuzzy matching
-    (setq helm-display-header-line nil)
-    (set-face-attribute 'helm-source-header nil :height 0.1)
-    (setq helm-split-window-in-side-p t)
-    (setq  helm-echo-input-in-header-line t)
-    (helm-mode 1)
-    (setq helm-autoresize-max-height 0)
-    (setq helm-autoresize-min-height 20)
-    (setq helm-prevent-escaping-from-minibuffer nil)
-    (helm-autoresize-mode 1))
 #+END_SRC
 
 ** Switch and rebalance windows when splitting
@@ -2089,6 +2034,15 @@ Use ace-jump-mode to quick jump to words or char
     (unbind-key "C-'" org-mode-map)) ;; jump in current frame
 #+END_SRC
 
+** Use goto-last-change to jump between
+
+#+BEGIN_SRC emacs-lisp
+  (use-package goto-chg
+    :config
+    (bind-keys* ("C-." . goto-last-change))
+    (bind-keys* ("C-," . goto-last-change-reverse)))
+#+END_SRC
+
 ** windows switch
 
 #+BEGIN_SRC emacs-lisp
@@ -2121,33 +2075,10 @@ Use ace-jump-mode to quick jump to words or char
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
     (setq wg-emacs-exit-save-behavior 'save)
     (setq wg-workgroups-mode-exit-save-behavior 'save)
-    ;; (setq wg-mode-line-display-on t)
-    ;; (setq wg-flag-modified t)
-    ;; (setq wg-mode-line-decor-left-brace "["
-    ;;       wg-mode-line-decor-right-brace "]"  ; how to surround it
-    ;;       wg-mode-line-decor-divider ":")
-    ;;
     (workgroups-mode 1))
 #+END_SRC
 
-# #+BEGIN_SRC emacs-lisp
-#   (setq desktop-restore-frames t)
-#   (setq desktop-restore-in-current-display t)
-#   (setq desktop-restore-forces-onscreen nil)
-#   (desktop-save-mode 1)
-# #+END_SRC
-
-# #+BEGIN_SRC emacs-lisp
-#   (add-hook 'after-make-frame-functions
-#             (lambda (frame)
-#               (with-selected-frame frame
-#                 (unless desktop-save-mode
-#                   ;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=17693
-#                   (if (daemonp) (setq desktop-restore-frames nil))
-#                   (desktop-save-mode 1)
-#                   (desktop-read)))))
-# #+END_SRC
-
+** Hid
 ** show more recent file
 
 #+BEGIN_SRC emacs-lisp
