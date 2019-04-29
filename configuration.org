@@ -611,7 +611,7 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
       (hs-toggle-hiding)))
 
   (use-package hideshow
-    :hook ((prog-mode . hs-minor-mode))
+    :hook (c-mode-common . hs-minor-mode)
     :bind ("C-c h" . toggle-fold))
 #+END_SRC
 
@@ -948,6 +948,22 @@ Using jedi as python backend
 set realgud python debug command
 #+BEGIN_SRC emacs-lisp
   (setq realgud:pdb-command-name "python -m pdb")
+#+END_SRC
+
+
+using Jupyter
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ein
+    :config
+    (require 'ein-notebook)
+    (require 'ein-subpackages)
+;    (require 'ein-dev) ;; this if for debug
+;    (setq websocket-debug t)
+    (setq ein:completion-backend 'ein:use-company-backend)
+    :commands (ein:notebooklist-open)
+    :custom-face
+    (ein:cell-input-area ((t (:background "black")))))
 #+END_SRC
 
 ** MATLAB
@@ -1660,7 +1676,7 @@ Open the checklist and my TODO list side-by-side:
 ** Set [[https://www.gnu.org/software/auctex/reftex.html][reftex]]  References, labels, citations
 
  #+BEGIN_SRC emacs-lisp
-   (use-package org-ref)
+;;   (use-package org-ref)
    (add-hook 'LaTeX-mode-hook 'turn-on-reftex) ; with Auctex Latex mode
    (add-hook 'latex-mode-hook 'turn-on-reftex) ; with Emacs latex mode
    (setq reftex-plug-into-AUCTeX t)
