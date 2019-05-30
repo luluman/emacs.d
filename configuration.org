@@ -264,7 +264,9 @@ hint of transparency looks lovely and isn't distracting or hard to read.
     "Apply the `nord' theme and make frames just slightly transparent."
     (interactive)
     (load-theme 'nord t)
-    (transparency 100))
+    (transparency 100)
+    (set-face-attribute 'font-lock-comment-face nil
+                        :foreground "color-243"))
 #+END_SRC
 
 If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
@@ -530,6 +532,22 @@ If emacs shwo on GUI, than apply this code.
                                   t :background "#00c5c0" :foreground "color-17")
               (set-face-attribute  'ediff-odd-diff-Ancestor
                                    t :background "gray40" :foreground "brightwhite")))
+#+END_SRC
+
+** Using highlight indentation
+
+#+BEGIN_SRC emacs-lisp
+  (use-package highlight-indent-guides
+    :hook (prog-mode . highlight-indent-guides-mode)
+    :config
+    (setq highlight-indent-guides-method 'character)
+    (setq highlight-indent-guides-responsive 'top)
+    (setq highlight-indent-guides-auto-enabled nil)
+    (set-face-background 'highlight-indent-guides-odd-face "black")
+    (set-face-background 'highlight-indent-guides-even-face "black")
+    (set-face-foreground 'highlight-indent-guides-character-face "brightblack")
+    (set-face-foreground 'highlight-indent-guides-top-character-face "cyan")
+    (setq highlight-indent-guides-delay 0))
 #+END_SRC
 
 * Programming customization
@@ -1708,6 +1726,12 @@ files. We're using:
   (setq-default dired-listing-switches "-lhvA")
 #+END_SRC
 
+fast copy and past
+
+#+BEGIN_SRC emacs-lisp
+  (setq dired-dwim-target t)
+#+END_SRC
+
 Use "j" and "k" to move around in =dired=.
 
 Kill buffers of files/directories that are deleted in =dired=.
@@ -2050,6 +2074,13 @@ Use ace-jump-mode to quick jump to words or char
     (unbind-key "C-'" org-mode-map)) ;; jump in current frame
 #+END_SRC
 
+** Scrolling one line
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-S-n") "\C-u1\C-v")
+  (global-set-key (kbd "C-S-p") "\C-u1\M-v")
+#+END_SRC
+
 ** Use goto-last-change to jump between
 
 #+BEGIN_SRC emacs-lisp
@@ -2089,8 +2120,8 @@ Use ace-jump-mode to quick jump to words or char
     (setq wg-session-file "~/.emacs.d/.emacs_workgroups")
     (setq wg-prefix-key (kbd "C-c z"))
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
-    (setq wg-emacs-exit-save-behavior 'save)
-    (setq wg-workgroups-mode-exit-save-behavior 'save)
+    ;; (setq wg-emacs-exit-save-behavior 'save)
+    ;; (setq wg-workgroups-mode-exit-save-behavior 'save)
     (workgroups-mode 1))
 #+END_SRC
 
