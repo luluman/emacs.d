@@ -492,6 +492,14 @@ If emacs shwo on GUI, than apply this code.
 #+BEGIN_SRC emacs-lisp
   (setq display-line-numbers-type 'visual)
   (global-display-line-numbers-mode)
+  (set-face-foreground 'line-number  "color-241")
+  (set-face-foreground 'line-number-current-line  "cyan")
+#+END_SRC
+
+** change customization menu color
+
+#+BEGIN_SRC emacs-lisp
+ ;;(set-face-foreground 'custom-variable-tag "brightblue")
 #+END_SRC
 
 ** Modify =ediff= face for better contrast
@@ -546,8 +554,8 @@ If emacs shwo on GUI, than apply this code.
     (set-face-background 'highlight-indent-guides-odd-face "black")
     (set-face-background 'highlight-indent-guides-even-face "black")
     (set-face-foreground 'highlight-indent-guides-character-face "brightblack")
-    (set-face-foreground 'highlight-indent-guides-top-character-face "cyan")
-    (setq highlight-indent-guides-delay 0))
+    (set-face-foreground 'highlight-indent-guides-top-character-face "cyan"))
+    ;; (setq highlight-indent-guides-delay 0.1)
 #+END_SRC
 
 * Programming customization
@@ -576,27 +584,51 @@ output.
   (setq compilation-scroll-output t)
 #+END_SRC
 
-*** Complete engines
-
+*** ycmd
 YouCompltedMe setup
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
     :init
     (add-hook 'after-init-hook #'global-ycmd-mode)
     :config
-    (set-variable 'ycmd-server-command `("python3" "-u" ,(file-truename "~/Matt_Installed_package/ycmd/ycmd")))
-    (set-variable 'ycmd-global-config (file-truename "~/Matt_Installed_package/ycmd/.ycm_extra_conf.py")))
+    (set-variable 'ycmd-server-command
+                  `("python3" "-u" ,(file-truename "~/Matt_Installed_package/ycmd/ycmd"))))
 
-   (use-package company-ycmd
-     :init
-     (company-ycmd-setup))
+  (use-package company-ycmd
+    :init
+    (company-ycmd-setup))
 
-   (use-package flycheck-ycmd
-     :config
-     (flycheck-ycmd-setup)
-     ((when (not (display-graphic-p))
-        (setq flycheck-indication-mode nil)))
-     :requires flycheck)
+  (use-package flycheck-ycmd
+    :config
+    (flycheck-ycmd-setup)
+    ((when (not (display-graphic-p))
+       (setq flycheck-indication-mode nil)))
+    :requires flycheck)
+#+END_SRC
+
+*** COMMENT lsp-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-mode
+  :hook (c-mode-common . lsp)
+  :commands lsp)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-lsp
+    :commands company-lsp)
+#+END_SRC
+
+*** eglot
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eglot
+    :commands
+    (eglot eglot-ensure)
+    :config
+    (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+    :hook
+    (c-mode-common . eglot-ensure))
 #+END_SRC
 
 *** COMMENT Show function name
@@ -660,37 +692,6 @@ format-all for Emacs
 #+END_SRC
 
 ** C++
-
-   Use =rtags=
-#+BEGIN_SRC emacs-lisp
-  (use-package company-rtags
-    :init
-    (push  'company-rtags company-backends))
-  (use-package rtags
-    :config
-    (setq rtags-autostart-diagnostics t)
-    (rtags-diagnostics)
-    (setq rtags-completions-enabled t)
-    :init
-    (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
-    (add-hook 'c++-mode-hook 'rtags-start-process-unless-running))
-#+END_SRC
-
-   Use =company-irony=
-#+BEGIN_SRC emacs-lisp
-  (use-package company-irony
-    :init
-    (push 'company-irony company-backends)
-    :requires company)
-#+END_SRC
-
-   Use =company-c-headers=
-#+BEGIN_SRC emacs-lisp
-  (use-package company-c-headers
-    :init
-    (push 'company-c-headers company-backends)
-    :requires company)
-#+END_SRC
 
   Use =smartparens=
 #+BEGIN_SRC emacs-lisp
@@ -1056,45 +1057,6 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 #+END_SRC
 ** jump and tags
 
-Rtags fall back to other taggers
-#+BEGIN_SRC emacs-lisp
-  (defun use-rtags (&optional useFileManager)
-    (and (rtags-executable-find "rc")
-         (cond ((not (gtags-get-rootpath)) t)
-               ((and (not (eq major-mode 'c++-mode))
-                     (not (eq major-mode 'c-mode))) (rtags-has-filemanager))
-               (useFileManager (rtags-has-filemanager))
-               (t (rtags-is-indexed)))))
-
-  (defun tags-find-symbol-at-point (&optional prefix)
-    (interactive "P")
-    (if (and (not (rtags-find-symbol-at-point prefix)) rtags-last-request-not-indexed)
-        (gtags-find-tag)))
-  (defun tags-find-references-at-point (&optional prefix)
-    (interactive "P")
-    (if (and (not (rtags-find-references-at-point prefix)) rtags-last-request-not-indexed)
-        (gtags-find-rtag)))
-  (defun tags-find-symbol ()
-    (interactive)
-    (call-interactively (if (use-rtags) 'rtags-find-symbol 'gtags-find-symbol)))
-  (defun tags-find-references ()
-    (interactive)
-    (call-interactively (if (use-rtags) 'rtags-find-references 'gtags-find-rtag)))
-  (defun tags-find-file ()
-    (interactive)
-    (call-interactively (if (use-rtags t) 'rtags-find-file 'gtags-find-file)))
-  (defun tags-imenu ()
-    (interactive)
-    (call-interactively (if (use-rtags t) 'rtags-imenu 'idomenu)))
-
-  (define-key c-mode-base-map (kbd "M-.") (function tags-find-symbol-at-point))
-  (define-key c-mode-base-map (kbd "M-,") (function tags-find-references-at-point))
-  (define-key c-mode-base-map (kbd "M-;") (function tags-find-file))
-  (define-key c-mode-base-map (kbd "C-.") (function tags-find-symbol))
-  (define-key c-mode-base-map (kbd "C-,") (function tags-find-references))
-  (define-key c-mode-base-map (kbd "C-<") (function rtags-find-virtuals-at-point))
-;;  (define-key c-mode-base-map (kbd "M-i") (function tags-imenu))
-#+END_SRC
 ** imenu-list
 
 show function and variable tree in side buffer
@@ -1816,19 +1778,32 @@ Add system path to emacs.
     :config
     (add-hook 'after-init-hook 'global-company-mode)
     (setq company-tooltip-limit 10)                      ; bigger popup window
-    (setq company-idle-delay .3)                         ; decrease delay before autocompletion popup shows
+    (setq company-idle-delay .1)                         ; decrease delay before autocompletion popup shows
     (setq company-echo-delay 0)                          ; remove annoying blinking
     (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
     (setq company-show-numbers t)
+    (setq company-require-match nil)
+    (setq company-backends (delete 'company-semantic company-backends))
+    (setq company-backends (delete 'company-clang company-backends))
     :custom-face
-    (company-echo-common ((t (:background "brightblack"))))
-    (company-preview-common ((t (:background "#1a4b77"))))
-    (company-tooltip ((t (:background "black" :foreground "white"))))
-    (company-scrollbar-bg ((t (:background "brightblack" :foreground "brightblack"))))
-    (company-scrollbar-fg ((t (:background "cyan" :foreground "cyan"))))
-    (company-tooltip-common-selection ((t (:background "brightcyan" :foreground "black"))))
+    (company-echo-common
+     ((t (:background "brightblack"))))
+    (company-preview-common
+     ((t (:background "#1a4b77"))))
+    (company-tooltip
+     ((t (:background "black" :foreground "white"))))
+    (company-scrollbar-bg
+     ((t (:background "brightblack" :foreground "brightblack"))))
+    (company-scrollbar-fg
+     ((t (:background "cyan" :foreground "cyan"))))
+    (company-tooltip-common-selection
+     ((t (:background "brightblack" :foreground "brightcyan" :wight bold))))
     (company-tooltip-selection
-                        ((t (:background "brightcyan" :foreground "black" :weight bold)))))
+     ((t (:background "brightblack" :foreground "white" :weight bold))))
+    (company-tooltip-annotation
+     ((t (:foreground "yellow"))))
+    (company-tooltip-annotation-selection
+     ((t (:foreground "brightyellow" :weight bold)))))
 #+END_SRC
 
 Set TAB for complete cycle
