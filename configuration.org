@@ -285,23 +285,14 @@ frame is themed appropriately.
 ** Configure =powerline=
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/apply-powerline ()
-    (interactive)
-    (powerline-center-theme)
-    (set-face-attribute 'mode-line-inactive  nil :background "black")
-    (set-face-attribute 'powerline-inactive1 nil :background "brightblack")
-    (set-face-attribute 'powerline-inactive2 nil :background "brightblack")
-    (set-face-attribute 'mode-line nil :background "brightgreen" :foreground "black"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
   (use-package powerline
     :config
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions
-                  (lambda (frame)
-                    (MattLu/apply-powerline)))
-      (MattLu/apply-powerline)))
+    (powerline-center-theme)
+    :custom-face
+    (powerline-active0 ((t (:background "color-48" :foreground "black"))))
+    (powerline-inactive0 ((t (:background "black" :foreground "#D8DEE9"))))
+    (powerline-inactive1 ((t (:background "brightblack" :foreground "#D8DEE9"))))
+    (powerline-inactive2 ((t (:background "brightblack" :foreground "#D8DEE9")))))
 #+end_SRC
 
  Powerline in terminal may not using the right color
@@ -422,8 +413,8 @@ either hides or "renames" a variety of major or minor modes using the =diminish=
 package.
 
 #+BEGIN_SRC emacs-lisp
- (use-package diminish)
- (defmacro diminish-minor-mode (filename mode &optional abbrev)
+  (use-package diminish)
+  (defmacro diminish-minor-mode (filename mode &optional abbrev)
     `(eval-after-load (symbol-name ,filename)
        '(diminish ,mode ,abbrev)))
 
@@ -445,9 +436,9 @@ package.
   (diminish-minor-mode 'yard-mode 'yard-mode)
   (diminish-minor-mode 'yasnippet 'yas-minor-mode)
   (diminish-minor-mode 'wrap-region 'wrap-region-mode)
+  (diminish-minor-mode 'ivy 'ivy-mode)
 
   (diminish-minor-mode 'paredit 'paredit-mode " π")
-
   (diminish-major-mode 'emacs-lisp-mode-hook "el")
   (diminish-major-mode 'haskell-mode-hook "λ=")
   (diminish-major-mode 'lisp-interaction-mode-hook "λ")
@@ -627,6 +618,7 @@ YouCompltedMe setup
     (eglot eglot-ensure)
     :config
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+    ;; (add-to-list 'eglot-ignored-server-capabilites ':hoverProvider)
     :hook
     (c-mode-common . eglot-ensure))
 #+END_SRC
@@ -665,10 +657,14 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
     :bind ("C-c h" . toggle-fold))
 #+END_SRC
 
-** Format code
+** Format c family
 format-all for Emacs
 #+BEGIN_SRC emacs-lisp
-  (use-package format-all)
+  (use-package clang-format
+    :config
+    (setq clang-format-style-option "google")
+    :bind
+    ("C-c u" . clang-format-buffer))
 #+END_SRC
 
 *** Highlight variables
@@ -1039,7 +1035,7 @@ If I'm in =web-mode=, I'd like to:
 
 Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 
-** Tags
+** COMMENT Tags
 
    using GNU Global to generate Tags
 #+BEGIN_SRC emacs-lisp
@@ -1795,7 +1791,7 @@ Add system path to emacs.
     (company-scrollbar-bg
      ((t (:background "brightblack" :foreground "brightblack"))))
     (company-scrollbar-fg
-     ((t (:background "cyan" :foreground "cyan"))))
+     ((t (:background "blue" :foreground "bule"))))
     (company-tooltip-common-selection
      ((t (:background "brightblack" :foreground "brightcyan" :wight bold))))
     (company-tooltip-selection
@@ -2098,15 +2094,6 @@ Use ace-jump-mode to quick jump to words or char
     ;; (setq wg-emacs-exit-save-behavior 'save)
     ;; (setq wg-workgroups-mode-exit-save-behavior 'save)
     (workgroups-mode 1))
-#+END_SRC
-
-** Hid
-** show more recent file
-
-#+BEGIN_SRC emacs-lisp
-  (run-at-time nil (* 5 60) 'recentf-save-list)
-  (setq auto-revert-verbose nil)
-  (setq recentf-max-saved-items 100)
 #+END_SRC
 
 * Set custom keybindings
