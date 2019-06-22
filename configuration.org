@@ -220,7 +220,6 @@ Why not?
 #+END_SRC
 
 ** Load up a theme
-
 ***  COMMENT new package but some bugs have not be fixed
 I like the solarized-dark theme. I prefer keeping all the characters in the same
 side and font, though.
@@ -289,10 +288,12 @@ frame is themed appropriately.
     :config
     (powerline-center-theme)
     :custom-face
-    (powerline-active0 ((t (:background "color-48" :foreground "black"))))
-    (powerline-inactive0 ((t (:background "black" :foreground "#D8DEE9"))))
-    (powerline-inactive1 ((t (:background "brightblack" :foreground "#D8DEE9"))))
-    (powerline-inactive2 ((t (:background "brightblack" :foreground "#D8DEE9")))))
+    (powerline-active0 ((t (:background "brightcyan" :foreground "black"))))
+    (powerline-active1 ((t (:background "black" :foreground "white"))))
+    (powerline-active2 ((t (:background "white" :foreground "color-16"))))
+    (powerline-inactive0 ((t (:background "black" :foreground "white"))))
+    (powerline-inactive1 ((t (:background "brightblack" :foreground "white"))))
+    (powerline-inactive2 ((t (:background "brightblack" :foreground "white")))))
 #+end_SRC
 
  Powerline in terminal may not using the right color
@@ -476,6 +477,11 @@ If emacs shwo on GUI, than apply this code.
 
 #+BEGIN_SRC emacs-lisp
   (set-face-background 'default "dark")
+  (set-face-background 'region  "brightblack")
+  (set-face-attribute 'show-paren-match
+                      t
+                      :background "turquoise" :foreground "black")
+  (set-face-background 'highlight "brightblack")
 #+END_SRC
 
 ** Display line number
@@ -484,7 +490,7 @@ If emacs shwo on GUI, than apply this code.
   (setq display-line-numbers-type 'visual)
   (global-display-line-numbers-mode)
   (set-face-foreground 'line-number  "color-241")
-  (set-face-foreground 'line-number-current-line  "cyan")
+  (set-face-foreground 'line-number-current-line  "white")
 #+END_SRC
 
 ** change customization menu color
@@ -583,7 +589,8 @@ YouCompltedMe setup
     (add-hook 'after-init-hook #'global-ycmd-mode)
     :config
     (set-variable 'ycmd-server-command
-                  `("python3" "-u" ,(file-truename "~/Matt_Installed_package/ycmd/ycmd"))))
+                  `("python3" "-u" ,
+                    (file-truename "~/Matt_Installed_package/ycmd/ycmd"))))
 
   (use-package company-ycmd
     :init
@@ -592,9 +599,7 @@ YouCompltedMe setup
   (use-package flycheck-ycmd
     :config
     (flycheck-ycmd-setup)
-    ((when (not (display-graphic-p))
-       (setq flycheck-indication-mode nil)))
-    :requires flycheck)
+    (setq flycheck-indication-mode nil))
 #+END_SRC
 
 *** COMMENT lsp-mode
