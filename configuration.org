@@ -18,13 +18,10 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 * Configure =use-package=
 
 #+BEGIN_SRC emacs-lisp
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
+  (require 'use-package-ensure)
 
   (setq use-package-verbose t)
   (setq use-package-always-ensure t)
-
-  (require 'use-package)
 #+END_SRC
 
 use auto-package-update to keep your packages updated automatically
@@ -46,7 +43,6 @@ Always compile packages, and use the newest version available.
 #+END_SRC
 
 * Set personal information
-
 ** Who am I? Where am I?
 
 #+BEGIN_SRC emacs-lisp
@@ -107,32 +103,6 @@ Define a big ol' bunch of handy utility functions.
        name."
     (interactive)
     (switch-to-buffer (make-temp-name "scratch-")))
-
-  (defun MattLu/de-unicode ()
-    "Tidy up a buffer by replacing all special Unicode characters
-       (smart quotes, etc.) with their more sane cousins"
-    (interactive)
-    (let ((unicode-map '(("[\u2018\|\u2019\|\u201A\|\uFFFD]" . "'")
-                         ("[\u201c\|\u201d\|\u201e]" . "\"")
-                         ("\u2013" . "--")
-                         ("\u2014" . "---")
-                         ("\u2026" . "...")
-                         ("\u00A9" . "(c)")
-                         ("\u00AE" . "(r)")
-                         ("\u2122" . "TM")
-                         ("[\u02DC\|\u00A0]" . " "))))
-      (save-excursion
-        (loop for (key . value) in unicode-map
-              do
-              (goto-char (point-min))
-              (replace-regexp key value)))))
-
-  (defun MattLu/beautify-json ()
-    "Pretty-print the JSON in the marked region. Currently shells
-       out to `jsonpp'--be sure that's installed!"
-    (interactive)
-    (save-excursion
-      (shell-command-on-region (mark) (point) "jsonpp" (buffer-name) t)))
 
   (defun MattLu/unfill-paragraph ()
     "Takes a multi-line paragraph and makes it into a single line of text."
@@ -256,7 +226,7 @@ hint of transparency looks lovely and isn't distracting or hard to read.
 #+BEGIN_SRC emacs-lisp
   (defun transparency (value)
     "Sets the transparency of the frame window. 0=transparent/100=opaque."
-    (interactive "nTransparency Value 0 - 100 opaque:")
+    (interactive "Transparency Value 0 - 100 opaque:")
     (set-frame-parameter (selected-frame) 'alpha value))
 
   (defun MattLu/apply-theme ()
@@ -265,7 +235,24 @@ hint of transparency looks lovely and isn't distracting or hard to read.
     (load-theme 'nord t)
     (transparency 100)
     (set-face-attribute 'font-lock-comment-face nil
-                        :foreground "color-243"))
+                        :foreground "color-243")
+    (set-face-background 'default "dark")
+    (set-face-background 'region  "brightblack")
+    (set-face-attribute 'show-paren-match
+                        t
+                        :background "turquoise" :foreground "black")
+    (set-face-background 'highlight "brightblack")
+    (set-face-foreground 'custom-variable-tag "brightblue")
+    (let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line          nil :overline   line)
+    (set-face-attribute 'mode-line-inactive nil :overline   line)
+    (set-face-attribute 'mode-line-inactive nil :underline  line)
+    (set-face-attribute 'mode-line          nil :box        nil)
+    (set-face-attribute 'mode-line          nil :background "cyan")
+    (set-face-attribute 'mode-line          nil :foreground "color-16")
+    (set-face-attribute 'mode-line-inactive nil :box        nil)
+    (set-face-attribute 'mode-line-inactive nil :background "brightblack")
+    (set-face-attribute 'mode-line-buffer-id nil :foreground "white")))
 #+END_SRC
 
 If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
@@ -281,7 +268,50 @@ frame is themed appropriately.
     (MattLu/apply-theme)))
 #+END_SRC
 
-** Configure =powerline=
+** Use moody for a beautiful modeline
+
+This gives me a truly lovely ribbon-based modeline.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+#+END_SRC
+
+** Use minions to hide all minor modes
+never want to see a minor mode, and manually adding :diminish to every use-package
+declaration is a hassle. This uses minions to hide all the minor modes in the modeline. Nice!
+
+#+BEGIN_SRC emacs-lisp
+  (use-package minions
+    :config
+    (setq minions-mode-line-lighter "…")
+    (add-to-list 'minions-direct 'flymake-mode)
+    (minions-mode 1))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+** better flymake
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flymake
+    :bind (:map flymake-mode-map
+                ("C-c <" . flymake-goto-prev-error)
+                ("C-c >" . flymake-goto-next-error))
+    :config
+    (defun flymake--transform-mode-line-format (ret)
+      "Change the output of `flymake--mode-line-format'."
+      (setf (seq-elt (car ret) 1) " Φ")
+      ret)
+    (advice-add #'flymake--mode-line-format
+                :filter-return #'flymake--transform-mode-line-format))
+#+END_SRC
+
+** COMMENT Configure =powerline=
 
 #+BEGIN_SRC emacs-lisp
   (use-package powerline
@@ -410,41 +440,19 @@ pairing or presenting code.
 ** Hide certain modes from the modeline
 
 I'd rather have only a few necessary mode identifiers on my modeline. This
-either hides or "renames" a variety of major or minor modes using the =diminish=
+either hides or "renames" a variety of major or minor modes using the =delight=
 package.
 
 #+BEGIN_SRC emacs-lisp
   (use-package diminish)
-  (defmacro diminish-minor-mode (filename mode &optional abbrev)
-    `(eval-after-load (symbol-name ,filename)
-       '(diminish ,mode ,abbrev)))
-
-  (defmacro diminish-major-mode (mode-hook abbrev)
-    `(add-hook ,mode-hook
-               (lambda () (setq mode-name ,abbrev))))
-
-  (diminish-minor-mode 'abbrev 'abbrev-mode)
-  (diminish-minor-mode 'simple 'auto-fill-function)
-  (diminish-minor-mode 'company 'company-mode)
-  (diminish-minor-mode 'eldoc 'eldoc-mode)
-  (diminish-minor-mode 'flycheck 'flycheck-mode)
-  (diminish-minor-mode 'flyspell 'flyspell-mode)
-  (diminish-minor-mode 'global-whitespace 'global-whitespace-mode)
-  (diminish-minor-mode 'projectile 'projectile-mode)
-  (diminish-minor-mode 'ruby-end 'ruby-end-mode)
-  (diminish-minor-mode 'subword 'subword-mode)
-  (diminish-minor-mode 'undo-tree 'undo-tree-mode)
-  (diminish-minor-mode 'yard-mode 'yard-mode)
-  (diminish-minor-mode 'yasnippet 'yas-minor-mode)
-  (diminish-minor-mode 'wrap-region 'wrap-region-mode)
-  (diminish-minor-mode 'ivy 'ivy-mode)
-
-  (diminish-minor-mode 'paredit 'paredit-mode " π")
-  (diminish-major-mode 'emacs-lisp-mode-hook "el")
-  (diminish-major-mode 'haskell-mode-hook "λ=")
-  (diminish-major-mode 'lisp-interaction-mode-hook "λ")
-  (diminish-major-mode 'python-mode-hook "Py")
+  (use-package delight)
 #+END_SRC
+
+  # (diminish-minor-mode 'paredit 'paredit-mode "π")
+  # (diminish-major-mode 'emacs-lisp-mode-hook "el")
+  # (diminish-major-mode 'haskell-mode-hook "λ=")
+  # (diminish-major-mode 'lisp-interaction-mode-hook "λ")
+  # (diminish-major-mode 'python-mode-hook "Py")
 
 ** Highlight uncommitted changes
 
@@ -473,17 +481,6 @@ If emacs shwo on GUI, than apply this code.
       (MattLu/change-frame-alpha))
 #+END_SRC
 
-** Set Emacs background color
-
-#+BEGIN_SRC emacs-lisp
-  (set-face-background 'default "dark")
-  (set-face-background 'region  "brightblack")
-  (set-face-attribute 'show-paren-match
-                      t
-                      :background "turquoise" :foreground "black")
-  (set-face-background 'highlight "brightblack")
-#+END_SRC
-
 ** Display line number
 
 #+BEGIN_SRC emacs-lisp
@@ -491,12 +488,6 @@ If emacs shwo on GUI, than apply this code.
   (global-display-line-numbers-mode)
   (set-face-foreground 'line-number  "color-241")
   (set-face-foreground 'line-number-current-line  "white")
-#+END_SRC
-
-** change customization menu color
-
-#+BEGIN_SRC emacs-lisp
- ;;(set-face-foreground 'custom-variable-tag "brightblue")
 #+END_SRC
 
 ** Modify =ediff= face for better contrast
@@ -569,7 +560,8 @@ Treating terms in CamelCase symbols as separate words makes editing a little
 easier for me, so I like to use =subword-mode= everywhere.
 
 #+BEGIN_SRC emacs-lisp
-  (global-subword-mode 1)
+  (use-package subword
+    :config (global-subword-mode 1))
 #+END_SRC
 
 Compilation output goes to the =*compilation*= buffer. I rarely have that window
@@ -676,7 +668,6 @@ format-all for Emacs
 
 #+BEGIN_SRC emacs-lisp
   (use-package symbol-overlay
-    :diminish
     :bind (("M-i" . symbol-overlay-put)
            ("M-n" . symbol-overlay-jump-next)
            ("M-p" . symbol-overlay-jump-prev)
@@ -828,31 +819,43 @@ more!), =rainbow-delimiters= to color matching parentheses, and highlighting the
 whole expression when point is on a paren.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package paredit
-    :hook ((clojure-mode
-          emacs-lisp-mode
-          lisp-mode
-          scheme-mode) . paredit-mode))
+  (use-package paredit)
+  (use-package rainbow-delimiters)
+#+END_SRC
 
-  (use-package rainbow-delimiters
-    :hook ((clojure-mode
-          emacs-lisp-mode
-          lisp-mode
-          scheme-mode) . rainbow-delimiters-mode))
+All the lisps have some shared features, so we want to do the same things for
+ all of them. That includes using paredit, rainbow-delimiters, and highlighting
+ the whole expression when point is on a parenthesis.
+
+#+BEGIN_SRC emacs-lisp
+  (setq lispy-mode-hooks
+        '(clojure-mode-hook
+          emacs-lisp-mode-hook
+          lisp-mode-hook
+          scheme-mode-hook))
+
+  (dolist (hook lispy-mode-hooks)
+    (add-hook hook (lambda ()
+                     (paredit-mode)
+                     (rainbow-delimiters-mode))))
 #+END_SRC
 
 If I'm writing in Emacs lisp I'd like to use =eldoc-mode= to display
 documentation.
 
 #+BEGIN_SRC emacs-lisp
- (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+  (use-package eldoc
+    :config
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
 #+END_SRC
 
-My own silly language ([[https://github.com/hrs/blueprint][blueprint]]) is close enough to Scheme that it can use the
-same mode.
+I also like using flycheck-package to ensure that my Elisp packages are correctly formatted.
 
 #+BEGIN_SRC emacs-lisp
-  (MattLu/add-auto-mode 'scheme-mode "\\.blu$")
+  (use-package flycheck-package)
+
+  (eval-after-load 'flycheck
+    '(flycheck-package-setup))
 #+END_SRC
 
 ** Magit
@@ -908,22 +911,22 @@ when I'm in a Projecile-defined project. This uses the current directory as a
 project root (if I'm not in a "real" project).
 
 #+BEGIN_SRC emacs-lisp
-
   (use-package projectile
-     :init
-     (defun MattLu/search-project-for-symbol-at-point ()
-     "Use `projectile-ag' to search the current project for `symbol-at-point'."
-          (interactive)
-          (projectile-ag (projectile-symbol-at-point)))
-
-     :bind (("C-c v" . projectile-ag)
-            ( "C-c C-v" . MattLu/search-project-for-symbol-at-point))
+     :bind
+     ("C-c v" . projectile-ag)
      :config
-     (projectile-mode +1)
      (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
      (setq projectile-completion-system 'ivy)
      (setq projectile-switch-project-action 'projectile-dired)
      (setq projectile-require-project-root nil))
+#+END_SRC
+
+** undo-tree
+
+I like tree-based undo management. I only rarely need it, but when I do, oh boy.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree)
 #+END_SRC
 
 ** Python
@@ -978,8 +981,6 @@ using Jupyter
     :config
     (require 'ein-notebook)
     (require 'ein-subpackages)
-;    (require 'ein-dev) ;; this if for debug
-;    (setq websocket-debug t)
     (setq ein:completion-backend 'ein:use-company-backend)
     :commands (ein:notebooklist-open)
     :custom-face
@@ -1088,6 +1089,16 @@ Add shell completion
 #+END_SRC
 
 ** org-mode programming
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :config
+    (setq org-hide-leading-stars t)
+    (set-face-attribute 'org-hide  t :foreground "black")
+    (setq org-cycle-include-plain-lists 'integrate)
+    (put 'narrow-to-region 'disabled nil))
+#+END_SRC
+
 ob-async enables asynchronous execution of org-babel src blocks, using :async
 #+BEGIN_SRC emacs-lisp
   (use-package ob-async
@@ -1142,7 +1153,6 @@ Use a login shell:
  #+END_SRC
 
 * Publishing and task management with Org-mode
-
 ** Display preferences
 
 I like to see an outline of pretty bullets instead of a list of asterisks.
@@ -1150,7 +1160,7 @@ I like to see an outline of pretty bullets instead of a list of asterisks.
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
     :init
-    (add-hook 'org-mode-hook #'org-bullets-mode))
+    (add-hook 'org-mode-hook 'org-bullets-mode))
 #+END_SRC
 
 I like seeing a little downward-pointing arrow instead of the usual ellipsis
@@ -1831,29 +1841,26 @@ Never use tabs. Tabs are the devil’s whitespace.
   (setq-default indent-tabs-mode nil)
 #+END_SRC
 
+** Install and configure which-key
+
+which-key displays the possible completions for a long keybinding. That’s really helpful
+for some modes (like projectile, for example).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :config (which-key-mode))
+#+END_SRC
+
 ** TODO Configure yasnippet
 
 I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippet=
 enabled.
 
- Add yasnippet support for all company backends TOO slowly for rtags
-#+BEGIN_SRC emacs-lisp
-;; (defvar company-mode/enable-yas
-;;   "Enable yasnippet for all backends.")
-;; (defun company-mode/backend-with-yas (backend)
-;;   (if (or (not company-mode/enable-yas)
-;;           (and (listp backend) (member 'company-yasnippet backend)))
-;;       backend
-;;     (append (if (consp backend) backend (list backend))
-;;             '(:with company-yasnippet))))
-;; (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
-#+END_SRC
-
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
-   :init
-   (setq yas-snippet-dirs '("/home/man.lu/.emacs.d/snippets"))
-   (yas-global-mode 1))
+    :init
+    (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+    (yas-global-mode 1))
 #+END_SRC
 
 I /don’t/ want =ido= to automatically indent the snippets it inserts. Sometimes
@@ -1865,10 +1872,10 @@ at the correct indentation for Python).
 #+END_SRC
 
 ** ivy + counsel + swiper
-   ivy configuration
+
+  ivy configuration
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :diminish (ivy-mode . "")
+  (use-package ivy;
     :config
     (ivy-mode 1)
     (setq ivy-use-virtual-buffers t
@@ -1891,17 +1898,22 @@ at the correct indentation for Python).
     (ivy-remote ((t (:foreground "color-202"))))
     :ensure flx)
 #+END_SRC
+
    counsel configuration (counsel package replay on swiper)
+
 #+BEGIN_SRC emacs-lisp
   (use-package counsel
+    :bind
+    ("C-s" . 'swiper)
+    ("C-c C-r" . 'ivy-resume)
+    ("M-x" . 'counsel-M-x)
+    ("C-x C-f" . 'counsel-find-file)
+    ("C-c k" . 'counsel-ag)
+    ("C-c f" . 'counsel-recentf)
+    ("C-c b" . 'counsel-bookmark)
     :config
-    (global-set-key "\C-s" 'swiper)
-    (global-set-key (kbd "C-c C-r") 'ivy-resume)
-    (global-set-key (kbd "M-x") 'counsel-M-x)
-    (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-    (global-set-key (kbd "C-c k") 'counsel-ag)
-    (global-set-key (kbd "C-c f") 'counsel-recentf)
-    (global-set-key (kbd "C-c b") 'counsel-bookmark))
+    (use-package flx)
+    (use-package smex))
 #+END_SRC
    better information for ivy switch buffer
 #+BEGIN_SRC emacs-lisp
@@ -1968,7 +1980,6 @@ results and =C-c C-c= to stop, just like in =dired=.
 ** Use projectile everywhere
 
 #+BEGIN_SRC emacs-lisp
-
   (projectile-global-mode)
 #+END_SRC
 
@@ -2011,8 +2022,6 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
 #+END_SRC
 
 ** Use multiple cursors
-
-
 
 Set multiple cursors for better marker words
 
@@ -2093,12 +2102,18 @@ Use ace-jump-mode to quick jump to words or char
 #+BEGIN_SRC emacs-lisp
   (use-package workgroups2
     :config
+    (setq wg-mode-line-only-name t)
     (setq wg-session-file "~/.emacs.d/.emacs_workgroups")
     (setq wg-prefix-key (kbd "C-c z"))
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
-    ;; (setq wg-emacs-exit-save-behavior 'save)
-    ;; (setq wg-workgroups-mode-exit-save-behavior 'save)
     (workgroups-mode 1))
+#+END_SRC
+
+** Handle layer file
+
+#+BEGIN_SRC emacs-lisp
+  (setq jit-lock-defer-time 0)
+  (setq fast-but-imprecise-scrolling t)
 #+END_SRC
 
 * Set custom keybindings

@@ -3,17 +3,13 @@
              '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
-;; here to ensure that the correct version of =org= is used to render my
-;; =configuration.org= file.
-
-(eval-when-compile
-  (require 'use-package)
-  (require 'bind-key))
-
-(require 'org)
-(setq org-hide-leading-stars t)
-(set-face-attribute 'org-hide  t :foreground "black")
-(setq org-cycle-include-plain-lists 'integrate)
-(put 'narrow-to-region 'disabled nil)
+;; Ensure that use-package is installed.
+;;
+;; If use-package isn't already installed, it's extremely likely that this is a
+;; fresh installation! So we'll want to update the package repository and
+;; install use-package before loading the literate configuration.
+(when (not (package-installed-p 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package))
 
 (org-babel-load-file "~/.emacs.d/configuration.org")
