@@ -243,16 +243,12 @@ hint of transparency looks lovely and isn't distracting or hard to read.
                         :background "turquoise" :foreground "black")
     (set-face-background 'highlight "brightblack")
     (set-face-foreground 'custom-variable-tag "brightblue")
-    (let ((line (face-attribute 'mode-line :underline)))
-    (set-face-attribute 'mode-line          nil :overline   line)
-    (set-face-attribute 'mode-line-inactive nil :overline   line)
-    (set-face-attribute 'mode-line-inactive nil :underline  line)
     (set-face-attribute 'mode-line          nil :box        nil)
     (set-face-attribute 'mode-line          nil :background "cyan")
     (set-face-attribute 'mode-line          nil :foreground "color-16")
     (set-face-attribute 'mode-line-inactive nil :box        nil)
     (set-face-attribute 'mode-line-inactive nil :background "brightblack")
-    (set-face-attribute 'mode-line-buffer-id nil :foreground "white")))
+    (set-face-attribute 'mode-line-buffer-id nil :foreground "white"))
 #+END_SRC
 
 If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
@@ -893,7 +889,9 @@ I'd like to start in the insert state when writing a commit message.
     (setq magit-highlight-trailing-whitespace nil)
     (setq magit-highlight-whitespace nil)
     (setq magit-use-overlays t)
-    (add-hook 'git-commit-mode-hook 'turn-on-flyspell))
+    (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
+    (set-face-foreground 'magit-section-heading-selection "turquoise")
+    (set-face-background 'magit-section-highlight "brightblack"))
 #+END_SRC
 
 ** Projectile
