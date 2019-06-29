@@ -564,8 +564,7 @@ output.
 YouCompltedMe setup
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
-    :init
-    (add-hook 'after-init-hook #'global-ycmd-mode)
+    :hook (c-mode-common . ycmd-mode)
     :config
     (set-variable 'ycmd-server-command
                   `("python3" "-u" ,
@@ -574,24 +573,6 @@ YouCompltedMe setup
   (use-package company-ycmd
     :init
     (company-ycmd-setup))
-
-  (use-package flycheck-ycmd
-    :config
-    (flycheck-ycmd-setup)
-    (setq flycheck-indication-mode nil))
-#+END_SRC
-
-*** COMMENT lsp-mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package lsp-mode
-  :hook (c-mode-common . lsp)
-  :commands lsp)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company-lsp
-    :commands company-lsp)
 #+END_SRC
 
 *** eglot
@@ -604,7 +585,8 @@ LSP client
     :config
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
     :hook
-    (c-mode-common . eglot-ensure))
+    ((c-mode-common python-mode sh-mode)
+     . eglot-ensure))
 #+END_SRC
 
 *** COMMENT Show function name
@@ -921,10 +903,11 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
 
 #+BEGIN_SRC emacs-lisp
   (use-package virtualenvwrapper
-    :init
+    :config
     (venv-initialize-interactive-shells) ;; if you want interactive shell support
     (venv-initialize-eshell) ;; if you want eshell support
-    (setq venv-location "~/EnvPy/"))
+    (setq venv-location "~/venvPy/")
+    (venv-workon "py3"))
 #+END_SRC
 
 
