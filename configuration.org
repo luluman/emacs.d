@@ -53,22 +53,6 @@ Always compile packages, and use the newest version available.
         calendar-location-name "zhongkeyuanQingniangongyu H2209")
 #+END_SRC
 
-** COMMENT Access my netrc data
-
-#+BEGIN_SRC emacs-lisp
-  (require 'netrc)
-
-  (setq netrc-file "~/.netrc")
-
-  (defun netrc-username (machine)
-    "Helper function to extract a username from my netrc."
-    (car (netrc-credentials machine)))
-
-  (defun netrc-password (machine)
-    "Helper function to extract a password from my netrc."
-    (cadr (netrc-credentials machine)))
-#+END_SRC
-
 * Add =resources= to =load-path=
 
 #+BEGIN_SRC emacs-lisp
@@ -258,19 +242,7 @@ frame is themed appropriately.
     (MattLu/apply-theme)))
 #+END_SRC
 
-** COMMENT Use moody for a beautiful modeline
-
-This gives me a truly lovely ribbon-based modeline.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package moody
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
-#+END_SRC
-
-** COMMENT Use minions to hide all minor modes
+** Use minions to hide all minor modes
 never want to see a minor mode, and manually adding :diminish to every use-package
 declaration is a hassle. This uses minions to hide all the minor modes in the modeline. Nice!
 
@@ -279,6 +251,7 @@ declaration is a hassle. This uses minions to hide all the minor modes in the mo
     :config
     (setq minions-mode-line-lighter "…")
     (add-to-list 'minions-direct 'flymake-mode)
+    (add-to-list 'minions-direct 'projectile-mode)
     (minions-mode 1))
 #+END_SRC
 
@@ -312,11 +285,6 @@ declaration is a hassle. This uses minions to hide all the minor modes in the mo
     (powerline-inactive1 ((t (:background "brightblack" :foreground "white"))))
     (powerline-inactive2 ((t (:background "brightblack" :foreground "white")))))
 #+end_SRC
-
- Powerline in terminal may not using the right color
-#+BEGIN_SRC emacs-lisp
-
-#+END_SRC
 
 ** COMMENT Disable visual bell
 
@@ -423,23 +391,6 @@ pairing or presenting code.
 #+BEGIN_SRC emacs-lisp
   (global-hl-line-mode)
 #+END_SRC
-
-** Hide certain modes from the modeline
-
-I'd rather have only a few necessary mode identifiers on my modeline. This
-either hides or "renames" a variety of major or minor modes using the =delight=
-package.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package diminish)
-  (use-package delight)
-#+END_SRC
-
-  # (diminish-minor-mode 'paredit 'paredit-mode "π")
-  # (diminish-major-mode 'emacs-lisp-mode-hook "el")
-  # (diminish-major-mode 'haskell-mode-hook "λ=")
-  # (diminish-major-mode 'lisp-interaction-mode-hook "λ")
-  # (diminish-major-mode 'python-mode-hook "Py")
 
 ** Highlight uncommitted changes
 
@@ -582,8 +533,12 @@ LSP client
   (use-package eglot
     :commands
     (eglot eglot-ensure)
+    :bind (:map eglot-mode-map
+                ("C-c u" . eglot-format)
+                ("C-c h" . eglot-help-at-point))
     :config
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+    (setq eglot-events-buffer-size 200)
     :hook
     ((c-mode-common python-mode sh-mode)
      . eglot-ensure))
@@ -620,20 +575,11 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
 
   (use-package hideshow
     :hook (c-mode-common . hs-minor-mode)
-    :bind ("C-c h" . toggle-fold))
+    :bind (:map hs-minor-mode-map
+                ("C-c m" . toggle-fold)))
 #+END_SRC
 
-** Format c family
-format-all for Emacs
-#+BEGIN_SRC emacs-lisp
-  (use-package clang-format
-    :config
-    (setq clang-format-style-option "google")
-    :bind
-    ("C-c u" . clang-format-buffer))
-#+END_SRC
-
-*** Highlight variables
+** Highlight variables
 
 #+BEGIN_SRC emacs-lisp
   (use-package symbol-overlay
@@ -649,7 +595,7 @@ format-all for Emacs
                         t
                         :inherit nil
                         :background "blue"
-                        :foreground "black"))
+                        :foreground "color-16"))
 #+END_SRC
 
 ** C++
@@ -862,8 +808,11 @@ I'd like to start in the insert state when writing a commit message.
     (setq magit-highlight-whitespace nil)
     (setq magit-use-overlays t)
     (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
-    (set-face-foreground 'magit-section-heading-selection "turquoise")
-    (set-face-background 'magit-section-highlight "brightblack"))
+    :custom-face
+    (magit-diff-context-highlight ((t (:background "brightblack"))))
+    (magit-section-highlight ((t (:background "brightblack"))))
+    (magit-diff-file-heading-selection ((t (:background "brightblack" :foreground "color-202"))))
+    (magit-section-heading-selection ((t (:foreground "turquoise")))))
 #+END_SRC
 
 ** Projectile
@@ -882,13 +831,17 @@ project root (if I'm not in a "real" project).
 
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
-     :bind
-     ("C-c v" . projectile-ag)
-     :config
-     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-     (setq projectile-completion-system 'ivy)
-     (setq projectile-switch-project-action 'projectile-dired)
-     (setq projectile-require-project-root nil))
+    :bind
+    ("C-c v" . projectile-ag)
+    :config
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (setq projectile-completion-system 'ivy)
+    (setq projectile-sort-order 'recently-active)
+    (setq projectile-enable-caching t)
+    (setq projectile-switch-project-action 'projectile-dired)
+    (setq projectile-require-project-root nil)
+    (setq projectile-mode-line-function
+          '(lambda () (format "[%s]" (projectile-project-name)))))
 #+END_SRC
 
 ** undo-tree
@@ -930,7 +883,8 @@ Using jedi as python backend
 
 #+BEGIN_SRC emacs-lisp
   (use-package company-jedi
-    :bind ("C-c d" . jedi:show-doc)
+    :bind (:map jedi-mode-map
+           ("C-c d" . jedi:show-doc))
     :init
     (push 'company-jedi company-backends)
     :config
@@ -1029,7 +983,6 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
   (use-package protobuf-mode)
 #+END_SRC
 ** jump and tags
-
 ** imenu-list
 
 show function and variable tree in side buffer
@@ -1291,7 +1244,7 @@ Define a few common tasks as capture templates. Specifically, I frequently:
 
           ("w" "work"
            entry
-           (file+headline org-gtd-file  "Racobit")
+           (file+headline org-gtd-file  "Bitmain")
            "* TODO [#A] %?\n  %i\n %U"
            :empty-lines 1)
 
@@ -1846,7 +1799,7 @@ at the correct indentation for Python).
 
   ivy configuration
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy;
+  (use-package ivy
     :config
     (ivy-mode 1)
     (setq ivy-use-virtual-buffers t

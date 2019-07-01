@@ -1,6 +1,6 @@
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+             '("MELPA Stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
 
 ;; Ensure that use-package is installed.
