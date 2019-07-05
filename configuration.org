@@ -220,7 +220,6 @@ hint of transparency looks lovely and isn't distracting or hard to read.
     (transparency 100)
     (set-face-attribute 'font-lock-comment-face nil
                         :foreground "color-243")
-    (set-face-background 'default "dark")
     (set-face-background 'region  "brightblack")
     (set-face-attribute 'show-paren-match
                         t
@@ -249,7 +248,7 @@ declaration is a hassle. This uses minions to hide all the minor modes in the mo
 #+BEGIN_SRC emacs-lisp
   (use-package minions
     :config
-    (setq minions-mode-line-lighter "…")
+    (setq minions-mode-line-lighter "")
     (add-to-list 'minions-direct 'flymake-mode)
     (add-to-list 'minions-direct 'projectile-mode)
     (minions-mode 1))
@@ -511,7 +510,7 @@ output.
   (setq compilation-scroll-output t)
 #+END_SRC
 
-*** ycmd
+*** COMMENT ycmd
 YouCompltedMe setup
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
@@ -598,6 +597,57 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
                         :foreground "color-16"))
 #+END_SRC
 
+** Use =company-mode= everywhere
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-tooltip-limit 10)                      ; bigger popup window
+    (setq company-idle-delay .1)                         ; decrease delay before autocompletion popup shows
+    (setq company-echo-delay 0)                          ; remove annoying blinking
+    (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
+    (setq company-show-numbers t)
+    (setq company-require-match nil)
+    (setq company-backends (delete 'company-semantic company-backends))
+    (setq company-backends (delete 'company-clang company-backends))
+    :custom-face
+    (company-echo-common
+     ((t (:background "brightblack"))))
+    (company-preview-common
+     ((t (:background "#1a4b77"))))
+    (company-tooltip
+     ((t (:background "black" :foreground "white"))))
+    (company-scrollbar-bg
+     ((t (:background "brightblack" :foreground "brightblack"))))
+    (company-scrollbar-fg
+     ((t (:background "blue" :foreground "bule"))))
+    (company-tooltip-common-selection
+     ((t (:background "brightblack" :foreground "brightcyan" :wight bold))))
+    (company-tooltip-selection
+     ((t (:background "brightblack" :foreground "white" :weight bold))))
+    (company-tooltip-annotation
+     ((t (:foreground "yellow"))))
+    (company-tooltip-annotation-selection
+     ((t (:foreground "brightyellow" :weight bold)))))
+#+END_SRC
+
+Set TAB for complete cycle
+
+#+BEGIN_SRC emacs-lisp
+  (eval-after-load 'company
+    '(progn
+       (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+       (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+       (define-key company-active-map (kbd "C-n") 'company-select-next)
+       (define-key company-active-map (kbd "C-o") 'company-other-backend)
+       (define-key company-active-map (kbd "C-p") 'company-select-previous)
+       (define-key company-active-map (kbd "C-v") 'company-next-page)
+       (define-key company-active-map (kbd "M-v") 'company-previous-page)
+       (define-key company-active-map (kbd "M-\<") 'company-select-first)
+       (define-key company-active-map (kbd "M-\>") 'company-select-last)))
+#+END_SRC
+
 ** C++
 
   Use =smartparens=
@@ -637,61 +687,6 @@ time.
 
 #+BEGIN_SRC emacs-lisp
   (setq proof-splash-enable nil)
-#+END_SRC
-
-** CSS and Sass
-
-Indent 2 spaces.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package css-mode
-    :config
-    (setq css-indent-offset 2))
-#+END_SRC
-
-Don't compile the current SCSS file every time I save.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package scss-mode
-    :config
-    (setq scss-compile-at-save nil))
-#+END_SRC
-
-** COMMENT Golang
-
-Define my =$GOPATH= and tell Emacs where to find the Go binaries.
-
-#+BEGIN_SRC emacs-lisp
-  (setenv "GOPATH" "/home/MattLu/code/go")
-  (MattLu/append-to-path (concat (getenv "GOPATH") "/bin"))
-#+END_SRC
-
-Run =goimports= on every file when saving, which formats the file and
-automatically updates the list of imports. This requires that the =goimports=
-binary is installed.
-
-#+BEGIN_SRC emacs-lisp
-  (setq gofmt-command "goimports")
-  (add-hook 'before-save-hook 'gofmt-before-save)
-#+END_SRC
-
-When I open a Go file,
-
-- Start up =company-mode= with the Go backend. This requires that the =gocode=
-  binary is installed,
-- Redefine the default =compile= command to something Go-specific, and
-- Enable =flycheck=.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'go-mode-hook
-            (lambda ()
-              (set (make-local-variable 'company-backends)
-                   '(company-go))
-              (company-mode)
-              (if (not (string-match "go" compile-command))
-                  (set (make-local-variable 'compile-command)
-                       "go build -v && go test -v && go vet"))
-              (flycheck-mode)))
 #+END_SRC
 
 ** Haskell
@@ -1704,57 +1699,6 @@ Add system path to emacs.
 #+BEGIN_SRC emacs-lisp
   (MattLu/append-to-path "/usr/local/bin")
 	(MattLu/append-to-path "/Library/TeX/texbin")
-#+END_SRC
-
-** Use =company-mode= everywhere
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company
-    :config
-    (add-hook 'after-init-hook 'global-company-mode)
-    (setq company-tooltip-limit 10)                      ; bigger popup window
-    (setq company-idle-delay .1)                         ; decrease delay before autocompletion popup shows
-    (setq company-echo-delay 0)                          ; remove annoying blinking
-    (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
-    (setq company-show-numbers t)
-    (setq company-require-match nil)
-    (setq company-backends (delete 'company-semantic company-backends))
-    (setq company-backends (delete 'company-clang company-backends))
-    :custom-face
-    (company-echo-common
-     ((t (:background "brightblack"))))
-    (company-preview-common
-     ((t (:background "#1a4b77"))))
-    (company-tooltip
-     ((t (:background "black" :foreground "white"))))
-    (company-scrollbar-bg
-     ((t (:background "brightblack" :foreground "brightblack"))))
-    (company-scrollbar-fg
-     ((t (:background "blue" :foreground "bule"))))
-    (company-tooltip-common-selection
-     ((t (:background "brightblack" :foreground "brightcyan" :wight bold))))
-    (company-tooltip-selection
-     ((t (:background "brightblack" :foreground "white" :weight bold))))
-    (company-tooltip-annotation
-     ((t (:foreground "yellow"))))
-    (company-tooltip-annotation-selection
-     ((t (:foreground "brightyellow" :weight bold)))))
-#+END_SRC
-
-Set TAB for complete cycle
-
-#+BEGIN_SRC emacs-lisp
-  (eval-after-load 'company
-    '(progn
-       (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-       (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-       (define-key company-active-map (kbd "C-n") 'company-select-next)
-       (define-key company-active-map (kbd "C-o") 'company-other-backend)
-       (define-key company-active-map (kbd "C-p") 'company-select-previous)
-       (define-key company-active-map (kbd "C-v") 'company-next-page)
-       (define-key company-active-map (kbd "M-v") 'company-previous-page)
-       (define-key company-active-map (kbd "M-\<") 'company-select-first)
-       (define-key company-active-map (kbd "M-\>") 'company-select-last)))
 #+END_SRC
 
 ** Always indent with spaces
