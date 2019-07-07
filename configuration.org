@@ -19,7 +19,6 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 
 #+BEGIN_SRC emacs-lisp
   (require 'use-package-ensure)
-
   (setq use-package-verbose t)
   (setq use-package-always-ensure t)
 #+END_SRC
@@ -484,6 +483,57 @@ If emacs shwo on GUI, than apply this code.
 #+END_SRC
 
 * Programming customization
+** Use =company-mode= everywhere
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-tooltip-limit 10)                      ; bigger popup window
+    (setq company-idle-delay .1)                         ; decrease delay before autocompletion popup shows
+    (setq company-echo-delay 0)                          ; remove annoying blinking
+    (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
+    (setq company-show-numbers t)
+    (setq company-require-match nil)
+    (setq company-backends (delete 'company-semantic company-backends))
+    (setq company-backends (delete 'company-clang company-backends))
+    :custom-face
+    (company-echo-common
+     ((t (:background "brightblack"))))
+    (company-preview-common
+     ((t (:background "#1a4b77"))))
+    (company-tooltip
+     ((t (:background "black" :foreground "white"))))
+    (company-scrollbar-bg
+     ((t (:background "brightblack" :foreground "brightblack"))))
+    (company-scrollbar-fg
+     ((t (:background "blue" :foreground "bule"))))
+    (company-tooltip-common-selection
+     ((t (:background "brightblack" :foreground "brightcyan" :wight bold))))
+    (company-tooltip-selection
+     ((t (:background "brightblack" :foreground "white" :weight bold))))
+    (company-tooltip-annotation
+     ((t (:foreground "yellow"))))
+    (company-tooltip-annotation-selection
+     ((t (:foreground "brightyellow" :weight bold)))))
+#+END_SRC
+
+Set TAB for complete cycle
+
+#+BEGIN_SRC emacs-lisp
+  (eval-after-load 'company
+    '(progn
+       (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+       (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+       (define-key company-active-map (kbd "C-n") 'company-select-next)
+       (define-key company-active-map (kbd "C-o") 'company-other-backend)
+       (define-key company-active-map (kbd "C-p") 'company-select-previous)
+       (define-key company-active-map (kbd "C-v") 'company-next-page)
+       (define-key company-active-map (kbd "M-v") 'company-previous-page)
+       (define-key company-active-map (kbd "M-\<") 'company-select-first)
+       (define-key company-active-map (kbd "M-\>") 'company-select-last)))
+#+END_SRC
+
 ** common settings
 *** Editing
 I like shallow indentation, but tabs are displayed as 8 characters by default.
@@ -510,15 +560,21 @@ output.
   (setq compilation-scroll-output t)
 #+END_SRC
 
-*** COMMENT ycmd
+*** ycmd
 YouCompltedMe setup
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
-    :hook (c-mode-common . ycmd-mode)
+    :hook
+    (after-init . global-ycmd-mode)
     :config
+    (setq request-backend 'url-retrieve) ;; otherwise will throw error
+    (setq request-message-level -1)
     (set-variable 'ycmd-server-command
                   `("python3" "-u" ,
-                    (file-truename "~/Matt_Installed_package/ycmd/ycmd"))))
+                    (file-truename "~/Matt_Installed_package/ycmd/ycmd")))
+    (require 'ycmd-eldoc)
+    :hook
+    (ycmd-mode . ycmd-eldoc-setup))
 
   (use-package company-ycmd
     :init
@@ -595,57 +651,6 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
                         :inherit nil
                         :background "blue"
                         :foreground "color-16"))
-#+END_SRC
-
-** Use =company-mode= everywhere
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company
-    :config
-    (add-hook 'after-init-hook 'global-company-mode)
-    (setq company-tooltip-limit 10)                      ; bigger popup window
-    (setq company-idle-delay .1)                         ; decrease delay before autocompletion popup shows
-    (setq company-echo-delay 0)                          ; remove annoying blinking
-    (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
-    (setq company-show-numbers t)
-    (setq company-require-match nil)
-    (setq company-backends (delete 'company-semantic company-backends))
-    (setq company-backends (delete 'company-clang company-backends))
-    :custom-face
-    (company-echo-common
-     ((t (:background "brightblack"))))
-    (company-preview-common
-     ((t (:background "#1a4b77"))))
-    (company-tooltip
-     ((t (:background "black" :foreground "white"))))
-    (company-scrollbar-bg
-     ((t (:background "brightblack" :foreground "brightblack"))))
-    (company-scrollbar-fg
-     ((t (:background "blue" :foreground "bule"))))
-    (company-tooltip-common-selection
-     ((t (:background "brightblack" :foreground "brightcyan" :wight bold))))
-    (company-tooltip-selection
-     ((t (:background "brightblack" :foreground "white" :weight bold))))
-    (company-tooltip-annotation
-     ((t (:foreground "yellow"))))
-    (company-tooltip-annotation-selection
-     ((t (:foreground "brightyellow" :weight bold)))))
-#+END_SRC
-
-Set TAB for complete cycle
-
-#+BEGIN_SRC emacs-lisp
-  (eval-after-load 'company
-    '(progn
-       (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-       (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-       (define-key company-active-map (kbd "C-n") 'company-select-next)
-       (define-key company-active-map (kbd "C-o") 'company-other-backend)
-       (define-key company-active-map (kbd "C-p") 'company-select-previous)
-       (define-key company-active-map (kbd "C-v") 'company-next-page)
-       (define-key company-active-map (kbd "M-v") 'company-previous-page)
-       (define-key company-active-map (kbd "M-\<") 'company-select-first)
-       (define-key company-active-map (kbd "M-\>") 'company-select-last)))
 #+END_SRC
 
 ** C++
@@ -871,21 +876,6 @@ Indent 2 spaces.
 
 #+BEGIN_SRC emacs-lisp
   (setq python-indent 4)
-#+END_SRC
-
-
-Using jedi as python backend
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company-jedi
-    :bind (:map jedi-mode-map
-           ("C-c d" . jedi:show-doc))
-    :init
-    (push 'company-jedi company-backends)
-    :config
-    (setq jedi:complete-on-dot t))
-
-  (setq python-shell-completion-native-enable nil) ;; disable warring in python promote bug
 #+END_SRC
 
 set realgud python debug command
@@ -1954,13 +1944,15 @@ Use ace-jump-mode to quick jump to words or char
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
 
-** Multiple desktop config
+** COMMENT Multiple desktop config
 
 #+BEGIN_SRC emacs-lisp
   (bind-keys*
-  ; ("M-s" . select-frame-by-name)
+   ("M-s" . select-frame-by-name)
    ("C-c n" . set-frame-name))
 #+END_SRC
+
+** Workgroups another way to organize workspace
 
 #+BEGIN_SRC emacs-lisp
   (when (fboundp 'winner-mode)
@@ -1970,7 +1962,7 @@ Use ace-jump-mode to quick jump to words or char
 #+BEGIN_SRC emacs-lisp
   (use-package workgroups2
     :config
-    (setq wg-mode-line-only-name t)
+    (setq wg-session-load-on-start nil)
     (setq wg-session-file "~/.emacs.d/.emacs_workgroups")
     (setq wg-prefix-key (kbd "C-c z"))
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
