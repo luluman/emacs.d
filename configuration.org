@@ -497,6 +497,7 @@ If emacs shwo on GUI, than apply this code.
     (setq company-require-match nil)
     (setq company-backends (delete 'company-semantic company-backends))
     (setq company-backends (delete 'company-clang company-backends))
+    (setq company-backends (delete 'company-capf company-backends))
     :custom-face
     (company-echo-common
      ((t (:background "brightblack"))))
@@ -577,8 +578,9 @@ YouCompltedMe setup
     (ycmd-mode . ycmd-eldoc-setup))
 
   (use-package company-ycmd
-    :init
-    (company-ycmd-setup))
+    :config
+    (add-to-list 'company-backends 'company-ycmd)
+    (add-to-list 'company-backends 'company-capf))
 #+END_SRC
 
 *** eglot
@@ -973,10 +975,14 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 show function and variable tree in side buffer
 #+BEGIN_SRC emacs-lisp
   (use-package imenu-list
-    :bind ("C-c i" . imenu-list-minor-mode)
+    :bind ("C-c i" . imenu-list-smart-toggle)
     :config
-    (setq imenu-list-focus-after-activation t))
+    (setq imenu-list-focus-after-activation t)
+    :custom-face
+    (imenu-list-entry-face-1 ((t (:inherit imenu-list-entry-face :foreground "green"))))
+    (imenu-list-entry-face-2 ((t (:inherit imenu-list-entry-face :foreground "blue")))))
 #+END_SRC
+
 ** =GDB=
 
 using Realgud to debug source code
