@@ -495,9 +495,8 @@ If emacs shwo on GUI, than apply this code.
     (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
     (setq company-show-numbers t)
     (setq company-require-match nil)
-    (setq company-backends (delete 'company-semantic company-backends))
-    (setq company-backends (delete 'company-clang company-backends))
-    (setq company-backends (delete 'company-capf company-backends))
+    (delete 'company-semantic company-backends)
+    (delete 'company-clang company-backends)
     :custom-face
     (company-echo-common
      ((t (:background "brightblack"))))
@@ -516,7 +515,9 @@ If emacs shwo on GUI, than apply this code.
     (company-tooltip-annotation
      ((t (:foreground "yellow"))))
     (company-tooltip-annotation-selection
-     ((t (:foreground "brightyellow" :weight bold)))))
+     ((t (:foreground "brightyellow" :weight bold))))
+    (company-template-field
+     ((t (:background "cyan" :foreground "black")))))
 #+END_SRC
 
 Set TAB for complete cycle
@@ -562,11 +563,12 @@ output.
 #+END_SRC
 
 *** ycmd
+
 YouCompltedMe setup
+
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
-    :hook
-    (after-init . global-ycmd-mode)
+    :hook ((c-mode-common python-mode) . ycmd-mode)
     :config
     (setq request-backend 'url-retrieve) ;; otherwise will throw error
     (setq request-message-level -1)
@@ -579,8 +581,16 @@ YouCompltedMe setup
 
   (use-package company-ycmd
     :config
-    (add-to-list 'company-backends 'company-ycmd)
-    (add-to-list 'company-backends 'company-capf))
+    (add-hook 'python-mode-hook
+              (lambda ()
+                (add-to-list (make-local-variable 'company-backends)
+                             'company-ycmd)))
+    (add-hook 'c-mode-common-hook
+              (lambda ()
+                (set (make-local-variable 'company-backends)
+                     (remove 'company-capf company-backends))
+                (add-to-list 'company-backends 'company-ycmd)
+                (add-to-list 'company-backends 'company-capf))))
 #+END_SRC
 
 *** eglot
@@ -894,6 +904,10 @@ using Jupyter
     (require 'ein-notebook)
     (require 'ein-subpackages)
     (setq ein:completion-backend 'ein:use-company-backend)
+    (add-hook 'ein:notebook-mode-hook
+              (lambda ()
+                (add-to-list (make-local-variable 'company-backends)
+                             'ein:company-backend)))
     :commands (ein:notebooklist-open)
     :custom-face
     (ein:cell-input-area ((t (:background "black")))))
@@ -1498,9 +1512,12 @@ Open the checklist and my TODO list side-by-side:
 
 
 #+BEGIN_SRC emacs-lisp
- (use-package company-auctex
-   :config
-   (company-auctex-init))
+  (use-package company-auctex
+    :config
+    (add-hook 'TeX-mode-hook
+              (lambda ()
+                (make-local-variable 'company-backends)
+                (company-auctex-init))))
 #+END_SRC
 
 ** Set some usefull commands of latex
@@ -1577,7 +1594,6 @@ Open the checklist and my TODO list side-by-side:
    (setq TeX-view-program-list
          '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
  #+END_SRC
-
 
 ** Set [[https://www.gnu.org/software/auctex/reftex.html][reftex]]  References, labels, citations
 
