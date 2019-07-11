@@ -852,6 +852,7 @@ project root (if I'm not in a "real" project).
     (setq projectile-enable-caching t)
     (setq projectile-switch-project-action 'projectile-dired)
     (setq projectile-require-project-root nil)
+    (setq projectile-mode-line-prefix "P")
     (setq projectile-mode-line-function
           '(lambda () (format "[%s]" (projectile-project-name)))))
 #+END_SRC
@@ -874,7 +875,6 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
     (setq venv-location "~/venvPy/")
     (venv-workon "py3"))
 #+END_SRC
-
 
 Set ipython as interpreter
 
@@ -1277,7 +1277,7 @@ using priority to organize my life
           ("wb" "重要且不紧急的任务" tags-todo "-Weekly-Monthly-Daily+PRIORITY=\"B\"")
           ("wc" "不重要且紧急的任务" tags-todo "+PRIORITY=\"C\"")
           ("p" . "项目安排")
-          ("pw" tags-todo "PROJECT+WORK+CATEGORY=\"Racobit\"")
+          ("pw" tags-todo "PROJECT+WORK+CATEGORY=\"Bitmain\"")
           ("pl" tags-todo "PROJECT+DREAM+CATEGORY=\"MattLu\"")
           ("W" "Weekly Review"
            ((stuck "") ;; review stuck projects as designated by org-stuck-projects
