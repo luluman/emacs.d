@@ -185,7 +185,7 @@ side and font, though.
     (setq solarized-height-plus-3 1.0)
     (setq solarized-height-plus-4 1.0)
     (setq solarized-high-contrast-mode-line t)
-    (load-theme 'solarized-dark t)) ;;light
+    (load-theme 'solarized-light t))
 #+END_SRC
 
 If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
@@ -492,6 +492,7 @@ If emacs shwo on GUI, than apply this code.
     (setq company-tooltip-limit 10)                      ; bigger popup window
     (setq company-idle-delay .1)                         ; decrease delay before autocompletion popup shows
     (setq company-echo-delay 0)                          ; remove annoying blinking
+    (setq company-minimum-prefix-length 3)
     (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
     (setq company-show-numbers t)
     (setq company-require-match nil)
@@ -1765,6 +1766,7 @@ at the correct indentation for Python).
       '((swiper . ivy--regex-plus)
         (t . ivy--regex-fuzzy)))
     (setq ivy-initial-inputs-alist nil)
+    (setq ivy-do-completion-in-region nil)
     :custom-face
     (isearch ((t (:background "brightcyan" :foreground "black"))))
     (ivy-minibuffer-match-face-1
@@ -1996,6 +1998,18 @@ Use ace-jump-mode to quick jump to words or char
 #+BEGIN_SRC emacs-lisp
   (setq jit-lock-defer-time 0)
   (setq fast-but-imprecise-scrolling t)
+#+END_SRC
+
+** suppress undo overflow
+
+This is normal if you executed a command that made a huge change
+to the buffer.  In that case, to prevent similar problems in the
+future, set `undo-outer-limit' to a value that is large enough to
+cover the maximum size of normal changes you expect a single
+command to make, but not so large that it might exceed the
+maximum memory allotted to Emacs.
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'warning-suppress-types '(undo discard-info))
 #+END_SRC
 
 * Set custom keybindings
