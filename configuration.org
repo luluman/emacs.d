@@ -1795,10 +1795,15 @@ at the correct indentation for Python).
     ("C-c k" . 'counsel-ag)
     ("C-c f" . 'counsel-recentf)
     ("C-c b" . 'counsel-bookmark)
+    :custom
+    ;; disable ivy-thing-at-point which call ffap-file-at-point and comint-output-filter
+    ;; (counsel-describe-function-preselect 'ivy-function-called-at-point)
+    (counsel-describe-function-preselect 'ivy-thing-at-point)
     :config
     (use-package flx)
     (use-package smex))
 #+END_SRC
+
    better information for ivy switch buffer
 #+BEGIN_SRC emacs-lisp
   (use-package ivy-rich
@@ -1806,6 +1811,28 @@ at the correct indentation for Python).
     :config
     (ivy-rich-mode 1)
     (setq ivy-rich-path-style 'abbrev))
+#+END_SRC
+
+*** COMMENT override ivy-thing-at-point
+
+ivy-thing-at-point call ffap-file-at-point then call comint-output-filter
+:Profile-Report:
+- ivy-completing-read                               140,189,606  88%
+ - ivy-read                                         140,189,606  88%
+  - ivy--reset-state                                140,189,606  88%
+   - ivy-thing-at-point                             140,165,054  88%
+    - ffap-file-at-point                            140,072,938  88%
+     - python-ffap-module-path                      140,067,818  88%
+      - python-shell-send-string-no-output          140,067,818  88%
+       - accept-process-output                      137,134,284  86%
+        - comint-output-filter                      136,924,775  86%
+         + python-shell-output-filter                 4,601,423   2%
+:END:
+but right now I will change ivy.el instead
+
+#+BEGIN_SRC emacs-lisp
+  (defun ivy-thing-at-point()
+    nil)
 #+END_SRC
 
 ** Switch and rebalance windows when splitting
