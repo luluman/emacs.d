@@ -563,6 +563,18 @@ output.
   (setq compilation-scroll-output t)
 #+END_SRC
 
+flyspell can really help programmers as well by pointing out typos they make
+in comments.
+#+BEGIN_SRC emacs-lisp
+  (use-package flyspell
+    :config
+    (setq ispell-program-name "aspell"; use aspell instead of ispell
+          ispell-extra-args '("--sug-mode=ultra"))
+    :hook
+    ((prog-mode . flyspell-prog-mode)
+     (text-mode . flyspell-mode)))
+#+END_SRC
+
 *** ycmd
 
 YouCompltedMe setup
@@ -1507,8 +1519,7 @@ Open the checklist and my TODO list side-by-side:
     (add-hook 'LaTeX-mode-hook 'visual-line-mode)
     (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
     (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-    (setq reftex-plug-into-AUCTeX t)
-    (add-hook 'text-mode-hook 'turn-on-flyspell))
+    (setq reftex-plug-into-AUCTeX t))
 #+END_SRC
 
 
