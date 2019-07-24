@@ -220,10 +220,10 @@ hint of transparency looks lovely and isn't distracting or hard to read.
     (set-face-attribute 'font-lock-comment-face nil
                         :foreground "color-243")
     (set-face-background 'region  "brightblack")
-    (set-face-attribute 'show-paren-match
-                        t
+    (set-face-attribute 'show-paren-match nil
                         :background "turquoise" :foreground "black")
-    (set-face-background 'highlight "brightblack")
+    (set-face-attribute 'highlight nil
+                        :inherit nil :background "#1a4b77" :foreground nil)
     (set-face-foreground 'custom-variable-tag "brightblue"))
 #+END_SRC
 
@@ -502,7 +502,7 @@ If emacs shwo on GUI, than apply this code.
     (company-echo-common
      ((t (:background "brightblack"))))
     (company-preview-common
-     ((t (:background "#1a4b77"))))
+     ((t (:background "brightblack"))))
     (company-tooltip
      ((t (:background "black" :foreground "white"))))
     (company-scrollbar-bg
@@ -670,12 +670,16 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
            ("M-P" . symbol-overlay-switch-backward)
            ("M-C" . symbol-overlay-remove-all))
     :hook (prog-mode . symbol-overlay-mode)
-    :config
-    (set-face-attribute 'symbol-overlay-default-face
-                        t
-                        :inherit nil
-                        :background "blue"
-                        :foreground "color-16"))
+    :custom-face
+    (symbol-overlay-default-face ((t (:inherit highlight))))
+    (symbol-overlay-face-1 ((t (:background "dodger blue"))))
+    (symbol-overlay-face-2 ((t (:background "hot pink"))))
+    (symbol-overlay-face-3 ((t (:background "color-172"))))
+    (symbol-overlay-face-4 ((t (:background "orchid"))))
+    (symbol-overlay-face-5 ((t (:background "red"))))
+    (symbol-overlay-face-6 ((t (:background "salmon"))))
+    (symbol-overlay-face-7 ((t (:background "color-34"))))
+    (symbol-overlay-face-8 ((t (:background "turquoise")))))
 #+END_SRC
 
 ** C++
@@ -683,8 +687,10 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
   Use =smartparens=
 #+BEGIN_SRC emacs-lisp
   (use-package smartparens
-    :init
-    (smartparens-global-mode 1))
+    :config
+    (smartparens-global-mode 1)
+    :custom-face
+    (sp-pair-overlay-face ((t (:inherit region)))))
 #+END_SRC
 
 ** Coq
@@ -1781,7 +1787,7 @@ at the correct indentation for Python).
     (setf (alist-get 't ivy-format-functions-alist)
           'ivy-format-function-line)
     :custom-face
-    (isearch ((t (:background "brightcyan" :foreground "black"))))
+    (isearch ((t (:background "brightcyan" :foreground "color-16"))))
     (ivy-minibuffer-match-face-1
      ((t (:background "green" :foreground "black"))))
     (ivy-minibuffer-match-face-2
