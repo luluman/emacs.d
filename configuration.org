@@ -496,8 +496,14 @@ If emacs shwo on GUI, than apply this code.
     (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
     (setq company-show-numbers t)
     (setq company-require-match nil)
+    (setq company-selection-wrap-around t)
     (delete 'company-semantic company-backends)
     (delete 'company-clang company-backends)
+    (delete 'company-gtags company-backends)
+    (delete 'company-etags company-backends)
+    (delete 'company-xcode company-backends)
+    (delete 'company-eclims company-backends)
+    (delete 'company-bbdb company-backends)
     :custom-face
     (company-echo-common
      ((t (:background "brightblack"))))
@@ -532,9 +538,7 @@ Set TAB for complete cycle
        (define-key company-active-map (kbd "C-o") 'company-other-backend)
        (define-key company-active-map (kbd "C-p") 'company-select-previous)
        (define-key company-active-map (kbd "C-v") 'company-next-page)
-       (define-key company-active-map (kbd "M-v") 'company-previous-page)
-       (define-key company-active-map (kbd "M-\<") 'company-select-first)
-       (define-key company-active-map (kbd "M-\>") 'company-select-last)))
+       (define-key company-active-map (kbd "M-v") 'company-previous-page)))
 #+END_SRC
 
 ** common settings
