@@ -217,13 +217,6 @@ hint of transparency looks lovely and isn't distracting or hard to read.
     (interactive)
     (load-theme 'nord t)
     (transparency 100)
-    (set-face-attribute 'font-lock-comment-face nil
-                        :foreground "color-243")
-    (set-face-background 'region  "brightblack")
-    (set-face-attribute 'show-paren-match nil
-                        :background "turquoise" :foreground "black")
-    (set-face-attribute 'highlight nil
-                        :inherit nil :background "#1a4b77" :foreground nil)
     (set-face-foreground 'custom-variable-tag "brightblue"))
 #+END_SRC
 
@@ -238,6 +231,31 @@ frame is themed appropriately.
                 (lambda (frame)
                   (with-selected-frame frame (MattLu/apply-theme))))
     (MattLu/apply-theme)))
+#+END_SRC
+
+** more personal color preferences
+
+better vertical border and region color
+
+#+BEGIN_SRC emacs-lisp
+  ;; Reverse colors for the border to have nicer line
+  (set-face-inverse-video-p 'vertical-border nil)
+  (set-face-background 'vertical-border "color-16")
+  (set-face-attribute 'font-lock-comment-face nil
+                      :foreground "color-243")
+  (set-face-background 'region  "brightblack")
+  (set-face-attribute 'show-paren-match nil
+                      :background "turquoise" :foreground "black")
+  (set-face-attribute 'highlight nil  ;; shallow blue
+                      :inherit nil :background "#1a4b77" :foreground nil)
+
+  ;; Set symbol for the border │ or ┃
+  (defun MattLu/change-window-divider ()
+    (let ((display-table (or buffer-display-table standard-display-table)))
+      (set-display-table-slot display-table 5 ?┃)
+      (set-window-display-table (selected-window) display-table)))
+
+  (add-hook 'window-configuration-change-hook 'MattLu/change-window-divider)
 #+END_SRC
 
 ** Use minions to hide all minor modes
