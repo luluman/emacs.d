@@ -933,7 +933,8 @@ using Jupyter
                              'ein:company-backend)))
     :commands (ein:notebooklist-open)
     :custom-face
-    (ein:cell-input-area ((t (:background "black")))))
+    (ein:cell-input-area ((t (:background "black"))))
+    (ein:cell-output-stderr ((t (:background "PeachPuff" :foreground "black")))))
 #+END_SRC
 
 ** MATLAB
