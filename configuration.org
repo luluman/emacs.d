@@ -2081,6 +2081,15 @@ maximum memory allotted to Emacs.
   (add-to-list 'warning-suppress-types '(undo discard-info))
 #+END_SRC
 
+** using too-long-lines-mode to discard extremely long lines
+
+#+BEGIN_SRC emacs-lisp
+    (use-package too-long-lines-mode
+      :load-path "~/.emacs.d/too-long-lines-mode"
+      :config
+      (setq too-long-lines-mode t))
+#+END_SRC
+
 * Set custom keybindings
 
 Just a few handy functions.
