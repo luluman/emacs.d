@@ -238,9 +238,11 @@ frame is themed appropriately.
 better vertical border and region color
 
 #+BEGIN_SRC emacs-lisp
+  (set-face-attribute 'header-line t
+                      :background "white" :foreground "black")
   ;; Reverse colors for the border to have nicer line
   (set-face-inverse-video-p 'vertical-border nil)
-  (set-face-background 'vertical-border "color-16")
+  (set-face-foreground 'vertical-border "color-16")
   (set-face-attribute 'font-lock-comment-face nil
                       :foreground "color-243")
   (set-face-background 'region  "brightblack")
@@ -952,7 +954,12 @@ using Jupyter
                              'ein:company-backend)))
     :commands (ein:notebooklist-open)
     :custom-face
-    (ein:cell-input-area ((t (:background "black"))))
+    (ein:cell-input-area ((t nil)))
+    (ein:cell-input-prompt ((t (:inherit header-line))))
+    (ein:cell-output-prompt ((t (:background "cyan" :foreground "black"))))
+    (ein:cell-output-area ((t (:background "black"))))
+    (ein:cell-output-area-error ((t (:foreground "brightred"))))
+    (ein:notification-tab-selected ((t (:inherit match :underline t))))
     (ein:cell-output-stderr ((t (:background "PeachPuff" :foreground "black")))))
 #+END_SRC
 
@@ -2084,10 +2091,10 @@ maximum memory allotted to Emacs.
 ** using too-long-lines-mode to discard extremely long lines
 
 #+BEGIN_SRC emacs-lisp
-    (use-package too-long-lines-mode
-      :load-path "~/.emacs.d/too-long-lines-mode"
-      :config
-      (setq too-long-lines-mode t))
+  (use-package too-long-lines-mode
+    :load-path "~/.emacs.d/too-long-lines-mode"
+    :config
+    (too-long-lines-mode))
 #+END_SRC
 
 * Set custom keybindings
