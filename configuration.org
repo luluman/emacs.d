@@ -173,6 +173,37 @@ Why not?
 #+END_SRC
 
 ** Load up a theme
+*** personal color preferences
+
+ better vertical border and region color
+
+ #+BEGIN_SRC emacs-lisp
+   (defun MattLu/color-config ()
+     (interactive)
+     (set-face-attribute 'header-line nil
+                         :background "white" :foreground "black")
+     ;; Reverse colors for the border to have nicer line
+     (set-face-inverse-video-p 'vertical-border nil)
+     (set-face-attribute 'vertical-border nil
+                         :foreground "color-16" :background nil)
+     (set-face-attribute 'font-lock-comment-face nil
+                         :foreground "color-243")
+     (set-face-background 'region  "brightblack")
+     (set-face-attribute 'show-paren-match nil
+                         :background "turquoise" :foreground "black")
+     (set-face-attribute 'highlight nil  ;; shallow blue
+                         :inherit nil :background "#1a4b77" :foreground nil)
+     (set-face-foreground 'custom-variable-tag "brightblue"))
+
+   ;; Set symbol for the border │ or ┃
+   (defun MattLu/change-window-divider ()
+     (let ((display-table (or buffer-display-table standard-display-table)))
+       (set-display-table-slot display-table 5 ?┃)
+       (set-window-display-table (selected-window) display-table)))
+
+   (add-hook 'window-configuration-change-hook 'MattLu/change-window-divider)
+ #+END_SRC
+
 ***  COMMENT new package but some bugs have not be fixed
 I like the solarized-dark theme. I prefer keeping all the characters in the same
 side and font, though.
@@ -217,7 +248,7 @@ hint of transparency looks lovely and isn't distracting or hard to read.
     (interactive)
     (load-theme 'nord t)
     (transparency 100)
-    (set-face-foreground 'custom-variable-tag "brightblue"))
+    (MattLu/color-config))
 #+END_SRC
 
 If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
@@ -231,33 +262,6 @@ frame is themed appropriately.
                 (lambda (frame)
                   (with-selected-frame frame (MattLu/apply-theme))))
     (MattLu/apply-theme)))
-#+END_SRC
-
-** more personal color preferences
-
-better vertical border and region color
-
-#+BEGIN_SRC emacs-lisp
-  (set-face-attribute 'header-line t
-                      :background "white" :foreground "black")
-  ;; Reverse colors for the border to have nicer line
-  (set-face-inverse-video-p 'vertical-border nil)
-  (set-face-foreground 'vertical-border "color-16")
-  (set-face-attribute 'font-lock-comment-face nil
-                      :foreground "color-243")
-  (set-face-background 'region  "brightblack")
-  (set-face-attribute 'show-paren-match nil
-                      :background "turquoise" :foreground "black")
-  (set-face-attribute 'highlight nil  ;; shallow blue
-                      :inherit nil :background "#1a4b77" :foreground nil)
-
-  ;; Set symbol for the border │ or ┃
-  (defun MattLu/change-window-divider ()
-    (let ((display-table (or buffer-display-table standard-display-table)))
-      (set-display-table-slot display-table 5 ?┃)
-      (set-window-display-table (selected-window) display-table)))
-
-  (add-hook 'window-configuration-change-hook 'MattLu/change-window-divider)
 #+END_SRC
 
 ** Use minions to hide all minor modes
@@ -644,6 +648,9 @@ LSP client
     :config
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
     (setq eglot-events-buffer-size 200)
+    (setq eglot-autoreconnect 1)
+    (setq eglot-connect-timeout 10)
+    (setq eglot-sync-connect nil)
     :hook
     ((c-mode-common python-mode sh-mode)
      . eglot-ensure))
@@ -2065,6 +2072,7 @@ Use ace-jump-mode to quick jump to words or char
     (setq wg-session-load-on-start nil)
     (setq wg-session-file "~/.emacs.d/.emacs_workgroups")
     (setq wg-prefix-key (kbd "C-c z"))
+    (setq wg-workgroups-mode-exit-save-behavior "none")
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
     (workgroups-mode 1))
 #+END_SRC
