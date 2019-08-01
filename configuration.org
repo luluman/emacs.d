@@ -177,32 +177,30 @@ Why not?
 
  better vertical border and region color
 
- #+BEGIN_SRC emacs-lisp
-   (defun MattLu/color-config ()
-     (interactive)
-     (set-face-attribute 'header-line nil
-                         :background "white" :foreground "black")
-     ;; Reverse colors for the border to have nicer line
-     (set-face-inverse-video-p 'vertical-border nil)
-     (set-face-attribute 'vertical-border nil
-                         :foreground "color-16" :background nil)
-     (set-face-attribute 'font-lock-comment-face nil
-                         :foreground "color-243")
-     (set-face-background 'region  "brightblack")
-     (set-face-attribute 'show-paren-match nil
-                         :background "turquoise" :foreground "black")
-     (set-face-attribute 'highlight nil  ;; shallow blue
-                         :inherit nil :background "#1a4b77" :foreground nil)
-     (set-face-foreground 'custom-variable-tag "brightblue"))
 
-   ;; Set symbol for the border │ or ┃
-   (defun MattLu/change-window-divider ()
-     (let ((display-table (or buffer-display-table standard-display-table)))
-       (set-display-table-slot display-table 5 ?┃)
-       (set-window-display-table (selected-window) display-table)))
+#+BEGIN_SRC emacs-lisp
+  ;; Set symbol for the border │ or ┃
+  (set-display-table-slot standard-display-table
+                          'vertical-border
+                          (make-glyph-code ?┃))
+#+END_SRC
 
-   (add-hook 'window-configuration-change-hook 'MattLu/change-window-divider)
- #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (defun MattLu/color-config ()
+    (interactive)
+    (set-face-attribute 'header-line nil
+                        :background "white" :foreground "black")
+    (set-face-attribute 'font-lock-comment-face nil
+                        :foreground "color-243")
+    (set-face-background 'region  "brightblack")
+    (set-face-attribute 'vertical-border nil
+                        :foreground "color-16" :background nil)
+    (set-face-attribute 'show-paren-match nil
+                        :background "turquoise" :foreground "black")
+    (set-face-attribute 'highlight nil  ;; shallow blue
+                        :inherit nil :background "#1a4b77" :foreground nil)
+    (set-face-foreground 'custom-variable-tag "brightblue"))
+#+END_SRC
 
 ***  COMMENT new package but some bugs have not be fixed
 I like the solarized-dark theme. I prefer keeping all the characters in the same
@@ -612,7 +610,6 @@ YouCompltedMe setup
     :hook ((c-mode-common python-mode inferior-python-mode)
            . ycmd-mode)
     :config
-    (setq request-backend 'url-retrieve) ;; otherwise will throw error
     (setq request-message-level -1)
     (set-variable 'ycmd-server-command
                   `("python3" "-u" ,
@@ -954,6 +951,7 @@ using Jupyter
     :config
     (require 'ein-notebook)
     (require 'ein-subpackages)
+    (setq ein:cell-max-num-outputs 10)
     (setq ein:completion-backend 'ein:use-company-backend)
     (add-hook 'ein:notebook-mode-hook
               (lambda ()
@@ -962,7 +960,7 @@ using Jupyter
     :commands (ein:notebooklist-open)
     :custom-face
     (ein:cell-input-area ((t nil)))
-    (ein:cell-input-prompt ((t (:inherit header-line))))
+    (ein:cell-input-prompt ((t (:inherit minibuffer-prompt))))
     (ein:cell-output-prompt ((t (:background "cyan" :foreground "black"))))
     (ein:cell-output-area ((t (:background "black"))))
     (ein:cell-output-area-error ((t (:foreground "brightred"))))
