@@ -607,7 +607,7 @@ YouCompltedMe setup
 
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
-    :hook ((c-mode-common python-mode inferior-python-mode)
+    :hook ((c-mode-common python-mode)
            . ycmd-mode)
     :config
     (setq request-message-level -1)
@@ -618,18 +618,20 @@ YouCompltedMe setup
     :hook
     (ycmd-mode . ycmd-eldoc-setup))
 
+  (defun MattLu/company-mode-c-mode-hook ()
+    (set (make-local-variable 'company-backends)
+         (remove 'company-capf company-backends))
+    (add-to-list 'company-backends 'company-ycmd)
+    (add-to-list 'company-backends 'company-capf))
+
+  (defun Mattlu/company-mode-python-mode-hook ()
+    (add-to-list (make-local-variable 'company-backends)
+                 'company-ycmd))
+
   (use-package company-ycmd
-    :config
-    (add-hook 'python-mode-hook
-              (lambda ()
-                (add-to-list (make-local-variable 'company-backends)
-                             'company-ycmd)))
-    (add-hook 'c-mode-common-hook
-              (lambda ()
-                (set (make-local-variable 'company-backends)
-                     (remove 'company-capf company-backends))
-                (add-to-list 'company-backends 'company-ycmd)
-                (add-to-list 'company-backends 'company-capf))))
+    :hook
+    ((python-mode . Mattlu/company-mode-python-mode-hook)
+     (c-mode-common . Mattlu/company-mode-c-mode-hook)))
 #+END_SRC
 
 *** eglot
