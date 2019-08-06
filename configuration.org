@@ -1097,6 +1097,15 @@ ob-async enables asynchronous execution of org-babel src blocks, using :async
        (python . t))))
 #+END_SRC
 
+** display system Information
+
+#+BEGIN_SRC emacs-lisp
+  (use-package symon
+    :config
+    (setq symon-delay 10)
+    (symon-mode))
+#+END_SRC
+
 * Terminal
 
 I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
