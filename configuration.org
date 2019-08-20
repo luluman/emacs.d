@@ -1074,6 +1074,11 @@ Add shell completion
     :config (bash-completion-setup))
 #+END_SRC
 
+use company instead of ivy which would invoke minibuffer
+#+BEGIN_SRC emacs-lisp
+  (define-key shell-mode-map (kbd "TAB") 'company-complete)
+#+END_SRC
+
 ** org-mode programming
 
 #+BEGIN_SRC emacs-lisp
@@ -1097,7 +1102,7 @@ ob-async enables asynchronous execution of org-babel src blocks, using :async
        (python . t))))
 #+END_SRC
 
-** display system Information
+** COMMENT display system Information
 
 #+BEGIN_SRC emacs-lisp
   (use-package symon
