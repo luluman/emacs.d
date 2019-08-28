@@ -613,7 +613,7 @@ YouCompltedMe setup
     (setq request-message-level -1)
     (set-variable 'ycmd-server-command
                   `("python3" "-u" ,
-                    (file-truename "~/Matt_Installed_package/ycmd/ycmd")))
+                    (file-truename "~/.emacs.d/ycmd/ycmd")))
     (require 'ycmd-eldoc)
     :hook
     (ycmd-mode . ycmd-eldoc-setup))
@@ -904,7 +904,8 @@ project root (if I'm not in a "real" project).
     (setq projectile-require-project-root nil)
     (setq projectile-mode-line-prefix "P")
     (setq projectile-mode-line-function
-          '(lambda () (format "[%s]" (projectile-project-name)))))
+          '(lambda () (format "[%s]" (projectile-project-name))))
+    :ensure ag)
 #+END_SRC
 
 ** undo-tree
@@ -1102,12 +1103,12 @@ ob-async enables asynchronous execution of org-babel src blocks, using :async
        (python . t))))
 #+END_SRC
 
-** COMMENT display system Information
+** display system Information
 
 #+BEGIN_SRC emacs-lisp
   (use-package symon
     :config
-    (setq symon-delay 10)
+    (setq symon-delay 20)
     (symon-mode))
 #+END_SRC
 
@@ -1673,6 +1674,16 @@ Open the checklist and my TODO list side-by-side:
    (add-hook 'latex-mode-hook 'turn-on-reftex) ; with Emacs latex mode
    (setq reftex-plug-into-AUCTeX t)
  #+END_SRC
+
+* System tools
+** Docker
+
+#+BEGIN_SRC emacs-lisp
+  (use-package docker
+    :ensure t
+    :bind ("C-c d" . docker)
+    :custom (docker-image-run-arguments '("-i" "-t" "--rm")))
+#+END_SRC
 
 * =dired=
 
