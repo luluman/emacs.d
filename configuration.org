@@ -519,13 +519,13 @@ If emacs shwo on GUI, than apply this code.
     (setq company-show-numbers t)
     (setq company-require-match nil)
     (setq company-selection-wrap-around t)
-    (delete 'company-semantic company-backends)
-    (delete 'company-clang company-backends)
-    (delete 'company-gtags company-backends)
-    (delete 'company-etags company-backends)
-    (delete 'company-xcode company-backends)
-    (delete 'company-eclims company-backends)
-    (delete 'company-bbdb company-backends)
+    (setq company-backends '(company-capf
+                             company-files
+                             company-dabbrev
+                             company-dabbrev-code
+                             company-keywords
+                             company-ispell
+                             company-oddmuse))
     :custom-face
     (company-echo-common
      ((t (:background "brightblack"))))
@@ -923,7 +923,8 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
     :config
     (venv-initialize-interactive-shells) ;; if you want interactive shell support
     (venv-initialize-eshell) ;; if you want eshell support
-    (setq venv-location "~/venvPy/")
+    (setq venv-location '("~/venvPy/py3/"
+                          "~/python/bmnett-3.5/"))
     (venv-workon "py3"))
 #+END_SRC
 
@@ -1213,7 +1214,7 @@ of an index file (my main todo list), and archive finished tasks in
 =~/org/archive.org=.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-directory "~/Documents/org")
+  (setq org-directory "~/organization")
 
   (defun org-file-path (filename)
     "Return the absolute address of an org file, given its relative name."
@@ -1227,7 +1228,6 @@ of an index file (my main todo list), and archive finished tasks in
         (concat (org-file-path "archive.org") "::* From %s"))
   (setq org-default-notes-file (org-file-path "gtd.org"))
 #+END_SRC
-
 
 *** COMMENT Something we needn't yet
 I use [[http://agiletortoise.com/drafts/][Drafts]] to create new tasks, format them according to a template, and
@@ -1298,11 +1298,6 @@ Define a few common tasks as capture templates. Specifically, I frequently:
            checkitem
            (file (org-file-path "groceries.org")))
 
-          ("v" "Vocabulary"
-           table-line
-           (file+headline (org-file-path "vocabulary.org") "Vocabulary")
-           "| %^{English} | %^{Chinese} | %u|")
-
           ("l" "letters"
            entry
            (file+headline (org-file-path "vocabulary.org") "Letters")
@@ -1321,13 +1316,13 @@ Define a few common tasks as capture templates. Specifically, I frequently:
 
           ("w" "work"
            entry
-           (file+headline org-gtd-file  "Bitmain")
+           (file+headline org-gtd-file  "Work")
            "* TODO [#A] %?\n  %i\n %U"
            :empty-lines 1)
 
           ("t" "Todo"
            entry
-           (file+headline org-gtd-file "Workspace")
+           (file+headline org-gtd-file "Explore")
            "* TODO [#B] %?\n %i\n"
            :empty-lines 1)))
 #+END_SRC
