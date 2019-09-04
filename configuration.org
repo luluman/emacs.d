@@ -756,7 +756,7 @@ time.
   (setq proof-splash-enable nil)
 #+END_SRC
 
-** Haskell
+** COMMENT Haskell
 
 Enable =haskell-doc-mode=, which displays the type signature of a function, and
 use smart indentation.
@@ -833,6 +833,16 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
 
   (eval-after-load 'flycheck
     '(flycheck-package-setup))
+#+END_SRC
+
+** scheme
+
+#+BEGIN_SRC emacs-lisp
+  (use-package geiser
+    :config
+    (setq geiser-active-implementations '(mit chicken guile racket chez))
+    :custom-face
+    (geiser-font-lock-repl-output ((t (:foreground "color-166")))))
 #+END_SRC
 
 ** Magit
@@ -1042,7 +1052,6 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 #+BEGIN_SRC emacs-lisp
   (use-package protobuf-mode)
 #+END_SRC
-** jump and tags
 ** imenu-list
 
 show function and variable tree in side buffer
