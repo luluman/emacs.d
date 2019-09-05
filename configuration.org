@@ -2047,9 +2047,15 @@ Use ace-jump-mode to quick jump to words or char
     ("C-c j" . avy-goto-word-or-subword-1)
     ("C-'"   . avy-goto-char-timer)
     ("M-g f" . avy-goto-line)
+    :custom-face
+    (avy-lead-face ((nil (:background nil :foreground "color-202"))))
+    (avy-lead-face-0 ((nil (:background nil :foreground "color-226"))))
+    (avy-lead-face-1 ((nil (:background nil :foreground "color-46"))))
+    (avy-lead-face-2 ((nil (:background nil :foreground "white"))))
     :config
     (setq avy-all-windows nil)
     (setq avy-background t)
+    (setq avy-timeout-seconds 0.3)
     (unbind-key "C-'" org-mode-map)) ;; jump in current frame
 #+END_SRC
 
