@@ -944,6 +944,10 @@ Set ipython as interpreter
   (setq python-shell-interpreter "ipython")
   (setq python-shell-interpreter-args "--simple-prompt -i")
   (setq py-ipython-command-args "--simple-prompt -i")
+  (add-hook 'inferior-python-mode-hook
+          (lambda ()
+            (set (make-local-variable 'company-backends)
+                 (remove 'company-capf company-backends))))
 #+END_SRC
 
 Indent 2 spaces.
@@ -1897,7 +1901,7 @@ at the correct indentation for Python).
     (setq ivy-rich-path-style 'abbrev))
 #+END_SRC
 
-*** COMMENT override ivy-thing-at-point
+*** override ivy-thing-at-point
 
 ivy-thing-at-point call ffap-file-at-point then call comint-output-filter
 :Profile-Report:
@@ -2115,7 +2119,6 @@ Use ace-jump-mode to quick jump to words or char
 ** Handle layer file
 
 #+BEGIN_SRC emacs-lisp
-  (setq jit-lock-defer-time 0)
   (setq fast-but-imprecise-scrolling t)
 #+END_SRC
 
