@@ -986,15 +986,6 @@ using Jupyter
     (ein:cell-output-stderr ((t (:background "PeachPuff" :foreground "black")))))
 #+END_SRC
 
-** MATLAB
-#+BEGIN_SRC emacs-lisp
-  (use-package matlab-mode
-    :no-require t
-    :config
-    (setq matlab-indent-function t)
-    (setq matlab-shell-command "/data/mat/MATLAB/R2017b/bin/matlab"))
-#+END_SRC
-
 ** =sh=
 
 Indent with 2 spaces.
@@ -1117,6 +1108,19 @@ ob-async enables asynchronous execution of org-babel src blocks, using :async
        (python . t))))
 #+END_SRC
 
+** ReStructuredText
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rst
+    :custom-face
+    (rst-level-1 ((t (:background "color-28"))))
+    (rst-level-2 ((t (:background "color-172"))))
+    (rst-level-3 ((t (:background "color-33"))))
+    (rst-level-4 ((t (:background "brightmagenta"))))
+    (rst-level-5 ((t (:background "grey57"))))
+    (rst-level-6 ((t (:background "grey50")))))
+#+END_SRC
+
 ** display system Information
 
 #+BEGIN_SRC emacs-lisp
@@ -1227,7 +1231,7 @@ of an index file (my main todo list), and archive finished tasks in
 =~/org/archive.org=.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-directory "~/organization")
+  (setq org-directory "~/.Org")
 
   (defun org-file-path (filename)
     "Return the absolute address of an org file, given its relative name."
