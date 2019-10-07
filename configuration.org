@@ -185,81 +185,61 @@ Why not?
                           (make-glyph-code ?┃))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/color-config ()
-    (interactive)
-    (set-face-attribute 'header-line nil
-                        :background "white" :foreground "black")
-    (set-face-attribute 'font-lock-comment-face nil
-                        :foreground "color-243")
-    (set-face-background 'region  "brightblack")
-    (set-face-attribute 'vertical-border nil
-                        :foreground "color-16" :background nil)
-    (set-face-attribute 'show-paren-match nil
-                        :background "turquoise" :foreground "black")
-    (set-face-attribute 'highlight nil  ;; shallow blue
-                        :inherit nil :background "#1a4b77" :foreground nil)
-    (set-face-foreground 'custom-variable-tag "brightblue"))
-#+END_SRC
-
-***  COMMENT new package but some bugs have not be fixed
+*** new package
 I like the solarized-dark theme. I prefer keeping all the characters in the same
 side and font, though.
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/apply-solarized-theme ()
-    (setq solarized-use-variable-pitch nil)
-    (setq solarized-height-plus-1 1.0)
-    (setq solarized-height-plus-2 1.0)
-    (setq solarized-height-plus-3 1.0)
-    (setq solarized-height-plus-4 1.0)
-    (setq solarized-high-contrast-mode-line t)
-    (load-theme 'solarized-light t))
-#+END_SRC
-
-If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
-frame is themed appropriately.
-
-#+BEGIN_SRC emacs-lisp
   (use-package solarized-theme
-    :custom (solarized-termcolors 16)
     :config
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions
-                  (lambda (frame)
-                      (MattLu/apply-solarized-theme)))
-      (MattLu/apply-solarized-theme)))
-#+END_SRC
+    (load-theme 'solarized-light t)
 
-*** nord theme
-I'm currently using the "nord" theme. I've got a scenic wallpaper, so just a
-hint of transparency looks lovely and isn't distracting or hard to read.
+    (setq solarized-use-variable-pitch nil
+          solarized-height-plus-1 1.0
+          solarized-height-plus-2 1.0
+          solarized-height-plus-3 1.0
+          solarized-height-plus-4 1.0)
 
-#+BEGIN_SRC emacs-lisp
+    (let ((line (face-attribute 'mode-line :underline)))
+      (set-face-attribute 'mode-line          nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :underline  line)
+      (set-face-attribute 'mode-line          nil :box        nil)
+      (set-face-attribute 'mode-line-inactive nil :box        nil)
+      (set-face-attribute 'mode-line-inactive nil :background "#f9f2d9")))
+
   (defun transparency (value)
     "Sets the transparency of the frame window. 0=transparent/100=opaque."
-    (interactive "Transparency Value 0 - 100 opaque:")
+    (interactive "nTransparency Value 0 - 100 opaque:")
     (set-frame-parameter (selected-frame) 'alpha value))
 
   (defun MattLu/apply-theme ()
-    "Apply the `nord' theme and make frames just slightly transparent."
+    "Apply the `solarized-light' theme and make frames just slightly transparent."
     (interactive)
-    (load-theme 'nord t)
-    (transparency 100)
-    (MattLu/color-config))
+    (load-theme 'solarized-light t)
+    (transparency 90))
 #+END_SRC
 
-If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
-frame is themed appropriately.
+If this code is being evaluated by emacs --daemon, ensure that each subsequent frame is themed appropriately.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package nord-theme
-  :config
   (if (daemonp)
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
                   (with-selected-frame frame (MattLu/apply-theme))))
-    (MattLu/apply-theme)))
+    (MattLu/apply-theme))
+#+END_SRC
+
+** Use moody for a beautiful modeline
+
+This gives me a truly lovely ribbon-based modeline.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
 #+END_SRC
 
 ** Use minions to hide all minor modes
@@ -290,21 +270,6 @@ declaration is a hassle. This uses minions to hide all the minor modes in the mo
     (advice-add #'flymake--mode-line-format
                 :filter-return #'flymake--transform-mode-line-format))
 #+END_SRC
-
-** Configure =powerline=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package powerline
-    :config
-    (powerline-center-theme)
-    :custom-face
-    (powerline-active0 ((t (:background "brightcyan" :foreground "color-235"))))
-    (powerline-active1 ((t (:background "black" :foreground "white"))))
-    (powerline-active2 ((t (:background "white" :foreground "color-16"))))
-    (powerline-inactive0 ((t (:background "black" :foreground "white"))))
-    (powerline-inactive1 ((t (:background "brightblack" :foreground "white"))))
-    (powerline-inactive2 ((t (:background "brightblack" :foreground "white")))))
-#+end_SRC
 
 ** COMMENT Disable visual bell
 
@@ -339,7 +304,7 @@ Note that this overrides the default font-related keybindings from
 =sensible-defaults=.
 
 #+BEGIN_SRC emacs-lisp
-    (setq MattLu/default-font "Ubuntu Mono")
+    (setq MattLu/default-font "Source Code Variable")
     (setq MattLu/default-font-size 11)
     (setq MattLu/current-font-size MattLu/default-font-size)
 
@@ -422,70 +387,11 @@ programming.
    :hook ((prog-mode vc-dir-mode) . turn-on-diff-hl-mode))
  #+END_SRC
 
-** Change frame apperience
-
-Change the frame alpha .
-
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/change-frame-alpha ()
-    (set-frame-parameter (selected-frame) 'alpha '(96 96))
-    (add-to-list 'default-frame-alist '(alpha 96 96)))
-#+END_SRC
-
-If emacs shwo on GUI, than apply this code.
-
-#+BEGIN_SRC emacs-lisp
-  (if (display-graphic-p)
-      (MattLu/change-frame-alpha))
-#+END_SRC
-
 ** Display line number
 
 #+BEGIN_SRC emacs-lisp
   (setq display-line-numbers-type 'visual)
   (global-display-line-numbers-mode)
-  (set-face-foreground 'line-number  "color-241")
-  (set-face-foreground 'line-number-current-line  "white")
-#+END_SRC
-
-** Modify =ediff= face for better contrast
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'ediff-load-hook
-            (lambda ()
-              (set-face-foreground
-               ediff-current-diff-face-A "color-88")
-              (set-face-foreground
-               ediff-current-diff-face-B "color-22")
-              (set-face-foreground
-               ediff-current-diff-face-C "color-94")
-              (set-face-foreground
-               ediff-even-diff-face-A "black")
-              (set-face-foreground
-               ediff-even-diff-face-B "black")
-              (set-face-foreground
-               ediff-even-diff-face-C "black")
-              (set-face-foreground
-               ediff-fine-diff-face-A "color-88")
-              (set-face-foreground
-               ediff-fine-diff-face-B "color-28")
-              (set-face-foreground
-               ediff-fine-diff-face-C "color-58")
-              (set-face-foreground
-               ediff-odd-diff-face-A "black")
-              (set-face-foreground
-               ediff-odd-diff-face-B "black")
-              (set-face-foreground
-               ediff-odd-diff-face-C "black")
-
-              (set-face-attribute 'ediff-current-diff-Ancestor
-                                  t :background "#cfdeee" :foreground "grey30")
-              (set-face-attribute 'ediff-even-diff-Ancestor
-                                  t :background "Grey" :foreground "black")
-              (set-face-attribute 'ediff-fine-diff-Ancestor
-                                  t :background "#00c5c0" :foreground "color-17")
-              (set-face-attribute  'ediff-odd-diff-Ancestor
-                                   t :background "gray40" :foreground "brightwhite")))
 #+END_SRC
 
 ** Using highlight indentation
@@ -496,11 +402,7 @@ If emacs shwo on GUI, than apply this code.
     :config
     (setq highlight-indent-guides-method 'character)
     (setq highlight-indent-guides-responsive 'top)
-    (setq highlight-indent-guides-auto-enabled nil)
-    (set-face-background 'highlight-indent-guides-odd-face "black")
-    (set-face-background 'highlight-indent-guides-even-face "black")
-    (set-face-foreground 'highlight-indent-guides-character-face "brightblack")
-    (set-face-foreground 'highlight-indent-guides-top-character-face "cyan"))
+    (setq highlight-indent-guides-auto-enabled nil))
     ;; (setq highlight-indent-guides-delay 0.1)
 #+END_SRC
 
@@ -525,28 +427,7 @@ If emacs shwo on GUI, than apply this code.
                              company-dabbrev-code
                              company-keywords
                              company-ispell
-                             company-oddmuse))
-    :custom-face
-    (company-echo-common
-     ((t (:background "brightblack"))))
-    (company-preview-common
-     ((t (:background "brightblack"))))
-    (company-tooltip
-     ((t (:background "black" :foreground "white"))))
-    (company-scrollbar-bg
-     ((t (:background "brightblack" :foreground "brightblack"))))
-    (company-scrollbar-fg
-     ((t (:background "blue" :foreground "bule"))))
-    (company-tooltip-common-selection
-     ((t (:background "brightblack" :foreground "brightcyan" :wight bold))))
-    (company-tooltip-selection
-     ((t (:background "brightblack" :foreground "white" :weight bold))))
-    (company-tooltip-annotation
-     ((t (:foreground "yellow"))))
-    (company-tooltip-annotation-selection
-     ((t (:foreground "brightyellow" :weight bold))))
-    (company-template-field
-     ((t (:background "cyan" :foreground "black")))))
+                             company-oddmuse)))
 #+END_SRC
 
 Set TAB for complete cycle
@@ -700,17 +581,7 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
            ("M-N" . symbol-overlay-switch-forward)
            ("M-P" . symbol-overlay-switch-backward)
            ("M-C" . symbol-overlay-remove-all))
-    :hook (prog-mode . symbol-overlay-mode)
-    :custom-face
-    (symbol-overlay-default-face ((t (:inherit highlight))))
-    (symbol-overlay-face-1 ((t (:background "dodger blue"))))
-    (symbol-overlay-face-2 ((t (:background "hot pink"))))
-    (symbol-overlay-face-3 ((t (:background "color-172"))))
-    (symbol-overlay-face-4 ((t (:background "orchid"))))
-    (symbol-overlay-face-5 ((t (:background "red"))))
-    (symbol-overlay-face-6 ((t (:background "salmon"))))
-    (symbol-overlay-face-7 ((t (:background "color-34"))))
-    (symbol-overlay-face-8 ((t (:background "turquoise")))))
+    :hook (prog-mode . symbol-overlay-mode))
 #+END_SRC
 
 ** C++
@@ -719,9 +590,7 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
 #+BEGIN_SRC emacs-lisp
   (use-package smartparens
     :config
-    (smartparens-global-mode 1)
-    :custom-face
-    (sp-pair-overlay-face ((t (:inherit region)))))
+    (smartparens-global-mode 1))
 #+END_SRC
 
 ** Coq
@@ -840,9 +709,7 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
 #+BEGIN_SRC emacs-lisp
   (use-package geiser
     :config
-    (setq geiser-active-implementations '(mit chicken guile racket chez))
-    :custom-face
-    (geiser-font-lock-repl-output ((t (:foreground "color-166")))))
+    (setq geiser-active-implementations '(mit chicken guile racket chez)))
 #+END_SRC
 
 ** Magit
@@ -879,12 +746,7 @@ I'd like to start in the insert state when writing a commit message.
     (setq magit-highlight-trailing-whitespace nil)
     (setq magit-highlight-whitespace nil)
     (setq magit-use-overlays t)
-    (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
-    :custom-face
-    (magit-diff-context-highlight ((t (:background "brightblack"))))
-    (magit-section-highlight ((t (:background "brightblack"))))
-    (magit-diff-file-heading-selection ((t (:background "brightblack" :foreground "color-202"))))
-    (magit-section-heading-selection ((t (:foreground "turquoise")))))
+    (add-hook 'git-commit-mode-hook 'turn-on-flyspell))
 #+END_SRC
 
 ** Projectile
@@ -906,6 +768,7 @@ project root (if I'm not in a "real" project).
     :bind
     ("C-c v" . projectile-ag)
     :config
+    (projectile-global-mode)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     (setq projectile-completion-system 'ivy)
     (setq projectile-sort-order 'recently-active)
@@ -934,8 +797,7 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
     (venv-initialize-interactive-shells) ;; if you want interactive shell support
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
-                          "~/python/bmnett-3.5/"))
-    (venv-workon "py3"))
+                          "~/python/bmnett-3.5/")))
 #+END_SRC
 
 Set ipython as interpreter
@@ -1054,10 +916,7 @@ show function and variable tree in side buffer
   (use-package imenu-list
     :bind ("C-c i" . imenu-list-smart-toggle)
     :config
-    (setq imenu-list-focus-after-activation t)
-    :custom-face
-    (imenu-list-entry-face-1 ((t (:inherit imenu-list-entry-face :foreground "green"))))
-    (imenu-list-entry-face-2 ((t (:inherit imenu-list-entry-face :foreground "blue")))))
+    (setq imenu-list-focus-after-activation t))
 #+END_SRC
 
 ** =GDB=
@@ -1091,7 +950,6 @@ use company instead of ivy which would invoke minibuffer
   (use-package org
     :config
     (setq org-hide-leading-stars t)
-    (set-face-attribute 'org-hide  t :foreground "black")
     (setq org-cycle-include-plain-lists 'integrate)
     (put 'narrow-to-region 'disabled nil))
 #+END_SRC
@@ -1108,26 +966,19 @@ ob-async enables asynchronous execution of org-babel src blocks, using :async
        (python . t))))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-mode-hook (lambda ()
+     "Beautify Org Checkbox Symbol"
+     (push '("[ ]" .  "☐") prettify-symbols-alist)
+     (push '("[X]" . "☑" ) prettify-symbols-alist)
+     (push '("[-]" . "❍" ) prettify-symbols-alist)
+     (prettify-symbols-mode)))
+#+END_SRC
+
 ** ReStructuredText
 
 #+BEGIN_SRC emacs-lisp
-  (use-package rst
-    :custom-face
-    (rst-level-1 ((t (:background "color-28"))))
-    (rst-level-2 ((t (:background "color-172"))))
-    (rst-level-3 ((t (:background "color-33"))))
-    (rst-level-4 ((t (:background "brightmagenta"))))
-    (rst-level-5 ((t (:background "grey57"))))
-    (rst-level-6 ((t (:background "grey50")))))
-#+END_SRC
-
-** display system Information
-
-#+BEGIN_SRC emacs-lisp
-  (use-package symon
-    :config
-    (setq symon-delay 20)
-    (symon-mode))
+  (use-package rst)
 #+END_SRC
 
 * Terminal
@@ -1861,17 +1712,6 @@ at the correct indentation for Python).
     (setq ivy-do-completion-in-region nil)
     (setf (alist-get 't ivy-format-functions-alist)
           'ivy-format-function-line)
-    :custom-face
-    (isearch ((t (:background "brightcyan" :foreground "color-16"))))
-    (ivy-minibuffer-match-face-1
-     ((t (:background "green" :foreground "black"))))
-    (ivy-minibuffer-match-face-2
-     ((t (:background "yellow" :foreground "black" :weight bold))))
-    (ivy-minibuffer-match-face-3
-     ((t (:background "cyan" :foreground "black" :weight bold))))
-    (ivy-minibuffer-match-face-4
-     ((t (:background "#ffbbff" :foreground "black" :weight bold))))
-    (ivy-remote ((t (:foreground "color-202"))))
     :ensure flx)
 #+END_SRC
 
@@ -1979,12 +1819,6 @@ results and =C-c C-c= to stop, just like in =dired=.
     (wrap-region-add-wrapper "`" "`" nil '(markdown-mode ruby-mode)))
 #+END_SRC
 
-** Use projectile everywhere
-
-#+BEGIN_SRC emacs-lisp
-  (projectile-global-mode)
-#+END_SRC
-
 ** Add a bunch of engines for =engine-mode=
 
 Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few useful engines.
@@ -2055,11 +1889,6 @@ Use ace-jump-mode to quick jump to words or char
     ("C-c j" . avy-goto-word-or-subword-1)
     ("C-'"   . avy-goto-char-timer)
     ("M-g f" . avy-goto-line)
-    :custom-face
-    (avy-lead-face ((nil (:background nil :foreground "color-202"))))
-    (avy-lead-face-0 ((nil (:background nil :foreground "color-226"))))
-    (avy-lead-face-1 ((nil (:background nil :foreground "color-46"))))
-    (avy-lead-face-2 ((nil (:background nil :foreground "white"))))
     :config
     (setq avy-all-windows nil)
     (setq avy-background t)
