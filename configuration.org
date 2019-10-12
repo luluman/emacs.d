@@ -306,16 +306,6 @@ declaration is a hassle. This uses minions to hide all the minor modes in the mo
     (powerline-inactive2 ((t (:background "brightblack" :foreground "white")))))
 #+end_SRC
 
-** COMMENT Disable visual bell
-
-=sensible-defaults= replaces the audible bell with a visual one, but I really
-don't even want that (and my Emacs/Mac pair renders it poorly). This disables
-the bell altogether.
-
-#+BEGIN_SRC emacs-lisp
-  (setq ring-bell-function 'ignore)
-#+END_SRC
-
 ** Scroll conservatively
 
 When point goes outside the window, Emacs usually recenters the buffer point.
@@ -387,21 +377,6 @@ Note that this overrides the default font-related keybindings from
     (MattLu/reset-font-size)
 #+END_SRC
 
-** Maintain consistent line height with Unicode characters
-
-Depending on the font, including a Unicode character on a line sometimes makes
-that line bizarrely huge, which is super ugly. My preferred font (Inconsolata)
-doesn't seem to handle Unicode especially well.
-
-Luckily, the =unicode-fonts= package can totally mitigate this problem! I don't
-really know how it works, but I can't argue with the results.
-
-#+BEGIN_SRC emacs-lisp
-(use-package unicode-fonts
-   :config
-   (unicode-fonts-setup))
-#+END_SRC
-
 ** Highlight the current line
 
 =global-hl-line-mode= softly highlights the background color of the line
@@ -421,23 +396,6 @@ programming.
   (use-package diff-hl
    :hook ((prog-mode vc-dir-mode) . turn-on-diff-hl-mode))
  #+END_SRC
-
-** Change frame apperience
-
-Change the frame alpha .
-
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/change-frame-alpha ()
-    (set-frame-parameter (selected-frame) 'alpha '(96 96))
-    (add-to-list 'default-frame-alist '(alpha 96 96)))
-#+END_SRC
-
-If emacs shwo on GUI, than apply this code.
-
-#+BEGIN_SRC emacs-lisp
-  (if (display-graphic-p)
-      (MattLu/change-frame-alpha))
-#+END_SRC
 
 ** Display line number
 
@@ -504,6 +462,15 @@ If emacs shwo on GUI, than apply this code.
     ;; (setq highlight-indent-guides-delay 0.1)
 #+END_SRC
 
+** display system Information
+
+#+BEGIN_SRC emacs-lisp
+  (use-package symon
+    :config
+    (setq symon-delay 20)
+    (symon-mode))
+#+END_SRC
+
 * Programming customization
 ** Use =company-mode= everywhere
 
@@ -561,6 +528,13 @@ Set TAB for complete cycle
        (define-key company-active-map (kbd "C-p") 'company-select-previous)
        (define-key company-active-map (kbd "C-v") 'company-next-page)
        (define-key company-active-map (kbd "M-v") 'company-previous-page)))
+#+END_SRC
+** undo-tree
+
+I like tree-based undo management. I only rarely need it, but when I do, oh boy.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree)
 #+END_SRC
 
 ** common settings
@@ -655,23 +629,77 @@ LSP client
      . eglot-ensure))
 #+END_SRC
 
-*** COMMENT Show function name
+** Projectile
 
-To show the function in the HeaderLine
+Projectile's default binding of =projectile-ag= to =C-c p s s= is clunky enough
+that I rarely use it (and forget it when I need it). This binds the
+easier-to-type =C-c C-v= and =C-c v= to useful searches.
+
+When I visit a project with =projectile-switch-project=, the default action is
+to search for a file in that project. I'd rather just open up the top-level
+directory of the project in =dired= and find (or create) new files from there.
+
+I'd like to /always/ be able to recursively fuzzy-search for files, not just
+when I'm in a Projecile-defined project. This uses the current directory as a
+project root (if I'm not in a "real" project).
+
 #+BEGIN_SRC emacs-lisp
-  (use-package which-func
-    :init
-    (which-function-mode)
-    (setq which-func-unknown "n/a")
-    ;;  Show the current function name in the header line
-    (setq mode-line-format (delete (assoc 'which-func-mode
-                                        mode-line-format) mode-line-format)
-          which-func-header-line-format '(which-func-mode ("" which-func-format)))
-    (defadvice which-func-ff-hook (after header-line activate)
-      (when which-func-mode
-        (setq mode-line-format (delete (assoc 'which-func-mode
-                                              mode-line-format) mode-line-format)
-              header-line-format which-func-header-line-format))))
+  (use-package projectile
+    :bind
+    ("C-c v" . projectile-ag)
+    :config
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (setq projectile-completion-system 'ivy)
+    (setq projectile-sort-order 'recently-active)
+    (setq projectile-enable-caching t)
+    (setq projectile-switch-project-action 'projectile-dired)
+    (setq projectile-require-project-root nil)
+    (setq projectile-mode-line-prefix "P")
+    (setq projectile-mode-line-function
+          '(lambda () (format "[%s]" (projectile-project-name))))
+    :ensure ag)
+#+END_SRC
+
+** Terminal
+
+I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package multi-term
+    :bind ("C-c t" . multi-term))
+#+END_SRC
+
+Use a login shell:
+
+#+BEGIN_SRC emacs-lisp
+   (setq multi-term-program-switches "--login")
+#+END_SRC
+
+*** Go on
+
+I add a bunch of hooks to =term-mode=:
+
+- I'd like links (URLs, etc) to be clickable.
+- Yanking in =term-mode= doesn't quite work. The text from the paste appears in
+  the buffer but isn't sent to the shell process. This correctly binds =C-y= and
+  middle-click to yank the way we'd expect.
+- I bind =M-o= to quickly change windows. I'd like that in terminals, too.
+- I don't want to perform =yasnippet= expansion when tab-completing.
+
+#+BEGIN_SRC emacs-lisp
+  (defun MattLu/term-paste (&optional string)
+    (interactive)
+    (process-send-string
+         (get-buffer-process (current-buffer))
+         (if string string (current-kill 0))))
+
+  (add-hook 'term-mode-hook
+            (lambda ()
+              (goto-address-mode)
+              (define-key term-raw-map (kbd "C-y") 'MattLu/term-paste)
+              (define-key term-raw-map (kbd "<mouse-2>") 'MattLu/term-paste)
+              (define-key term-raw-map (kbd "M-o") 'other-window)
+              (setq yas-dont-activate t)))
 #+END_SRC
 
 ** Fold and unfold code blocks
@@ -887,45 +915,6 @@ I'd like to start in the insert state when writing a commit message.
     (magit-section-heading-selection ((t (:foreground "turquoise")))))
 #+END_SRC
 
-** Projectile
-
-Projectile's default binding of =projectile-ag= to =C-c p s s= is clunky enough
-that I rarely use it (and forget it when I need it). This binds the
-easier-to-type =C-c C-v= and =C-c v= to useful searches.
-
-When I visit a project with =projectile-switch-project=, the default action is
-to search for a file in that project. I'd rather just open up the top-level
-directory of the project in =dired= and find (or create) new files from there.
-
-I'd like to /always/ be able to recursively fuzzy-search for files, not just
-when I'm in a Projecile-defined project. This uses the current directory as a
-project root (if I'm not in a "real" project).
-
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :bind
-    ("C-c v" . projectile-ag)
-    :config
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (setq projectile-completion-system 'ivy)
-    (setq projectile-sort-order 'recently-active)
-    (setq projectile-enable-caching t)
-    (setq projectile-switch-project-action 'projectile-dired)
-    (setq projectile-require-project-root nil)
-    (setq projectile-mode-line-prefix "P")
-    (setq projectile-mode-line-function
-          '(lambda () (format "[%s]" (projectile-project-name))))
-    :ensure ag)
-#+END_SRC
-
-** undo-tree
-
-I like tree-based undo management. I only rarely need it, but when I do, oh boy.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package undo-tree)
-#+END_SRC
-
 ** Python
 
 #+BEGIN_SRC emacs-lisp
@@ -986,26 +975,6 @@ using Jupyter
     (ein:cell-output-stderr ((t (:background "PeachPuff" :foreground "black")))))
 #+END_SRC
 
-** =sh=
-
-Indent with 2 spaces.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'sh-mode-hook
-            (lambda ()
-              (setq sh-basic-offset 2
-                    sh-indentation 2)))
-#+END_SRC
-
-** COMMENT Slim
-
-If I'm editing Slim templates I'm probably in a Rails project. In that case, I'd
-like to still be able to run my tests from a Slim buffer.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'slim-mode-hook 'rspec-mode)
-#+END_SRC
-
 ** =web-mode=
 
 If I'm in =web-mode=, I'd like to:
@@ -1031,22 +1000,13 @@ If I'm in =web-mode=, I'd like to:
 
 Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 
-** COMMENT Tags
-
-   using GNU Global to generate Tags
-#+BEGIN_SRC emacs-lisp
-  (use-package ggtags
-    :hook ((c-mode c++-mode java-mode) . ggtags-mode)
-    :config
-    ;; Remove the default binding for `M-o' in `ggtags-navigation-map'
-    (bind-key "M-o" nil ggtags-navigation-map))
-#+END_SRC
 ** protocol buffer
 
    add Google protocol buffer support
 #+BEGIN_SRC emacs-lisp
   (use-package protobuf-mode)
 #+END_SRC
+
 ** imenu-list
 
 show function and variable tree in side buffer
@@ -1068,6 +1028,15 @@ using Realgud to debug source code
 #+END_SRC
 
 ** Shell connfig
+
+Indent with 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'sh-mode-hook
+            (lambda ()
+              (setq sh-basic-offset 2
+                    sh-indentation 2)))
+#+END_SRC
 
 Force open shell in the current buffer
 #+BEGIN_SRC emacs-lisp
@@ -1120,56 +1089,6 @@ ob-async enables asynchronous execution of org-babel src blocks, using :async
     (rst-level-5 ((t (:background "grey57"))))
     (rst-level-6 ((t (:background "grey50")))))
 #+END_SRC
-
-** display system Information
-
-#+BEGIN_SRC emacs-lisp
-  (use-package symon
-    :config
-    (setq symon-delay 20)
-    (symon-mode))
-#+END_SRC
-
-* Terminal
-
-I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package multi-term
-    :bind ("C-c t" . multi-term))
-#+END_SRC
-
-Use a login shell:
-
-#+BEGIN_SRC emacs-lisp
-  (setq multi-term-program-switches "--login")
-#+END_SRC
-
-** Go on
- I add a bunch of hooks to =term-mode=:
-
- - I'd like links (URLs, etc) to be clickable.
- - Yanking in =term-mode= doesn't quite work. The text from the paste appears in
-   the buffer but isn't sent to the shell process. This correctly binds =C-y= and
-   middle-click to yank the way we'd expect.
- - I bind =M-o= to quickly change windows. I'd like that in terminals, too.
- - I don't want to perform =yasnippet= expansion when tab-completing.
-
- #+BEGIN_SRC emacs-lisp
-   (defun MattLu/term-paste (&optional string)
-     (interactive)
-     (process-send-string
-			(get-buffer-process (current-buffer))
-			(if string string (current-kill 0))))
-
-   (add-hook 'term-mode-hook
-             (lambda ()
-               (goto-address-mode)
-               (define-key term-raw-map (kbd "C-y") 'MattLu/term-paste)
-               (define-key term-raw-map (kbd "<mouse-2>") 'MattLu/term-paste)
-               (define-key term-raw-map (kbd "M-o") 'other-window)
-               (setq yas-dont-activate t)))
- #+END_SRC
 
 * Publishing and task management with Org-mode
 ** Display preferences
@@ -1611,12 +1530,12 @@ Open the checklist and my TODO list side-by-side:
                    '(("XeLaTeX_SyncteX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil
                       (latex-mode doctex-mode)
                       :help "Run XeLaTeX")
-                  ;;   ("TeX" "%(PDF)%(tex) %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil
-                  ;;    (plain-tex-mode texinfo-mode ams-tex-mode)
-                  ;;    :help "Run plain TeX")
-                   ;;  ("LaTeX" "%`%l%(mode)%' %t" TeX-run-TeX nil
-                   ;;   (latex-mode doctex-mode)
-                   ;;   :help "Run LaTeX")
+                     ("TeX" "%(PDF)%(tex) %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil
+                      (plain-tex-mode texinfo-mode ams-tex-mode)
+                      :help "Run plain TeX")
+                     ("LaTeX" "%`%l%(mode)%' %t" TeX-run-TeX nil
+                      (latex-mode doctex-mode)
+                      :help "Run LaTeX")
                      ("Makeinfo" "makeinfo %t" TeX-run-compile nil
                       (texinfo-mode)
                       :help "Run Makeinfo with Info output")
@@ -1687,16 +1606,6 @@ Open the checklist and my TODO list side-by-side:
    (setq reftex-plug-into-AUCTeX t)
  #+END_SRC
 
-* System tools
-** Docker
-
-#+BEGIN_SRC emacs-lisp
-  (use-package docker
-    :ensure t
-    :bind ("C-c d" . docker)
-    :custom (docker-image-run-arguments '("-i" "-t" "--rm")))
-#+END_SRC
-
 * =dired=
 
 Open media with the appropriate programs.
@@ -1723,13 +1632,19 @@ files. We're using:
   (setq-default dired-listing-switches "-lhvA")
 #+END_SRC
 
+Use “[” and “]” to jump out and in dired.
+#+BEGIN_SRC emacs-lisp
+  (eval-after-load "dired"
+	'(progn
+	   (define-key dired-mode-map (kbd "[") 'dired-up-directory)
+	   (define-key dired-mode-map (kbd "]") 'dired-open-file)))
+#+END_SRC
+
 fast copy and past
 
 #+BEGIN_SRC emacs-lisp
   (setq dired-dwim-target t)
 #+END_SRC
-
-Use "j" and "k" to move around in =dired=.
 
 Kill buffers of files/directories that are deleted in =dired=.
 
@@ -2177,6 +2092,4 @@ Remap when working in terminal Emacs.
 #+BEGIN_SRC emacs-lisp
   (global-unset-key (kbd "C-x 5 1"))
   (local-unset-key (kbd "C-x 5 1"))
-  (global-unset-key (kbd "C-c t"))
-  (local-unset-key (kbd "C-c t"))
 #+END_SRC
