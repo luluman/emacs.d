@@ -161,7 +161,13 @@ The default frame title isn't useful. This binds it to the name of the current
 project:
 
 #+BEGIN_SRC emacs-lisp
-    (setq frame-title-format '((:eval (projectile-project-name))))
+  (setq frame-title-format
+        '(""
+          "%b"
+          (:eval
+           (let ((project-name (wg-mode-line-string)))
+             (unless (string= "-" project-name)
+               (format " in %s" project-name))))))
 #+END_SRC
 
 ** Use fancy lambdas
@@ -217,7 +223,7 @@ side and font, though.
     "Apply the `solarized-light' theme and make frames just slightly transparent."
     (interactive)
     (load-theme 'solarized-light t)
-    (transparency 90))
+    (transparency 95))
 #+END_SRC
 
 If this code is being evaluated by emacs --daemon, ensure that each subsequent frame is themed appropriately.
@@ -304,67 +310,50 @@ Note that this overrides the default font-related keybindings from
 =sensible-defaults=.
 
 #+BEGIN_SRC emacs-lisp
-    (setq MattLu/default-font "Source Code Variable")
-    (setq MattLu/default-font-size 11)
-    (setq MattLu/current-font-size MattLu/default-font-size)
+  (setq MattLu/default-font "Source Code Variable")
+  (setq MattLu/default-font-size 12)
+  (setq MattLu/current-font-size MattLu/default-font-size)
 
-    (setq MattLu/font-change-increment 1.1)
+  (setq MattLu/font-change-increment 1.1)
 
-    (defun MattLu/font-code ()
-      "Return a string representing the current font (like \"Inconsolata-14\")."
-      (concat MattLu/default-font "-" (number-to-string MattLu/current-font-size)))
+  (defun MattLu/font-code ()
+    "Return a string representing the current font (like \"Inconsolata-14\")."
+    (concat MattLu/default-font "-" (number-to-string MattLu/current-font-size)))
 
-    (defun MattLu/set-font-size ()
-      "Set the font to `MattLu/default-font' at `MattLu/current-font-size'.
+  (defun MattLu/set-font-size ()
+    "Set the font to `MattLu/default-font' at `MattLu/current-font-size'.
     Set that for the current frame, and also make it the default for
     other, future frames."
-      (let ((font-code (MattLu/font-code)))
-        (add-to-list 'default-frame-alist (cons 'font font-code))
-        (set-frame-font font-code)))
+    (let ((font-code (MattLu/font-code)))
+      (add-to-list 'default-frame-alist (cons 'font font-code))
+      (set-frame-font font-code)))
 
-    (defun MattLu/reset-font-size ()
-      "Change font size back to `MattLu/default-font-size'."
-      (interactive)
-      (setq MattLu/current-font-size MattLu/default-font-size)
-      (MattLu/set-font-size))
+  (defun MattLu/reset-font-size ()
+    "Change font size back to `MattLu/default-font-size'."
+    (interactive)
+    (setq MattLu/current-font-size MattLu/default-font-size)
+    (MattLu/set-font-size))
 
-    (defun MattLu/increase-font-size ()
-      "Increase current font size by a factor of `MattLu/font-change-increment'."
-      (interactive)
-      (setq MattLu/current-font-size
-            (ceiling (* MattLu/current-font-size MattLu/font-change-increment)))
-      (MattLu/set-font-size))
+  (defun MattLu/increase-font-size ()
+    "Increase current font size by a factor of `MattLu/font-change-increment'."
+    (interactive)
+    (setq MattLu/current-font-size
+          (ceiling (* MattLu/current-font-size MattLu/font-change-increment)))
+    (MattLu/set-font-size))
 
-    (defun MattLu/decrease-font-size ()
-      "Decrease current font size by a factor of `MattLu/font-change-increment', down to a minimum size of 1."
-      (interactive)
-      (setq MattLu/current-font-size
-            (max 1
-                 (floor (/ MattLu/current-font-size MattLu/font-change-increment))))
-      (MattLu/set-font-size))
+  (defun MattLu/decrease-font-size ()
+    "Decrease current font size by a factor of `MattLu/font-change-increment', down to a minimum size of 1."
+    (interactive)
+    (setq MattLu/current-font-size
+          (max 1
+               (floor (/ MattLu/current-font-size MattLu/font-change-increment))))
+    (MattLu/set-font-size))
 
-    (define-key global-map (kbd "C-)") 'MattLu/reset-font-size)
-    (define-key global-map (kbd "C-+") 'MattLu/increase-font-size)
-  ;;  (define-key global-map (kbd "C-=") 'MattLu/increase-font-size)
-;;    (define-key global-map (kbd "C-c -") 'MattLu/decrease-font-size)
-  ;; (define-key global-map (kbd "C--") nil)
+  (global-set-key (kbd "C-)") 'MattLu/reset-font-size)
+  (global-set-key (kbd "C-+") 'MattLu/increase-font-size)
+  (global-set-key (kbd "C-_") 'MattLu/decrease-font-size)
 
-    (MattLu/reset-font-size)
-#+END_SRC
-
-** Maintain consistent line height with Unicode characters
-
-Depending on the font, including a Unicode character on a line sometimes makes
-that line bizarrely huge, which is super ugly. My preferred font (Inconsolata)
-doesn't seem to handle Unicode especially well.
-
-Luckily, the =unicode-fonts= package can totally mitigate this problem! I don't
-really know how it works, but I can't argue with the results.
-
-#+BEGIN_SRC emacs-lisp
-(use-package unicode-fonts
-   :config
-   (unicode-fonts-setup))
+  (MattLu/reset-font-size)
 #+END_SRC
 
 ** Highlight the current line
@@ -384,7 +373,8 @@ programming.
 
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
-   :hook ((prog-mode vc-dir-mode) . turn-on-diff-hl-mode))
+    :config
+    (global-diff-hl-mode))
  #+END_SRC
 
 ** Display line number
@@ -768,7 +758,6 @@ project root (if I'm not in a "real" project).
     :bind
     ("C-c v" . projectile-ag)
     :config
-    (projectile-global-mode)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     (setq projectile-completion-system 'ivy)
     (setq projectile-sort-order 'recently-active)
@@ -797,7 +786,8 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
     (venv-initialize-interactive-shells) ;; if you want interactive shell support
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
-                          "~/python/bmnett-3.5/")))
+                          "~/venvPy/py2/"))
+    (venv-workon "py3"))
 #+END_SRC
 
 Set ipython as interpreter
@@ -1683,7 +1673,7 @@ enabled.
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :init
-    (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+    (setq yas-snippet-dirs '("~/.emacs.d/yasnippet-snippets/snippets"))
     (yas-global-mode 1))
 #+END_SRC
 
@@ -1817,6 +1807,12 @@ results and =C-c C-c= to stop, just like in =dired=.
     (wrap-region-global-mode t)
     (wrap-region-add-wrapper "/" "/" nil 'ruby-mode)
     (wrap-region-add-wrapper "`" "`" nil '(markdown-mode ruby-mode)))
+#+END_SRC
+
+** Use projectile everywhere
+
+#+BEGIN_SRC emacs-lisp
+  (projectile-global-mode)
 #+END_SRC
 
 ** Add a bunch of engines for =engine-mode=
@@ -1993,11 +1989,6 @@ Remap when working in terminal Emacs.
 #+BEGIN_SRC emacs-lisp
   (setq ns-right-option-modifier 'super)
 #+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-_") 'undo)
-#+END_SRC
-
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-c w") 'ediff-regions-wordwise)
