@@ -2059,7 +2059,27 @@ maximum memory allotted to Emacs.
   (use-package too-long-lines-mode
     :load-path "~/.emacs.d/too-long-lines-mode"
     :config
+    (set 'too-long-lines-special-buffer-modes
+         '(shell-mode ag-mode inferior-python-mode))
     (too-long-lines-mode))
+#+END_SRC
+
+** fast scroll
+
+To ensure scrolling is fast in Emacs, I use a package that disables
+non-essential things while the window is being scrolled
+
+#+BEGIN_SRC emacs-lisp
+  (use-package fast-scroll
+    :config
+    (add-hook 'fast-scroll-start-hook
+              (lambda ()
+                (flyspell-mode -1)))
+    (add-hook 'fast-scroll-end-hook
+              (lambda ()
+                (flyspell-mode 1)))
+    (fast-scroll-config)
+    (fast-scroll-mode 1))
 #+END_SRC
 
 * Set custom keybindings
