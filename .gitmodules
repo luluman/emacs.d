@@ -1,0 +1,3 @@
+[submodule "too-long-lines-mode"]
+	path = too-long-lines-mode
+	url = https://github.com/rakete/too-long-lines-mode
