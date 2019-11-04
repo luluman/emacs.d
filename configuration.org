@@ -4,17 +4,6 @@
 #+EMAIL: lu.man@outlook.com
 #+OPTIONS: toc:nil num:nil
 [[https://github.com/hrs/dotfiles][Harry R. Schwartz]]
-* Use sensible-defaults.el
-
-Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
-
-#+BEGIN_SRC emacs-lisp
-  (load-file "~/.emacs.d/sensible-defaults.el")
-  (sensible-defaults/use-all-settings)
-  (sensible-defaults/use-all-keybindings)
-  (sensible-defaults/backup-to-temp-directory)
-#+END_SRC
-
 * Configure =use-package=
 
 #+BEGIN_SRC emacs-lisp
@@ -39,6 +28,24 @@ Always compile packages, and use the newest version available.
   (use-package auto-compile
     :config (auto-compile-on-load-mode)
     (setq load-prefer-newer t))
+#+END_SRC
+
+Disable TLS 1.3; ELPA has higher standards.
+That’ll be the default in Emacs 26.3, I think, but I’m not there yet.
+
+#+BEGIN_SRC emacs-lisp
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+#+END_SRC
+
+* Use sensible-defaults.el
+
+Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
+
+#+BEGIN_SRC emacs-lisp
+  (load-file "~/.emacs.d/sensible-defaults.el")
+  (sensible-defaults/use-all-settings)
+  (sensible-defaults/use-all-keybindings)
+  (sensible-defaults/backup-to-temp-directory)
 #+END_SRC
 
 * Set personal information
@@ -624,6 +631,8 @@ LSP client
     (setq eglot-autoreconnect 1)
     (setq eglot-connect-timeout 10)
     (setq eglot-sync-connect nil)
+    (add-to-list 'eglot-ignored-server-capabilites
+                 :documentHighlightProvider)
     :hook
     ((c-mode-common python-mode sh-mode)
      . eglot-ensure))
@@ -647,11 +656,11 @@ project root (if I'm not in a "real" project).
   (use-package projectile
     :bind
     ("C-c v" . projectile-ag)
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
     :config
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     (setq projectile-completion-system 'ivy)
     (setq projectile-sort-order 'recently-active)
-    (setq projectile-enable-caching t)
     (setq projectile-switch-project-action 'projectile-dired)
     (setq projectile-require-project-root nil)
     (setq projectile-mode-line-prefix "P")
@@ -852,7 +861,7 @@ documentation.
   (use-package eldoc
     :config
     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-    (setq eldoc-idle-delay 3))
+    (setq eldoc-idle-delay 1))
 #+END_SRC
 
 I also like using flycheck-package to ensure that my Elisp packages are correctly formatted.
@@ -1898,7 +1907,7 @@ results and =C-c C-c= to stop, just like in =dired=.
 ** Use projectile everywhere
 
 #+BEGIN_SRC emacs-lisp
-  (projectile-global-mode)
+  (projectile-mode)
 #+END_SRC
 
 ** Add a bunch of engines for =engine-mode=
