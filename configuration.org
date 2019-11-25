@@ -287,8 +287,8 @@ declaration is a hassle. This uses minions to hide all the minor modes in the mo
 #+BEGIN_SRC emacs-lisp
   (use-package flymake
     :bind (:map flymake-mode-map
-                ("C-c <" . flymake-goto-prev-error)
-                ("C-c >" . flymake-goto-next-error))
+                ("C-c [" . flymake-goto-prev-error)
+                ("C-c ]" . flymake-goto-next-error))
     :config
     (defun flymake--transform-mode-line-format (ret)
       "Change the output of `flymake--mode-line-format'."
@@ -944,7 +944,7 @@ I'd like to start in the insert state when writing a commit message.
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
                           "~/python/bmnett-3.5/"))
-    (venv-workon "py3"))
+    (venv-workon "bmnett-3.5"))
 #+END_SRC
 
 Set ipython as interpreter
@@ -1095,11 +1095,16 @@ Including org-tempo restores the <s-style easy-templates that were deprecated in
   (use-package org
     :ensure org-plus-contrib
     :config
-    (setq org-hide-leading-stars t)
-    (set-face-attribute 'org-hide  t :foreground "black")
-    (setq org-cycle-include-plain-lists 'integrate)
     (put 'narrow-to-region 'disabled nil)
-    (require 'org-tempo))
+    (setq org-modules (remove-duplicates
+                       (append org-modules
+                               '(org-tempo
+                                 ox-md
+                                 ox-beamer
+                                 org-capture
+                                 ox-latex
+                                 ox-odt
+                                 org-gnus)))))
 #+END_SRC
 
 I’d like the initial scratch buffer to be in Org:
@@ -1122,7 +1127,8 @@ I like seeing a little downward-pointing arrow instead of the usual ellipsis
 (=...=) that org displays when there's stuff under a header.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-ellipsis "⤵")
+  (setq org-ellipsis " …")
+  (set-face-foreground 'org-ellipsis  "color-50")
 #+END_SRC
 
 Use syntax highlighting in source blocks while editing.
@@ -1144,170 +1150,16 @@ new one (which shows the same information).
   (setq org-src-window-setup 'current-window)
 #+END_SRC
 
-Quickly insert a block of elisp:
-
+Using build-in hide leading starts
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'org-structure-template-alist
-               '("el" . "src emacs-lisp"))
+  (setq org-hide-leading-stars t)
+  (setq org-pretty-entities t)
+  (setq org-allow-promoting-top-level-subtree t)
+  (setq org-email-link-description-format "%c: %.50s")
 #+END_SRC
 
-Enable spell-checking in Org-mode.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'org-mode-hook 'flyspell-mode)
-#+END_SRC
-
-** Task and org-capture management
-
-Store my org files in =~/org=, maintain an inbox in Dropbox, define the location
-of an index file (my main todo list), and archive finished tasks in
-=~/org/archive.org=.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-pomodoro)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-directory "~/.Org")
-
-  (defun org-file-path (filename)
-    "Return the absolute address of an org file, given its relative name."
-    (concat (file-name-as-directory org-directory) filename))
-
-    ;(setq org-inbox-file "~/Dropbox/inbox.org") We can not access to Dropbox
-  (setq org-index-file (org-file-path "index.org"))
-  (setq org-gtd-file (org-file-path "gtd.org"))
-  (setq org-notes-file (org-file-path "notes.org"))
-  (setq org-archive-location
-        (concat (org-file-path "archive.org") "::* From %s"))
-  (setq org-default-notes-file (org-file-path "gtd.org"))
-#+END_SRC
-
-*** COMMENT Something we needn't yet
-I use [[http://agiletortoise.com/drafts/][Drafts]] to create new tasks, format them according to a template, and
-append them to an "inbox.org" file in my Dropbox. This function lets me import
-them easily from that inbox file to my index.
-
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/copy-tasks-from-inbox ()
-    (when (file-exists-p org-inbox-file)
-      (save-excursion
-        (find-file org-index-file)
-        (goto-char (point-max))
-        (insert-file-contents org-inbox-file)
-        (delete-file org-inbox-file))))
-#+END_SRC
-
-*** Move on
-I store all my todos in =~/org/index.org=, so I'd like to derive my agenda from
-there.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (list org-directory))
-#+END_SRC
-
-set org-refile level deep to max 6
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
-#+END_SRC
-
-
-Hitting =C-c C-x C-s= will mark a todo as done and move it to an appropriate
-place in the archive.
-
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/mark-done-and-archive ()
-    "Mark the state of an org-mode item as DONE and archive it."
-    (interactive)
-    (org-todo 'done)
-    (org-archive-subtree))
-
-  (define-key org-mode-map (kbd "C-c C-x C-s") 'MattLu/mark-done-and-archive)
-#+END_SRC
-
-Record the time that a todo was archived.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-log-done 'time)
-#+END_SRC
-
-**** TODO Capturing tasks
-
-Define a few common tasks as capture templates. Specifically, I frequently:
-
-- Record ideas for future blog posts in =~/org/blog-ideas.org=,
-- Keep a running grocery list in =~/org/groceries.org=, and
-- Maintain a todo list in =~/org/index.org=.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-capture-templates
-        '(("n" "notes"
-           entry
-           (file+headline org-notes-file "Quick notes")
-           "* %?\n %i\n %U"
-           :empty-lines 1)
-
-          ("g" "Groceries"
-           checkitem
-           (file (org-file-path "groceries.org")))
-
-          ("l" "letters"
-           entry
-           (file+headline (org-file-path "vocabulary.org") "Letters")
-           "* %?\n %i\n %U")
-
-          ("L" "links"
-           entry
-           (file+headline org-notes-file "Links")
-           "* TODO [#C] %?\n  %i\n %a \n %U"
-           :empty-lines 1)
-
-          ("s" "Code Snippet"
-           entry
-           (file (org-file-path "snippet.org"))
-           "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC")
-
-          ("w" "work"
-           entry
-           (file+headline org-gtd-file  "Work")
-           "* TODO [#A] %?\n  %i\n %U"
-           :empty-lines 1)
-
-          ("t" "Todo"
-           entry
-           (file+headline org-gtd-file "Explore")
-           "* TODO [#B] %?\n %i\n"
-           :empty-lines 1)))
-#+END_SRC
-
-
-**** Agenda review
-
-     list stuck projects
-#+BEGIN_SRC emacs-lisp
-      (setq org-stuck-projects
-            '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
-#+END_SRC
-
-using priority to organize my life
-#+BEGIN_SRC emacs-lisp
-  (setq org-agenda-custom-commands
-        '(("w" . "任务安排")
-          ("wa" "重要且紧急的任务" tags-todo "+PRIORITY=\"A\"")
-          ("wb" "重要且不紧急的任务" tags-todo "-Weekly-Monthly-Daily+PRIORITY=\"B\"")
-          ("wc" "不重要且紧急的任务" tags-todo "+PRIORITY=\"C\"")
-          ("p" . "项目安排")
-          ("pw" tags-todo "PROJECT+WORK+CATEGORY=\"Bitmain\"")
-          ("pl" tags-todo "PROJECT+DREAM+CATEGORY=\"MattLu\"")
-          ("W" "Weekly Review"
-           ((stuck "") ;; review stuck projects as designated by org-stuck-projects
-            (tags-todo "PROJECT") ;; review all projects (assuming you use todo keywords to designate projects)
-            ))))
- #+END_SRC
-
-**** Keybindings
+** Key-bindings
 
 Bind a few handy keys.
 
@@ -1315,8 +1167,8 @@ Bind a few handy keys.
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map "\C-cc" 'org-capture)
+  (define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
 #+END_SRC
-
 
 Hit =C-c g= to quickly open up my todo list.
 
@@ -1339,32 +1191,372 @@ Hit =M-n= to quickly open up a capture template for a new todo.
   (defun org-capture-todo ()
     (interactive)
     (org-capture :keys "t"))
-
-;;  (global-set-key (kbd "C-c t d") 'org-capture-todo)
-;;  (add-hook 'gfm-mode-hook
-;;            (lambda () (local-set-key (kbd "M-n") 'org-capture-todo)))
-;;  (add-hook 'haskell-mode-hook
-;;            (lambda () (local-set-key (kbd "M-n") 'org-capture-todo)))
 #+END_SRC
 
-** Exporting
+#+begin_src emacs-lisp
+  (setq org-special-ctrl-a/e 'reversed)
+  (setq org-special-ctrl-k t)
+  (setq org-support-shift-select t)
+#+end_src
 
-Allow export to markdown and beamer (for presentations).
+** Timing
+
+Set headlines to STRT and clock-in when running a countdown
 
 #+BEGIN_SRC emacs-lisp
-  (require 'ox-md)
-  (require 'ox-beamer)
+  (org-clock-persistence-insinuate)
+  (setq org-clock-display-default-range 'thisweek)
+  (setq org-clock-persist t)
+  (setq org-clock-idle-time 60)
+  (setq org-clock-history-length 35)
+  (setq org-clock-in-resume t)
+  (setq org-clock-out-remove-zero-time-clocks t)
+  (org-agenda-to-appt)
+  (add-hook 'org-timer-set-hook
+              (lambda ()
+                (if (eq major-mode 'org-agenda-mode)
+                    (call-interactively 'org-agenda-clock-in)
+                  (call-interactively 'org-clock-in))))
+    (add-hook 'org-timer-done-hook
+              (lambda ()
+                (if (and (eq major-mode 'org-agenda-mode)
+                         org-clock-current-task)
+                    (call-interactively 'org-agenda-clock-out)
+                  (call-interactively 'org-clock-out))))
+    (add-hook 'org-timer-pause-hook
+              (lambda ()
+                (if org-clock-current-task
+                    (if (eq major-mode 'org-agenda-mode)
+                        (call-interactively 'org-agenda-clock-out)
+                      (call-interactively 'org-clock-out)))))
+    (add-hook 'org-timer-stop-hook
+              (lambda ()
+                (if org-clock-current-task
+                    (if (eq major-mode 'org-agenda-mode)
+                        (call-interactively 'org-agenda-clock-out)
+                      (call-interactively 'org-clock-out)))))
 #+END_SRC
 
-Allow =babel= to evaluate Emacs lisp, Ruby, dot, or Gnuplot code.
+*** COMMENT icalendar
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-combined-agenda-icalendar-file "~/org/matt.ics")
+  (setq org-icalendar-combined-name "MattLu ORG")
+  (setq org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
+  (setq org-icalendar-use-deadline '(todo-due event-if-todo event-if-not-todo))
+  (setq org-icalendar-timezone "China/Beijing")
+  (setq org-icalendar-store-UID t)
+#+END_SRC
+
+** GTD
+
+Store my org files in =~/org=, maintain an inbox in Dropbox, define the location
+of an index file (my main todo list), and archive finished tasks in
+=~/org/archive.org=.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-pomodoro)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-directory "~/.Org")
+
+  (defun org-file-path (filename)
+    "Return the absolute address of an org file, given its relative name."
+    (let ((fun (lambda (x)
+                 (concat (file-name-as-directory org-directory) x))))
+      (if (listp filename)
+          (mapcar fun filename)
+        (eval (list fun filename)))))
+
+  (setq org-agenda-diary-file (org-file-path '("rdv.org" "gtd.org" "inbox.org")))
+  (setq org-gtd-file (org-file-path "gtd.org"))
+  (setq org-archive-location
+        (concat (org-file-path "archive.org") "::* From %s"))
+  (setq org-default-notes-file (org-file-path "note.org"))
+  (setq org-scheduled-past-days 100)
+  (setq org-stuck-projects '("+LEVEL=1" ("NEXT" "TODO" "DONE")))
+  (setq org-tag-persistent-alist '(("Write" . ?w) ("Read" . ?r)))
+  (setq org-tag-alist
+        '((:startgroup)
+          ("Handson" . ?o)
+          (:grouptags)
+          ("Write" . ?w) ("Code" . ?c) ("Tel" . ?t)
+          (:endgroup)
+          (:startgroup)
+          ("Handsoff" . ?f)
+          (:grouptags)
+          ("Read" . ?r) ("View" . ?v) ("Listen" . ?l)
+          (:endgroup)
+          ("Mail" . ?@) ("Print" . ?P) ("Buy" . ?b)))
+  (setq org-tags-column -74)
+  (setq org-todo-keywords '((type "TODO" "STRT" "NEXT" "WAIT" "|" "DONE" "DELEGATED" "CANCELED")))
+  (setq org-todo-repeat-to-state t)
+  (setq org-use-property-inheritance t)
+  (setq org-use-sub-superscripts nil)
+  (setq org-todo-keyword-faces
+        '(("STRT" . (:foreground "white" :inverse-video t))
+          ("NEXT" . (:foreground "color-45" :weight bold))
+          ("WAIT" . (:foreground "#889699" :inverse-video t))
+          ("CANCELED" . (:foreground "#889699"))))
+  (setq org-enforce-todo-dependencies t)
+  (setq org-deadline-warning-days 7)
+#+END_SRC
+
+*** Capturing
+
+Define a few common tasks as capture templates. Specifically
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-capture-templates
+        '(("C" "Misc" entry (file "~/.Org/inbox.org")
+           "* TODO %a\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n"
+           :prepend t :immediate-finish t)
+
+          ("c" "Misc (edit)" entry (file "~/.Org/inbox.org")
+           "* TODO %?\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a" :prepend t)
+
+          ("r" "RDV Perso" entry (file+headline "~/.Org/rdv.org" "RDV Perso")
+           "* RDV avec %:fromname %?\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a" :prepend t)
+
+          ("R" "RDV Etalab" entry (file+headline "~/.Org/rdv-etalab.org" "RDV Etalab")
+           "* RDV avec %:fromname %?\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a" :prepend t)
+
+          ("e" "Etalab" entry (file+headline "~/.Org/bzg.org" "Etalab : impulser dynamique LL via la DINSIC")
+           "* TODO %?\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a\n\n%i" :prepend t)
+
+          ("g" "Garden" entry (file+headline "~/.Org/libre.org" "Garden")
+           "* TODO %?\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a\n\n%i" :prepend t)
+
+          ("o" "Org" entry (file+headline "~/.Org/bzg.org" "Org-mode : passer la maintenance fin 2019")
+           "* TODO %? :Code:\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a\n\n%i" :prepend t)))
+
+  (setq org-capture-templates-contexts
+        '(("r" ((in-mode . "gnus-summary-mode")
+                (in-mode . "gnus-article-mode")
+                (in-mode . "message-mode")))
+          ("R" ((in-mode . "gnus-summary-mode")
+                (in-mode . "gnus-article-mode")
+                (in-mode . "message-mode")))))
+#+END_SRC
+
+*** Refine & Archive
+
+set org-refile level deep to max 6
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))
+                             ((org-file-path "libre.org") . (:maxlevel . 1))))
+
+  (setq org-refile-use-outline-path t)
+  (setq org-refile-allow-creating-parent-nodes t)
+  (setq org-refile-use-cache t)
+  (setq org-reverse-note-order t)
+  (setq org-archive-default-command 'org-archive-to-archive-sibling)
+#+END_SRC
+
+
+Hitting =C-c C-x C-s= will mark a todo as done and move it to an appropriate
+place in the archive.
+
+#+BEGIN_SRC emacs-lisp
+  (defun MattLu/mark-done-and-archive ()
+    "Mark the state of an org-mode item as DONE and archive it."
+    (interactive)
+    (org-todo 'done)
+    (org-archive-subtree))
+
+  (define-key org-mode-map (kbd "C-c C-x C-s") 'MattLu/mark-done-and-archive)
+#+END_SRC
+
+Record the time that a todo was archived.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-done 'time)
+#+END_SRC
+
+*** Review
+
+list stuck projects
+#+BEGIN_SRC emacs-lisp
+  (setq org-stuck-projects
+        '("TODO={.+}/-DONE" nil nil "SCHEDULED:\\|DEADLINE:"))
+#+END_SRC
+
+using priority to organize my life
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-custom-commands
+        `(
+          ;; Week agenda for rendez-vous and tasks
+          ("%" "Rendez-vous" agenda* "Week planning"
+           ((org-agenda-span 'week)
+            (org-agenda-files '(org-file-path "rdv.org"))
+            ;; (org-deadline-warning-days 3)
+            (org-agenda-sorting-strategy
+             '(todo-state-up time-up priority-down))))
+
+          ("!" tags-todo "+DEADLINE<=\"<+7d>\"")
+          ("=" tags-todo "+SCHEDULED<=\"<now>\"")
+          ("?" "WAIT (gtd)" tags-todo "TODO={WAIT}"
+           ((org-agenda-files '(org-file-path "gtd.org"))
+            (org-agenda-sorting-strategy
+             '(todo-state-up priority-down time-up))))
+          ("@" tags-todo "+Mail+TODO={NEXT\\|STRT\\|WAIT}")
+          ("#" "DONE/CANCELED/DELEGATED"
+           todo "DONE|CANCELED|DELEGATED"
+           ((org-agenda-files (org-file-path '("gtd.org" "rdv.org" "matt.org" "libre.org")))
+            (org-agenda-sorting-strategy '(timestamp-up))))
+
+          ("" . "Task and rendez-vous for today")
+          ("" "Travail (tout)" agenda "Tasks and rdv for today"
+           ((org-agenda-span 1)
+            (org-agenda-files (org-file-path '("gtd.org" "rdv.org" "matt.org")))
+            (org-deadline-warning-days 3)
+            (org-agenda-sorting-strategy
+             '(todo-state-up time-up priority-down))))
+          (" " "Libre (tout)" agenda "Tasks and rdv for today"
+           ((org-agenda-span 1)
+            (org-agenda-files '(org-file-path "libre.org"))
+            (org-deadline-warning-days 3)
+            (org-agenda-sorting-strategy
+             '(todo-state-up priority-down time-up))))
+          ("e" "Etalab TODO" tags-todo "TODO={STRT\\|NEXT\\|TODO}"
+           ((org-agenda-files '(org-file-path "bzg.org"))
+            (org-agenda-category-filter-preset '("+ETL"))
+            (org-agenda-sorting-strategy
+             '(todo-state-up time-up priority-down))))
+
+          ("n" . "What's next?")
+          ("nn" "Etalab NEXT" tags-todo "TODO={STRT\\|NEXT}"
+           ((org-agenda-files (org-file-path '("gtd.org" "matt.org")))
+            (org-agenda-sorting-strategy
+             '(todo-state-up time-up priority-down))))
+          ("nN" "Libre NEXT" tags-todo "TODO={STRT\\|NEXT}"
+           ((org-agenda-files '(org-file-path "libre.org"))
+            (org-agenda-sorting-strategy
+             '(todo-state-up time-up priority-down))))
+
+          ("x" . "Scheduled for today")
+          ("xx" "Agenda work" agenda "Work scheduled for today"
+           ((org-agenda-span 1)
+            (org-deadline-warning-days 3)
+            (org-agenda-entry-types '(:timestamp :scheduled))
+            (org-agenda-sorting-strategy
+             '(todo-state-up priority-down time-up))))
+          ("xX" "Agenda libre" agenda "Libre scheduled for today"
+           ((org-agenda-span 1)
+            (org-deadline-warning-days 3)
+            (org-agenda-files '(org-file-path "libre.org"))
+            (org-agenda-entry-types '(:timestamp :scheduled))
+            (org-agenda-sorting-strategy
+             '(todo-state-up priority-down time-up))))
+
+          ("z" . "Deadlines for today")
+          ("zz" "Work deadlines" agenda "Past/upcoming work deadlines"
+           ((org-agenda-span 1)
+            (org-deadline-warning-days 15)
+            (org-agenda-entry-types '(:deadline))
+            (org-agenda-sorting-strategy
+             '(todo-state-up priority-down time-up))))
+          ("zZ" "Libre deadlines" agenda "Past/upcoming leisure deadlines"
+           ((org-agenda-span 1)
+            (org-deadline-warning-days 15)
+            (org-agenda-files '(org-file-path "libre.org"))
+            (org-agenda-entry-types '(:deadline))
+            (org-agenda-sorting-strategy
+             '(todo-state-up priority-down time-up))))
+
+          ("r" . "Read")
+          ("rr" tags-todo "+Read+TODO={NEXT\\|STRT}")
+          ("rR" tags-todo "+Read+TODO={NEXT\\|STRT}"
+           ((org-agenda-files '("~/org/libre.org"))))
+          ("v" . "View")
+          ("vv" tags-todo "+View+TODO={NEXT\\|STRT}")
+          ("vV" tags-todo "+View+TODO={NEXT\\|STRT}"
+           ((org-agenda-files '(org-file-path "libre.org"))))
+          ("l" . "Listen")
+          ("ll" tags-todo "+Listen+TODO={NEXT\\|STRT}")
+          ("lL" tags-todo "+Listen+TODO={NEXT\\|STRT}"
+           ((org-agenda-files '(org-file-path "libre.org"))))
+          ("w" . "Write")
+          ("ww" tags-todo "+Write+TODO={NEXT\\|STRT}")
+          ("wW" tags-todo "+Write+TODO={NEXT\\|STRT}"
+           ((org-agenda-files '(org-file-path "libre.org"))))
+          ("c" . "Code")
+          ("cc" tags-todo "+Code+TODO={NEXT\\|STRT}")
+          ("cC" tags-todo "+Code+TODO={NEXT\\|STRT}"
+           ((org-agenda-files '(org-file-path "libre.org"))))
+          ))
+   #+END_SRC
+
+*** Agenda
+
+#+BEGIN_SRC emacs-lisp
+  ;; Set headlines to STRT when clocking in
+  (add-hook 'org-clock-in-hook (lambda() (org-todo "STRT")))
+  ;; (setq org-agenda-diary-file "/home/guerry/org/rdv.org")
+  (setq org-agenda-dim-blocked-tasks nil)
+  (setq org-log-into-drawer "LOGBOOK")
+  (setq org-agenda-entry-text-maxlines 10)
+  (setq org-timer-default-timer 25)
+  (setq org-agenda-files (org-file-path '("agenda.org" "gtd.org")))
+  (setq org-agenda-prefix-format
+        '((agenda . " %i %-12:c%?-14t%s")
+          (timeline . "  % s")
+          (todo . " %i %-14:c")
+          (tags . " %i %-14:c")
+          (search . " %i %-14:c")))
+  (setq org-agenda-remove-tags t)
+  (setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-show-inherited-tags nil)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-skip-timestamp-if-done t)
+  (setq org-agenda-sorting-strategy
+        '((agenda time-up) (todo time-up) (tags time-up) (search time-up)))
+  (setq org-agenda-tags-todo-honor-ignore-options t)
+  (setq org-agenda-use-tag-inheritance nil)
+  (setq org-agenda-window-frame-fractions '(0.0 . 0.5))
+  (setq org-agenda-deadline-faces
+        '((1.0001 . org-warning)              ; due yesterday or before
+          (0.0    . org-upcoming-deadline)))  ; due today or later
+#+END_SRC
+
+** Edit
+
+ob-async enables asynchronous execution of org-babel src blocks, using :async
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ob-async
+    :config
+    (require 'org))
+#+END_SRC
+
+Programming languages support
 
 #+BEGIN_SRC emacs-lisp
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
-     (ruby . t)
+     (shell . t)
+     (org . t)
+     (scheme . t)
+     (python . t)
      (dot . t)
      (gnuplot . t)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-babel-default-header-args
+    '((:session . "none")
+      (:results . "replace")
+      (:exports . "code")
+      (:cache . "no")
+      (:noweb . "yes")
+      (:hlines . "no")
+      (:tangle . "no")
+      (:padnewline . "yes")))
 #+END_SRC
 
 Don't ask before evaluating code blocks.
@@ -1379,64 +1571,45 @@ Associate the "dot" language with the =graphviz-dot= major mode.
   (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
 #+END_SRC
 
-Translate regular ol' straight quotes to typographically-correct curly quotes
-when exporting.
+Quickly insert a block of elisp:
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-export-with-smart-quotes t)
+  (add-to-list 'org-structure-template-alist
+               '("el" . "src emacs-lisp"))
 #+END_SRC
 
-**** Exporting to HTML
-
-Don't include a footer with my contact and publishing information at the bottom
-of every exported HTML document.
+Enable spell-checking in Org-mode.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-html-postamble nil)
+  (add-hook 'org-mode-hook 'flyspell-mode)
 #+END_SRC
 
-Exporting to HTML and opening the results triggers =/usr/bin/sensible-browser=,
-which checks the =$BROWSER= environment variable to choose the right browser.
-I'd like to always use Firefox, so:
+Hook to update all blocks before saving
 
 #+BEGIN_SRC emacs-lisp
-  (setenv "BROWSER" "safari")
+  (add-hook 'org-mode-hook
+        (lambda() (add-hook 'before-save-hook
+                'org-update-all-dblocks t t)))
+  (setq org-insert-heading-respect-content t)
+  (setq org-id-method 'uuidgen)
+  (setq org-id-uuid-program "uuidgen")
+  (setq org-use-speed-commands
+    (lambda nil
+      (and (looking-at org-outline-regexp-bol)
+           (not (org-in-src-block-p t)))))
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+  (setq org-link-display-descriptive nil)
+  (setq org-loop-over-headlines-in-active-region t)
+  ;; (setq org-create-formula-image-program 'dvipng) ;; imagemagick
+  (setq org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
+  (setq org-fontify-whole-heading-line t)
+  (setq org-global-properties '(("Effort_ALL" . "0:10 0:30 1:00 2:00 3:30 7:00")))
+  (setq org-confirm-elisp-link-function nil)
+  (setq org-confirm-shell-link-function nil)
 #+END_SRC
 
-**** Exporting to PDF
-
-I want to produce PDFs with syntax highlighting in the code. The best way to do
-that seems to be with the =minted= package, but that package shells out to
-=pygments= to do the actual work. =pdflatex= usually disallows shell commands;
-this enables that.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-latex-pdf-process
-        '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-#+END_SRC
-
-Include the =minted= package in all of my LaTeX exports.
-
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'org-latex-packages-alist '("" "minted"))
-  (setq org-latex-listings 'minted)
-#+END_SRC
-
-**** COMMENT Exporting projects
-
-I have a few Org project definitions that I maintain in a separate elisp file.
-
-#+BEGIN_SRC emacs-lisp
-  (load-file ".emacs.d/projects.el")
-#+END_SRC
-
-** TODO TeX configuration
-
-I rarely write LaTeX directly any more, but I often export through it with
-org-mode, so I'm keeping them together.
-
+*** LaTex
 Automatically parse the file after loading it.
 
 #+BEGIN_SRC emacs-lisp
@@ -1470,26 +1643,142 @@ I'm usually actually in an org document.
               (setq TeX-master t)))
 #+END_SRC
 
-** org-mode programming
+** Exporting
 
-ob-async enables asynchronous execution of org-babel src blocks, using :async
+Translate regular ol' straight quotes to typographically-correct curly quotes
+when exporting.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ob-async
-    :config
-    (require 'org))
+  (setq org-export-with-smart-quotes t)
+  (setq org-export-default-language "en")
+  (setq org-export-backends '(latex odt icalendar html ascii))
+  (setq org-export-with-archived-trees nil)
+  (setq org-export-with-drawers '("HIDE"))
+  (setq org-export-with-sub-superscripts nil)
+  (setq org-export-with-tags 'not-in-toc)
+  (setq org-export-with-timestamps t)
+  (setq org-export-with-toc nil)
+  (setq org-export-with-priority t)
+  (setq org-export-dispatch-use-expert-ui t)
+  (setq org-export-babel-evaluate t)
+  (setq org-export-allow-bind-keywords t)
+  (setq org-publish-list-skipped-files nil)
+  (setq org-fast-tag-selection-single-key 'expert)
+  (setq org-fontify-done-headline t)
+  (setq org-footnote-auto-label 'confirm)
+  (setq org-footnote-auto-adjust t)
+  (setq org-hide-emphasis-markers t)
+  (setq org-hide-macro-markers t)
+  (setq org-icalendar-include-todo 'all)
+  (setq org-link-frame-setup '((gnus . gnus) (file . find-file-other-window)))
+  (setq org-log-note-headings
+    '((done . "CLOSING NOTE %t") (state . "State %-12s %t") (clock-out . "")))
+  (setq org-footnote-section "Notes")
+  (setq org-attach-directory "~/.Org/data/")
+  (setq org-link-display-descriptive nil)
+  (setq org-export-filter-planning-functions
+        '(MatttLu/org-html-export-planning))
+  (setq org-export-with-broken-links t)
+#+END_SRC
+
+*** Exporting to HTML
+
+Don't include a footer with my contact and publishing information at the bottom
+of every exported HTML document.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-html-head "")
+  (setq org-html-head-include-default-style nil)
+  (setq org-html-postamble nil)
+  (setq org-html-table-row-tags
+	(cons '(cond (top-row-p "<tr class=\"tr-top\">")
+		     (bottom-row-p "<tr class=\"tr-bottom\">")
+		     (t (if (= (mod row-number 2) 1)
+			    "<tr class=\"tr-odd\">"
+			  "<tr class=\"tr-even\">")))
+	      "</tr>"))
+  (setq org-gnus-prefer-web-links nil)
+  (setq org-html-head-include-default-style nil)
+  (setq org-html-head-include-scripts nil)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (shell . t)
-     (org . t)
-     (scheme . t)
-     (python . t)))
+  (defun MattLu/org-html-export-planning (planning-string backend info)
+    (when (string-match "<p>.+><\\([0-9]+-[0-9]+-[0-9]+\\)[^>]+><.+</p>" planning-string)
+      (concat "<span class=\"planning\">" (match-string 1 planning-string) "</span>")))
 #+END_SRC
 
+Exporting to HTML and opening the results triggers =/usr/bin/sensible-browser=,
+which checks the =$BROWSER= environment variable to choose the right browser.
+I'd like to always use Firefox, so:
+
+#+BEGIN_SRC emacs-lisp
+  (setenv "BROWSER" "safari")
+#+END_SRC
+
+*** Exporting to PDF
+
+I want to produce PDFs with syntax highlighting in the code. The best way to do
+that seems to be with the =minted= package, but that package shells out to
+=pygments= to do the actual work. =pdflatex= usually disallows shell commands;
+this enables that.
+
+#+BEGIN_SRC emcs-lisp
+  (setq org-latex-listings t)
+  (add-to-list 'org-latex-classes
+	       '("my-letter"
+		 "\\documentclass\{scrlttr2\}
+	      \\usepackage[english,frenchb]{babel}
+	      \[NO-DEFAULT-PACKAGES]
+	      \[NO-PACKAGES]
+	      \[EXTRA]"))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-pdf-process
+        '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+#+END_SRC
+
+Include the =minted= package in all of my LaTeX exports.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (setq org-latex-listings 'minted)
+#+END_SRC
+
+** org-caldav
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-caldav)
+
+  (defun MattLu/caldav-sync-perso ()
+    (interactive)
+    (let ((org-caldav-inbox (org-file-path "rdv.org"))
+          (org-caldav-calendar-id "personnel")
+          (org-caldav-url "Google")
+          (org-caldav-files nil))
+      (call-interactively 'org-caldav-sync)))
+
+  (defun MattLu/caldav-sync-etalab-perso ()
+    (interactive)
+    (let ((org-caldav-inbox "~/.Org/rdv-etalab.org")
+          (org-caldav-calendar-id "personal")
+          (org-caldav-url "Outlook")
+          (org-caldav-files nil))
+      (call-interactively 'org-caldav-sync)))
+
+  (defun MattLu/etalab-caldav-sync ()
+    (interactive)
+    (MattLu/caldav-sync-etalab-perso))
+
+  (defun bzg-caldav-sync-all ()
+    (interactive)
+    (MattLu/etalab-caldav-sync)
+    (MattLu/caldav-sync-perso))
+#+END_SRC
 * Writing thesis
 
  Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
@@ -1797,6 +2086,7 @@ at the correct indentation for Python).
     ("C-c k" . 'counsel-ag)
     ("C-c f" . 'counsel-recentf)
     ("C-c b" . 'counsel-bookmark)
+    ("C-x C-b" . 'ivy-switch-buffer)
     :custom
     ;; disable ivy-thing-at-point which call ffap-file-at-point and comint-output-filter
     ;; (counsel-describe-function-preselect 'ivy-function-called-at-point)
