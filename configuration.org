@@ -1087,13 +1087,13 @@ use company instead of ivy which would invoke minibuffer
     (rst-level-6 ((t (:background "grey50")))))
 #+END_SRC
 
-* Org-mode
+* Org
 
 Including org-tempo restores the <s-style easy-templates that were deprecated in Org 9.2.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :ensure org-plus-contrib
+    :requires (org-plus-contrib)
     :config
     (put 'narrow-to-region 'disabled nil)
     (setq org-modules (remove-duplicates
@@ -1128,7 +1128,7 @@ I like seeing a little downward-pointing arrow instead of the usual ellipsis
 
 #+BEGIN_SRC emacs-lisp
   (setq org-ellipsis " …")
-  (set-face-foreground 'org-ellipsis  "color-50")
+  (set-face-foreground 'org-ellipsis  "color-46")
 #+END_SRC
 
 Use syntax highlighting in source blocks while editing.
@@ -1269,10 +1269,7 @@ of an index file (my main todo list), and archive finished tasks in
           (mapcar fun filename)
         (eval (list fun filename)))))
 
-  (setq org-agenda-diary-file (org-file-path '("rdv.org" "gtd.org" "inbox.org")))
   (setq org-gtd-file (org-file-path "gtd.org"))
-  (setq org-archive-location
-        (concat (org-file-path "archive.org") "::* From %s"))
   (setq org-default-notes-file (org-file-path "note.org"))
   (setq org-scheduled-past-days 100)
   (setq org-stuck-projects '("+LEVEL=1" ("NEXT" "TODO" "DONE")))
@@ -1303,17 +1300,52 @@ of an index file (my main todo list), and archive finished tasks in
   (setq org-deadline-warning-days 7)
 #+END_SRC
 
+*** Agenda
+
+#+BEGIN_SRC emacs-lisp
+  ;; Set headlines to STRT when clocking in
+  (add-hook 'org-clock-in-hook (lambda() (org-todo "STRT")))
+  ;; (setq org-agenda-diary-file "/home/guerry/org/rdv.org")
+  (setq org-agenda-dim-blocked-tasks nil)
+  (setq org-log-into-drawer "LOGBOOK")
+  (setq org-agenda-entry-text-maxlines 10)
+  (setq org-timer-default-timer 25)
+  (setq org-agenda-diary-file (org-file-path '("rdv.org" "gtd.org" "inbox.org")))
+  (setq org-agenda-files (org-file-path '("inbox.org" "gtd.org" "tickler.org")))
+  (setq org-agenda-prefix-format
+        '((agenda . " %i %-12:c%?-14t%s")
+          (timeline . "  % s")
+          (todo . " %i %-14:c")
+          (tags . " %i %-14:c")
+          (search . " %i %-14:c")))
+  (setq org-agenda-remove-tags t)
+  (setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-show-inherited-tags nil)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-skip-timestamp-if-done t)
+  (setq org-agenda-sorting-strategy
+        '((agenda time-up) (todo time-up) (tags time-up) (search time-up)))
+  (setq org-agenda-tags-todo-honor-ignore-options t)
+  (setq org-agenda-use-tag-inheritance nil)
+  (setq org-agenda-window-frame-fractions '(0.0 . 0.5))
+  (setq org-agenda-deadline-faces
+        '((1.0001 . org-warning)              ; due yesterday or before
+          (0.0    . org-upcoming-deadline)))  ; due today or later
+#+END_SRC
+
 *** Capturing
 
 Define a few common tasks as capture templates. Specifically
 
 #+BEGIN_SRC emacs-lisp
   (setq org-capture-templates
-        '(("C" "Misc" entry (file "~/.Org/inbox.org")
+        '(("C" "Misc [inbox]" entry (file "~/.Org/inbox.org")
            "* TODO %a\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n"
            :prepend t :immediate-finish t)
 
-          ("c" "Misc (edit)" entry (file "~/.Org/inbox.org")
+          ("c" "Misc [inbox] (edit)" entry (file "~/.Org/inbox.org")
            "* TODO %?\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a" :prepend t)
 
           ("r" "RDV Perso" entry (file+headline "~/.Org/rdv.org" "RDV Perso")
@@ -1322,14 +1354,8 @@ Define a few common tasks as capture templates. Specifically
           ("R" "RDV Etalab" entry (file+headline "~/.Org/rdv-etalab.org" "RDV Etalab")
            "* RDV avec %:fromname %?\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a" :prepend t)
 
-          ("e" "Etalab" entry (file+headline "~/.Org/bzg.org" "Etalab : impulser dynamique LL via la DINSIC")
-           "* TODO %?\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a\n\n%i" :prepend t)
-
-          ("g" "Garden" entry (file+headline "~/.Org/libre.org" "Garden")
-           "* TODO %?\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a\n\n%i" :prepend t)
-
-          ("o" "Org" entry (file+headline "~/.Org/bzg.org" "Org-mode : passer la maintenance fin 2019")
-           "* TODO %? :Code:\n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a\n\n%i" :prepend t)))
+          ("t" "Tickler" entry (file+headline "~/.Org/tickler.org" "Tickler")
+           "* %i%? \n  :PROPERTIES:\n  :CAPTURED: %U\n  :END:\n\n- %a\n\n%i" :prepend t)))
 
   (setq org-capture-templates-contexts
         '(("r" ((in-mode . "gnus-summary-mode")
@@ -1345,8 +1371,9 @@ Define a few common tasks as capture templates. Specifically
 set org-refile level deep to max 6
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))
-                             ((org-file-path "libre.org") . (:maxlevel . 1))))
+  (setq org-refile-targets '((("~/.Org/gtd.org") . (:maxlevel . 3))
+                             (("~/.Org/someday.org") . (:maxlevel . 1))
+                             (("~/.Org/tickler.org") . (:maxlevel . 2))))
 
   (setq org-refile-use-outline-path t)
   (setq org-refile-allow-creating-parent-nodes t)
@@ -1355,11 +1382,13 @@ set org-refile level deep to max 6
   (setq org-archive-default-command 'org-archive-to-archive-sibling)
 #+END_SRC
 
-
 Hitting =C-c C-x C-s= will mark a todo as done and move it to an appropriate
 place in the archive.
 
 #+BEGIN_SRC emacs-lisp
+  (setq org-archive-location
+        (concat (org-file-path "archive.org") "::datetree/"))
+
   (defun MattLu/mark-done-and-archive ()
     "Mark the state of an org-mode item as DONE and archive it."
     (interactive)
@@ -1428,7 +1457,7 @@ using priority to organize my life
 
           ("n" . "What's next?")
           ("nn" "Etalab NEXT" tags-todo "TODO={STRT\\|NEXT}"
-           ((org-agenda-files (org-file-path '("gtd.org" "matt.org")))
+           ((org-agenda-files '(org-file-path "gtd.org"))
             (org-agenda-sorting-strategy
              '(todo-state-up time-up priority-down))))
           ("nN" "Libre NEXT" tags-todo "TODO={STRT\\|NEXT}"
@@ -1488,40 +1517,6 @@ using priority to organize my life
            ((org-agenda-files '(org-file-path "libre.org"))))
           ))
    #+END_SRC
-
-*** Agenda
-
-#+BEGIN_SRC emacs-lisp
-  ;; Set headlines to STRT when clocking in
-  (add-hook 'org-clock-in-hook (lambda() (org-todo "STRT")))
-  ;; (setq org-agenda-diary-file "/home/guerry/org/rdv.org")
-  (setq org-agenda-dim-blocked-tasks nil)
-  (setq org-log-into-drawer "LOGBOOK")
-  (setq org-agenda-entry-text-maxlines 10)
-  (setq org-timer-default-timer 25)
-  (setq org-agenda-files (org-file-path '("agenda.org" "gtd.org")))
-  (setq org-agenda-prefix-format
-        '((agenda . " %i %-12:c%?-14t%s")
-          (timeline . "  % s")
-          (todo . " %i %-14:c")
-          (tags . " %i %-14:c")
-          (search . " %i %-14:c")))
-  (setq org-agenda-remove-tags t)
-  (setq org-agenda-restore-windows-after-quit t)
-  (setq org-agenda-show-inherited-tags nil)
-  (setq org-agenda-skip-deadline-if-done t)
-  (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
-  (setq org-agenda-skip-scheduled-if-done t)
-  (setq org-agenda-skip-timestamp-if-done t)
-  (setq org-agenda-sorting-strategy
-        '((agenda time-up) (todo time-up) (tags time-up) (search time-up)))
-  (setq org-agenda-tags-todo-honor-ignore-options t)
-  (setq org-agenda-use-tag-inheritance nil)
-  (setq org-agenda-window-frame-fractions '(0.0 . 0.5))
-  (setq org-agenda-deadline-faces
-        '((1.0001 . org-warning)              ; due yesterday or before
-          (0.0    . org-upcoming-deadline)))  ; due today or later
-#+END_SRC
 
 ** Edit
 
