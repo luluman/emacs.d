@@ -1435,9 +1435,13 @@ using priority to organize my life
 
           ("#" . "Week review.")
           ("#w" "Review DONE/CANCELED/DELEGATED"
-           todo "DONE|CANCELED|DELEGATED"
+           agenda ""
            ((org-agenda-span 'week)
+            (org-agenda-start-on-weekday 0)
+            (org-agenda-start-with-log-mode '(closed state clock))
             (org-agenda-files (org-file-path '("gtd.org")))
+            (org-agenda-skip-function
+                 '(org-agenda-skip-entry-if 'nottodo 'done))
             (org-agenda-sorting-strategy '(timestamp-up))))
           ("#W" "Report DONE/CANCELED/DELEGATED"
            agenda ""
