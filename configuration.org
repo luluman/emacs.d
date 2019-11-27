@@ -1240,7 +1240,7 @@ Set headlines to STRT and clock-in when running a countdown
 *** COMMENT icalendar
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-combined-agenda-icalendar-file "~/org/matt.ics")
+  (setq org-combined-agenda-icalendar-file "~/.Org/matt.ics")
   (setq org-icalendar-combined-name "MattLu ORG")
   (setq org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
   (setq org-icalendar-use-deadline '(todo-due event-if-todo event-if-not-todo))
@@ -1258,6 +1258,7 @@ of an index file (my main todo list), and archive finished tasks in
   (use-package org-pomodoro)
 #+END_SRC
 
+*** Keywords
 #+BEGIN_SRC emacs-lisp
   (setq org-directory "~/.Org")
 
@@ -1285,7 +1286,7 @@ of an index file (my main todo list), and archive finished tasks in
           (:grouptags)
           ("Read" . ?r) ("View" . ?v) ("Listen" . ?l)
           (:endgroup)
-          ("Mail" . ?@) ("Print" . ?P) ("Buy" . ?b)))
+          ("Mail" . ?@) ("Search" . ?s) ("Buy" . ?b)))
   (setq org-tags-column -74)
   (setq org-todo-keywords '((type "TODO" "STRT" "NEXT" "WAIT" "|" "DONE" "DELEGATED" "CANCELED")))
   (setq org-todo-repeat-to-state t)
@@ -1298,41 +1299,6 @@ of an index file (my main todo list), and archive finished tasks in
           ("CANCELED" . (:foreground "#889699"))))
   (setq org-enforce-todo-dependencies t)
   (setq org-deadline-warning-days 7)
-#+END_SRC
-
-*** Agenda
-
-#+BEGIN_SRC emacs-lisp
-  ;; Set headlines to STRT when clocking in
-  (add-hook 'org-clock-in-hook (lambda() (org-todo "STRT")))
-  ;; (setq org-agenda-diary-file "/home/guerry/org/rdv.org")
-  (setq org-agenda-dim-blocked-tasks nil)
-  (setq org-log-into-drawer "LOGBOOK")
-  (setq org-agenda-entry-text-maxlines 10)
-  (setq org-timer-default-timer 25)
-  (setq org-agenda-diary-file (org-file-path '("rdv.org" "gtd.org" "inbox.org")))
-  (setq org-agenda-files (org-file-path '("inbox.org" "gtd.org" "tickler.org")))
-  (setq org-agenda-prefix-format
-        '((agenda . " %i %-12:c%?-14t%s")
-          (timeline . "  % s")
-          (todo . " %i %-14:c")
-          (tags . " %i %-14:c")
-          (search . " %i %-14:c")))
-  (setq org-agenda-remove-tags t)
-  (setq org-agenda-restore-windows-after-quit t)
-  (setq org-agenda-show-inherited-tags nil)
-  (setq org-agenda-skip-deadline-if-done t)
-  (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
-  (setq org-agenda-skip-scheduled-if-done t)
-  (setq org-agenda-skip-timestamp-if-done t)
-  (setq org-agenda-sorting-strategy
-        '((agenda time-up) (todo time-up) (tags time-up) (search time-up)))
-  (setq org-agenda-tags-todo-honor-ignore-options t)
-  (setq org-agenda-use-tag-inheritance nil)
-  (setq org-agenda-window-frame-fractions '(0.0 . 0.5))
-  (setq org-agenda-deadline-faces
-        '((1.0001 . org-warning)              ; due yesterday or before
-          (0.0    . org-upcoming-deadline)))  ; due today or later
 #+END_SRC
 
 *** Capturing
@@ -1379,7 +1345,7 @@ set org-refile level deep to max 6
   (setq org-refile-allow-creating-parent-nodes t)
   (setq org-refile-use-cache t)
   (setq org-reverse-note-order t)
-  (setq org-archive-default-command 'org-archive-to-archive-sibling)
+  ;; (setq org-archive-default-command 'org-archive-to-archive-sibling)
 #+END_SRC
 
 Hitting =C-c C-x C-s= will mark a todo as done and move it to an appropriate
@@ -1402,6 +1368,41 @@ Record the time that a todo was archived.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-log-done 'time)
+#+END_SRC
+
+*** Agenda
+
+#+BEGIN_SRC emacs-lisp
+  ;; Set headlines to STRT when clocking in
+  (add-hook 'org-clock-in-hook (lambda() (org-todo "STRT")))
+  ;; (setq org-agenda-diary-file "/home/guerry/org/rdv.org")
+  (setq org-agenda-dim-blocked-tasks nil)
+  (setq org-log-into-drawer "LOGBOOK")
+  (setq org-agenda-entry-text-maxlines 10)
+  (setq org-timer-default-timer 25)
+  (setq org-agenda-diary-file (org-file-path '("rdv.org" "gtd.org" "inbox.org")))
+  (setq org-agenda-files (org-file-path '("inbox.org" "gtd.org" "tickler.org")))
+  (setq org-agenda-prefix-format
+        '((agenda . " %i %-12:c%?-14t%s")
+          (timeline . "  % s")
+          (todo . " %i %-14:c")
+          (tags . " %i %-14:c")
+          (search . " %i %-14:c")))
+  (setq org-agenda-remove-tags t)
+  (setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-show-inherited-tags nil)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-skip-timestamp-if-done t)
+  (setq org-agenda-sorting-strategy
+        '((agenda time-up) (todo time-up) (tags time-up) (search time-up)))
+  (setq org-agenda-tags-todo-honor-ignore-options t)
+  (setq org-agenda-use-tag-inheritance nil)
+  (setq org-agenda-window-frame-fractions '(0.0 . 0.5))
+  (setq org-agenda-deadline-faces
+        '((1.0001 . org-warning)              ; due yesterday or before
+          (0.0    . org-upcoming-deadline)))  ; due today or later
 #+END_SRC
 
 *** Review
@@ -1431,15 +1432,27 @@ using priority to organize my life
             (org-agenda-sorting-strategy
              '(todo-state-up priority-down time-up))))
           ("@" tags-todo "+Mail+TODO={NEXT\\|STRT\\|WAIT}")
-          ("#" "DONE/CANCELED/DELEGATED"
+
+          ("#" . "Week review.")
+          ("#w" "Review DONE/CANCELED/DELEGATED"
            todo "DONE|CANCELED|DELEGATED"
-           ((org-agenda-files (org-file-path '("gtd.org" "rdv.org" "matt.org" "libre.org")))
+           ((org-agenda-span 'week)
+            (org-agenda-files (org-file-path '("gtd.org")))
+            (org-agenda-sorting-strategy '(timestamp-up))))
+          ("#W" "Report DONE/CANCELED/DELEGATED"
+           agenda ""
+           ((org-agenda-span 'week)
+            (org-agenda-start-on-weekday 0)
+            (org-agenda-start-with-log-mode '(closed state clock))
+            (org-agenda-files (org-file-path '("gtd.org" "archive.org")))
+            (org-agenda-skip-function
+                 '(org-agenda-skip-entry-if 'nottodo 'done))
             (org-agenda-sorting-strategy '(timestamp-up))))
 
           ("" . "Task and rendez-vous for today")
           ("" "Travail (tout)" agenda "Tasks and rdv for today"
            ((org-agenda-span 1)
-            (org-agenda-files (org-file-path '("gtd.org" "rdv.org" "matt.org")))
+            (org-agenda-files (org-file-path '("gtd.org" "matt.org")))
             (org-deadline-warning-days 3)
             (org-agenda-sorting-strategy
              '(todo-state-up time-up priority-down))))
@@ -1457,11 +1470,11 @@ using priority to organize my life
 
           ("n" . "What's next?")
           ("nn" "Etalab NEXT" tags-todo "TODO={STRT\\|NEXT}"
-           ((org-agenda-files '(org-file-path "gtd.org"))
+           ((org-agenda-files (org-file-path '("gtd.org")))
             (org-agenda-sorting-strategy
              '(todo-state-up time-up priority-down))))
           ("nN" "Libre NEXT" tags-todo "TODO={STRT\\|NEXT}"
-           ((org-agenda-files '(org-file-path "libre.org"))
+           ((org-agenda-files (org-file-path '("libre.org")))
             (org-agenda-sorting-strategy
              '(todo-state-up time-up priority-down))))
 
