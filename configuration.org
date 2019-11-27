@@ -206,7 +206,8 @@ Why not?
                         :background "turquoise" :foreground "black")
     (set-face-attribute 'highlight nil  ;; shallow blue
                         :inherit nil :background "#1a4b77" :foreground nil)
-    (set-face-foreground 'custom-variable-tag "brightblue"))
+    (set-face-foreground 'custom-variable-tag "brightblue")
+    (set-face-foreground 'org-ellipsis  "color-46"))
 #+END_SRC
 
 ***  COMMENT new package but some bugs have not be fixed
@@ -1128,7 +1129,6 @@ I like seeing a little downward-pointing arrow instead of the usual ellipsis
 
 #+BEGIN_SRC emacs-lisp
   (setq org-ellipsis " …")
-  (set-face-foreground 'org-ellipsis  "color-46")
 #+END_SRC
 
 Use syntax highlighting in source blocks while editing.
