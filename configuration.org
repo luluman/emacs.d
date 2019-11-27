@@ -1334,17 +1334,18 @@ Define a few common tasks as capture templates. Specifically
 
 *** Refine & Archive
 
-set org-refile level deep to max 6
+set org-refile level deep to max 3
 
 #+BEGIN_SRC emacs-lisp
   (setq org-refile-targets '((("~/.Org/gtd.org") . (:maxlevel . 3))
                              (("~/.Org/someday.org") . (:maxlevel . 1))
                              (("~/.Org/tickler.org") . (:maxlevel . 2))))
 
-  (setq org-refile-use-outline-path t)
-  (setq org-refile-allow-creating-parent-nodes t)
+  (setq org-refile-use-outline-path 'file)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-refile-use-cache t)
   (setq org-reverse-note-order t)
+  (setq org-outline-path-complete-in-steps t)
   ;; (setq org-archive-default-command 'org-archive-to-archive-sibling)
 #+END_SRC
 
