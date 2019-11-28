@@ -1345,7 +1345,7 @@ set org-refile level deep to max 3
   (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-refile-use-cache t)
   (setq org-reverse-note-order t)
-  (setq org-outline-path-complete-in-steps t)
+  (setq org-outline-path-complete-in-steps nil)
   ;; (setq org-archive-default-command 'org-archive-to-archive-sibling)
 #+END_SRC
 
@@ -1421,7 +1421,7 @@ using priority to organize my life
           ;; Week agenda for rendez-vous and tasks
           ("%" "Rendez-vous" agenda* "Week planning"
            ((org-agenda-span 'week)
-            (org-agenda-files '(org-file-path "rdv.org"))
+            (org-agenda-files (org-file-path '("rdv.org")))
             ;; (org-deadline-warning-days 3)
             (org-agenda-sorting-strategy
              '(todo-state-up time-up priority-down))))
@@ -1429,22 +1429,12 @@ using priority to organize my life
           ("!" tags-todo "+DEADLINE<=\"<+7d>\"")
           ("=" tags-todo "+SCHEDULED<=\"<now>\"")
           ("?" "WAIT (gtd)" tags-todo "TODO={WAIT}"
-           ((org-agenda-files '(org-file-path "gtd.org"))
+           ((org-agenda-files (org-file-path '("gtd.org")))
             (org-agenda-sorting-strategy
              '(todo-state-up priority-down time-up))))
           ("@" tags-todo "+Mail+TODO={NEXT\\|STRT\\|WAIT}")
 
-          ("#" . "Week review.")
-          ("#w" "Review DONE/CANCELED/DELEGATED"
-           agenda ""
-           ((org-agenda-span 'week)
-            (org-agenda-start-on-weekday 0)
-            (org-agenda-start-with-log-mode '(closed state clock))
-            (org-agenda-files (org-file-path '("gtd.org")))
-            (org-agenda-skip-function
-                 '(org-agenda-skip-entry-if 'nottodo 'done))
-            (org-agenda-sorting-strategy '(timestamp-up))))
-          ("#W" "Report DONE/CANCELED/DELEGATED"
+          ("w" "Report DONE/CANCELED/DELEGATED"
            agenda ""
            ((org-agenda-span 'week)
             (org-agenda-start-on-weekday 0)
@@ -1463,25 +1453,20 @@ using priority to organize my life
              '(todo-state-up time-up priority-down))))
           (" " "Libre (tout)" agenda "Tasks and rdv for today"
            ((org-agenda-span 1)
-            (org-agenda-files '(org-file-path "libre.org"))
+            (org-agenda-files (org-file-path '("libre.org")))
             (org-deadline-warning-days 3)
             (org-agenda-sorting-strategy
              '(todo-state-up priority-down time-up))))
           ("e" "Etalab TODO" tags-todo "TODO={STRT\\|NEXT\\|TODO}"
-           ((org-agenda-files '(org-file-path "bzg.org"))
+           ((org-agenda-files (org-file-path '("libre.org")))
             (org-agenda-category-filter-preset '("+ETL"))
             (org-agenda-sorting-strategy
              '(todo-state-up time-up priority-down))))
 
-          ("n" . "What's next?")
-          ("nn" "Etalab NEXT" tags-todo "TODO={STRT\\|NEXT}"
+          ("n" "NEXT action" tags-todo "TODO={NEXT\\|STRT}"
            ((org-agenda-files (org-file-path '("gtd.org")))
             (org-agenda-sorting-strategy
-             '(todo-state-up time-up priority-down))))
-          ("nN" "Libre NEXT" tags-todo "TODO={STRT\\|NEXT}"
-           ((org-agenda-files (org-file-path '("libre.org")))
-            (org-agenda-sorting-strategy
-             '(todo-state-up time-up priority-down))))
+             '(todo-state-down time-up priority-down))))
 
           ("x" . "Scheduled for today")
           ("xx" "Agenda work" agenda "Work scheduled for today"
@@ -1493,7 +1478,7 @@ using priority to organize my life
           ("xX" "Agenda libre" agenda "Libre scheduled for today"
            ((org-agenda-span 1)
             (org-deadline-warning-days 3)
-            (org-agenda-files '(org-file-path "libre.org"))
+            (org-agenda-files (org-file-path '("libre.org")))
             (org-agenda-entry-types '(:timestamp :scheduled))
             (org-agenda-sorting-strategy
              '(todo-state-up priority-down time-up))))
@@ -1508,7 +1493,7 @@ using priority to organize my life
           ("zZ" "Libre deadlines" agenda "Past/upcoming leisure deadlines"
            ((org-agenda-span 1)
             (org-deadline-warning-days 15)
-            (org-agenda-files '(org-file-path "libre.org"))
+            (org-agenda-files (org-file-path '("libre.org")))
             (org-agenda-entry-types '(:deadline))
             (org-agenda-sorting-strategy
              '(todo-state-up priority-down time-up))))
@@ -1520,21 +1505,21 @@ using priority to organize my life
           ("v" . "View")
           ("vv" tags-todo "+View+TODO={NEXT\\|STRT}")
           ("vV" tags-todo "+View+TODO={NEXT\\|STRT}"
-           ((org-agenda-files '(org-file-path "libre.org"))))
+           ((org-agenda-files (org-file-path '("libre.org")))))
           ("l" . "Listen")
           ("ll" tags-todo "+Listen+TODO={NEXT\\|STRT}")
           ("lL" tags-todo "+Listen+TODO={NEXT\\|STRT}"
-           ((org-agenda-files '(org-file-path "libre.org"))))
+           ((org-agenda-files (org-file-path '("libre.org")))))
           ("w" . "Write")
           ("ww" tags-todo "+Write+TODO={NEXT\\|STRT}")
           ("wW" tags-todo "+Write+TODO={NEXT\\|STRT}"
-           ((org-agenda-files '(org-file-path "libre.org"))))
+           ((org-agenda-files (org-file-path '("libre.org")))))
           ("c" . "Code")
           ("cc" tags-todo "+Code+TODO={NEXT\\|STRT}")
           ("cC" tags-todo "+Code+TODO={NEXT\\|STRT}"
-           ((org-agenda-files '(org-file-path "libre.org"))))
+           ((org-agenda-files (org-file-path '("libre.org")))))
           ))
-   #+END_SRC
+#+END_SRC
 
 ** Edit
 
