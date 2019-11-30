@@ -635,7 +635,7 @@ LSP client
                 ("C-c u" . eglot-format)
                 ("C-c h" . eglot-help-at-point))
     :config
-    ;; (setq eglot-stay-out-of '(company))
+    (setq eglot-stay-out-of '(company))
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
     (setq eglot-events-buffer-size 200)
     (setq eglot-autoreconnect 1)
@@ -1359,7 +1359,11 @@ place in the archive.
   (defun MattLu/mark-done-and-archive ()
     "Mark the state of an org-mode item as DONE and archive it."
     (interactive)
-    (org-todo 'done)
+    (let ((ts (org-get-todo-state)))
+      (when (not (or (equal ts "DONE")
+                     (equal ts "DELEGATED")
+                     (equal ts "CANCELLED")))
+        (org-todo 'done)))
     (org-archive-subtree))
 
   (define-key org-mode-map (kbd "C-c C-x C-s") 'MattLu/mark-done-and-archive)
@@ -1389,7 +1393,6 @@ Record the time that a todo was archived.
           (todo . " %i %-14:c")
           (tags . " %i %-14:c")
           (search . " %i %-14:c")))
-  (setq org-agenda-remove-tags t)
   (setq org-agenda-restore-windows-after-quit t)
   (setq org-agenda-show-inherited-tags nil)
   (setq org-agenda-skip-deadline-if-done t)
@@ -1747,7 +1750,7 @@ Include the =minted= package in all of my LaTeX exports.
   (setq org-latex-listings 'minted)
 #+END_SRC
 
-** org-caldav
+** COMMENT org-caldav
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-caldav)
@@ -2170,56 +2173,23 @@ results and =C-c C-c= to stop, just like in =dired=.
 
 ** Configure =wrap-region=
 
+warp selected region with punctuate.
+
 #+BEGIN_SRC emacs-lisp
   (use-package wrap-region
     :config
     (wrap-region-global-mode t)
-    (wrap-region-add-wrapper "/" "/" nil 'ruby-mode)
-    (wrap-region-add-wrapper "`" "`" nil '(markdown-mode ruby-mode)))
+    (wrap-region-add-wrappers
+     '(("$" "$")
+       ("/" "/" nil ruby-mode)
+       ("/* " " */" "#" (java-mode javascript-mode css-mode))
+       ("`" "`" nil (markdown-mode ruby-mode)))))
 #+END_SRC
 
 ** Use projectile everywhere
 
 #+BEGIN_SRC emacs-lisp
   (projectile-mode)
-#+END_SRC
-
-** Add a bunch of engines for =engine-mode=
-
-Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few useful engines.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package engine-mode)
-
-  (defengine duckduckgo
-    "https://duckduckgo.com/?q=%s"
-    :keybinding "d")
-
-  (defengine github
-    "https://github.com/search?ref=simplesearch&q=%s"
-    :keybinding "g")
-
-  (defengine google
-    "https://www.google.com/search?ie=utf-8&oe=utf-8&q=%s")
-
-  (defengine rfcs
-    "https://pretty-rfc.herokuapp.com/search?q=%s")
-
-  (defengine stack-overflow
-    "https://stackoverflow.com/search?q=%s"
-    :keybinding "s")
-
-  (defengine wikipedia
-    "https://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
-    :keybinding "w")
-
-  (defengine wiktionary
-    "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
-
-  (defengine youtube
-    "https://www.youtube.com/results?search_query=%s")
-
-  (engine-mode t)
 #+END_SRC
 
 ** Use multiple cursors
