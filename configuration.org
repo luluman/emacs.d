@@ -199,6 +199,8 @@ Why not?
                         :background "white" :foreground "black")
     (set-face-attribute 'font-lock-comment-face nil
                         :foreground "color-243")
+    (set-face-attribute 'font-lock-doc-face nil
+                        :foreground "color-243")
     (set-face-background 'region  "brightblack")
     (set-face-attribute 'vertical-border nil
                         :foreground "color-16" :background nil)
@@ -586,10 +588,20 @@ in comments.
           ispell-extra-args '("--sug-mode=ultra"))
     :hook
     ((prog-mode . flyspell-prog-mode)
-     (text-mode . flyspell-mode)))
+     (text-mode . flyspell-mode)
+     (org-mode . flyspell-mode)))
 #+END_SRC
 
-*** ycmd
+Use =smartparens=
+#+BEGIN_SRC emacs-lisp
+  (use-package smartparens
+    :config
+    (smartparens-global-mode 1)
+    :custom-face
+    (sp-pair-overlay-face ((t (:inherit region)))))
+#+END_SRC
+
+*** YCMD
 
 YouCompltedMe setup
 
@@ -624,7 +636,7 @@ YouCompltedMe setup
      (c-mode-common . MattLu/company-mode-c-mode-hook)))
 #+END_SRC
 
-*** eglot
+*** eglot LSP
 
 LSP client
 #+BEGIN_SRC emacs-lisp
@@ -761,15 +773,12 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
     (symbol-overlay-face-8 ((t (:background "turquoise")))))
 #+END_SRC
 
-** C++
+** COMMENT C++
 
-  Use =smartparens=
+use modern cpp font lock to get better semantic highlight
 #+BEGIN_SRC emacs-lisp
-  (use-package smartparens
-    :config
-    (smartparens-global-mode 1)
-    :custom-face
-    (sp-pair-overlay-face ((t (:inherit region)))))
+  (use-package modern-cpp-font-lock
+    :hook (c++-mode . modern-c++-font-lock-mode))
 #+END_SRC
 
 ** Coq
@@ -1577,12 +1586,6 @@ Quickly insert a block of elisp:
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'org-structure-template-alist
                '("el" . "src emacs-lisp"))
-#+END_SRC
-
-Enable spell-checking in Org-mode.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'org-mode-hook 'flyspell-mode)
 #+END_SRC
 
 Hook to update all blocks before saving
