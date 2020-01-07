@@ -201,6 +201,7 @@ Why not?
                         :foreground "color-243")
     (set-face-attribute 'font-lock-doc-face nil
                         :foreground "color-243")
+    (set-face-foreground 'org-drawer "color-243")
     (set-face-background 'region  "brightblack")
     (set-face-attribute 'vertical-border nil
                         :foreground "color-16" :background nil)
@@ -661,12 +662,35 @@ LSP client
      . eglot-ensure))
 #+END_SRC
 
-*** Jump
+#+BEGIN_SRC emacs-lisp
+  ;; (defun MattLu/eglot-helper (orig-fun &rest args)
+  ;;   (message "display-buffer called with args %S" args)
+  ;;   (let ((res (apply orig-fun args)))
+  ;;     (message "display-buffer returned %S" res)
+  ;;     res))
+
+  ;; (advice-add 'eglot--lsp-xref-helper :around #'MattLu/eglot-helper)
+#+END_SRC
+
+#+RESULTS:
+
+*** Tags
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ggtags
+    :hook
+    (c-mode-common . ggtags-mode))
+#+END_SRC
+
+*** Xref jump
 
 Use Ivy as the interface to select from xref candidates.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ivy-xref
+    :config
+    (bind-keys* ("M-." . xref-find-definitions))
+    (bind-keys* ("M-," . xref-pop-marker-stack))
     :init
     ;; xref initialization is different in Emacs 27 - there are two different
     ;; variables which can be set rather than just one
@@ -1369,7 +1393,7 @@ set org-refile level deep to max 3
 
   (setq org-refile-use-outline-path 'file)
   (setq org-refile-allow-creating-parent-nodes 'confirm)
-  (setq org-refile-use-cache t)
+  (setq org-refile-use-cache nil)
   (setq org-reverse-note-order t)
   (setq org-outline-path-complete-in-steps nil)
   ;; (setq org-archive-default-command 'org-archive-to-archive-sibling)
@@ -1403,11 +1427,16 @@ Record the time that a todo was archived.
 
 auto save org file
 #+BEGIN_SRC emacs-lisp
-  (advice-add 'org-archive-default-command :after 'org-save-all-org-buffers)
+  (advice-add 'org-archive-subtree :after 'org-save-all-org-buffers)
   (advice-add 'org-agenda-quit :before 'org-save-all-org-buffers)
 #+END_SRC
 
 *** Agenda
+
+#+begin_src emacs-lisp
+  (use-package org-super-agenda)
+#+end_src
+
 
 #+BEGIN_SRC emacs-lisp
   ;; Set headlines to STRT when clocking in
@@ -1418,7 +1447,7 @@ auto save org file
   (setq org-agenda-entry-text-maxlines 10)
   (setq org-timer-default-timer 25)
   (setq org-agenda-diary-file (org-file-path '("rdv.org" "gtd.org" "inbox.org")))
-  (setq org-agenda-files (org-file-path '("inbox.org" "gtd.org" "tickler.org")))
+  (setq org-agenda-files (org-file-path '("inbox.org" "gtd.org" "tickler.org" "someday.org")))
   (setq org-agenda-prefix-format
         '((agenda . " %i %-12:c%?-14t%s")
           (timeline . "  % s")
@@ -2313,6 +2342,15 @@ Use ace-jump-mode to quick jump to words or char
     (setq wg-workgroups-mode-exit-save-behavior "none")
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
     (workgroups-mode 1))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; (setq desktop-restore-forces-onscreen nil)
+  ;; (desktop-save-mode)
+  ;; (add-hook 'server-after-make-frame-hook 'desktop-read)
+  ;; (bind-keys*
+  ;;  ("M-s" . select-frame-by-name)
+  ;;  ("C-c n" . set-frame-name))
 #+END_SRC
 
 ** Handle layer file
