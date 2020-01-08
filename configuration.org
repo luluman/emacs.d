@@ -2094,8 +2094,8 @@ enabled.
 
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
-    :init
-    (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+    :config
+    (use-package yasnippet-snippets)
     (yas-global-mode 1))
 #+END_SRC
 
