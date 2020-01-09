@@ -730,6 +730,7 @@ project root (if I'm not in a "real" project).
     :bind-keymap
     ("C-c p" . projectile-command-map)
     :config
+    (add-to-list 'projectile-project-root-files-bottom-up "compile_commands.json")
     (setq projectile-completion-system 'ivy)
     (setq projectile-sort-order 'recently-active)
     (setq projectile-switch-project-action 'projectile-dired)
@@ -2124,6 +2125,8 @@ at the correct indentation for Python).
     (setf (alist-get 't ivy-format-functions-alist)
           'ivy-format-function-line)
     :custom-face
+    (ivy-current-match
+     ((t (:foreground "white" :background "#1a4b77"))))
     (isearch ((t (:background "brightcyan" :foreground "color-16"))))
     (ivy-minibuffer-match-face-1
      ((t (:background "green" :foreground "black"))))
