@@ -1177,8 +1177,20 @@ I’d like the initial scratch buffer to be in Org:
 I like to see an outline of pretty bullets instead of a list of asterisks.
 
 #+BEGIN_SRC emacs-lisp
+  (defun MattLu/change-cdr-value (in-list key value)
+    (when (consp in-list)
+      (if (eq (car in-list) key)
+          (setcdr in-list value)
+        (progn
+          (MattLu/change-cdr-value (car in-list) key value)
+          (MattLu/change-cdr-value (cdr in-list) key value))
+        )))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
   (use-package org-bullets
-    :init
+    :config
+    (MattLu/change-cdr-value org-bullets--keywords :foreground '("black"))
     (add-hook 'org-mode-hook 'org-bullets-mode))
 #+END_SRC
 
