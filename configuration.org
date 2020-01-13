@@ -981,7 +981,7 @@ I'd like to start in the insert state when writing a commit message.
     (setq git-commit-summary-max-length 50)
     (setq magit-refresh-status-buffer nil)
     (setq auto-revert-buffer-list-filter
-        'magit-auto-revert-repository-buffers-p)
+          'magit-auto-revert-repository-buffers-p)
     (setq magit-diff-refine-hunk nil)
     (setq magit-highlight-indentation nil)
     (setq magit-highlight-trailing-whitespace nil)
@@ -994,6 +994,11 @@ I'd like to start in the insert state when writing a commit message.
     (magit-diff-file-heading-selection ((t (:background "brightblack" :foreground "color-202"))))
     (magit-section-heading-selection ((t (:foreground "turquoise")))))
 #+END_SRC
+
+#+begin_src emacs-lisp
+  (use-package magit-lfs
+    :after (magit))
+#+end_src
 
 ** Python
 
