@@ -725,6 +725,8 @@ project root (if I'm not in a "real" project).
 
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
+    :init
+    (use-package ag)
     :bind
     ("C-c v" . projectile-ag)
     :bind-keymap
@@ -737,8 +739,7 @@ project root (if I'm not in a "real" project).
     (setq projectile-require-project-root nil)
     (setq projectile-mode-line-prefix "P")
     (setq projectile-mode-line-function
-          '(lambda () (format "[%s]" (projectile-project-name))))
-    :ensure ag)
+          '(lambda () (format "[%s]" (projectile-project-name)))))
 #+END_SRC
 
 ** Terminal
@@ -1152,7 +1153,7 @@ Including org-tempo restores the <s-style easy-templates that were deprecated in
 
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :requires (org-plus-contrib)
+    :requires org-plus-contrib
     :config
     (put 'narrow-to-region 'disabled nil)
     (setq org-modules (remove-duplicates
@@ -2149,7 +2150,7 @@ at the correct indentation for Python).
     (ivy-minibuffer-match-face-4
      ((t (:background "#ffbbff" :foreground "black" :weight bold))))
     (ivy-remote ((t (:foreground "color-202"))))
-    :ensure flx)
+    :requires flx)
 #+END_SRC
 
    counsel configuration (counsel package replay on swiper)
