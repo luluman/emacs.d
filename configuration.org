@@ -794,10 +794,21 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
       (end-of-line)
       (hs-toggle-hiding)))
 
+  (defun MattLu/display-code-line-counts (ov)
+    (when (eq 'code (overlay-get ov 'hs))
+      (overlay-put ov 'display
+                   (propertize
+                    (format " … <%d>"
+                            (count-lines (overlay-start ov)
+                                         (overlay-end ov)))
+                    'face '(:background "#ff0066" :foreground "color-16")))))
+
   (use-package hideshow
     :hook (c-mode-common . hs-minor-mode)
     :bind (:map hs-minor-mode-map
-                ("C-c m" . toggle-fold)))
+                ("C-c m" . toggle-fold))
+    :config
+    (setq hs-set-up-overlay 'MattLu/display-code-line-counts))
 #+END_SRC
 
 ** Highlight variables
