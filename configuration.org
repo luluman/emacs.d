@@ -788,12 +788,6 @@ I add a bunch of hooks to =term-mode=:
 
 Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
 #+BEGIN_SRC emacs-lisp
-  (defun toggle-fold ()
-    (interactive)
-    (save-excursion
-      (end-of-line)
-      (hs-toggle-hiding)))
-
   (defun MattLu/display-code-line-counts (ov)
     (when (eq 'code (overlay-get ov 'hs))
       (overlay-put ov 'display
@@ -804,9 +798,9 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
                     'face '(:background "#ff0066" :foreground "color-16")))))
 
   (use-package hideshow
-    :hook (c-mode-common . hs-minor-mode)
+    :hook (prog-mode . hs-minor-mode)
     :bind (:map hs-minor-mode-map
-                ("C-c m" . toggle-fold))
+                ("C-c m" . hs-toggle-hiding))
     :config
     (setq hs-set-up-overlay 'MattLu/display-code-line-counts))
 #+END_SRC
@@ -942,7 +936,7 @@ documentation.
   (use-package eldoc
     :config
     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-    (setq eldoc-idle-delay 1))
+    (setq eldoc-idle-delay 2))
 #+END_SRC
 
 I also like using flycheck-package to ensure that my Elisp packages are correctly formatted.
@@ -997,6 +991,7 @@ I'd like to start in the insert state when writing a commit message.
     (setq magit-highlight-indentation nil)
     (setq magit-highlight-trailing-whitespace nil)
     (setq magit-highlight-whitespace nil)
+    (setq magit-revision-insert-related-refs nil)
     (setq magit-use-overlays t)
     (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
     :custom-face
