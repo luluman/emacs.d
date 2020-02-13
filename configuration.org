@@ -1167,7 +1167,9 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 
    add Google protocol buffer support
 #+BEGIN_SRC emacs-lisp
-  (use-package protobuf-mode)
+  (use-package protobuf-mode
+    :config
+    (add-to-list 'auto-mode-alist '("\\.prototxt\\'" . protobuf-mode)))
 #+END_SRC
 
 ** imenu-list
