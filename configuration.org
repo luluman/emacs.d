@@ -308,22 +308,6 @@ frame is themed appropriately.
     (powerline-inactive2 ((t (:background "brightblack" :foreground "white")))))
 #+end_SRC
 
-** better flymake
-
-#+BEGIN_SRC emacs-lisp
-  (use-package flymake
-    :bind (:map flymake-mode-map
-                ("C-c [" . flymake-goto-prev-error)
-                ("C-c ]" . flymake-goto-next-error))
-    :config
-    (defun flymake--transform-mode-line-format (ret)
-      "Change the output of `flymake--mode-line-format'."
-      (setf (seq-elt (car ret) 1) " Φ")
-      ret)
-    (advice-add #'flymake--mode-line-format
-                :filter-return #'flymake--transform-mode-line-format))
-#+END_SRC
-
 ** Scroll conservatively
 
 When point goes outside the window, Emacs usually recenters the buffer point.
@@ -489,10 +473,25 @@ programming.
     (symon-mode))
 #+END_SRC
 
-* Programming customization
-** Use =company-mode= everywhere
+* Project management
 
-#+BEGIN_SRC emacs-lisp
+I use a few packages in virtually every programming or writing environment to
+manage the project, handle auto-completion, search for terms, and deal with
+version control. That's all in here.
+
+** =ripgrep=
+
+Install and configure [[https://github.com/Wilfred/deadgrep][deadgrep]] as an interface to =ripgrep=.
+
+#+begin_src emacs-lisp
+  (use-package deadgrep)
+#+end_src
+
+** =company-mode=
+
+Use =company-mode= everywhere.
+
+#+begin_src emacs-lisp
   (use-package company
     :config
     (add-hook 'after-init-hook 'global-company-mode)
@@ -532,17 +531,17 @@ programming.
      ((t (:foreground "brightyellow" :weight bold))))
     (company-template-field
      ((t (:background "cyan" :foreground "black")))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (use-package company-statistics
     :config
     (add-hook 'after-init-hook 'company-statistics-mode))
-#+END_SRC
+#+end_src
 
 Set TAB for complete cycle
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (eval-after-load 'company
     '(progn
        (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
@@ -552,15 +551,169 @@ Set TAB for complete cycle
        (define-key company-active-map (kbd "C-p") 'company-select-previous)
        (define-key company-active-map (kbd "C-v") 'company-next-page)
        (define-key company-active-map (kbd "M-v") 'company-previous-page)))
+#+end_src
+
+** =dumb-jump=
+
+The =dumb-jump= package works well enough in a [[https://github.com/jacktasia/dumb-jump#supported-languages][ton of environments]], and it
+doesn't require any additional setup. bounding as official recommendation.
+
+#+begin_src emacs-lisp
+  (use-package dumb-jump
+    :bind
+    (("M-g o" . dumb-jump-go-other-window)
+     ("M-g j" . dumb-jump-go)
+     ("M-g b" . dumb-jump-back)
+     ("M-g i" . dumb-jump-go-prompt)
+     ("M-g x" . dumb-jump-go-prefer-external)
+     ("M-g z" . dumb-jump-go-prefer-external-other-window))
+
+    :config
+    (setq dumb-jump-selector 'ivy))
+#+end_src
+
+** flymake
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flymake
+    :bind (:map flymake-mode-map
+                ("C-c [" . flymake-goto-prev-error)
+                ("C-c ]" . flymake-goto-next-error))
+    :config
+    (defun flymake--transform-mode-line-format (ret)
+      "Change the output of `flymake--mode-line-format'."
+      (setf (seq-elt (car ret) 1) " Φ")
+      ret)
+    (advice-add #'flymake--mode-line-format
+                :filter-return #'flymake--transform-mode-line-format))
 #+END_SRC
-** undo-tree
+
+** =flycheck=
+
+ #+begin_src emacs-lisp
+   (use-package let-alist)
+   (use-package flycheck)
+ #+end_src
+
+** =magit=
+
+I use =magit= to handle version control. It's lovely, but I tweak a few things:
+
+- I bring up the status menu with =C-x g=.
+- Use =evil= keybindings with =magit=.
+- The default behavior of =magit= is to ask before pushing. I haven't had any
+  problems with accidentally pushing, so I'd rather not confirm that every time.
+- Per [[http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html][tpope's suggestions]], highlight commit text in the summary line that goes
+  beyond 50 characters.
+- On the command line I'll generally push a new branch with a plain old =git
+  push=, which automatically creates a tracking branch on (usually) =origin=.
+  Magit, by default, wants me to manually specify an upstream branch. This binds
+  =P P= to =magit-push-implicitly=, which is just a wrapper around =git push
+  -v=. Convenient!
+- I'd like to start in the insert state when writing a commit message.
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :bind
+    ("C-x g" . magit-status)
+
+    :config
+    (use-package with-editor)
+    (setq magit-push-always-verify nil)
+    (setq git-commit-summary-max-length 50)
+
+    (with-eval-after-load 'magit-remote
+      (magit-define-popup-action 'magit-push-popup ?P
+        'magit-push-implicitly--desc
+        'magit-push-implicitly ?p t))
+
+    ;; (setq magit-refresh-status-buffer nil)
+    (setq auto-revert-buffer-list-filter
+          'magit-auto-revert-repository-buffers-p)
+    (setq magit-diff-refine-hunk nil)
+    (setq magit-highlight-indentation nil)
+    (setq magit-highlight-trailing-whitespace nil)
+    (setq magit-highlight-whitespace nil)
+    (setq magit-revision-insert-related-refs nil)
+    (setq magit-use-overlays t)
+    (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
+
+    :custom-face
+    (magit-diff-context-highlight ((t (:background "brightblack"))))
+    (magit-section-highlight ((t (:background "brightblack"))))
+    (magit-diff-file-heading-selection ((t (:background "brightblack" :foreground "color-202"))))
+    (magit-section-heading-selection ((t (:foreground "turquoise")))))
+#+end_src
+
+I've been playing around with the newly-released =forge= for managing GitHub PRs
+and issues. Seems slick so far.
+
+#+begin_src emacs-lisp
+  (use-package ghub)
+  (use-package forge)
+#+end_src
+
+I'm also partial to =git-timemachine=, which lets you quickly page through the
+history of a file.
+
+#+begin_src emacs-lisp
+  (use-package git-timemachine)
+#+end_src
+
+Some projectile is managed by git-lfs, we need to extent magit
+
+#+begin_src emacs-lisp
+  (use-package magit-lfs
+    :after (magit))
+#+end_src
+
+** =projectile=
+
+Projectile's default binding of =projectile-ag= to =C-c p s s= is clunky enough
+that I rarely use it (and forget it when I need it). This binds it to the
+easier-to-type =C-c v= to useful searches.
+
+Bind =C-p= to fuzzy-finding files in the current project. We also need to
+explicitly set that in a few other modes.
+
+I use =ivy= as my completion system.
+
+When I visit a project with =projectile-switch-project=, the default action is
+to search for a file in that project. I'd rather just open up the top-level
+directory of the project in =dired= and find (or create) new files from there.
+
+I'd like to /always/ be able to recursively fuzzy-search for files, not just
+when I'm in a Projectile-defined project. I use the current directory as a
+project root (if I'm not in a "real" project).
+
+#+begin_src emacs-lisp
+  (use-package projectile
+    :bind
+    ("C-c v" . deadgrep)
+
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+
+    :config
+    (add-to-list 'projectile-project-root-files-bottom-up "compile_commands.json")
+    (setq projectile-completion-system 'ivy)
+    (setq projectile-sort-order 'recently-active)
+    (setq projectile-switch-project-action 'projectile-dired)
+    (setq projectile-require-project-root nil)
+    (setq projectile-mode-line-prefix "P")
+    (setq projectile-mode-line-function
+          '(lambda () (format "[%s]" (projectile-project-name)))))
+#+end_src
+
+** =undo-tree=
 
 I like tree-based undo management. I only rarely need it, but when I do, oh boy.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (use-package undo-tree)
-#+END_SRC
+#+end_src
 
+* Programming customization
 ** common settings
 *** Editing
 I like shallow indentation, but tabs are displayed as 8 characters by default.
@@ -709,124 +862,89 @@ Use Ivy as the interface to select from xref candidates.
     (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 #+END_SRC
 
-** Projectile
+*** Terminal
 
-Projectile's default binding of =projectile-ag= to =C-c p s s= is clunky enough
-that I rarely use it (and forget it when I need it). This binds the
-easier-to-type =C-c C-v= and =C-c v= to useful searches.
+ I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
 
-When I visit a project with =projectile-switch-project=, the default action is
-to search for a file in that project. I'd rather just open up the top-level
-directory of the project in =dired= and find (or create) new files from there.
+ #+BEGIN_SRC emacs-lisp
+   (use-package multi-term
+     :bind ("C-c t" . multi-term))
+ #+END_SRC
 
-I'd like to /always/ be able to recursively fuzzy-search for files, not just
-when I'm in a Projecile-defined project. This uses the current directory as a
-project root (if I'm not in a "real" project).
+ Use a login shell:
 
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :init
-    (use-package ag)
-    :bind
-    ("C-c v" . projectile-ag)
-    :bind-keymap
-    ("C-c p" . projectile-command-map)
-    :config
-    (add-to-list 'projectile-project-root-files-bottom-up "compile_commands.json")
-    (setq projectile-completion-system 'ivy)
-    (setq projectile-sort-order 'recently-active)
-    (setq projectile-switch-project-action 'projectile-dired)
-    (setq projectile-require-project-root nil)
-    (setq projectile-mode-line-prefix "P")
-    (setq projectile-mode-line-function
-          '(lambda () (format "[%s]" (projectile-project-name)))))
-#+END_SRC
+ #+BEGIN_SRC emacs-lisp
+    (setq multi-term-program-switches "--login")
+ #+END_SRC
 
-** Terminal
+ I add a bunch of hooks to =term-mode=:
 
-I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
+ - I'd like links (URLs, etc) to be clickable.
+ - Yanking in =term-mode= doesn't quite work. The text from the paste appears in
+   the buffer but isn't sent to the shell process. This correctly binds =C-y= and
+   middle-click to yank the way we'd expect.
+ - I bind =M-o= to quickly change windows. I'd like that in terminals, too.
+ - I don't want to perform =yasnippet= expansion when tab-completing.
 
-#+BEGIN_SRC emacs-lisp
-  (use-package multi-term
-    :bind ("C-c t" . multi-term))
-#+END_SRC
+ #+BEGIN_SRC emacs-lisp
+   (defun MattLu/term-paste (&optional string)
+     (interactive)
+     (process-send-string
+          (get-buffer-process (current-buffer))
+          (if string string (current-kill 0))))
 
-Use a login shell:
+   (add-hook 'term-mode-hook
+             (lambda ()
+               (goto-address-mode)
+               (define-key term-raw-map (kbd "C-y") 'MattLu/term-paste)
+               (define-key term-raw-map (kbd "<mouse-2>") 'MattLu/term-paste)
+               (define-key term-raw-map (kbd "M-o") 'other-window)
+               (setq yas-dont-activate t)))
+ #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-   (setq multi-term-program-switches "--login")
-#+END_SRC
+*** Fold and unfold code blocks
 
-*** Go on
+ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
+ #+BEGIN_SRC emacs-lisp
+   (defun MattLu/display-code-line-counts (ov)
+     (when (eq 'code (overlay-get ov 'hs))
+       (overlay-put ov 'display
+                    (propertize
+                     (format " … <%d>"
+                             (count-lines (overlay-start ov)
+                                          (overlay-end ov)))
+                     'face '(:background "#ff0066" :foreground "color-16")))))
 
-I add a bunch of hooks to =term-mode=:
+   (use-package hideshow
+     :hook (prog-mode . hs-minor-mode)
+     :bind (:map hs-minor-mode-map
+                 ("C-c m" . hs-toggle-hiding))
+     :config
+     (setq hs-set-up-overlay 'MattLu/display-code-line-counts))
+ #+END_SRC
 
-- I'd like links (URLs, etc) to be clickable.
-- Yanking in =term-mode= doesn't quite work. The text from the paste appears in
-  the buffer but isn't sent to the shell process. This correctly binds =C-y= and
-  middle-click to yank the way we'd expect.
-- I bind =M-o= to quickly change windows. I'd like that in terminals, too.
-- I don't want to perform =yasnippet= expansion when tab-completing.
+*** Highlight variables
 
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/term-paste (&optional string)
-    (interactive)
-    (process-send-string
-         (get-buffer-process (current-buffer))
-         (if string string (current-kill 0))))
-
-  (add-hook 'term-mode-hook
-            (lambda ()
-              (goto-address-mode)
-              (define-key term-raw-map (kbd "C-y") 'MattLu/term-paste)
-              (define-key term-raw-map (kbd "<mouse-2>") 'MattLu/term-paste)
-              (define-key term-raw-map (kbd "M-o") 'other-window)
-              (setq yas-dont-activate t)))
-#+END_SRC
-
-** Fold and unfold code blocks
-
-Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/display-code-line-counts (ov)
-    (when (eq 'code (overlay-get ov 'hs))
-      (overlay-put ov 'display
-                   (propertize
-                    (format " … <%d>"
-                            (count-lines (overlay-start ov)
-                                         (overlay-end ov)))
-                    'face '(:background "#ff0066" :foreground "color-16")))))
-
-  (use-package hideshow
-    :hook (prog-mode . hs-minor-mode)
-    :bind (:map hs-minor-mode-map
-                ("C-c m" . hs-toggle-hiding))
-    :config
-    (setq hs-set-up-overlay 'MattLu/display-code-line-counts))
-#+END_SRC
-
-** Highlight variables
-
-#+BEGIN_SRC emacs-lisp
-  (use-package symbol-overlay
-    :bind (("M-i" . symbol-overlay-put)
-           ("M-n" . symbol-overlay-jump-next)
-           ("M-p" . symbol-overlay-jump-prev)
-           ("M-N" . symbol-overlay-switch-forward)
-           ("M-P" . symbol-overlay-switch-backward)
-           ("M-C" . symbol-overlay-remove-all))
-    :hook (prog-mode . symbol-overlay-mode)
-    :custom-face
-    (symbol-overlay-default-face ((t (:inherit highlight))))
-    (symbol-overlay-face-1 ((t (:background "dodger blue"))))
-    (symbol-overlay-face-2 ((t (:background "hot pink"))))
-    (symbol-overlay-face-3 ((t (:background "color-172"))))
-    (symbol-overlay-face-4 ((t (:background "orchid"))))
-    (symbol-overlay-face-5 ((t (:background "red"))))
-    (symbol-overlay-face-6 ((t (:background "salmon"))))
-    (symbol-overlay-face-7 ((t (:background "color-34"))))
-    (symbol-overlay-face-8 ((t (:background "turquoise")))))
-#+END_SRC
+ #+BEGIN_SRC emacs-lisp
+   (use-package symbol-overlay
+     :bind (("M-i" . symbol-overlay-put)
+            ("M-n" . symbol-overlay-jump-next)
+            ("M-p" . symbol-overlay-jump-prev)
+            ("M-N" . symbol-overlay-switch-forward)
+            ("M-P" . symbol-overlay-switch-backward)
+            ("M-C" . symbol-overlay-remove-all))
+     :hook (prog-mode . symbol-overlay-mode)
+     :custom-face
+     (symbol-overlay-default-face ((t (:inherit highlight))))
+     (symbol-overlay-face-1 ((t (:background "dodger blue"))))
+     (symbol-overlay-face-2 ((t (:background "hot pink"))))
+     (symbol-overlay-face-3 ((t (:background "color-172"))))
+     (symbol-overlay-face-4 ((t (:background "orchid"))))
+     (symbol-overlay-face-5 ((t (:background "red"))))
+     (symbol-overlay-face-6 ((t (:background "salmon"))))
+     (symbol-overlay-face-7 ((t (:background "color-34"))))
+     (symbol-overlay-face-8 ((t (:background "turquoise")))))
+ #+END_SRC
 
 ** COMMENT C++
 
@@ -836,7 +954,7 @@ use modern cpp font lock to get better semantic highlight
     :hook (c++-mode . modern-c++-font-lock-mode))
 #+END_SRC
 
-** Coq
+** COMMENT Coq
 
 Use =company-coq-mode=, which really helps make Proof General a more useful IDE.
 
@@ -902,15 +1020,17 @@ Indent everything by 2 spaces.
 
 ** Lisps
 
-All the lisps have some shared features, so we want to do the same things for
-all of them. That includes using =paredit-mode= to balance parentheses (and
-more!), =rainbow-delimiters= to color matching parentheses, and highlighting the
-whole expression when point is on a paren.
+I like to use =paredit= in Lisp modes to balance parentheses (and more!).
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (use-package paredit)
+#+end_src
+
+=rainbow-delimiters= is convenient for coloring matching parentheses.
+
+#+begin_src emacs-lisp
   (use-package rainbow-delimiters)
-#+END_SRC
+#+end_src
 
 All the lisps have some shared features, so we want to do the same things for
  all of them. That includes using paredit, rainbow-delimiters, and highlighting
@@ -957,54 +1077,6 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
     :custom-face
     (geiser-font-lock-repl-output ((t (:foreground "color-166")))))
 #+END_SRC
-
-** Magit
-
-I bring up the status menu with =C-x g=.
-
-Use =evil= keybindings with =magit=.
-
-The default behavior of =magit= is to ask before pushing. I haven't had any
-problems with accidentally pushing, so I'd rather not confirm that every time.
-
-Per [[http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html][tpope's suggestions]], highlight commit text in the summary line that goes
-beyond 50 characters.
-
-Enable spellchecking when writing commit messages.
-
-I sometimes use =git= from the terminal, and I'll use =emacsclient --tty= to
-write commits. I'd like to be in the insert state when my editor pops open for
-that.
-
-I'd like to start in the insert state when writing a commit message.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :bind ("C-x g" . magit-status)
-    :config
-    (setq magit-push-always-verify nil)
-    (setq git-commit-summary-max-length 50)
-    (setq magit-refresh-status-buffer nil)
-    (setq auto-revert-buffer-list-filter
-          'magit-auto-revert-repository-buffers-p)
-    (setq magit-diff-refine-hunk nil)
-    (setq magit-highlight-indentation nil)
-    (setq magit-highlight-trailing-whitespace nil)
-    (setq magit-highlight-whitespace nil)
-    (setq magit-revision-insert-related-refs nil)
-    (setq magit-use-overlays t)
-    (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
-    :custom-face
-    (magit-diff-context-highlight ((t (:background "brightblack"))))
-    (magit-section-highlight ((t (:background "brightblack"))))
-    (magit-diff-file-heading-selection ((t (:background "brightblack" :foreground "color-202"))))
-    (magit-section-heading-selection ((t (:foreground "turquoise")))))
-#+END_SRC
-
-#+begin_src emacs-lisp
-  (use-package magit-lfs
-    :after (magit))
-#+end_src
 
 ** Python
 
@@ -1164,10 +1236,10 @@ Including org-tempo restores the <s-style easy-templates that were deprecated in
 
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :requires org-plus-contrib
+    :ensure org-plus-contrib
     :config
     (put 'narrow-to-region 'disabled nil)
-    (setq org-modules (remove-duplicates
+    (setq org-modules (cl-remove-duplicates
                        (append org-modules
                                '(org-tempo
                                  ox-md
@@ -2112,7 +2184,7 @@ for some modes (like projectile, for example).
     :config (which-key-mode))
 #+END_SRC
 
-** TODO Configure yasnippet
+** Configure yasnippet
 
 I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippet=
 enabled.
