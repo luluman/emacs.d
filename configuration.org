@@ -553,6 +553,18 @@ Set TAB for complete cycle
        (define-key company-active-map (kbd "M-v") 'company-previous-page)))
 #+end_src
 
+** COMMENT smart-jump
+
+This packages tries to smartly go to definition leveraging several methods to do so.
+If one method fails, this package will go on to the next one,
+eventually falling back to =dumb-jump=.
+
+#+begin_src emacs-lisp
+  (use-package smart-jump
+    :config
+    (smart-jump-setup-default-registers))
+#+end_src
+
 ** =dumb-jump=
 
 The =dumb-jump= package works well enough in a [[https://github.com/jacktasia/dumb-jump#supported-languages][ton of environments]], and it
