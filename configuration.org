@@ -725,6 +725,55 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
   (use-package undo-tree)
 #+end_src
 
+** =GDB=
+
+using Realgud to debug source code
+
+#+BEGIN_SRC emacs-lisp
+  (use-package realgud)
+#+END_SRC
+
+** Shell config
+
+Indent with 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'sh-mode-hook
+            (lambda ()
+              (setq sh-basic-offset 2
+                    sh-indentation 2)))
+#+END_SRC
+
+Force open shell in the current buffer
+#+BEGIN_SRC emacs-lisp
+  (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
+#+END_SRC
+
+Add shell completion
+#+BEGIN_SRC emacs-lisp
+  (use-package bash-completion
+    :config (bash-completion-setup))
+#+END_SRC
+
+use company instead of ivy which would invoke minibuffer
+#+BEGIN_SRC emacs-lisp
+  (define-key shell-mode-map (kbd "TAB") 'company-complete)
+#+END_SRC
+
+Get environment variable in Shell and set them to Emacs
+#+begin_src emacs-lisp
+  (defun MattLu/get-shell-env-value-and-set-emacs ()
+  ; get environment variable form shell and set to emacs
+    (interactive)
+    (let ((env-var '("PATH" "LD_LIBRARY_PATH")))
+      (mapcar #'shell-copy-environment-variable env-var)
+      (setq python-shell-process-environment
+            (mapcar (lambda (x) (format "%s=%s" x (getenv x)))
+                    env-var))))
+
+  (define-key shell-mode-map (kbd "C-c x") 'MattLu/get-shell-env-value-and-set-emacs)
+#+end_src
+
 * Programming customization
 ** common settings
 *** Editing
@@ -1194,40 +1243,6 @@ show function and variable tree in side buffer
     :custom-face
     (imenu-list-entry-face-1 ((t (:inherit imenu-list-entry-face :foreground "green"))))
     (imenu-list-entry-face-2 ((t (:inherit imenu-list-entry-face :foreground "blue")))))
-#+END_SRC
-
-** =GDB=
-
-using Realgud to debug source code
-#+BEGIN_SRC emacs-lisp
-  (use-package realgud)
-#+END_SRC
-
-** Shell connfig
-
-Indent with 2 spaces.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'sh-mode-hook
-            (lambda ()
-              (setq sh-basic-offset 2
-                    sh-indentation 2)))
-#+END_SRC
-
-Force open shell in the current buffer
-#+BEGIN_SRC emacs-lisp
-  (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
-#+END_SRC
-
-Add shell completion
-#+BEGIN_SRC emacs-lisp
-  (use-package bash-completion
-    :config (bash-completion-setup))
-#+END_SRC
-
-use company instead of ivy which would invoke minibuffer
-#+BEGIN_SRC emacs-lisp
-  (define-key shell-mode-map (kbd "TAB") 'company-complete)
 #+END_SRC
 
 ** ReStructuredText
