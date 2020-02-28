@@ -1132,7 +1132,6 @@ using Jupyter
   (use-package ein
     :config
     (require 'ein-notebook)
-    (require 'ein-subpackages)
     (setq ein:cell-max-num-outputs 10)
     (setq ein:completion-backend 'ein:use-company-backend)
     (add-hook 'ein:notebook-mode-hook
