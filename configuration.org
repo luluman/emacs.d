@@ -879,7 +879,7 @@ LSP client
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
     :hook
-    ((c-mode-common python-mode sh-mode)
+    ((c-mode c++-mode python-mode sh-mode)
      . eglot-ensure))
 #+END_SRC
 
