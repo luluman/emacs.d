@@ -192,39 +192,26 @@ Why not?
                           (make-glyph-code ?┃))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/color-config ()
-    (interactive)
-    (set-face-attribute 'header-line nil
-                        :background "white" :foreground "black")
-    (set-face-attribute 'font-lock-comment-face nil
-                        :foreground "color-243")
-    (set-face-attribute 'font-lock-doc-face nil
-                        :foreground "color-243")
-    (set-face-foreground 'org-drawer "color-243")
-    (set-face-background 'region  "brightblack")
-    (set-face-attribute 'vertical-border nil
-                        :foreground "color-16" :background nil)
-    (set-face-attribute 'show-paren-match nil
-                        :background "turquoise" :foreground "black")
-    (set-face-attribute 'highlight nil  ;; shallow blue
-                        :inherit nil :background "#1a4b77" :foreground nil)
-    (set-face-foreground 'custom-variable-tag "brightblue")
-    (set-face-foreground 'org-ellipsis  "color-46"))
-#+END_SRC
+#+begin_src emacs-lisp
+  (defun transparency (value)
+    "Sets the transparency of the frame window. 0=transparent/100=opaque."
+    (interactive "Transparency Value 0 - 100 opaque:")
+    (set-frame-parameter (selected-frame) 'alpha value))
+#+end_src
 
-***  COMMENT new package but some bugs have not be fixed
+#+begin_src emacs-lisp
+  (if (not (display-graphic-p))
+      (load-file "~/.emacs.d/custom-face.el"))
+#+end_src
+
+*** solarized-theme
 I like the solarized-dark theme. I prefer keeping all the characters in the same
 side and font, though.
 
 #+BEGIN_SRC emacs-lisp
   (defun MattLu/apply-solarized-theme ()
-    (setq solarized-use-variable-pitch nil)
-    (setq solarized-height-plus-1 1.0)
-    (setq solarized-height-plus-2 1.0)
-    (setq solarized-height-plus-3 1.0)
-    (setq solarized-height-plus-4 1.0)
-    (setq solarized-high-contrast-mode-line t)
+    (setq solarized-scale-org-headlines nil)
+    (transparency 98)
     (load-theme 'solarized-light t))
 #+END_SRC
 
@@ -233,7 +220,7 @@ frame is themed appropriately.
 
 #+BEGIN_SRC emacs-lisp
   (use-package solarized-theme
-    :custom (solarized-termcolors 16)
+    :if (display-graphic-p)
     :config
     (if (daemonp)
         (add-hook 'after-make-frame-functions
@@ -247,17 +234,9 @@ I'm currently using the "nord" theme. I've got a scenic wallpaper, so just a
 hint of transparency looks lovely and isn't distracting or hard to read.
 
 #+BEGIN_SRC emacs-lisp
-  (defun transparency (value)
-    "Sets the transparency of the frame window. 0=transparent/100=opaque."
-    (interactive "Transparency Value 0 - 100 opaque:")
-    (set-frame-parameter (selected-frame) 'alpha value))
-
-  (defun MattLu/apply-theme ()
+  (defun MattLu/apply-nord-theme ()
     "Apply the `nord' theme and make frames just slightly transparent."
-    (interactive)
-    (load-theme 'nord t)
-    (transparency 100)
-    (MattLu/color-config))
+    (load-theme 'nord t))
 #+END_SRC
 
 If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
@@ -265,12 +244,13 @@ frame is themed appropriately.
 
 #+BEGIN_SRC emacs-lisp
   (use-package nord-theme
-  :config
-  (if (daemonp)
-      (add-hook 'after-make-frame-functions
-                (lambda (frame)
-                  (with-selected-frame frame (MattLu/apply-theme))))
-    (MattLu/apply-theme)))
+    :if (not (display-graphic-p))
+    :config
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                    (with-selected-frame frame (MattLu/apply-nord-theme))))
+      (MattLu/apply-nord-theme)))
 #+END_SRC
 
 ** Configure =powerline=
@@ -298,14 +278,7 @@ frame is themed appropriately.
     :config
     (powerline-center-theme)
     (advice-add 'powerline-minor-modes
-                :around #'powerline-minor-modes-modify)
-    :custom-face
-    (powerline-active0 ((t (:background "brightcyan" :foreground "color-235"))))
-    (powerline-active1 ((t (:background "black" :foreground "white"))))
-    (powerline-active2 ((t (:background "white" :foreground "color-16"))))
-    (powerline-inactive0 ((t (:background "black" :foreground "white"))))
-    (powerline-inactive1 ((t (:background "brightblack" :foreground "white"))))
-    (powerline-inactive2 ((t (:background "brightblack" :foreground "white")))))
+                :around #'powerline-minor-modes-modify))
 #+end_SRC
 
 ** Scroll conservatively
@@ -331,52 +304,54 @@ Note that this overrides the default font-related keybindings from
 =sensible-defaults=.
 
 #+BEGIN_SRC emacs-lisp
-    (setq MattLu/default-font "Ubuntu Mono")
-    (setq MattLu/default-font-size 11)
-    (setq MattLu/current-font-size MattLu/default-font-size)
-
-    (setq MattLu/font-change-increment 1.1)
-
-    (defun MattLu/font-code ()
-      "Return a string representing the current font (like \"Inconsolata-14\")."
-      (concat MattLu/default-font "-" (number-to-string MattLu/current-font-size)))
-
-    (defun MattLu/set-font-size ()
-      "Set the font to `MattLu/default-font' at `MattLu/current-font-size'.
-    Set that for the current frame, and also make it the default for
-    other, future frames."
-      (let ((font-code (MattLu/font-code)))
-        (add-to-list 'default-frame-alist (cons 'font font-code))
-        (set-frame-font font-code)))
-
-    (defun MattLu/reset-font-size ()
-      "Change font size back to `MattLu/default-font-size'."
-      (interactive)
+  (if (eq system-type 'gnu/linux)
+     (setq MattLu/default-font "Ubuntu Mono")
+    (setq MattLu/default-font "Source Code Variable"))
+      (setq MattLu/default-font-size 12)
       (setq MattLu/current-font-size MattLu/default-font-size)
-      (MattLu/set-font-size))
 
-    (defun MattLu/increase-font-size ()
-      "Increase current font size by a factor of `MattLu/font-change-increment'."
-      (interactive)
-      (setq MattLu/current-font-size
-            (ceiling (* MattLu/current-font-size MattLu/font-change-increment)))
-      (MattLu/set-font-size))
+      (setq MattLu/font-change-increment 1.1)
 
-    (defun MattLu/decrease-font-size ()
-      "Decrease current font size by a factor of `MattLu/font-change-increment', down to a minimum size of 1."
-      (interactive)
-      (setq MattLu/current-font-size
-            (max 1
-                 (floor (/ MattLu/current-font-size MattLu/font-change-increment))))
-      (MattLu/set-font-size))
+      (defun MattLu/font-code ()
+        "Return a string representing the current font (like \"Inconsolata-14\")."
+        (concat MattLu/default-font "-" (number-to-string MattLu/current-font-size)))
 
-    (define-key global-map (kbd "C-)") 'MattLu/reset-font-size)
-    (define-key global-map (kbd "C-+") 'MattLu/increase-font-size)
-  ;;  (define-key global-map (kbd "C-=") 'MattLu/increase-font-size)
-;;    (define-key global-map (kbd "C-c -") 'MattLu/decrease-font-size)
-  ;; (define-key global-map (kbd "C--") nil)
+      (defun MattLu/set-font-size ()
+        "Set the font to `MattLu/default-font' at `MattLu/current-font-size'.
+      Set that for the current frame, and also make it the default for
+      other, future frames."
+        (let ((font-code (MattLu/font-code)))
+          (add-to-list 'default-frame-alist (cons 'font font-code))
+          (set-frame-font font-code)))
 
-    (MattLu/reset-font-size)
+      (defun MattLu/reset-font-size ()
+        "Change font size back to `MattLu/default-font-size'."
+        (interactive)
+        (setq MattLu/current-font-size MattLu/default-font-size)
+        (MattLu/set-font-size))
+
+      (defun MattLu/increase-font-size ()
+        "Increase current font size by a factor of `MattLu/font-change-increment'."
+        (interactive)
+        (setq MattLu/current-font-size
+              (ceiling (* MattLu/current-font-size MattLu/font-change-increment)))
+        (MattLu/set-font-size))
+
+      (defun MattLu/decrease-font-size ()
+        "Decrease current font size by a factor of `MattLu/font-change-increment', down to a minimum size of 1."
+        (interactive)
+        (setq MattLu/current-font-size
+              (max 1
+                   (floor (/ MattLu/current-font-size MattLu/font-change-increment))))
+        (MattLu/set-font-size))
+
+      (define-key global-map (kbd "C-)") 'MattLu/reset-font-size)
+      (define-key global-map (kbd "C-+") 'MattLu/increase-font-size)
+    ;;  (define-key global-map (kbd "C-=") 'MattLu/increase-font-size)
+  ;;    (define-key global-map (kbd "C-c -") 'MattLu/decrease-font-size)
+    ;; (define-key global-map (kbd "C--") nil)
+
+      (MattLu/reset-font-size)
 #+END_SRC
 
 ** Highlight the current line
@@ -404,48 +379,6 @@ programming.
 #+BEGIN_SRC emacs-lisp
   (setq display-line-numbers-type 'visual)
   (global-display-line-numbers-mode)
-  (set-face-foreground 'line-number  "color-241")
-  (set-face-foreground 'line-number-current-line  "white")
-#+END_SRC
-
-** Modify =ediff= face for better contrast
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'ediff-load-hook
-            (lambda ()
-              (set-face-foreground
-               ediff-current-diff-face-A "color-88")
-              (set-face-foreground
-               ediff-current-diff-face-B "color-22")
-              (set-face-foreground
-               ediff-current-diff-face-C "color-94")
-              (set-face-foreground
-               ediff-even-diff-face-A "black")
-              (set-face-foreground
-               ediff-even-diff-face-B "black")
-              (set-face-foreground
-               ediff-even-diff-face-C "black")
-              (set-face-foreground
-               ediff-fine-diff-face-A "color-88")
-              (set-face-foreground
-               ediff-fine-diff-face-B "color-28")
-              (set-face-foreground
-               ediff-fine-diff-face-C "color-58")
-              (set-face-foreground
-               ediff-odd-diff-face-A "black")
-              (set-face-foreground
-               ediff-odd-diff-face-B "black")
-              (set-face-foreground
-               ediff-odd-diff-face-C "black")
-
-              (set-face-attribute 'ediff-current-diff-Ancestor
-                                  t :background "#cfdeee" :foreground "grey30")
-              (set-face-attribute 'ediff-even-diff-Ancestor
-                                  t :background "Grey" :foreground "black")
-              (set-face-attribute 'ediff-fine-diff-Ancestor
-                                  t :background "#00c5c0" :foreground "color-17")
-              (set-face-attribute  'ediff-odd-diff-Ancestor
-                                   t :background "gray40" :foreground "brightwhite")))
 #+END_SRC
 
 ** Using highlight indentation
@@ -456,11 +389,7 @@ programming.
     :config
     (setq highlight-indent-guides-method 'character)
     (setq highlight-indent-guides-responsive 'top)
-    (setq highlight-indent-guides-auto-enabled nil)
-    (set-face-background 'highlight-indent-guides-odd-face "black")
-    (set-face-background 'highlight-indent-guides-even-face "black")
-    (set-face-foreground 'highlight-indent-guides-character-face "brightblack")
-    (set-face-foreground 'highlight-indent-guides-top-character-face "cyan"))
+    (setq highlight-indent-guides-auto-enabled nil))
     ;; (setq highlight-indent-guides-delay 0.1)
 #+END_SRC
 
@@ -509,28 +438,7 @@ Use =company-mode= everywhere.
                              company-dabbrev-code
                              company-keywords
                              company-ispell
-                             company-oddmuse))
-    :custom-face
-    (company-echo-common
-     ((t (:background "brightblack"))))
-    (company-preview-common
-     ((t (:background "brightblack"))))
-    (company-tooltip
-     ((t (:background "black" :foreground "white"))))
-    (company-scrollbar-bg
-     ((t (:background "brightblack" :foreground "brightblack"))))
-    (company-scrollbar-fg
-     ((t (:background "blue" :foreground "bule"))))
-    (company-tooltip-common-selection
-     ((t (:background "brightblack" :foreground "brightcyan" :wight bold))))
-    (company-tooltip-selection
-     ((t (:background "brightblack" :foreground "white" :weight bold))))
-    (company-tooltip-annotation
-     ((t (:foreground "yellow"))))
-    (company-tooltip-annotation-selection
-     ((t (:foreground "brightyellow" :weight bold))))
-    (company-template-field
-     ((t (:background "cyan" :foreground "black")))))
+                             company-oddmuse)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -648,13 +556,7 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     (setq magit-highlight-whitespace nil)
     (setq magit-revision-insert-related-refs nil)
     (setq magit-use-overlays t)
-    (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
-
-    :custom-face
-    (magit-diff-context-highlight ((t (:background "brightblack"))))
-    (magit-section-highlight ((t (:background "brightblack"))))
-    (magit-diff-file-heading-selection ((t (:background "brightblack" :foreground "color-202"))))
-    (magit-section-heading-selection ((t (:foreground "turquoise")))))
+    (add-hook 'git-commit-mode-hook 'turn-on-flyspell))
 #+end_src
 
 I've been playing around with the newly-released =forge= for managing GitHub PRs
@@ -994,17 +896,7 @@ Use Ivy as the interface to select from xref candidates.
             ("M-N" . symbol-overlay-switch-forward)
             ("M-P" . symbol-overlay-switch-backward)
             ("M-C" . symbol-overlay-remove-all))
-     :hook (prog-mode . symbol-overlay-mode)
-     :custom-face
-     (symbol-overlay-default-face ((t (:inherit highlight))))
-     (symbol-overlay-face-1 ((t (:background "dodger blue"))))
-     (symbol-overlay-face-2 ((t (:background "hot pink"))))
-     (symbol-overlay-face-3 ((t (:background "color-172"))))
-     (symbol-overlay-face-4 ((t (:background "orchid"))))
-     (symbol-overlay-face-5 ((t (:background "red"))))
-     (symbol-overlay-face-6 ((t (:background "salmon"))))
-     (symbol-overlay-face-7 ((t (:background "color-34"))))
-     (symbol-overlay-face-8 ((t (:background "turquoise")))))
+     :hook (prog-mode . symbol-overlay-mode))
  #+END_SRC
 
 ** COMMENT C++
@@ -1134,9 +1026,7 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
 #+BEGIN_SRC emacs-lisp
   (use-package geiser
     :config
-    (setq geiser-active-implementations '(mit chicken guile racket chez))
-    :custom-face
-    (geiser-font-lock-repl-output ((t (:foreground "color-166")))))
+    (setq geiser-active-implementations '(mit chicken guile racket chez)))
 #+END_SRC
 
 ** Python
@@ -1148,7 +1038,8 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
                           "~/python/bmnett-3.5/"))
-    (venv-workon "bmnett-3.5"))
+    (if (eq system-type 'gnu/linux)
+        (venv-workon "bmnett-3.5")))
 #+END_SRC
 
 Set ipython as interpreter
@@ -1187,15 +1078,7 @@ using Jupyter
               (lambda ()
                 (add-to-list (make-local-variable 'company-backends)
                              'ein:company-backend)))
-    :commands (ein:notebooklist-open)
-    :custom-face
-    (ein:cell-input-area ((t nil)))
-    (ein:cell-input-prompt ((t (:inherit minibuffer-prompt))))
-    (ein:cell-output-prompt ((t (:background "cyan" :foreground "black"))))
-    (ein:cell-output-area ((t (:background "black"))))
-    (ein:cell-output-area-error ((t (:foreground "brightred"))))
-    (ein:notification-tab-selected ((t (:inherit match :underline t))))
-    (ein:cell-output-stderr ((t (:background "PeachPuff" :foreground "black")))))
+    :commands (ein:notebooklist-open))
 #+END_SRC
 
 ** =web-mode=
@@ -1239,23 +1122,13 @@ show function and variable tree in side buffer
   (use-package imenu-list
     :bind ("C-c i" . imenu-list-smart-toggle)
     :config
-    (setq imenu-list-focus-after-activation t)
-    :custom-face
-    (imenu-list-entry-face-1 ((t (:inherit imenu-list-entry-face :foreground "green"))))
-    (imenu-list-entry-face-2 ((t (:inherit imenu-list-entry-face :foreground "blue")))))
+    (setq imenu-list-focus-after-activation t))
 #+END_SRC
 
 ** ReStructuredText
 
 #+BEGIN_SRC emacs-lisp
-  (use-package rst
-    :custom-face
-    (rst-level-1 ((t (:background "color-28"))))
-    (rst-level-2 ((t (:background "color-172"))))
-    (rst-level-3 ((t (:background "color-33"))))
-    (rst-level-4 ((t (:background "brightmagenta"))))
-    (rst-level-5 ((t (:background "grey57"))))
-    (rst-level-6 ((t (:background "grey50")))))
+  (use-package rst)
 #+END_SRC
 
 * Org
@@ -2248,19 +2121,6 @@ at the correct indentation for Python).
     (setq ivy-do-completion-in-region nil)
     (setf (alist-get 't ivy-format-functions-alist)
           'ivy-format-function-line)
-    :custom-face
-    (ivy-current-match
-     ((t (:foreground "white" :background "#1a4b77"))))
-    (isearch ((t (:background "brightcyan" :foreground "color-16"))))
-    (ivy-minibuffer-match-face-1
-     ((t (:background "green" :foreground "black"))))
-    (ivy-minibuffer-match-face-2
-     ((t (:background "yellow" :foreground "black" :weight bold))))
-    (ivy-minibuffer-match-face-3
-     ((t (:background "cyan" :foreground "black" :weight bold))))
-    (ivy-minibuffer-match-face-4
-     ((t (:background "#ffbbff" :foreground "black" :weight bold))))
-    (ivy-remote ((t (:foreground "color-202"))))
     :requires flx)
 #+END_SRC
 
@@ -2423,11 +2283,6 @@ Use ace-jump-mode to quick jump to words or char
     ("C-c j" . avy-goto-word-or-subword-1)
     ("C-'"   . avy-goto-char-timer)
     ("M-g f" . avy-goto-line)
-    :custom-face
-    (avy-lead-face ((nil (:background nil :foreground "color-202"))))
-    (avy-lead-face-0 ((nil (:background nil :foreground "color-226"))))
-    (avy-lead-face-1 ((nil (:background nil :foreground "color-46"))))
-    (avy-lead-face-2 ((nil (:background nil :foreground "white"))))
     :config
     (setq avy-all-windows nil)
     (setq avy-background t)
@@ -2566,11 +2421,9 @@ Remap when working in terminal Emacs.
   (global-set-key (kbd "C-_") 'undo)
 #+END_SRC
 
-
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-c w") 'ediff-regions-wordwise)
 #+END_SRC
-
 #+BEGIN_SRC emacs-lisp
   (global-unset-key (kbd "C-x 5 1"))
   (local-unset-key (kbd "C-x 5 1"))

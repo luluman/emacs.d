@@ -6,3 +6,4 @@
 !sensible-defaults.el
 !.gitignore
 !.gitmodules
+!custom-face.el
