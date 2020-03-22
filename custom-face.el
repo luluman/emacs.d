@@ -17,6 +17,7 @@
  '(highlight  ;; shallow blue
    ((nil (:inherit nil :background "#1a4b77" :foreground nil))))
  '(org-ellipsis   ((t (:foreground "color-46"))))
+ '(custom-variable-tag ((t (:foreground "brightblue"))))
  '(sp-pair-overlay-face ((t (:inherit region))))
 
  ;; powerline

@@ -461,7 +461,7 @@ Set TAB for complete cycle
        (define-key company-active-map (kbd "M-v") 'company-previous-page)))
 #+end_src
 
-** COMMENT smart-jump
+** smart-jump
 
 This packages tries to smartly go to definition leveraging several methods to do so.
 If one method fails, this package will go on to the next one,
@@ -470,7 +470,22 @@ eventually falling back to =dumb-jump=.
 #+begin_src emacs-lisp
   (use-package smart-jump
     :config
-    (smart-jump-setup-default-registers))
+    (smart-jump-setup-default-registers)
+    (smart-jump-register :modes '(c-mode c++-mode python-mode)
+                         :jump-fn 'ymcd-goto
+                         :refs-fn 'ycmd-goto-references
+                         :heuristic 'point
+                         :async 500
+                         :order 1)
+
+    (smart-jump-register :modes '(c-mode c++-mode python-mode)
+                         :jump-fn 'ggtags-find-tag-dwim
+                         :pop-fn 'ggtags-prev-mark
+                         :refs-fn 'ggtags-find-reference
+                         :should-jump t
+                         :heuristic 'point
+                         :async 500
+                         :order 2))
 #+end_src
 
 ** =dumb-jump=
@@ -729,7 +744,7 @@ YouCompltedMe setup
 
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
-    :hook ((c-mode-common python-mode)
+    :hook ((c-mode c++-mode python-mode)
            . ycmd-mode)
     :config
     (setq request-message-level -1)
@@ -755,7 +770,7 @@ YouCompltedMe setup
     (setq company-ycmd-insert-arguments nil)
     :hook
     ((python-mode . MattLu/company-mode-python-mode-hook)
-     (c-mode-common . MattLu/company-mode-c-mode-hook)))
+     ((c-mode c++-mode) . MattLu/company-mode-c-mode-hook)))
 #+END_SRC
 
 *** eglot LSP
@@ -783,24 +798,14 @@ LSP client
      . eglot-ensure))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  ;; (defun MattLu/eglot-helper (orig-fun &rest args)
-  ;;   (message "display-buffer called with args %S" args)
-  ;;   (let ((res (apply orig-fun args)))
-  ;;     (message "display-buffer returned %S" res)
-  ;;     res))
-
-  ;; (advice-add 'eglot--lsp-xref-helper :around #'MattLu/eglot-helper)
-#+END_SRC
-
-#+RESULTS:
-
 *** Tags
 
 #+BEGIN_SRC emacs-lisp
   (use-package ggtags
+    ;; :custom
+    ;; (ggtags-enable-navigation-keys nil)
     :hook
-    (c-mode-common . ggtags-mode))
+    ((c-mode c++-mode) . ggtags-mode))
 #+END_SRC
 
 *** Xref jump
@@ -809,9 +814,6 @@ Use Ivy as the interface to select from xref candidates.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ivy-xref
-    :config
-    (bind-keys* ("M-." . xref-find-definitions))
-    (bind-keys* ("M-," . xref-pop-marker-stack))
     :init
     ;; xref initialization is different in Emacs 27 - there are two different
     ;; variables which can be set rather than just one
@@ -2117,8 +2119,6 @@ at the correct indentation for Python).
       '((swiper . ivy--regex-plus)
         (t . ivy--regex-fuzzy)))
     (setq ivy-do-completion-in-region nil)
-    (setf (alist-get 't ivy-format-functions-alist)
-          'ivy-format-function-line)
     :requires flx)
 #+END_SRC
 
@@ -2135,10 +2135,7 @@ at the correct indentation for Python).
     ("C-c f" . 'counsel-recentf)
     ("C-c b" . 'counsel-bookmark)
     ("C-x C-b" . 'ivy-switch-buffer)
-    :custom
-    ;; disable ivy-thing-at-point which call ffap-file-at-point and comint-output-filter
-    ;; (counsel-describe-function-preselect 'ivy-function-called-at-point)
-    (counsel-describe-function-preselect 'ivy-thing-at-point)
+    ("C-x b" . 'ivy-switch-buffer)
     :config
     (use-package flx)
     (use-package smex))
@@ -2149,6 +2146,7 @@ at the correct indentation for Python).
   (use-package ivy-rich
     :after (ivy)
     :config
+    (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
     (plist-put
      (plist-get ivy-rich-display-transformers-list
                 'ivy-switch-buffer)
