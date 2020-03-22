@@ -1175,7 +1175,6 @@ I like to see an outline of pretty bullets instead of a list of asterisks.
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
     :config
-    (MattLu/change-cdr-value org-bullets--keywords :foreground '("black"))
     (add-hook 'org-mode-hook 'org-bullets-mode))
 #+END_SRC
 
