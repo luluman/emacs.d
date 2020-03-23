@@ -469,13 +469,26 @@ eventually falling back to =dumb-jump=.
 
 #+begin_src emacs-lisp
   (use-package smart-jump
+    :custom
+    (smart-jump-default-mode-list
+     '(eglot
+       elisp-mode
+       erlang-mode
+       haskell-mode
+       lisp-mode
+       ruby-mode
+       rust-mode
+       scheme
+       swift-mode))
     :config
     (smart-jump-setup-default-registers)
     (smart-jump-register :modes '(c-mode c++-mode python-mode)
                          :jump-fn 'ymcd-goto
                          :refs-fn 'ycmd-goto-references
+                         :should-jump (lambda ()
+                                        (bound-and-true-p ycmd-mode))
                          :heuristic 'point
-                         :async 500
+                         :async 2000
                          :order 1)
 
     (smart-jump-register :modes '(c-mode c++-mode python-mode)
@@ -484,7 +497,7 @@ eventually falling back to =dumb-jump=.
                          :refs-fn 'ggtags-find-reference
                          :should-jump t
                          :heuristic 'point
-                         :async 500
+                         :async 3000
                          :order 2))
 #+end_src
 
