@@ -517,6 +517,7 @@ doesn't require any additional setup. bounding as official recommendation.
      ("M-g z" . dumb-jump-go-prefer-external-other-window))
 
     :config
+    (setq dumb-jump-force-searcher 'rg)
     (setq dumb-jump-selector 'ivy))
 #+end_src
 
@@ -815,10 +816,9 @@ LSP client
 
 #+BEGIN_SRC emacs-lisp
   (use-package ggtags
-    ;; :custom
-    ;; (ggtags-enable-navigation-keys nil)
-    :hook
-    ((c-mode c++-mode) . ggtags-mode))
+    :config
+    (define-key ggtags-mode-map (kbd "M-.") nil)
+    (define-key ggtags-mode-map (kbd "M-]") nil))
 #+END_SRC
 
 *** Xref jump
