@@ -164,13 +164,6 @@ I don't usually use the menu or scroll bar, and they take up useful space.
   (scroll-bar-mode -1)
 #+END_SRC
 
-The default frame title isn't useful. This binds it to the name of the current
-project:
-
-#+BEGIN_SRC emacs-lisp
-    (setq frame-title-format '((:eval (projectile-project-name))))
-#+END_SRC
-
 ** Use fancy lambdas
 
 Why not?
@@ -259,17 +252,18 @@ frame is themed appropriately.
   (setq MattLu/minor-mode-direct '(flymake-mode projectile-mode))
   (defun powerline-minor-modes-modify (orig-fun &rest args)
     "Change poweline-minor-modes display"
-    (defvar MattLu/default-mode-alist minor-mode-alist)
-    (let ((minor-mode-alist
-           (list `(:propertize ("" (:eval (--filter (memq (car it) MattLu/minor-mode-direct)
-                                                    MattLu/default-mode-alist)))
-                               mouse-face mode-line-highlight
-                               help-echo "Minor mode\n\
-    mouse-1: Display minor mode menu\n\
-    mouse-2: Show help for minor mode\n\
+    (let* ((MattLu/default-mode-alist minor-mode-alist)
+           (minor-mode-alist
+            (list `(:propertize
+                    ("" (:eval (--filter (memq (car it) MattLu/minor-mode-direct)
+                                         MattLu/default-mode-alist)))
+                    mouse-face mode-line-highlight
+                    help-echo "Minor mode
+    mouse-1: Display minor mode menu
+    mouse-2: Show help for minor mode
     mouse-3: Toggle minor modes"
-                               local-map ,mode-line-minor-mode-keymap)
-                 " ")))
+                    local-map ,mode-line-minor-mode-keymap)
+                  " ")))
       (apply orig-fun args)))
 #+end_src
 
@@ -278,7 +272,7 @@ frame is themed appropriately.
     :config
     (powerline-center-theme)
     (advice-add 'powerline-minor-modes
-                :around #'powerline-minor-modes-modify))
+                :around 'powerline-minor-modes-modify))
 #+end_SRC
 
 ** Scroll conservatively
@@ -638,6 +632,7 @@ project root (if I'm not in a "real" project).
     ("C-c p" . projectile-command-map)
 
     :config
+    (setq frame-title-format '((:eval (projectile-project-name))))
     (add-to-list 'projectile-project-root-files-bottom-up "compile_commands.json")
     (setq projectile-completion-system 'ivy)
     (setq projectile-sort-order 'recently-active)
@@ -2075,8 +2070,11 @@ buffers.
 Add system path to emacs.
 
 #+BEGIN_SRC emacs-lisp
-  (MattLu/append-to-path "/usr/local/bin")
-	(MattLu/append-to-path "/Library/TeX/texbin")
+  (if (eq system-type 'darwin)
+      (mapcar #'MattLu/append-to-path
+              '("/usr/local/bin"
+                "/Library/TeX/texbin"
+                "/usr/local/opt/llvm/bin/")))
 #+END_SRC
 
 ** Always indent with spaces
