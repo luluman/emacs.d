@@ -1968,9 +1968,9 @@ Open media with the appropriate programs.
     :config
     (setq dired-open-extensions
           '(("pdf" . "evince")
-            ("mkv" . "vlc")
-            ("mp4" . "vlc")
-            ("avi" . "vlc"))))
+            ("mkv" . "mpv")
+            ("mp4" . "mpv")
+            ("avi" . "mpv"))))
 #+END_SRC
 
 These are the switches that get passed to =ls= when =dired= gets a list of
@@ -1986,11 +1986,14 @@ files. We're using:
 #+END_SRC
 
 Use “[” and “]” to jump out and in dired.
+
 #+BEGIN_SRC emacs-lisp
   (eval-after-load "dired"
-	'(progn
-	   (define-key dired-mode-map (kbd "[") 'dired-up-directory)
-	   (define-key dired-mode-map (kbd "]") 'dired-open-file)))
+    '(progn
+       (define-key dired-mode-map (kbd "[") 'dired-up-directory)
+       (define-key dired-mode-map (kbd "]") 'dired-open-file)))
+  (eval-after-load "view"
+    '(define-key view-mode-map (kbd "[") 'View-quit))
 #+END_SRC
 
 fast copy and past
