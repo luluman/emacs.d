@@ -52,7 +52,7 @@
    ((t (:background "cyan" :foreground "black"))))
 
  ;; magit
-
+ '(magit-branch-local ((t (:foreground "color-46"))))
  '(magit-diff-context-highlight ((t (:background "brightblack"))))
  '(magit-section-highlight ((t (:background "brightblack"))))
  '(magit-diff-file-heading-selection ((t (:background "brightblack" :foreground "color-202"))))
