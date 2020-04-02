@@ -2141,14 +2141,16 @@ at the correct indentation for Python).
   (use-package counsel
     :bind
     ("C-s" . 'swiper)
-    ("C-c C-r" . 'ivy-resume)
     ("M-x" . 'counsel-M-x)
     ("C-x C-f" . 'counsel-find-file)
-    ("C-c k" . 'counsel-ag)
-    ("C-c f" . 'counsel-recentf)
-    ("C-c b" . 'counsel-bookmark)
-    ("C-x C-b" . 'ivy-switch-buffer)
+    ("M-y" . 'counsel-yank-pop)
     ("C-x b" . 'ivy-switch-buffer)
+    ("C-c k" . 'counsel-rg)
+    ("C-x C-b" . 'ivy-switch-buffer)
+    ("C-c C-r" . 'ivy-resume)
+    ("C-c b" . 'counsel-bookmark)
+    ("C-c d" . 'counsel-descbinds)
+    ("C-c f" . 'counsel-recentf)
     :config
     (use-package flx)
     (use-package smex))
