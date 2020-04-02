@@ -2328,8 +2328,10 @@ Use ace-jump-mode to quick jump to words or char
 
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
+    :bind
+    ("M-o" . 'ace-window)
+    ("C-x o" . 'ace-window)
     :config
-    (bind-key* "M-o" 'ace-window)
     (setq aw-scope 'frame)   ; only the windows of the current frame
     (setq aw-background t)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
