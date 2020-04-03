@@ -543,7 +543,6 @@ doesn't require any additional setup. bounding as official recommendation.
 I use =magit= to handle version control. It's lovely, but I tweak a few things:
 
 - I bring up the status menu with =C-x g=.
-- Use =evil= keybindings with =magit=.
 - The default behavior of =magit= is to ask before pushing. I haven't had any
   problems with accidentally pushing, so I'd rather not confirm that every time.
 - Per [[http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html][tpope's suggestions]], highlight commit text in the summary line that goes
