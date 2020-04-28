@@ -192,9 +192,18 @@ Why not?
     (set-frame-parameter (selected-frame) 'alpha value))
 #+end_src
 
+custom face when running in 256-color terminal
 #+begin_src emacs-lisp
-  (if (not (display-graphic-p))
-      (load-file "~/.emacs.d/custom-face.el"))
+  (defun MattLu/load-custom-face-el ()
+    (if (eq 256 (display-color-cells))
+        (load-file "~/.emacs.d/custom-face.el")))
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame
+                      frame (MattLu/load-custom-face-el))))
+    (MattLu/load-custom-face-el))
 #+end_src
 
 *** solarized-theme
@@ -758,10 +767,7 @@ YouCompltedMe setup
     (setq request-message-level -1)
     (set-variable 'ycmd-server-command
                   `("python3" "-u" ,
-                    (file-truename "~/.emacs.d/ycmd/ycmd")))
-    (require 'ycmd-eldoc)
-    :hook
-    (ycmd-mode . ycmd-eldoc-setup))
+                    (file-truename "~/.emacs.d/ycmd/ycmd"))))
 
   (defun MattLu/company-mode-c-mode-hook ()
     (set (make-local-variable 'company-backends)
