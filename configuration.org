@@ -405,6 +405,17 @@ programming.
     (symon-mode))
 #+END_SRC
 
+** Profile
+
+ set profile report line wide
+ most of the calling is too deep to show in 80 characters.
+#+begin_src emacs-lisp
+  (eval-after-load "profiler"
+    '(progn
+       (setf (caar profiler-report-cpu-line-format) 200
+             (caar profiler-report-memory-line-format) 200)))
+#+end_src
+
 * Project management
 
 I use a few packages in virtually every programming or writing environment to
