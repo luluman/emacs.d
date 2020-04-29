@@ -1045,8 +1045,10 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
                           "~/python/bmnett-3.5/"))
-    (if (eq system-type 'gnu/linux)
-        (venv-workon "bmnett-3.5")))
+    (cond ((eq system-type 'gnu/linux)
+           (venv-workon "bmnett-3.5"))
+          ((eq system-type 'darwin)
+           (venv-workon "py3"))))
 #+END_SRC
 
 Set ipython as interpreter
