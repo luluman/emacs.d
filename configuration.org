@@ -605,8 +605,8 @@ I've been playing around with the newly-released =forge= for managing GitHub PRs
 and issues. Seems slick so far.
 
 #+begin_src emacs-lisp
-  (use-package ghub)
-  (use-package forge)
+  ;; (use-package ghub)
+  ;; (use-package forge)
 #+end_src
 
 I'm also partial to =git-timemachine=, which lets you quickly page through the
@@ -718,6 +718,54 @@ Get environment variable in Shell and set them to Emacs
 
   (define-key shell-mode-map (kbd "C-c x") 'MattLu/get-shell-env-value-and-set-emacs)
 #+end_src
+
+** COMMENT Multiple desktop config
+
+#+BEGIN_SRC emacs-lisp
+  (bind-keys*
+   ("M-s" . select-frame-by-name)
+   ("C-c n" . set-frame-name))
+#+END_SRC
+
+** Workgroups another way to organize workspace
+
+#+BEGIN_SRC emacs-lisp
+  (when (fboundp 'winner-mode)
+    (winner-mode 1))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package workgroups2
+    :config
+    (setq wg-session-load-on-start nil)
+    (setq wg-session-file "~/.emacs.d/.emacs_workgroups")
+    (setq wg-prefix-key (kbd "C-c z"))
+    (setq wg-workgroups-mode-exit-save-behavior "none")
+    (setq wg-dissociate-buffer-on-kill-buffer nil)
+    (bind-keys* ("M-s" . wg-switch-to-workgroup))
+    (defun wg-add-or-remove-workgroups-hooks (remove)
+      "Add or remove all of Workgroups' hooks, depending on REMOVE."
+      (wg-add-or-remove-hooks
+       remove
+       'kill-emacs-query-functions       'wg-save-session-on-emacs-exit
+       'delete-frame-hook                'wg-update-working-wconfig-on-delete-frame
+       'after-make-frame-functions       'wg-update-working-wconfig-on-make-frame
+       'wg-pre-window-configuration-change-hook 'wg-update-working-wconfig-hook
+       'window-configuration-change-hook 'wg-flag-window-configuration-changed
+       'post-command-hook                'wg-undoify-window-configuration-change
+       'minibuffer-exit-hook             'wg-flag-just-exited-minibuffer
+       ))
+    (workgroups-mode 1))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; (setq desktop-restore-forces-onscreen nil)
+  ;; (desktop-save-mode)
+  ;; (add-hook 'server-after-make-frame-hook 'desktop-read)
+  ;; (bind-keys*
+  ;;  ("M-s" . select-frame-by-name)
+  ;;  ("C-c n" . set-frame-name))
+#+END_SRC
 
 * Programming customization
 ** common settings
@@ -2355,41 +2403,6 @@ Use ace-jump-mode to quick jump to words or char
     (setq aw-scope 'frame)   ; only the windows of the current frame
     (setq aw-background t)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
-#+END_SRC
-
-** COMMENT Multiple desktop config
-
-#+BEGIN_SRC emacs-lisp
-  (bind-keys*
-   ("M-s" . select-frame-by-name)
-   ("C-c n" . set-frame-name))
-#+END_SRC
-
-** Workgroups another way to organize workspace
-
-#+BEGIN_SRC emacs-lisp
-  (when (fboundp 'winner-mode)
-    (winner-mode 1))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package workgroups2
-    :config
-    (setq wg-session-load-on-start nil)
-    (setq wg-session-file "~/.emacs.d/.emacs_workgroups")
-    (setq wg-prefix-key (kbd "C-c z"))
-    (setq wg-workgroups-mode-exit-save-behavior "none")
-    (bind-keys* ("M-s" . wg-switch-to-workgroup))
-    (workgroups-mode 1))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; (setq desktop-restore-forces-onscreen nil)
-  ;; (desktop-save-mode)
-  ;; (add-hook 'server-after-make-frame-hook 'desktop-read)
-  ;; (bind-keys*
-  ;;  ("M-s" . select-frame-by-name)
-  ;;  ("C-c n" . set-frame-name))
 #+END_SRC
 
 ** Handle layer file
