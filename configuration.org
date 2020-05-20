@@ -2194,6 +2194,7 @@ at the correct indentation for Python).
     (setq ivy-use-virtual-buffers t
           ivy-count-format "%d/%d "
           enable-recursive-minibuffers t)
+    (setq ivy-initial-inputs-alist nil)
     (setq ivy-re-builders-alist
       '((swiper . ivy--regex-plus)
         (t . ivy--regex-fuzzy)))
@@ -2228,7 +2229,6 @@ at the correct indentation for Python).
     :after (ivy)
     :config
     (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
-    (setq ivy-initial-inputs-alist nil)
     (plist-put ivy-rich-display-transformers-list
                'ivy-switch-buffer
                '(:columns

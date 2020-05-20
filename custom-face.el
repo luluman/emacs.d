@@ -80,14 +80,14 @@
 
  ;; symbol-overlay
  '(symbol-overlay-default-face ((t (:inherit highlight))))
- '(symbol-overlay-face-1 ((t (:background "dodger blue"))))
- '(symbol-overlay-face-2 ((t (:background "hot pink"))))
- '(symbol-overlay-face-3 ((t (:background "color-172"))))
- '(symbol-overlay-face-4 ((t (:background "orchid"))))
- '(symbol-overlay-face-5 ((t (:background "red"))))
- '(symbol-overlay-face-6 ((t (:background "salmon"))))
- '(symbol-overlay-face-7 ((t (:background "color-34"))))
- '(symbol-overlay-face-8 ((t (:background "turquoise"))))
+ '(symbol-overlay-face-1 ((t (:background "dodger blue" :foreground "color-16"))))
+ '(symbol-overlay-face-2 ((t (:background "hot pink" :foreground "color-16"))))
+ '(symbol-overlay-face-3 ((t (:background "color-172" :foreground "color-16"))))
+ '(symbol-overlay-face-4 ((t (:background "orchid" :foreground "color-16"))))
+ '(symbol-overlay-face-5 ((t (:background "red" :foreground "color-16"))))
+ '(symbol-overlay-face-6 ((t (:background "salmon" :foreground "color-16"))))
+ '(symbol-overlay-face-7 ((t (:background "color-34" :foreground "color-16"))))
+ '(symbol-overlay-face-8 ((t (:background "turquoise" :foreground "color-16"))))
 
  ;; highlight-indent
  '(highlight-indent-guides-odd-face ((t (:background "black"))))
