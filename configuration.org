@@ -2437,11 +2437,14 @@ maximum memory allotted to Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package too-long-lines-mode
-    :quelpa
-    ((too-long-lines-mode
-      :fetcher github
-      :repo "rakete/too-long-lines-mode")
-     :upgrade t)
+    ;; using use-package PATH
+    :load-path "~/.emacs.d/too-long-lines-mode"
+    ;; using quelpa URL
+    ;; :quelpa
+    ;; ((too-long-lines-mode
+    ;;   :fetcher github
+    ;;   :repo "rakete/too-long-lines-mode")
+    ;;  :upgrade t)
     :config
     (set 'too-long-lines-special-buffer-modes
          '(shell-mode ag-mode inferior-python-mode))
@@ -2468,11 +2471,17 @@ non-essential things while the window is being scrolled
 
 ** jump back and forth
 
+ back-button offers local and global jumping
+
 #+begin_src emacs-lisp
   (use-package back-button
-    :config
+    :bind (:map back-button-mode-map
+                ("C-c C-<right>" . back-button-local-forward)
+                ("C-c C-<left>" . back-button-local-backward))
+    :init
     (back-button-mode 1)
-    :requires visible-mark)
+    (define-key back-button-mode-map (kbd "C-x <left>") nil)
+    (define-key back-button-mode-map (kbd "C-x <right>") nil))
 #+end_src
 
 ** COMMENT Icicles
