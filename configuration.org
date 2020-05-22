@@ -37,6 +37,15 @@ That’ll be the default in Emacs 26.3, I think, but I’m not there yet.
   ;; (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 #+END_SRC
 
+use-package supports git repository
+
+#+begin_src emacs-lisp
+  (use-package quelpa-use-package
+    ;; :config
+    ;; (setq use-package-ensure-function 'quelpa)
+    )
+#+end_src
+
 * Use sensible-defaults.el
 
 Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
@@ -2228,6 +2237,7 @@ at the correct indentation for Python).
   (use-package ivy-rich
     :after (ivy)
     :config
+    (setq ivy-initial-inputs-alist nil)
     (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
     (plist-put ivy-rich-display-transformers-list
                'ivy-switch-buffer
@@ -2427,7 +2437,11 @@ maximum memory allotted to Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package too-long-lines-mode
-    :load-path "~/.emacs.d/too-long-lines-mode"
+    :quelpa
+    ((too-long-lines-mode
+      :fetcher github
+      :repo "rakete/too-long-lines-mode")
+     :upgrade t)
     :config
     (set 'too-long-lines-special-buffer-modes
          '(shell-mode ag-mode inferior-python-mode))
@@ -2451,6 +2465,28 @@ non-essential things while the window is being scrolled
     (fast-scroll-config)
     (fast-scroll-mode 1))
 #+END_SRC
+
+** jump back and forth
+
+#+begin_src emacs-lisp
+  (use-package back-button
+    :config
+    (back-button-mode 1)
+    :requires visible-mark)
+#+end_src
+
+** COMMENT Icicles
+
+#+begin_src emacs-lisp
+  (use-package icicles
+    :quelpa
+    ((icicles
+      :fetcher github
+      :repo "emacsmirror/icicles")
+     :upgrade t)
+    :config
+    (icy-mode 1))
+#+end_src
 
 * Set custom keybindings
 
