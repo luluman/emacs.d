@@ -1,9 +1,8 @@
 (require 'package)
 (setq package-archives
-      '(("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
-        ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-        ("melpa-stable" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa-stable/")
-        ("org" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+      '(("gnu"   . "https://elpa.emacs-china.org/gnu/")
+        ("melpa" . "https://elpa.emacs-china.org/melpa/")
+        ("org" . "https://elpa.emacs-china.org/org/")
         ))
 (package-initialize)
 
