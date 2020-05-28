@@ -41,9 +41,9 @@ use-package supports git repository
 
 #+begin_src emacs-lisp
   (use-package quelpa-use-package
-    ;; :config
-    ;; (setq use-package-ensure-function 'quelpa)
-    )
+    :disabled t
+    :config
+    (setq use-package-ensure-function 'quelpa))
 #+end_src
 
 * Use sensible-defaults.el
@@ -592,7 +592,6 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     (use-package with-editor)
     (setq magit-push-always-verify nil)
     (setq git-commit-summary-max-length 50)
-
     (with-eval-after-load 'magit-remote
       (magit-define-popup-action 'magit-push-popup ?P
         'magit-push-implicitly--desc
@@ -655,11 +654,10 @@ project root (if I'm not in a "real" project).
   (use-package projectile
     :bind
     ("C-c v" . deadgrep)
-
     :bind-keymap
     ("C-c p" . projectile-command-map)
-
     :config
+    (projectile-global-mode)
     (setq frame-title-format '((:eval (projectile-project-name))))
     (add-to-list 'projectile-project-root-files-bottom-up "compile_commands.json")
     (setq projectile-completion-system 'ivy)
@@ -774,6 +772,41 @@ Get environment variable in Shell and set them to Emacs
   ;; (bind-keys*
   ;;  ("M-s" . select-frame-by-name)
   ;;  ("C-c n" . set-frame-name))
+#+END_SRC
+
+** CMake
+
+CMake is a meta-build system that is commonly used in C++ projects.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cmake-mode
+    :mode ("CMakeLists.txt" "\\.cmake\\'"))
+#+END_SRC
+
+Enable type-aware highlighting support for CMake files:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cmake-font-lock
+    :hook (cmake-mode . cmake-font-lock-activate))
+#+END_SRC
+
+** Bazel
+
+Bazel is a build system created by Google:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package bazel-mode
+    :defer t)
+#+END_SRC
+
+** imenu-list
+
+show function and variable tree in side buffer
+#+BEGIN_SRC emacs-lisp
+  (use-package imenu-list
+    :bind ("C-c i" . imenu-list-smart-toggle)
+    :config
+    (setq imenu-list-focus-after-activation t))
 #+END_SRC
 
 * Programming customization
@@ -979,6 +1012,16 @@ Use Ivy as the interface to select from xref candidates.
             ("M-C" . symbol-overlay-remove-all))
      :hook (prog-mode . symbol-overlay-mode))
  #+END_SRC
+
+*** Google Test
+
+For running Google Tests from a given buffer
+
+#+BEGIN_SRC emacs-lisp
+  (use-package gtest-mode
+    :load-path "~/.emacs.d/gtest-mode"
+    :after cc-mode)
+#+END_SRC
 
 ** COMMENT C++
 
@@ -1196,16 +1239,6 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
   (use-package protobuf-mode
     :config
     (add-to-list 'auto-mode-alist '("\\.prototxt\\'" . protobuf-mode)))
-#+END_SRC
-
-** imenu-list
-
-show function and variable tree in side buffer
-#+BEGIN_SRC emacs-lisp
-  (use-package imenu-list
-    :bind ("C-c i" . imenu-list-smart-toggle)
-    :config
-    (setq imenu-list-focus-after-activation t))
 #+END_SRC
 
 ** ReStructuredText
@@ -2137,10 +2170,11 @@ The =helpful= package provides, among other things, more context in Help
 buffers.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package helpful)
-  (global-set-key (kbd "C-h f") #'helpful-callable)
-  (global-set-key (kbd "C-h v") #'helpful-variable)
-  (global-set-key (kbd "C-h k") #'helpful-key)
+  (use-package helpful
+    :bind
+    (("C-h f" . helpful-callable)
+     ("C-h v" . helpful-variable)
+     ("C-h k" . helpful-key)))
 #+END_SRC
 
 ** Look for executables in =/usr/local/bin=.
@@ -2341,7 +2375,7 @@ warp selected region with punctuate.
        ("`" "`" nil (markdown-mode ruby-mode)))))
 #+END_SRC
 
-** Use projectile everywhere
+** COMMENT Use projectile everywhere
 
 #+BEGIN_SRC emacs-lisp
   (projectile-mode)
@@ -2433,6 +2467,12 @@ maximum memory allotted to Emacs.
   (add-to-list 'warning-suppress-types '(undo discard-info))
 #+END_SRC
 
+** Increase a bit garbage collection threshold
+
+#+BEGIN_SRC emacs-lisp
+  (setq gc-cons-threshold 1600000)
+#+END_SRC
+
 ** using too-long-lines-mode to discard extremely long lines
 
 #+BEGIN_SRC emacs-lisp
@@ -2484,6 +2524,14 @@ non-essential things while the window is being scrolled
     (define-key back-button-mode-map (kbd "C-x <right>") nil))
 #+end_src
 
+** Ediff
+
+I like Ediff's control panel to show in the same frame, even on
+graphical environments.
+
+#+BEGIN_SRC emacs-lisp
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+#+END_SRC
 ** COMMENT Icicles
 
 #+begin_src emacs-lisp
@@ -2522,6 +2570,7 @@ Remap when working in terminal Emacs.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-c w") 'ediff-regions-wordwise)
 #+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   (global-unset-key (kbd "C-x 5 1"))
   (local-unset-key (kbd "C-x 5 1"))
