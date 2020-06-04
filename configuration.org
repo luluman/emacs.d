@@ -750,18 +750,6 @@ Get environment variable in Shell and set them to Emacs
     (setq wg-workgroups-mode-exit-save-behavior "none")
     (setq wg-dissociate-buffer-on-kill-buffer nil)
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
-    (defun wg-add-or-remove-workgroups-hooks (remove)
-      "Add or remove all of Workgroups' hooks, depending on REMOVE."
-      (wg-add-or-remove-hooks
-       remove
-       'kill-emacs-query-functions       'wg-save-session-on-emacs-exit
-       'delete-frame-hook                'wg-update-working-wconfig-on-delete-frame
-       'after-make-frame-functions       'wg-update-working-wconfig-on-make-frame
-       'wg-pre-window-configuration-change-hook 'wg-update-working-wconfig-hook
-       'window-configuration-change-hook 'wg-flag-window-configuration-changed
-       'post-command-hook                'wg-undoify-window-configuration-change
-       'minibuffer-exit-hook             'wg-flag-just-exited-minibuffer
-       ))
     (workgroups-mode 1))
 #+END_SRC
 
@@ -2467,7 +2455,7 @@ maximum memory allotted to Emacs.
   (add-to-list 'warning-suppress-types '(undo discard-info))
 #+END_SRC
 
-** Increase a bit garbage collection threshold
+** COMMENT Increase a bit garbage collection threshold
 
 #+BEGIN_SRC emacs-lisp
   (setq gc-cons-threshold 1600000)
