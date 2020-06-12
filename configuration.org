@@ -1011,6 +1011,28 @@ For running Google Tests from a given buffer
     :after cc-mode)
 #+END_SRC
 
+*** COMMENT Tree-sitter
+
+using tree-sitter to manage Parser
+#+begin_src emacs-lisp
+  (use-package tree-sitter
+    :load-path "~/.emacs.d/emacs-tree-sitter/lisp")
+
+  ;; (use-package tree-sitter-hl
+  ;;   :load-path "~/.emacs.d/emacs-tree-sitter/lisp")
+
+  ;; (use-package tree-sitter-debug
+  ;;   :load-path "~/.emacs.d/emacs-tree-sitter/lisp")
+
+  ;; (use-package tree-sitter-query
+  ;;   :load-path "~/.emacs.d/emacs-tree-sitter/lisp")
+
+  (use-package tree-sitter-langs
+    :load-path "~/.emacs.d/emacs-tree-sitter/langs")
+
+  (global-tree-sitter-mode)
+#+end_src
+
 ** COMMENT C++
 
 use modern cpp font lock to get better semantic highlight
@@ -2277,7 +2299,7 @@ at the correct indentation for Python).
                'counsel-bookmark
                '(:columns
                  ((ivy-rich-bookmark-type (:width 10))
-                  (ivy-rich-candidate (:width 40))
+                  (ivy-rich-candidate (:width 60))
                   (ivy-rich-bookmark-info
                    (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))))
     (ivy-rich-mode 1)
