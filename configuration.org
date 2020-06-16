@@ -850,7 +850,7 @@ YouCompltedMe setup
 
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
-    :hook ((c-mode c++-mode python-mode)
+    :hook ((c-mode c++-mode python-mode typescript-mode)
            . ycmd-mode)
     :config
     (setq request-message-level -1)
@@ -864,7 +864,7 @@ YouCompltedMe setup
     (add-to-list 'company-backends 'company-ycmd)
     (add-to-list 'company-backends 'company-capf))
 
-  (defun MattLu/company-mode-python-mode-hook ()
+  (defun MattLu/company-mode-py/ts/js-mode-hook ()
     (add-to-list (make-local-variable 'company-backends)
                  'company-ycmd))
 
@@ -872,7 +872,7 @@ YouCompltedMe setup
     :config
     (setq company-ycmd-insert-arguments nil)
     :hook
-    ((python-mode . MattLu/company-mode-python-mode-hook)
+    (((python-mode typescript-mode) . MattLu/company-mode-py/ts/js-mode-hook)
      ((c-mode c++-mode) . MattLu/company-mode-c-mode-hook)))
 #+END_SRC
 
@@ -897,7 +897,7 @@ LSP client
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
     :hook
-    ((c-mode c++-mode python-mode sh-mode)
+    ((c-mode c++-mode python-mode sh-mode typescript-mode)
      . eglot-ensure))
 #+END_SRC
 
@@ -1001,7 +1001,7 @@ Use Ivy as the interface to select from xref candidates.
      :hook (prog-mode . symbol-overlay-mode))
  #+END_SRC
 
-*** Google Test
+*** COMMENT Google Test
 
 For running Google Tests from a given buffer
 
@@ -1104,6 +1104,18 @@ Indent everything by 2 spaces.
               (yas-minor-mode 1)
               (setq coffee-tab-width 2)))
 #+END_SRC
+
+Clear js-mode-hook when parser json file
+
+#+begin_src emacs-lisp
+  (defun MattLu/js-mode-hook ()
+    (unless (and (stringp buffer-file-name)
+               (string-match "\\.json\\'" buffer-file-name))
+      (eglot-ensure)
+      (ycmd-mode)
+      (MattLu/company-mode-py/ts/js-mode-hook)))
+  (add-hook 'js-mode-hook 'MattLu/js-mode-hook)
+#+end_src
 
 ** Lisps
 
@@ -1256,6 +1268,12 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 #+BEGIN_SRC emacs-lisp
   (use-package rst)
 #+END_SRC
+
+** typescript-mode
+
+#+begin_src emacs-lisp
+  (use-package typescript-mode)
+#+end_src
 
 * Org
 
@@ -2138,18 +2156,23 @@ Ask before recursively /deleting/ a directory, though.
   (setq dired-recursive-deletes 'top)
 #+END_SRC
 
-Open a file with an external program (that is, through =xdg-open=) by hitting
-=C-c C-o=.
+Files are normally moved and copied synchronously.
+This is fine for small or local files,
+but copying a large file or moving a file across a mounted
+network drive blocks Emacs until the process is completed. Unacceptable!
 
-#+BEGIN_SRC emacs-lisp
-  (defun dired-xdg-open ()
-    "In dired, open the file named on this line."
-    (interactive)
-    (let* ((file (dired-get-filename nil t)))
-      (call-process "xdg-open" nil 0 nil file)))
+This uses =emacs-async= to make dired perform actions asynchronously.
 
-  (define-key dired-mode-map (kbd "C-c C-o") 'dired-xdg-open)
-#+END_SRC
+#+begin_src emacs-lisp
+  (use-package async
+    :config
+    (dired-async-mode 1))
+#+end_src
+
+reuse dired buffer
+#+begin_src emacs-lisp
+  (put 'dired-find-alternate-file 'disabled nil)
+#+end_src
 
 * Editing settings
 ** Quickly visit Emacs
