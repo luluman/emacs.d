@@ -2266,7 +2266,7 @@ at the correct indentation for Python).
     ("M-y" . 'counsel-yank-pop)
     ("C-x b" . 'ivy-switch-buffer)
     ("C-c k" . 'counsel-rg)
-    ("C-x C-b" . 'ivy-switch-buffer)
+    ("C-x C-b" . 'ibuffer)
     ("C-c C-r" . 'ivy-resume)
     ("C-c b" . 'counsel-bookmark)
     ("C-c d" . 'counsel-descbinds)
