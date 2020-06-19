@@ -1015,21 +1015,8 @@ For running Google Tests from a given buffer
 
 using tree-sitter to manage Parser
 #+begin_src emacs-lisp
-  (use-package tree-sitter
-    :load-path "~/.emacs.d/emacs-tree-sitter/lisp")
-
-  ;; (use-package tree-sitter-hl
-  ;;   :load-path "~/.emacs.d/emacs-tree-sitter/lisp")
-
-  ;; (use-package tree-sitter-debug
-  ;;   :load-path "~/.emacs.d/emacs-tree-sitter/lisp")
-
-  ;; (use-package tree-sitter-query
-  ;;   :load-path "~/.emacs.d/emacs-tree-sitter/lisp")
-
-  (use-package tree-sitter-langs
-    :load-path "~/.emacs.d/emacs-tree-sitter/langs")
-
+  (use-package tree-sitter)
+  (use-package tree-sitter-langs)
   (global-tree-sitter-mode)
 #+end_src
 
