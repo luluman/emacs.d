@@ -2162,6 +2162,12 @@ reuse dired buffer
 #+end_src
 
 * Editing settings
+** Hydra
+
+#+begin_src emacs-lisp
+  (use-package hydra)
+#+end_src
+
 ** Quickly visit Emacs
 configuration
 
@@ -2571,12 +2577,6 @@ graphical environments.
      :upgrade t)
     :config
     (icy-mode 1))
-#+end_src
-
-** Hydra
-
-#+begin_src emacs-lisp
-  (use-package hydra)
 #+end_src
 
 * Set custom keybindings
