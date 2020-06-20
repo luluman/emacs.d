@@ -2545,17 +2545,21 @@ non-essential things while the window is being scrolled
                 ("C-c C-<right>" . hydra-back-and-forth/back-button-local-forward)
                 ("C-c C-<left>" . hydra-back-and-forth/back-button-local-backward)
                 ("C-c C-<up>" . hydra-back-and-forth/back-button-global-backward)
-                ("C-c C-<down>" . hydra-back-and-forth/back-button-global-backward))
+                ("C-c C-<down>" . hydra-back-and-forth/back-button-global-forward))
     :init
     (back-button-mode 1)
-    (setq back-button-mode-map (make-sparse-keymap))
+    (define-key back-button-mode-map (kbd "C-x <left>") nil)
+    (define-key back-button-mode-map (kbd "C-x <right>") nil)
+    (define-key back-button-mode-map (kbd "C-x C-SPC") nil)
+    (define-key back-button-mode-map (kbd "C-x SPC") nil)
     :config
     (defhydra hydra-back-and-forth ()
       "back-and-forth"
       ("<right>" back-button-local-forward "→")
       ("<left>" back-button-local-backward "←")
       ("<up>" back-button-global-backward "↑")
-      ("<down>" back-button-global-forward "↓")))
+      ("<down>" back-button-global-forward "↓"))
+    :after (hydra))
 #+end_src
 
 ** Ediff
