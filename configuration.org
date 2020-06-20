@@ -2549,12 +2549,20 @@ non-essential things while the window is being scrolled
 #+begin_src emacs-lisp
   (use-package back-button
     :bind (:map back-button-mode-map
-                ("C-c C-<right>" . back-button-local-forward)
-                ("C-c C-<left>" . back-button-local-backward))
+                ("C-c C-<right>" . hydra-back-and-forth/back-button-local-forward)
+                ("C-c C-<left>" . hydra-back-and-forth/back-button-local-backward)
+                ("C-c C-<up>" . hydra-back-and-forth/back-button-global-backward)
+                ("C-c C-<down>" . hydra-back-and-forth/back-button-global-backward))
     :init
     (back-button-mode 1)
-    (define-key back-button-mode-map (kbd "C-x <left>") nil)
-    (define-key back-button-mode-map (kbd "C-x <right>") nil))
+    (setq back-button-mode-map (make-sparse-keymap))
+    :config
+    (defhydra hydra-back-and-forth ()
+      "back-and-forth"
+      ("<right>" back-button-local-forward "→")
+      ("<left>" back-button-local-backward "←")
+      ("<up>" back-button-global-backward "↑")
+      ("<down>" back-button-global-forward "↓")))
 #+end_src
 
 ** Ediff
@@ -2576,6 +2584,12 @@ graphical environments.
      :upgrade t)
     :config
     (icy-mode 1))
+#+end_src
+
+** Hydra
+
+#+begin_src emacs-lisp
+  (use-package hydra)
 #+end_src
 
 * Set custom keybindings
