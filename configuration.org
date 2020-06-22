@@ -2513,7 +2513,7 @@ maximum memory allotted to Emacs.
     ;;  :upgrade t)
     :config
     (set 'too-long-lines-special-buffer-modes
-         '(shell-mode ag-mode inferior-python-mode))
+         '(shell-mode ag-mode inferior-python-mode comint-mode))
     (too-long-lines-mode))
 #+END_SRC
 
@@ -2542,12 +2542,14 @@ non-essential things while the window is being scrolled
 #+begin_src emacs-lisp
   (use-package back-button
     :bind (:map back-button-mode-map
-                ("C-c C-<right>" . hydra-back-and-forth/back-button-local-forward)
-                ("C-c C-<left>" . hydra-back-and-forth/back-button-local-backward)
-                ("C-c C-<up>" . hydra-back-and-forth/back-button-global-backward)
-                ("C-c C-<down>" . hydra-back-and-forth/back-button-global-forward))
+                ("C-<right>" . hydra-back-and-forth/back-button-local-forward)
+                ("C-<left>" . hydra-back-and-forth/back-button-local-backward)
+                ("C-<up>" . hydra-back-and-forth/back-button-global-backward)
+                ("C-<down>" . hydra-back-and-forth/back-button-global-forward))
     :init
     (back-button-mode 1)
+    (define-key back-button-mode-map (kbd "C-x <C-left>") nil)
+    (define-key back-button-mode-map (kbd "C-x <C-right>") nil)
     (define-key back-button-mode-map (kbd "C-x <left>") nil)
     (define-key back-button-mode-map (kbd "C-x <right>") nil)
     (define-key back-button-mode-map (kbd "C-x C-SPC") nil)
