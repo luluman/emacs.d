@@ -587,7 +587,6 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
   (use-package magit
     :bind
     ("C-x g" . magit-status)
-
     :config
     (use-package with-editor)
     (setq magit-push-always-verify nil)
@@ -983,7 +982,7 @@ Use Ivy as the interface to select from xref candidates.
    (use-package hideshow
      :hook (prog-mode . hs-minor-mode)
      :bind (:map hs-minor-mode-map
-                 ("C-c m" . hs-toggle-hiding))
+                 ("C-c s" . hs-toggle-hiding))
      :config
      (setq hs-set-up-overlay 'MattLu/display-code-line-counts))
  #+END_SRC
@@ -1246,8 +1245,7 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
    add Google protocol buffer support
 #+BEGIN_SRC emacs-lisp
   (use-package protobuf-mode
-    :config
-    (add-to-list 'auto-mode-alist '("\\.prototxt\\'" . protobuf-mode)))
+    :mode "\\.prototxt$")
 #+END_SRC
 
 ** ReStructuredText
@@ -2168,6 +2166,40 @@ reuse dired buffer
   (use-package hydra)
 #+end_src
 
+** Rectangle Hydra
+
+rectangle-mark-mode, copy form hydra/hydra-examples.el. Awesome.
+
+#+begin_src emacs-lisp
+  (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
+                                       :color pink
+                                       :post (deactivate-mark))
+    "
+    ^_k_^     _d_elete    _s_tring
+  _h_   _l_   _o_k        _y_ank
+    ^_j_^     _n_ew-copy  _r_eset
+  ^^^^        _e_xchange  _u_ndo
+  ^^^^        ^ ^         _p_aste
+  "
+    ("h" rectangle-backward-char nil)
+    ("l" rectangle-forward-char nil)
+    ("k" rectangle-previous-line nil)
+    ("j" rectangle-next-line nil)
+    ("e" hydra-ex-point-mark nil)
+    ("n" copy-rectangle-as-kill nil)
+    ("d" delete-rectangle nil)
+    ("r" (if (region-active-p)
+             (deactivate-mark)
+           (rectangle-mark-mode 1)) nil)
+    ("y" yank-rectangle nil)
+    ("u" undo nil)
+    ("s" string-rectangle nil)
+    ("p" kill-rectangle nil)
+    ("o" nil nil))
+
+  (global-set-key (kbd "C-x SPC") 'hydra-rectangle/body)
+#+end_src
+
 ** Quickly visit Emacs
 configuration
 
@@ -2259,6 +2291,7 @@ at the correct indentation for Python).
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
     :config
+    (use-package ivy-hydra)
     (ivy-mode 1)
     (setq ivy-use-virtual-buffers t
           ivy-count-format "%d/%d "
@@ -2413,10 +2446,28 @@ Set multiple cursors for better marker words
 
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
-   :bind ("C-S-c C-S-c" . mc/edit-lines)
-         ("C->" . mc/mark-next-like-this)
-         ("C-<" . mc/mark-previous-like-this)
-         ("C-c C-<"  . mc/mark-all-like-this))
+    :bind
+    ("C-c m" . multiple-cursors-hydra/body)
+    :config
+    (defhydra multiple-cursors-hydra (:hint nil)
+      "
+       ^Up^            ^Down^        ^Other^
+  ----------------------------------------------
+  [_p_]   Next    [_n_]   Next    [_l_] Edit lines
+  [_P_]   Skip    [_N_]   Skip    [_a_] Mark all
+  [_M-p_] Unmark  [_M-n_] Unmark  [_r_] Mark by regexp
+  ^ ^             ^ ^             [_q_] Quit
+  "
+      ("l" mc/edit-lines :exit t)
+      ("a" mc/mark-all-like-this :exit t)
+      ("n" mc/mark-next-like-this)
+      ("N" mc/skip-to-next-like-this)
+      ("M-n" mc/unmark-next-like-this)
+      ("p" mc/mark-previous-like-this)
+      ("P" mc/skip-to-previous-like-this)
+      ("M-p" mc/unmark-previous-like-this)
+      ("r" mc/mark-all-in-region-regexp :exit t)
+      ("q" nil)))
 #+END_SRC
 
 ** Use expand region

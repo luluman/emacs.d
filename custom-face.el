@@ -122,6 +122,11 @@
  '(rst-level-4 ((t (:background "brightmagenta"))))
  '(rst-level-5 ((t (:background "grey57"))))
  '(rst-level-6 ((t (:background "grey50"))))
+
+ ;; Hydra
+ '(hydra-face-blue ((t (:foreground "color-39" :weight bold))))
+ '(hydra-face-red ((t (:foreground "color-202" :weight bold))))
+ '(hydra-face-teal ((t (:foreground "cyan" :weight bold))))
  )
 
 ;; ediff
