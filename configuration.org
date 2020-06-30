@@ -1169,9 +1169,9 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
     (venv-initialize-interactive-shells) ;; if you want interactive shell support
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
-                          "~/python/bmnett-3.5/"))
+                          "~/python/ufw/"))
     (cond ((eq system-type 'gnu/linux)
-           (venv-workon "bmnett-3.5"))
+           (venv-workon "ufw"))
           ((eq system-type 'darwin)
            (venv-workon "py3"))))
 #+END_SRC
@@ -2447,17 +2447,16 @@ Set multiple cursors for better marker words
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
     :bind
-    ("C-c m" . multiple-cursors-hydra/body)
+    ("C-c m" . hydra-multiple-cursors/body)
     :config
-    (defhydra multiple-cursors-hydra (:hint nil)
+    (defhydra hydra-multiple-cursors (:hint nil)
       "
-       ^Up^            ^Down^        ^Other^
-  ----------------------------------------------
-  [_p_]   Next    [_n_]   Next    [_l_] Edit lines
-  [_P_]   Skip    [_N_]   Skip    [_a_] Mark all
-  [_M-p_] Unmark  [_M-n_] Unmark  [_r_] Mark by regexp
-  ^ ^             ^ ^             [_q_] Quit
-  "
+   Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
+  ------------------------------------------------------------------
+   [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
+   [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
+   [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search
+   [Click] Cursor at point       [_q_] Quit"
       ("l" mc/edit-lines :exit t)
       ("a" mc/mark-all-like-this :exit t)
       ("n" mc/mark-next-like-this)
@@ -2466,7 +2465,13 @@ Set multiple cursors for better marker words
       ("p" mc/mark-previous-like-this)
       ("P" mc/skip-to-previous-like-this)
       ("M-p" mc/unmark-previous-like-this)
-      ("r" mc/mark-all-in-region-regexp :exit t)
+      ("s" mc/mark-all-in-region-regexp :exit t)
+      ("0" mc/insert-numbers :exit t)
+      ("A" mc/insert-letters :exit t)
+      ("<mouse-1>" mc/add-cursor-on-click)
+      ;; Help with click recognition in this hydra
+      ("<down-mouse-1>" ignore)
+      ("<drag-mouse-1>" ignore)
       ("q" nil)))
 #+END_SRC
 
