@@ -13,7 +13,7 @@
  '(vertical-border
    ((nil (:foreground "color-16" :background nil))))
  '(show-paren-match
-  ((nil (:background "turquoise" :foreground "black"))))
+   ((nil (:background "turquoise" :foreground "black"))))
  '(highlight  ;; shallow blue
    ((nil (:inherit nil :background "#1a4b77" :foreground nil))))
  '(org-ellipsis ((t (:foreground "color-46"))))
@@ -127,45 +127,39 @@
  '(hydra-face-blue ((t (:foreground "color-39" :weight bold))))
  '(hydra-face-red ((t (:foreground "color-202" :weight bold))))
  '(hydra-face-teal ((t (:foreground "cyan" :weight bold))))
- )
 
-;; ediff
-(add-hook
- 'ediff-load-hook
- (lambda ()
-   (set-face-foreground
-    ediff-current-diff-face-A "color-88")
-   (set-face-foreground
-    ediff-current-diff-face-B "color-22")
-   (set-face-foreground
-    ediff-current-diff-face-C "color-94")
-   (set-face-foreground
-    ediff-even-diff-face-A "black")
-   (set-face-foreground
-    ediff-even-diff-face-B "black")
-   (set-face-foreground
-    ediff-even-diff-face-C "black")
-   (set-face-foreground
-    ediff-fine-diff-face-A "color-88")
-   (set-face-foreground
-    ediff-fine-diff-face-B "color-28")
-   (set-face-foreground
-    ediff-fine-diff-face-C "color-58")
-   (set-face-foreground
-    ediff-odd-diff-face-A "black")
-   (set-face-foreground
-    ediff-odd-diff-face-B "black")
-   (set-face-foreground
-    ediff-odd-diff-face-C "black")
-   (set-face-attribute
-    'ediff-current-diff-Ancestor
-    t :background "#cfdeee" :foreground "grey30")
-   (set-face-attribute
-    'ediff-even-diff-Ancestor
-    t :background "Grey" :foreground "black")
-   (set-face-attribute
-    'ediff-fine-diff-Ancestor
-    t :background "#00c5c0" :foreground "color-17")
-   (set-face-attribute
-    'ediff-odd-diff-Ancestor
-    t :background "gray40" :foreground "brightwhite")))
+
+ ;; ediff
+ '(ediff-current-diff-A
+   ((t (:extend t :background "#ffdddd" :foreground "color-88"))))
+ '(ediff-current-diff-B
+   ((t (:extend t :background "#ddffdd" :foreground "color-22"))))
+ '(ediff-current-diff-C
+   ((t (:extend t :background "#ffffaa" :foreground "color-94"))))
+ '(ediff-current-diff-Ancestor
+   ((t (:extend t :background "#cfdeee" :foreground "color-237"))))
+ '(ediff-even-diff-A
+   ((t (:extend t :background "light grey" :foreground "black"))))
+ '(ediff-even-diff-B
+   ((t (:extend t :background "Grey" :foreground "black"))))
+ '(ediff-even-diff-C
+   ((t (:extend t :background "light grey" :foreground "black"))))
+ '(ediff-even-diff-Ancestor
+   ((t (:extend t :background "Grey" :foreground "black"))))
+ '(ediff-fine-diff-A
+   ((t (:background "#ffbbbb" :foreground "color-88"))))
+ '(ediff-fine-diff-B
+   ((t (:background "#aaffaa" :foreground "color-28"))))
+ '(ediff-fine-diff-C
+   ((t (:background "#ffff55" :foreground "color-58"))))
+ '(ediff-fine-diff-Ancestor
+   ((t (:background "#00c5c0" :foreground "color-17"))))
+ '(ediff-odd-diff-A
+   ((t (:extend t :background "Grey" :foreground "black"))))
+ '(ediff-odd-diff-B
+   ((t (:extend t :background "light grey" :foreground "black"))))
+ '(ediff-odd-diff-C
+   ((t (:extend t :background "Grey" :foreground "black"))))
+ '(ediff-odd-diff-Ancestor
+   ((t (:extend t :background "gray40" :foreground "brightwhite"))))
+ )
