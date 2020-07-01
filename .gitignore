@@ -7,3 +7,4 @@
 !.gitignore
 !.gitmodules
 !custom-face.el
+!.mc-lists.el
