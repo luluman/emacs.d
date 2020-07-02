@@ -968,43 +968,47 @@ Use Ivy as the interface to select from xref candidates.
 
 *** Fold and unfold code blocks
 
- Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
- #+BEGIN_SRC emacs-lisp
-   (defun MattLu/display-code-line-counts (ov)
-     (when (eq 'code (overlay-get ov 'hs))
-       (overlay-put ov 'display
-                    (propertize
-                     (format " … <%d>"
-                             (count-lines (overlay-start ov)
-                                          (overlay-end ov)))
-                     'face '(:background "#ff0066" :foreground "color-16")))))
+Hydra short-keys
+#+begin_src emacs-lisp
+  (defhydra hydra-hs (:idle 1.0)
+    "
+     Hide^^            ^Show^            ^Toggle^    ^Navigation^
+     ----------------------------------------------------------------
+     _h_ hide all      _s_ show all      _t_oggle    _n_ext line
+     _d_ hide block    _a_ show block              _p_revious line
+     _l_ hide level
 
-   (use-package hideshow
-     :hook (prog-mode . hs-minor-mode)
-     :bind (:map hs-minor-mode-map
-                 ("C-c @" . hydra-hs/body))
-     :config
-     (setq hs-set-up-overlay 'MattLu/display-code-line-counts)
-     (defhydra hydra-hs (:idle 1.0)
-       "
-   Hide^^            ^Show^            ^Toggle^    ^Navigation^
-   ----------------------------------------------------------------
-   _h_ hide all      _s_ show all      _t_oggle    _n_ext line
-   _d_ hide block    _a_ show block              _p_revious line
-   _l_ hide level
+     _SPC_ cancel
+     "
+    ("s" hs-show-all)
+    ("h" hs-hide-all)
+    ("a" hs-show-block)
+    ("d" hs-hide-block)
+    ("t" hs-toggle-hiding)
+    ("l" hs-hide-level)
+    ("n" forward-line)
+    ("p" (forward-line -1))
+    ("SPC" nil))
+#+end_src
 
-   _SPC_ cancel
-   "
-       ("s" hs-show-all)
-       ("h" hs-hide-all)
-       ("a" hs-show-block)
-       ("d" hs-hide-block)
-       ("t" hs-toggle-hiding)
-       ("l" hs-hide-level)
-       ("n" forward-line)
-       ("p" (forward-line -1))
-       ("SPC" nil)))
- #+END_SRC
+Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
+#+BEGIN_SRC emacs-lisp
+  (defun MattLu/display-code-line-counts (ov)
+    (when (eq 'code (overlay-get ov 'hs))
+      (overlay-put ov 'display
+                   (propertize
+                    (format " … <%d>"
+                            (count-lines (overlay-start ov)
+                                         (overlay-end ov)))
+                    'face '(:background "#ff0066" :foreground "color-16")))))
+
+  (use-package hideshow
+    :hook (prog-mode . hs-minor-mode)
+    :bind (:map hs-minor-mode-map
+                ("C-c @" . hydra-hs/body))
+    :config
+    (setq hs-set-up-overlay 'MattLu/display-code-line-counts))
+#+END_SRC
 
 *** Highlight variables
 
@@ -2461,37 +2465,40 @@ warp selected region with punctuate.
 
 ** Use multiple cursors
 
+Hydra short-keys
+#+begin_src emacs-lisp
+  (defhydra hydra-multiple-cursors (:hint nil)
+    "
+     Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
+    ------------------------------------------------------------------
+     [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
+     [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
+     [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search
+     [Click] Cursor at point       [_q_] Quit"
+    ("l" mc/edit-lines :exit t)
+    ("a" mc/mark-all-like-this :exit t)
+    ("n" mc/mark-next-like-this)
+    ("N" mc/skip-to-next-like-this)
+    ("M-n" mc/unmark-next-like-this)
+    ("p" mc/mark-previous-like-this)
+    ("P" mc/skip-to-previous-like-this)
+    ("M-p" mc/unmark-previous-like-this)
+    ("s" mc/mark-all-in-region-regexp :exit t)
+    ("0" mc/insert-numbers :exit t)
+    ("A" mc/insert-letters :exit t)
+    ("<mouse-1>" mc/add-cursor-on-click)
+    ;; Help with click recognition in this hydra
+    ("<down-mouse-1>" ignore)
+    ("<drag-mouse-1>" ignore)
+    ("q" nil))
+#+end_src
+
 Set multiple cursors for better marker words
 
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
     :bind
-    ("C-c m" . hydra-multiple-cursors/body)
-    :config
-    (defhydra hydra-multiple-cursors (:hint nil)
-      "
-   Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
-  ------------------------------------------------------------------
-   [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
-   [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
-   [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search
-   [Click] Cursor at point       [_q_] Quit"
-      ("l" mc/edit-lines :exit t)
-      ("a" mc/mark-all-like-this :exit t)
-      ("n" mc/mark-next-like-this)
-      ("N" mc/skip-to-next-like-this)
-      ("M-n" mc/unmark-next-like-this)
-      ("p" mc/mark-previous-like-this)
-      ("P" mc/skip-to-previous-like-this)
-      ("M-p" mc/unmark-previous-like-this)
-      ("s" mc/mark-all-in-region-regexp :exit t)
-      ("0" mc/insert-numbers :exit t)
-      ("A" mc/insert-letters :exit t)
-      ("<mouse-1>" mc/add-cursor-on-click)
-      ;; Help with click recognition in this hydra
-      ("<down-mouse-1>" ignore)
-      ("<drag-mouse-1>" ignore)
-      ("q" nil)))
+    ("C-c m" . hydra-multiple-cursors/body))
 #+END_SRC
 
 ** Use expand region
@@ -2664,6 +2671,17 @@ non-essential things while the window is being scrolled
 
 ** jump back and forth
 
+Hydra short-keys
+#+begin_src emacs-lisp
+  (defhydra hydra-back-and-forth ()
+    "back-and-forth"
+    ("<right>" back-button-local-forward "→")
+    ("<left>" back-button-local-backward "←")
+    ("<up>" back-button-global-backward "↑")
+    ("<down>" back-button-global-forward "↓")
+    ("q" nil "exit" :exit t))
+#+end_src
+
  back-button offers local and global jumping
 
 #+begin_src emacs-lisp
@@ -2680,16 +2698,7 @@ non-essential things while the window is being scrolled
     (define-key back-button-mode-map (kbd "C-x <left>") nil)
     (define-key back-button-mode-map (kbd "C-x <right>") nil)
     (define-key back-button-mode-map (kbd "C-x C-SPC") nil)
-    (define-key back-button-mode-map (kbd "C-x SPC") nil)
-    :config
-    (defhydra hydra-back-and-forth ()
-      "back-and-forth"
-      ("<right>" back-button-local-forward "→")
-      ("<left>" back-button-local-backward "←")
-      ("<up>" back-button-global-backward "↑")
-      ("<down>" back-button-global-forward "↓")
-      ("q" nil "exit" :exit t))
-    :after (hydra))
+    (define-key back-button-mode-map (kbd "C-x SPC") nil))
 #+end_src
 
 ** Ediff
