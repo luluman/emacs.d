@@ -2227,6 +2227,11 @@ reuse dired buffer
   (put 'dired-find-alternate-file 'disabled nil)
 #+end_src
 
+disable flyspell in dired mode
+#+begin_src emacs-lisp
+  (add-hook 'dired-mode-hook (lambda () (flyspell-mode -1)))
+#+end_src
+
 * Editing settings
 ** Hydra
 
