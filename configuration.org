@@ -2640,23 +2640,7 @@ matches aw-dispatch-alist with a few extra
     :config
     (setq aw-scope 'frame)   ; only the windows of the current frame
     (setq aw-background t)
-    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-
-    (setq aw-dispatch-alist
-          '((?\; hydra-frame-window/body "Hydra Windows")
-            (?x aw-delete-window "Delete Window")
-            (?m aw-swap-window "Swap Windows")
-            (?M aw-move-window "Move Window")
-            (?c aw-copy-window "Copy Window")
-            (?j aw-switch-buffer-in-window "Select Buffer")
-            (?n aw-flip-window)
-            (?u aw-switch-buffer-other-window "Switch Buffer Other Window")
-            (?c aw-split-window-fair "Split Fair Window")
-            (?v aw-split-window-vert "Split Vert Window")
-            (?b aw-split-window-horz "Split Horz Window")
-            (?o delete-other-windows "Delete Other Windows")
-            (?? aw-show-dispatch-help))
-          "List of actions for `aw-dispatch-default'."))
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
 
 ** Handle layer file
@@ -2696,6 +2680,7 @@ maximum memory allotted to Emacs.
     ;;   :repo "rakete/too-long-lines-mode")
     ;;  :upgrade t)
     :config
+    (setq too-long-lines-threshold 5000)
     (set 'too-long-lines-special-buffer-modes
          '(shell-mode ag-mode inferior-python-mode comint-mode))
     (too-long-lines-mode))
