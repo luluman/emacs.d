@@ -109,11 +109,6 @@ Define a big ol' bunch of handy utility functions.
     (let ((fill-column (point-max)))
       (fill-paragraph nil)))
 
-  (defun MattLu/kill-current-buffer ()
-    "Kill the current buffer without prompting."
-    (interactive)
-    (kill-buffer (current-buffer)))
-
   (defun MattLu/visit-last-dired-file ()
     "Open the last file in an open dired buffer."
     (end-of-buffer)
@@ -576,11 +571,6 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
   problems with accidentally pushing, so I'd rather not confirm that every time.
 - Per [[http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html][tpope's suggestions]], highlight commit text in the summary line that goes
   beyond 50 characters.
-- On the command line I'll generally push a new branch with a plain old =git
-  push=, which automatically creates a tracking branch on (usually) =origin=.
-  Magit, by default, wants me to manually specify an upstream branch. This binds
-  =P P= to =magit-push-implicitly=, which is just a wrapper around =git push
-  -v=. Convenient!
 - I'd like to start in the insert state when writing a commit message.
 
 #+begin_src emacs-lisp
@@ -591,20 +581,6 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     (use-package with-editor)
     (setq magit-push-always-verify nil)
     (setq git-commit-summary-max-length 50)
-    (with-eval-after-load 'magit-remote
-      (magit-define-popup-action 'magit-push-popup ?P
-        'magit-push-implicitly--desc
-        'magit-push-implicitly ?p t))
-
-    ;; (setq magit-refresh-status-buffer nil)
-    (setq auto-revert-buffer-list-filter
-          'magit-auto-revert-repository-buffers-p)
-    (setq magit-diff-refine-hunk nil)
-    (setq magit-highlight-indentation nil)
-    (setq magit-highlight-trailing-whitespace nil)
-    (setq magit-highlight-whitespace nil)
-    (setq magit-revision-insert-related-refs nil)
-    (setq magit-use-overlays t)
     (add-hook 'git-commit-mode-hook 'turn-on-flyspell))
 #+end_src
 
@@ -727,7 +703,7 @@ Get environment variable in Shell and set them to Emacs
 Disable flyspell in shell mode.
 Flyspell would slow down the performance of interaction in shell.
 #+begin_src emacs-lisp
-  (add-hook 'shell-mode-hook (lambda () (flyspell-mode -1)))
+  (add-hook 'shell-mode-hook 'turn-off-flyspell)
 #+end_src
 
 ** Workgroups another way to organize workspace
@@ -2279,6 +2255,10 @@ Emacs configuration file.
 Assume that I always want to kill the current buffer when hitting =C-x k=.
 
 #+BEGIN_SRC emacs-lisp
+  (defun MattLu/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
   (global-set-key (kbd "C-x k") 'MattLu/kill-current-buffer)
 #+END_SRC
 
