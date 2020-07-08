@@ -4,6 +4,7 @@
 (setq mc/cmds-to-run-for-all
       '(
         c-electric-delete-forward
+        c-electric-semi&comma
         c-electric-star
         org-self-insert-command
         paredit-forward-delete
@@ -11,9 +12,9 @@
 
 (setq mc/cmds-to-run-once
       '(
+        counsel-M-x
         hydra-multiple-cursors/mc/mark-next-like-this
         hydra-multiple-cursors/mc/mark-previous-like-this
         hydra-multiple-cursors/mc/unmark-next-like-this
         symbol-overlay-put
-        counsel-M-x
         ))
