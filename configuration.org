@@ -721,17 +721,14 @@ Get environment variable in Shell and set them to Emacs
       (setq python-shell-process-environment
             (mapcar (lambda (x) (format "%s=%s" x (getenv x)))
                     env-var))))
-  (add-hook 'shell-mode-hook (lambda () (flyspell-mode -1)))
   (define-key shell-mode-map (kbd "C-c x") 'MattLu/get-shell-env-value-and-set-emacs)
 #+end_src
 
-** COMMENT Multiple desktop config
-
-#+BEGIN_SRC emacs-lisp
-  (bind-keys*
-   ("M-s" . select-frame-by-name)
-   ("C-c n" . set-frame-name))
-#+END_SRC
+Disable flyspell in shell mode.
+Flyspell would slow down the performance of interaction in shell.
+#+begin_src emacs-lisp
+  (add-hook 'shell-mode-hook (lambda () (flyspell-mode -1)))
+#+end_src
 
 ** Workgroups another way to organize workspace
 
@@ -750,15 +747,6 @@ Get environment variable in Shell and set them to Emacs
     (setq wg-dissociate-buffer-on-kill-buffer nil)
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
     (workgroups-mode 1))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; (setq desktop-restore-forces-onscreen nil)
-  ;; (desktop-save-mode)
-  ;; (add-hook 'server-after-make-frame-hook 'desktop-read)
-  ;; (bind-keys*
-  ;;  ("M-s" . select-frame-by-name)
-  ;;  ("C-c n" . set-frame-name))
 #+END_SRC
 
 ** CMake
@@ -2504,12 +2492,6 @@ warp selected region with punctuate.
        ("/" "/" nil ruby-mode)
        ("/* " " */" "#" (java-mode javascript-mode css-mode))
        ("`" "`" nil (markdown-mode ruby-mode)))))
-#+END_SRC
-
-** COMMENT Use projectile everywhere
-
-#+BEGIN_SRC emacs-lisp
-  (projectile-mode)
 #+END_SRC
 
 ** Use multiple cursors
