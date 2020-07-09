@@ -420,6 +420,11 @@ programming.
              (caar profiler-report-memory-line-format) 200)))
 #+end_src
 
+* Hydra
+
+#+begin_src emacs-lisp
+  (use-package hydra)
+#+end_src
 * Project management
 
 I use a few packages in virtually every programming or writing environment to
@@ -2067,141 +2072,7 @@ Include the =minted= package in all of my LaTeX exports.
    (setq reftex-plug-into-AUCTeX t)
  #+END_SRC
 
-* =dired=
-
-These are the switches that get passed to =ls= when =dired= gets a list of
-files. We're using:
-
-- =l=: Use the long listing format.
-- =h=: Use human-readable sizes.
-- =v=: Sort numbers naturally.
-- =A=: Almost all. Doesn't include "=.=" or "=..=".
-
-#+BEGIN_SRC emacs-lisp
-  (setq-default dired-listing-switches "-lhvA")
-#+END_SRC
-
-Hydra Dired
-till a work in progress but this has helped me navigate and use dired.
-#+begin_src emacs-lisp
-  (defhydra hydra-dired (:hint nil :color pink)
-    "
-  _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
-  _C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
-  _D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
-  _R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
-  _Y_ rel symlink    _G_ chgrp        _E_xtension mark   _s_ort             _=_ pdiff
-  _S_ymlink          ^ ^              _F_ind marked      _._ toggle hydra   \\ flyspell
-  _r_sync            ^ ^              ^ ^                ^ ^                _?_ summary
-  _z_ compress-file  _A_ find regexp
-  _Z_ compress       _Q_ repl regexp
-
-  T - tag prefix
-  "
-    ("\\" dired-do-ispell)
-    ("(" dired-hide-details-mode)
-    (")" dired-omit-mode)
-    ("+" dired-create-directory)
-    ("=" diredp-ediff)         ;; smart diff
-    ("?" dired-summary)
-    ("$" diredp-hide-subdir-nomove)
-    ("A" dired-do-find-regexp)
-    ("C" dired-do-copy)        ;; Copy all marked files
-    ("D" dired-do-delete)
-    ("E" dired-mark-extension)
-    ("e" dired-ediff-files)
-    ("F" dired-do-find-marked-files)
-    ("G" dired-do-chgrp)
-    ("g" revert-buffer)        ;; read all directories again (refresh)
-    ("i" dired-maybe-insert-subdir)
-    ("l" dired-do-redisplay)   ;; relist the marked or singel directory
-    ("M" dired-do-chmod)
-    ("m" dired-mark)
-    ("O" dired-display-file)
-    ("o" dired-find-file-other-window)
-    ("Q" dired-do-find-regexp-and-replace)
-    ("R" dired-do-rename)
-    ("r" dired-do-rsynch)
-    ("S" dired-do-symlink)
-    ("s" dired-sort-toggle-or-edit)
-    ("t" dired-toggle-marks)
-    ("U" dired-unmark-all-marks)
-    ("u" dired-unmark)
-    ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
-    ("w" dired-kill-subdir)
-    ("Y" dired-do-relsymlink)
-    ("z" diredp-compress-this-file)
-    ("Z" dired-do-compress)
-    ("q" nil)
-    ("." nil :color blue))
-#+end_src
-
-Use “[” and “]” to jump out and in dired.
-
-#+BEGIN_SRC emacs-lisp
-  (eval-after-load "dired"
-    '(progn
-       (define-key dired-mode-map (kbd "[") 'dired-up-directory)
-       (define-key dired-mode-map (kbd "]") 'dired-view-file)
-       (define-key dired-mode-map "." 'hydra-dired/body)))
-  (eval-after-load "view"
-    '(define-key view-mode-map (kbd "[") 'View-quit))
-#+END_SRC
-
-fast copy and past
-
-#+BEGIN_SRC emacs-lisp
-  (setq dired-dwim-target t)
-#+END_SRC
-
-Kill buffers of files/directories that are deleted in =dired=.
-
-#+BEGIN_SRC emacs-lisp
-  (setq dired-clean-up-buffers-too t)
-#+END_SRC
-
-Always copy directories recursively instead of asking every time.
-
-#+BEGIN_SRC emacs-lisp
-  (setq dired-recursive-copies 'always)
-#+END_SRC
-
-Ask before recursively /deleting/ a directory, though.
-
-#+BEGIN_SRC emacs-lisp
-  (setq dired-recursive-deletes 'top)
-#+END_SRC
-
-Files are normally moved and copied synchronously.
-This is fine for small or local files,
-but copying a large file or moving a file across a mounted
-network drive blocks Emacs until the process is completed. Unacceptable!
-
-This uses =emacs-async= to make dired perform actions asynchronously.
-
-#+begin_src emacs-lisp
-  (use-package async
-    :config
-    (dired-async-mode 1))
-#+end_src
-
-reuse dired buffer
-#+begin_src emacs-lisp
-  (put 'dired-find-alternate-file 'disabled nil)
-#+end_src
-
-disable flyspell in dired mode
-#+begin_src emacs-lisp
-  (add-hook 'dired-mode-hook (lambda () (flyspell-mode -1)))
-#+end_src
-
 * Editing settings
-** Hydra
-
-#+begin_src emacs-lisp
-  (use-package hydra)
-#+end_src
-
 ** Rectangle Hydra
 
 rectangle-mark-mode, copy form hydra/hydra-examples.el. Awesome.
@@ -2744,6 +2615,134 @@ Hydra ediff, more function with less key bindings
     :config
     (icy-mode 1))
 #+end_src
+
+** =dired=
+
+ These are the switches that get passed to =ls= when =dired= gets a list of
+ files. We're using:
+
+ - =l=: Use the long listing format.
+ - =h=: Use human-readable sizes.
+ - =v=: Sort numbers naturally.
+ - =A=: Almost all. Doesn't include "=.=" or "=..=".
+
+ #+BEGIN_SRC emacs-lisp
+   (setq-default dired-listing-switches "-lhvA")
+ #+END_SRC
+
+ Hydra Dired
+ till a work in progress but this has helped me navigate and use dired.
+ #+begin_src emacs-lisp
+   (defhydra hydra-dired (:hint nil :color pink)
+     "
+   _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
+   _C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
+   _D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
+   _R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
+   _Y_ rel symlink    _G_ chgrp        _E_xtension mark   _s_ort             _=_ pdiff
+   _S_ymlink          ^ ^              _F_ind marked      _._ toggle hydra   \\ flyspell
+   _r_sync            ^ ^              ^ ^                ^ ^                _?_ summary
+   _z_ compress-file  _A_ find regexp
+   _Z_ compress       _Q_ repl regexp
+
+   T - tag prefix
+   "
+     ("\\" dired-do-ispell)
+     ("(" dired-hide-details-mode)
+     (")" dired-omit-mode)
+     ("+" dired-create-directory)
+     ("=" diredp-ediff)         ;; smart diff
+     ("?" dired-summary)
+     ("$" diredp-hide-subdir-nomove)
+     ("A" dired-do-find-regexp)
+     ("C" dired-do-copy)        ;; Copy all marked files
+     ("D" dired-do-delete)
+     ("E" dired-mark-extension)
+     ("e" dired-ediff-files)
+     ("F" dired-do-find-marked-files)
+     ("G" dired-do-chgrp)
+     ("g" revert-buffer)        ;; read all directories again (refresh)
+     ("i" dired-maybe-insert-subdir)
+     ("l" dired-do-redisplay)   ;; relist the marked or singel directory
+     ("M" dired-do-chmod)
+     ("m" dired-mark)
+     ("O" dired-display-file)
+     ("o" dired-find-file-other-window)
+     ("Q" dired-do-find-regexp-and-replace)
+     ("R" dired-do-rename)
+     ("r" dired-do-rsynch)
+     ("S" dired-do-symlink)
+     ("s" dired-sort-toggle-or-edit)
+     ("t" dired-toggle-marks)
+     ("U" dired-unmark-all-marks)
+     ("u" dired-unmark)
+     ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
+     ("w" dired-kill-subdir)
+     ("Y" dired-do-relsymlink)
+     ("z" diredp-compress-this-file)
+     ("Z" dired-do-compress)
+     ("q" nil)
+     ("." nil :color blue))
+ #+end_src
+
+ Use “[” and “]” to jump out and in dired.
+
+ #+BEGIN_SRC emacs-lisp
+   (eval-after-load "dired"
+     '(progn
+        (define-key dired-mode-map (kbd "[") 'dired-up-directory)
+        (define-key dired-mode-map (kbd "]") 'dired-view-file)
+        (define-key dired-mode-map "." 'hydra-dired/body)))
+   (eval-after-load "view"
+     '(define-key view-mode-map (kbd "[") 'View-quit))
+ #+END_SRC
+
+ fast copy and past
+
+ #+BEGIN_SRC emacs-lisp
+   (setq dired-dwim-target t)
+ #+END_SRC
+
+ Kill buffers of files/directories that are deleted in =dired=.
+
+ #+BEGIN_SRC emacs-lisp
+   (setq dired-clean-up-buffers-too t)
+ #+END_SRC
+
+ Always copy directories recursively instead of asking every time.
+
+ #+BEGIN_SRC emacs-lisp
+   (setq dired-recursive-copies 'always)
+ #+END_SRC
+
+ Ask before recursively /deleting/ a directory, though.
+
+ #+BEGIN_SRC emacs-lisp
+   (setq dired-recursive-deletes 'top)
+ #+END_SRC
+
+ Files are normally moved and copied synchronously.
+ This is fine for small or local files,
+ but copying a large file or moving a file across a mounted
+ network drive blocks Emacs until the process is completed. Unacceptable!
+
+ This uses =emacs-async= to make dired perform actions asynchronously.
+
+ #+begin_src emacs-lisp
+   (use-package async
+     :config
+     (dired-async-mode 1))
+ #+end_src
+
+ reuse dired buffer
+ #+begin_src emacs-lisp
+   (put 'dired-find-alternate-file 'disabled nil)
+ #+end_src
+
+ disable flyspell in dired mode
+ #+begin_src emacs-lisp
+   (add-hook 'dired-mode-hook (lambda () (flyspell-mode -1)))
+ #+end_src
 
 * Set custom keybindings
 
