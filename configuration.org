@@ -312,53 +312,55 @@ Note that this overrides the default font-related keybindings from
 
 #+BEGIN_SRC emacs-lisp
   (if (eq system-type 'gnu/linux)
-     (setq MattLu/default-font "Ubuntu Mono")
+      (setq MattLu/default-font "Ubuntu Mono")
     (setq MattLu/default-font "Source Code Variable"))
-      (setq MattLu/default-font-size 12)
-      (setq MattLu/current-font-size MattLu/default-font-size)
 
-      (setq MattLu/font-change-increment 1.1)
+  (setq MattLu/default-font-size 12)
+  (setq MattLu/current-font-size MattLu/default-font-size)
 
-      (defun MattLu/font-code ()
-        "Return a string representing the current font (like \"Inconsolata-14\")."
-        (concat MattLu/default-font "-" (number-to-string MattLu/current-font-size)))
+  (setq MattLu/font-change-increment 1.1)
 
-      (defun MattLu/set-font-size ()
-        "Set the font to `MattLu/default-font' at `MattLu/current-font-size'.
-      Set that for the current frame, and also make it the default for
-      other, future frames."
-        (let ((font-code (MattLu/font-code)))
-          (add-to-list 'default-frame-alist (cons 'font font-code))
-          (set-frame-font font-code)))
+  (defun MattLu/font-code ()
+    "Return a string representing the current font (like \"Inconsolata-14\")."
+    (concat MattLu/default-font "-" (number-to-string MattLu/current-font-size)))
 
-      (defun MattLu/reset-font-size ()
-        "Change font size back to `MattLu/default-font-size'."
-        (interactive)
-        (setq MattLu/current-font-size MattLu/default-font-size)
-        (MattLu/set-font-size))
+  (defun MattLu/set-font-size ()
+    "Set the font to `MattLu/default-font' at `MattLu/current-font-size'.
+        Set that for the current frame, and also make it the default for
+        other, future frames."
+    (let ((font-code (MattLu/font-code)))
+      (add-to-list 'default-frame-alist (cons 'font font-code))
+      (set-frame-font font-code)))
 
-      (defun MattLu/increase-font-size ()
-        "Increase current font size by a factor of `MattLu/font-change-increment'."
-        (interactive)
-        (setq MattLu/current-font-size
-              (ceiling (* MattLu/current-font-size MattLu/font-change-increment)))
-        (MattLu/set-font-size))
+  (defun MattLu/reset-font-size ()
+    "Change font size back to `MattLu/default-font-size'."
+    (interactive)
+    (setq MattLu/current-font-size MattLu/default-font-size)
+    (MattLu/set-font-size))
 
-      (defun MattLu/decrease-font-size ()
-        "Decrease current font size by a factor of `MattLu/font-change-increment', down to a minimum size of 1."
-        (interactive)
-        (setq MattLu/current-font-size
-              (max 1
-                   (floor (/ MattLu/current-font-size MattLu/font-change-increment))))
-        (MattLu/set-font-size))
+  (defun MattLu/increase-font-size ()
+    "Increase current font size by a factor of `MattLu/font-change-increment'."
+    (interactive)
+    (setq MattLu/current-font-size
+          (ceiling (* MattLu/current-font-size MattLu/font-change-increment)))
+    (MattLu/set-font-size))
 
-      (define-key global-map (kbd "C-)") 'MattLu/reset-font-size)
-      (define-key global-map (kbd "C-+") 'MattLu/increase-font-size)
-    ;;  (define-key global-map (kbd "C-=") 'MattLu/increase-font-size)
-  ;;    (define-key global-map (kbd "C-c -") 'MattLu/decrease-font-size)
-    ;; (define-key global-map (kbd "C--") nil)
+  (defun MattLu/decrease-font-size ()
+    "Decrease current font size by a factor of `MattLu/font-change-increment', down to a minimum size of 1."
+    (interactive)
+    (setq MattLu/current-font-size
+          (max 1
+               (floor (/ MattLu/current-font-size MattLu/font-change-increment))))
+    (MattLu/set-font-size))
 
-      (MattLu/reset-font-size)
+  ;; (define-key global-map (kbd "C-)") 'MattLu/reset-font-size)
+  ;; (define-key global-map (kbd "C-+") 'MattLu/increase-font-size)
+  ;; (define-key global-map (kbd "C-=") 'MattLu/increase-font-size)
+  ;; (define-key global-map (kbd "C-c -") 'MattLu/decrease-font-size)
+  ;; (define-key global-map (kbd "C--") nil)
+  (when (member MattLu/default-font
+                (font-family-list))
+    (MattLu/reset-font-size))
 #+END_SRC
 
 ** Highlight the current line
@@ -1162,9 +1164,12 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
                           "~/python/ufw/"))
-    (cond ((eq system-type 'gnu/linux)
+
+    (cond ((and (eq system-type 'gnu/linux)
+                (file-directory-p "~/python/ufw/"))
            (venv-workon "ufw"))
-          ((eq system-type 'darwin)
+          ((and (eq system-type 'darwin)
+                (file-directory-p "~/venvPy/py3/"))
            (venv-workon "py3"))))
 #+END_SRC
 
@@ -2436,11 +2441,11 @@ matches aw-dispatch-alist with a few extra
 #+begin_src emacs-lisp
   (defhydra hydra-frame-window (:color red :hint nil)
     "
-  ^Delete^                       ^Frame resize^             ^Window^                Window Size^^^^^^   ^Text^                         (__)
-  _0_: delete-frame              _g_: resize-frame-right    _t_: toggle               ^ ^ _k_ ^ ^        _K_                           (oo)
-  _1_: delete-other-frames       _H_: resize-frame-left     _e_: ace-swap-win         _h_ ^+^ _l_        ^+^                     /------\\/
-  _2_: make-frame                _F_: fullscreen            ^ ^                       ^ ^ _j_ ^ ^        _J_                    / |    ||
-  _d_: kill-and-delete-frame     _n_: new-frame-right       _w_: ace-delete-window    _b_alance^^^^      ^ ^                   *  /\\---/\\  ~~  C-x w ;
+  ^Delete^                       ^Frame resize^             ^Window^                Window Size^^^^^^   ^TEXT^   ^Text^                 (__)
+  _0_: delete-frame              _g_: resize-frame-right    _t_: toggle               ^ ^ _k_ ^ ^        _-_      _K_                   (oo)
+  _1_: delete-other-frames       _H_: resize-frame-left     _e_: ace-swap-win         _h_ ^+^ _l_        _=_      _L_             /------\\/
+  _2_: make-frame                _F_: fullscreen            ^ ^                       ^ ^ _j_ ^ ^        _+_      _J_            / |    ||
+  _d_: kill-and-delete-frame     _n_: new-frame-right       _w_: ace-delete-window    _b_alance^^^^      ^ ^      ^ ^           *  /\\---/\\  ~~  C-x w ;
   "
     ("0" delete-frame :exit t)
     ("1" delete-other-frames :exit t)
@@ -2458,6 +2463,10 @@ matches aw-dispatch-alist with a few extra
     ("x" delete-frame :exit t)
     ("K" text-scale-decrease)
     ("J" text-scale-increase)
+    ("L" sensible-defaults/reset-text-size)
+    ("+" MattLu/increase-font-size)
+    ("-" MattLu/decrease-font-size)
+    ("=" MattLu/reset-font-size)
     ("h" shrink-window-horizontally)
     ("k" shrink-window)
     ("j" enlarge-window)

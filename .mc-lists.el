@@ -6,6 +6,7 @@
         c-electric-delete-forward
         c-electric-semi&comma
         c-electric-star
+        org-delete-char
         org-self-insert-command
         paredit-forward-delete
         ))
