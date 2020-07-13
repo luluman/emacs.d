@@ -1970,6 +1970,14 @@ Include the =minted= package in all of my LaTeX exports.
 
  Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
 
+#+begin_src emacs-lisp
+  (use-package company-math)
+  (defun MattLu/latex-comapany-hook ()
+    (setq-local company-backends
+                (append '((company-math-symbols-latex company-latex-commands))
+                        company-backends)))
+#+end_src
+
 #+BEGIN_SRC emacs-lisp
   (use-package auctex
     :defer t
@@ -1981,6 +1989,7 @@ Include the =minted= package in all of my LaTeX exports.
     (add-hook 'LaTeX-mode-hook 'visual-line-mode)
     (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
     (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    (add-hook 'TeX-mode-hook 'MattLu/latex-comapany-hook)
     (setq reftex-plug-into-AUCTeX t))
 #+END_SRC
 
