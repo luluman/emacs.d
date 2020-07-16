@@ -17,5 +17,6 @@
         hydra-multiple-cursors/mc/mark-next-like-this
         hydra-multiple-cursors/mc/mark-previous-like-this
         hydra-multiple-cursors/mc/unmark-next-like-this
+        hydra-multiple-cursors/mc/unmark-previous-like-this
         symbol-overlay-put
         ))

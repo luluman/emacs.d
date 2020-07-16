@@ -708,12 +708,6 @@ Get environment variable in Shell and set them to Emacs
   (define-key shell-mode-map (kbd "C-c x") 'MattLu/get-shell-env-value-and-set-emacs)
 #+end_src
 
-Disable flyspell in shell mode.
-Flyspell would slow down the performance of interaction in shell.
-#+begin_src emacs-lisp
-  (add-hook 'shell-mode-hook 'turn-off-flyspell)
-#+end_src
-
 ** Workgroups another way to organize workspace
 
 #+BEGIN_SRC emacs-lisp
@@ -2539,22 +2533,23 @@ maximum memory allotted to Emacs.
     (too-long-lines-mode))
 #+END_SRC
 
-** fast scroll
+** COMMENT fast scroll
 
 To ensure scrolling is fast in Emacs, I use a package that disables
 non-essential things while the window is being scrolled
 
+=BUG=
+fast-scroll may enable flyspell although we disable flyspell by defaults.
+
 #+BEGIN_SRC emacs-lisp
   (use-package fast-scroll
+    :hook
+    ((fast-scroll-start . turn-off-flyspell)
+     (fast-scroll-end . turn-on-flyspell)
+     (flyspell-mode . fast-scroll-mode))
     :config
-    (add-hook 'fast-scroll-start-hook
-              (lambda ()
-                (flyspell-mode -1)))
-    (add-hook 'fast-scroll-end-hook
-              (lambda ()
-                (flyspell-mode 1)))
     (fast-scroll-config)
-    (fast-scroll-mode 1))
+    (setq fast-scroll-throttle 0.5))
 #+END_SRC
 
 ** jump back and forth

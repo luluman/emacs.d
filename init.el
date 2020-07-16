@@ -6,7 +6,7 @@
         ("ublt" . "https://elpa.ubolonton.org/packages/")
         ))
 (package-initialize)
-
+(set-terminal-coding-system 'utf-8)
 ;; Ensure that use-package is installed.
 ;;
 ;; If use-package isn't already installed, it's extremely likely that this is a
