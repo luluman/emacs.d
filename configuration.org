@@ -813,15 +813,29 @@ Use =smartparens=
 
 YouCompltedMe setup
 
+Set different path for docker and host
+#+begin_src emacs-lisp
+  (setq MattLu/YCMD-path '("/usr/local/lib/ycmd/ycmd/"
+                           (file-truename "~/.emacs.d/ycmd/ycmd/")))
+  (defun MattLu/YCMD-set-path (path-list)
+    (let ((ycmd-path (remove-if-not
+                      (lambda (x)
+                        (file-directory-p (eval x)))
+                      path-list)))
+      (when ycmd-path
+        (set-variable 'ycmd-server-command
+                      `("python3" "-u"
+                        ,(eval (car ycmd-path)))))))
+#+end_src
+
+The main part
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
     :hook ((c-mode c++-mode python-mode typescript-mode)
            . ycmd-mode)
     :config
     (setq request-message-level -1)
-    (set-variable 'ycmd-server-command
-                  `("python3" "-u" ,
-                    (file-truename "~/.emacs.d/ycmd/ycmd"))))
+    (MattLu/YCMD-set-path MattLu/YCMD-path))
 
   (defun MattLu/company-mode-c-mode-hook ()
     (set (make-local-variable 'company-backends)
