@@ -462,7 +462,6 @@ Use =company-mode= everywhere.
                              company-dabbrev
                              company-dabbrev-code
                              company-keywords
-                             company-ispell
                              company-oddmuse)))
 #+end_src
 
@@ -1251,9 +1250,21 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 ** protocol buffer
 
    add Google protocol buffer support
+#+begin_src emacs-lisp
+  (defun MattLu/prototxt-mode-hook ()
+    (when (and (stringp buffer-file-name)
+                 (string-match "\\.prototxt\\'" buffer-file-name))
+      (setq-local comment-start "# ")
+      (setq-local comment-start-skip "#+\\s-*")
+      (font-lock-add-keywords nil
+                              '(("#.+" . font-lock-comment-face)))))
+#+end_src
+
 #+BEGIN_SRC emacs-lisp
   (use-package protobuf-mode
-    :mode "\\.prototxt$")
+    :mode "\\.prototxt$"
+    :hook
+    (protobuf-mode . MattLu/prototxt-mode-hook))
 #+END_SRC
 
 ** ReStructuredText
