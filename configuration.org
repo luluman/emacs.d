@@ -2124,27 +2124,27 @@ rectangle-mark-mode, copy form hydra/hydra-examples.el. Awesome.
                                        :color pink
                                        :post (deactivate-mark))
     "
-    ^_k_^     _d_elete    _s_tring
-  _h_   _l_   _o_k        _y_ank
-    ^_j_^     _n_ew-copy  _r_eset
-  ^^^^        _e_xchange  _u_ndo
-  ^^^^        ^ ^         _p_aste
+    ^_p_^     _d_elete    _s_tring
+  _b_   _f_   _q_uit      _y_ank
+    ^_n_^     _w_-copy    _r_eset
+  ^^^^        _e_xchange  _/_ndo
+  ^^^^        ^ ^         _k_ill
   "
-    ("h" rectangle-backward-char nil)
-    ("l" rectangle-forward-char nil)
-    ("k" rectangle-previous-line nil)
-    ("j" rectangle-next-line nil)
+    ("b" rectangle-backward-char nil)
+    ("f" rectangle-forward-char nil)
+    ("p" rectangle-previous-line nil)
+    ("n" rectangle-next-line nil)
     ("e" hydra-ex-point-mark nil)
-    ("n" copy-rectangle-as-kill nil)
+    ("w" copy-rectangle-as-kill nil)
     ("d" delete-rectangle nil)
     ("r" (if (region-active-p)
              (deactivate-mark)
            (rectangle-mark-mode 1)) nil)
     ("y" yank-rectangle nil)
-    ("u" undo nil)
+    ("/" undo nil)
     ("s" string-rectangle nil)
-    ("p" kill-rectangle nil)
-    ("o" nil nil))
+    ("k" kill-rectangle nil)
+    ("q" nil nil))
 
   (global-set-key (kbd "C-x SPC") 'hydra-rectangle/body)
 #+end_src
