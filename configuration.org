@@ -1253,7 +1253,7 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 #+begin_src emacs-lisp
   (defun MattLu/prototxt-mode-hook ()
     (when (and (stringp buffer-file-name)
-                 (string-match "\\.prototxt\\'" buffer-file-name))
+               (string-match "\\.prototxt\\'" buffer-file-name))
       (setq-local comment-start "# ")
       (setq-local comment-start-skip "#+\\s-*")
       (font-lock-add-keywords nil
@@ -2141,6 +2141,29 @@ rectangle-mark-mode, copy form hydra/hydra-examples.el. Awesome.
     ("o" nil nil))
 
   (global-set-key (kbd "C-x SPC") 'hydra-rectangle/body)
+#+end_src
+
+** Scroll Hydra
+
+Scroll preserve screen position or not.
+#+begin_src emacs-lisp
+  (setq scroll-preserve-screen-position t)
+  (defhydra hydra-scroll ()
+    "move"
+    ;; scroll preserve t
+    ("n" (scroll-up-line))
+    ("p" scroll-down-line)
+    ;; scroll preserve always
+    ("N" (progn
+          (scroll-up-line)
+          (next-line)))
+    ("P" (progn
+          (scroll-down-line)
+          (previous-line)))
+    ("v" scroll-up-command)
+    ("V" scroll-down-command)
+    ("q" nil "quit"))
+  (global-set-key (kbd "C-c s") #'hydra-scroll/body)
 #+end_src
 
 ** Quickly visit Emacs
