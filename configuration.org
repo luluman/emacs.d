@@ -353,11 +353,6 @@ Note that this overrides the default font-related keybindings from
                (floor (/ MattLu/current-font-size MattLu/font-change-increment))))
     (MattLu/set-font-size))
 
-  ;; (define-key global-map (kbd "C-)") 'MattLu/reset-font-size)
-  ;; (define-key global-map (kbd "C-+") 'MattLu/increase-font-size)
-  ;; (define-key global-map (kbd "C-=") 'MattLu/increase-font-size)
-  ;; (define-key global-map (kbd "C-c -") 'MattLu/decrease-font-size)
-  ;; (define-key global-map (kbd "C--") nil)
   (when (member MattLu/default-font
                 (font-family-list))
     (MattLu/reset-font-size))
@@ -2151,15 +2146,15 @@ Scroll preserve screen position or not.
   (defhydra hydra-scroll ()
     "move"
     ;; scroll preserve t
-    ("n" (scroll-up-line))
+    ("n" scroll-up-line)
     ("p" scroll-down-line)
     ;; scroll preserve always
     ("N" (progn
-          (scroll-up-line)
-          (next-line)))
+           (next-line)
+           (scroll-up-line)))
     ("P" (progn
-          (scroll-down-line)
-          (previous-line)))
+           (previous-line)
+           (scroll-down-line)))
     ("v" scroll-up-command)
     ("V" scroll-down-command)
     ("q" nil "quit"))
