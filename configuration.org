@@ -30,13 +30,6 @@ Always compile packages, and use the newest version available.
     (setq load-prefer-newer t))
 #+END_SRC
 
-Disable TLS 1.3; ELPA has higher standards.
-That’ll be the default in Emacs 26.3, I think, but I’m not there yet.
-
-#+BEGIN_SRC emacs-lisp
-  ;; (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-#+END_SRC
-
 use-package supports git repository
 
 #+begin_src emacs-lisp
@@ -1272,6 +1265,24 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 
 #+begin_src emacs-lisp
   (use-package typescript-mode)
+#+end_src
+
+** LLVM mode
+
+These are syntax highlighting files for the Emacs and XEmacs editors.
+#+begin_src emacs-lisp
+  (use-package llvm-mode
+    :load-path "~/.emacs.d/llvm-mode+")
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package tablegen-mode
+    :load-path "~/.emacs.d/llvm-mode+")
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package mlir-mode
+    :load-path "~/.emacs.d/llvm-mode+")
 #+end_src
 
 * Org
