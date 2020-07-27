@@ -162,4 +162,8 @@
    ((t (:extend t :background "Grey" :foreground "black"))))
  '(ediff-odd-diff-Ancestor
    ((t (:extend t :background "gray40" :foreground "brightwhite"))))
+
+ ;; langtool
+
+ '(langtool-errline ((t (:background "LightPink" :foreground "black"))))
  )

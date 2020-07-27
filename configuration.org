@@ -2814,6 +2814,16 @@ Hydra ediff, more function with less key bindings
    (add-hook 'dired-mode-hook (lambda () (flyspell-mode -1)))
  #+end_src
 
+** LanguageTool
+
+#+begin_src emacs-lisp
+  (use-package langtool
+    :config
+    (setq langtool-http-server-host "langtool-server"
+          langtool-http-server-port 8010)
+    (setq langtool-default-language "en-US"))
+#+end_src
+
 * Set custom keybindings
 
 Just a few handy functions.
