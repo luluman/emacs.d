@@ -2589,25 +2589,6 @@ maximum memory allotted to Emacs.
     (too-long-lines-mode))
 #+END_SRC
 
-** COMMENT fast scroll
-
-To ensure scrolling is fast in Emacs, I use a package that disables
-non-essential things while the window is being scrolled
-
-=BUG=
-fast-scroll may enable flyspell although we disable flyspell by defaults.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package fast-scroll
-    :hook
-    ((fast-scroll-start . turn-off-flyspell)
-     (fast-scroll-end . turn-on-flyspell)
-     (flyspell-mode . fast-scroll-mode))
-    :config
-    (fast-scroll-config)
-    (setq fast-scroll-throttle 0.5))
-#+END_SRC
-
 ** jump back and forth
 
 Hydra short-keys
