@@ -806,15 +806,17 @@ Set different path for docker and host
 #+begin_src emacs-lisp
   (setq MattLu/YCMD-path '("/usr/local/lib/ycmd/ycmd/"
                            (file-truename "~/.emacs.d/ycmd/ycmd/")))
-  (defun MattLu/YCMD-set-path (path-list)
+  (defun MattLu/YCMD-get-path (path-list)
+    ;; get ycmd build path
+    ;; this dirctiry should contain the excutable server and config file.
+    ;; check path validation and return list.
     (let ((ycmd-path (remove-if-not
                       (lambda (x)
                         (file-directory-p (eval x)))
                       path-list)))
-      (when ycmd-path
-        (set-variable 'ycmd-server-command
-                      `("python3" "-u"
-                        ,(eval (car ycmd-path)))))))
+      (if ycmd-path
+          (eval (car ycmd-path))
+        nil)))
 #+end_src
 
 The main part
@@ -824,7 +826,14 @@ The main part
            . ycmd-mode)
     :config
     (setq request-message-level -1)
-    (MattLu/YCMD-set-path MattLu/YCMD-path))
+    ;; using local variable
+    (let ((ycmd-path (MattLu/YCMD-get-path MattLu/YCMD-path)))
+      (when ycmd-path
+        (set-variable 'ycmd-server-command
+                      `("python3" "-u"
+                        ,ycmd-path))
+        (set-variable 'ycmd-global-config
+                      (concat ycmd-path ".ycm_extra_conf.py")))))
 
   (defun MattLu/company-mode-c-mode-hook ()
     (set (make-local-variable 'company-backends)
