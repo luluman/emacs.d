@@ -776,21 +776,6 @@ output.
   (setq compilation-scroll-output t)
 #+END_SRC
 
-flyspell can really help programmers as well by pointing out typos they make
-in comments.
-#+BEGIN_SRC emacs-lisp
-  (use-package flyspell
-    :config
-    (setq ispell-program-name "aspell"; use aspell instead of ispell
-          ispell-extra-args '("--sug-mode=ultra"))
-    (add-to-list 'flyspell-delayed-commands 'scroll-down-command)
-    (add-to-list 'flyspell-delayed-commands 'scroll-up-command)
-    :hook
-    ((prog-mode . flyspell-prog-mode)
-     (text-mode . flyspell-mode)
-     (org-mode . flyspell-mode)))
-#+END_SRC
-
 Use =smartparens=
 #+BEGIN_SRC emacs-lisp
   (use-package smartparens
@@ -2123,6 +2108,188 @@ Include the =minted= package in all of my LaTeX exports.
    (setq reftex-plug-into-AUCTeX t)
  #+END_SRC
 
+* Writing prose
+
+I write prose in several modes: I might be editing an Org document, or a commit
+message, or an email. These are the main ones, with sub-items being /derived/
+from their parents:
+
+- =git-commit-mode=
+- =text-mode=
+  - =markdown-mode=
+    - =gfm-mode=
+  - =message-mode=
+    - =mu4e-compose-mode=
+  - =org-mode=
+
+Recall that derived modes "inherit" their parent's hooks, so a hook added onto
+e.g. =text-mode= will also be executed by =mu4e-compose-mode=.
+
+There are some exceptions, but I can usually associate a hook with every
+prose-related mode, so I store those in a list:
+
+#+begin_src emacs-lisp
+  (defvar prose-modes
+    '(gfm-mode
+      git-commit-mode
+      markdown-mode
+      message-mode
+      mu4e-compose-mode
+      org-mode
+      text-mode))
+
+  (defvar prose-mode-hooks
+    (mapcar (lambda (mode) (intern (format "%s-hook" mode)))
+            prose-modes))
+#+end_src
+
+** Enable spell-checking in the usual places
+
+I want to make sure that I've enabled spell-checking if I'm editing text,
+composing an email, or authoring a Git commit.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flyspell
+    :config
+    (setq ispell-program-name "aspell"; use aspell instead of ispell
+          ispell-extra-args '("--sug-mode=ultra"))
+    (add-to-list 'flyspell-delayed-commands 'scroll-down-command)
+    (add-to-list 'flyspell-delayed-commands 'scroll-up-command)
+    :hook
+    ((prog-mode . flyspell-prog-mode)
+     (prose-mode-hooks . flyspell-mode)))
+#+END_SRC
+
+** Wrap paragraphs automatically
+
+=AutoFillMode= automatically wraps paragraphs, kinda like hitting =M-q=. I wrap
+a lot of paragraphs, so this automatically wraps 'em when I'm writing text,
+Markdown, or Org.
+
+#+begin_src emacs-lisp
+  (dolist (hook prose-mode-hooks)
+    (add-hook hook 'turn-on-auto-fill))
+#+end_src
+
+** Use Org-style lists and tables everywhere
+
+Enable Org-style tables.
+
+#+begin_src emacs-lisp
+  (add-hook 'git-commit-mode-hook 'orgtbl-mode)
+  (add-hook 'markdown-mode-hook 'orgtbl-mode)
+  (add-hook 'message-mode-hook 'orgtbl-mode)
+#+end_src
+
+Use the [[https://elpa.gnu.org/packages/orgalist.html][=orgalist=]] package for more convenient list manipulation.
+
+#+begin_src emacs-lisp
+  (use-package orgalist
+    :config
+    (add-hook 'git-commit-mode-hook 'orgalist-mode)
+    (add-hook 'markdown-mode-hook 'orgalist-mode)
+    (add-hook 'message-mode-hook 'orgalist-mode))
+#+end_src
+
+** Linting prose
+
+I use [[http://proselint.com/][proselint]] to check my prose for common errors. This creates a flycheck
+checker that runs proselint in texty buffers and displays my errors.
+
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :config
+    (flycheck-def-executable-var proselint "proselint")
+    (flycheck-define-command-checker 'proselint
+      "A linter for prose."
+      :command '("proselint" source-inplace)
+      :error-patterns
+      '((warning line-start (file-name) ":" line ":" column ": "
+                 (id (one-or-more (not (any " "))))
+                 (message (one-or-more not-newline)
+                          (zero-or-more "\n" (any " ") (one-or-more not-newline)))
+                 line-end))
+      :modes prose-modes
+      :next-checkers 'nil
+      :standard-input 'nil
+      :working-directory 'nil)
+    (add-to-list 'flycheck-checkers 'proselint))
+#+end_src
+
+Use flycheck in the appropriate buffers:
+
+#+begin_src emacs-lisp
+  (dolist (hook prose-mode-hooks)
+    (add-hook hook 'flycheck-mode))
+#+end_src
+
+** Look up words in a thesaurus
+
+Hitting =C-x s= searches for synonyms for the word at point.
+
+#+begin_src emacs-lisp
+  (use-package powerthesaurus
+    :bind
+    ("C-x s" . powerthesaurus-lookup-word-dwim))
+#+end_src
+
+** Editing with Markdown
+
+Because I can't always use =org=.
+
+- Associate =.md= files with GitHub-flavored Markdown.
+- Use =pandoc= to render the results.
+- Leave the code block font unchanged.
+
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :commands gfm-mode
+
+    :mode (("\\.md$" . gfm-mode))
+
+    :config
+    (setq markdown-command "pandoc --standalone --mathjax --from=markdown")
+    (custom-set-faces
+     '(markdown-code-face ((t nil)))))
+#+end_src
+
+** Cycle between spacing alternatives
+
+Successive calls to =cycle-spacing= rotate between changing the whitespace
+around point to:
+
+- A single space,
+- No spaces, or
+- The original spacing.
+
+Binding this to =M-SPC= is strictly better than the original binding of
+=just-one-space=.
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "M-SPC") 'cycle-spacing)
+#+end_src
+
+** Enable region case modification
+
+#+begin_src emacs-lisp
+  (put 'downcase-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
+#+end_src
+
+** Quickly explore my "notes" directory with =deft=
+
+#+begin_src emacs-lisp
+  (use-package deft
+    :bind ("C-c n" . deft)
+    :commands (deft)
+    :config
+
+    (setq deft-directory "~/.notes"
+          deft-recursive t
+          deft-use-filename-as-title t)
+
+    (evil-set-initial-state 'deft-mode 'emacs))
+#+end_src
 * Editing settings
 ** Rectangle Hydra
 
