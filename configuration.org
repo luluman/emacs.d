@@ -833,7 +833,7 @@ The main part
 
   (use-package company-ycmd
     :config
-    (setq company-ycmd-insert-arguments nil)
+    (setq company-ycmd-insert-arguments t)
     :hook
     (((python-mode typescript-mode) . MattLu/company-mode-py/ts/js-mode-hook)
      ((c-mode c++-mode) . MattLu/company-mode-c-mode-hook)))
@@ -2475,7 +2475,8 @@ at the correct indentation for Python).
     ("C-c f" . 'counsel-recentf)
     :config
     (use-package flx)
-    (use-package smex))
+    (use-package smex)
+    (use-package wgrep))
 #+END_SRC
 
    better information for ivy switch buffer
