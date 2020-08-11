@@ -630,7 +630,6 @@ project root (if I'm not in a "real" project).
     ("C-c p" . projectile-command-map)
     :config
     (setq frame-title-format '((:eval (projectile-project-name))))
-    (add-to-list 'projectile-project-root-files-bottom-up "compile_commands.json")
     (setq projectile-completion-system 'ivy)
     (setq projectile-sort-order 'recently-active)
     (setq projectile-switch-project-action 'projectile-dired)
