@@ -987,16 +987,6 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
      :hook (prog-mode . symbol-overlay-mode))
  #+END_SRC
 
-*** COMMENT Google Test
-
-For running Google Tests from a given buffer
-
-#+BEGIN_SRC emacs-lisp
-  (use-package gtest-mode
-    :load-path "~/.emacs.d/gtest-mode"
-    :after cc-mode)
-#+END_SRC
-
 *** COMMENT Tree-sitter
 
 using tree-sitter to manage Parser
@@ -1006,12 +996,29 @@ using tree-sitter to manage Parser
   (global-tree-sitter-mode)
 #+end_src
 
-** COMMENT C++
+** C++
 
 use modern cpp font lock to get better semantic highlight
 #+BEGIN_SRC emacs-lisp
   (use-package modern-cpp-font-lock
     :hook (c++-mode . modern-c++-font-lock-mode))
+#+END_SRC
+
+format c-common code
+#+begin_src emacs-lisp
+  (use-package clang-format+
+    :hook
+    (c-mode-common . clang-format+-mode))
+#+end_src
+
+Google Test
+
+For running Google Tests from a given buffer
+
+#+BEGIN_SRC emacs-lisp
+  (use-package gtest-mode
+    :load-path "~/.emacs.d/third_party/danielmartin-gtest"
+    :after cc-mode)
 #+END_SRC
 
 ** COMMENT Coq
@@ -1267,17 +1274,17 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 These are syntax highlighting files for the Emacs and XEmacs editors.
 #+begin_src emacs-lisp
   (use-package llvm-mode
-    :load-path "~/.emacs.d/llvm-mode+")
+    :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package tablegen-mode
-    :load-path "~/.emacs.d/llvm-mode+")
+    :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package mlir-mode
-    :load-path "~/.emacs.d/llvm-mode+")
+    :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
 * Org
