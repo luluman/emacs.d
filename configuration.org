@@ -1022,7 +1022,9 @@ We should put it above eglot.
   (use-package clang-format
     :custom
     (clang-format-style "llvm")
-    :hook ((c-initialization . MattLu/clang-format-key)))
+    :bind (:map c-mode-base-map
+                ("C-c u" . MattLu/clang-format))
+    :hook ((c-mode c++-mode) . MattLu/clang-format-key))
 #+end_src
 
 Google Test
