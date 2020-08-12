@@ -752,6 +752,7 @@ show function and variable tree in side buffer
 * Programming customization
 ** common settings
 *** editing
+
 I like shallow indentation, but tabs are displayed as 8 characters by default.
 This reduces that.
 
@@ -782,36 +783,6 @@ Use =smartparens=
     :config
     (smartparens-global-mode 1))
 #+END_SRC
-
-*** format
-
-Format c-common code.
-We should put it above eglot.
-#+begin_src emacs-lisp
-  (defun MattLu/clang-format (&optional beg end)
-    (interactive
-     (and (region-active-p) (list (region-beginning) (region-end))))
-    (if (and beg end)
-        (clang-format beg end)
-      (clang-format-buffer)))
-
-  (defun MattLu/clang-format-overrite-eglot ()
-    (define-key
-      (set (make-local-variable 'eglot-mode-map)
-           eglot-mode-map) (kbd "C-c u") nil))
-
-  (defun MattLu/clang-format-key ()
-    (define-key c-mode-base-map (kbd "C-c u") 'MattLu/clang-format))
-
-  (use-package clang-format
-    :custom
-    (clang-format-style "llvm")
-    ;; this code des not work
-    :bind (:map c-mode-base-map
-                ("C-c u" . MattLu/clang-format))
-    :hook (((c-mode c++-mode) . MattLu/clang-format-overrite-eglot)
-           (c-initialization . MattLu/clang-format-key)))
-#+end_src
 
 *** YCMD
 
@@ -1028,13 +999,33 @@ using tree-sitter to manage Parser
 ** C++
 
 use modern cpp font lock to get better semantic highlight
+
 #+BEGIN_SRC emacs-lisp
   (use-package modern-cpp-font-lock
     :hook (c++-mode . modern-c++-font-lock-mode))
 #+END_SRC
 
-Google Test
+Format c-common code.
+We should put it above eglot.
 
+#+begin_src emacs-lisp
+  (defun MattLu/clang-format (&optional beg end)
+    (interactive
+     (and (region-active-p) (list (region-beginning) (region-end))))
+    (if (and beg end)
+        (clang-format beg end)
+      (clang-format-buffer)))
+
+  (defun MattLu/clang-format-key ()
+    (define-key (current-local-map) [remap eglot-format] 'MattLu/clang-format))
+
+  (use-package clang-format
+    :custom
+    (clang-format-style "llvm")
+    :hook ((c-initialization . MattLu/clang-format-key)))
+#+end_src
+
+Google Test
 For running Google Tests from a given buffer
 
 #+BEGIN_SRC emacs-lisp
