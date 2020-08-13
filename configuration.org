@@ -1005,9 +1005,8 @@ use modern cpp font lock to get better semantic highlight
     :hook (c++-mode . modern-c++-font-lock-mode))
 #+END_SRC
 
-Format c-common code.
-We should put it above eglot.
-
+clang-format
+OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
 #+begin_src emacs-lisp
   (defun MattLu/clang-format (&optional beg end)
     (interactive
@@ -1017,14 +1016,14 @@ We should put it above eglot.
       (clang-format-buffer)))
 
   (defun MattLu/clang-format-key ()
-    (define-key (current-local-map) [remap eglot-format] 'MattLu/clang-format))
+    (define-key (current-local-map) [remap eglot-format] 'MattLu/clang-format)
+    (local-set-key (kbd "C-c u") 'MattLu/clang-format))
 
   (use-package clang-format
     :custom
     (clang-format-style "llvm")
-    :bind (:map c-mode-base-map
-                ("C-c u" . MattLu/clang-format))
-    :hook ((c-mode c++-mode) . MattLu/clang-format-key))
+    :hook ((c-mode c++-mode java-mode js-mode) .
+           MattLu/clang-format-key))
 #+end_src
 
 Google Test
