@@ -1202,13 +1202,9 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
                           "~/python/ufw/"))
-
-    (cond ((and (eq system-type 'gnu/linux)
-                (file-directory-p "~/python/ufw/"))
-           (venv-workon "ufw"))
-          ((and (eq system-type 'darwin)
-                (file-directory-p "~/venvPy/py3/"))
-           (venv-workon "py3"))))
+    (let ((venv-py (MattLu/YCMD-get-path venv-location)))
+      (when venv-py
+        (venv-workon (car (last (split-string venv-py "\/") 2))))))
 #+END_SRC
 
 Set ipython as interpreter
