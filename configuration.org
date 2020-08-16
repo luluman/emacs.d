@@ -790,8 +790,8 @@ YouCompltedMe setup
 
 Set different path for docker and host
 #+begin_src emacs-lisp
-  (setq MattLu/YCMD-path '("/usr/local/lib/ycmd/ycmd/"
-                           (file-truename "~/.emacs.d/ycmd/ycmd/")))
+  (setq MattLu/YCMD-path '("/usr/local/lib/ycmd/"
+                           (file-truename "~/.emacs.d/ycmd/")))
   (defun MattLu/YCMD-get-path (path-list)
     ;; get ycmd build path
     ;; this dirctiry should contain the excutable server and config file.
@@ -817,9 +817,9 @@ The main part
       (when ycmd-path
         (set-variable 'ycmd-server-command
                       `("python3" "-u"
-                        ,ycmd-path))
+                        ,(concat ycmd-path "ycmd/")))
         (set-variable 'ycmd-global-config
-                      (concat ycmd-path ".ycm_extra_conf.py")))))
+                      (concat ycmd-path "examples/.ycm_extra_conf.py")))))
 
   (defun MattLu/company-mode-c-mode-hook ()
     (set (make-local-variable 'company-backends)
