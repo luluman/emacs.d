@@ -873,6 +873,7 @@ LSP client
     :commands
     (eglot eglot-ensure)
     :bind (:map eglot-mode-map
+                ("C-c u" . eglot-format)
                 ("C-c h" . hydra-eglot/body))
     :config
     (setq eglot-stay-out-of '(company))
@@ -1041,6 +1042,7 @@ OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
       (clang-format-buffer)))
 
   (defun MattLu/clang-format-key ()
+    (define-key (current-local-map) [remap eglot-format] 'MattLu/clang-format)
     (local-set-key (kbd "C-c u") 'MattLu/clang-format))
 
   (use-package clang-format
