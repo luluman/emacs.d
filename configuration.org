@@ -550,13 +550,6 @@ doesn't require any additional setup. bounding as official recommendation.
                 :filter-return #'flymake--transform-mode-line-format))
 #+END_SRC
 
-** =flycheck=
-
- #+begin_src emacs-lisp
-   (use-package let-alist)
-   (use-package flycheck)
- #+end_src
-
 ** =magit=
 
 I use =magit= to handle version control. It's lovely, but I tweak a few things:
@@ -839,7 +832,7 @@ The main part
      ((c-mode c++-mode) . MattLu/company-mode-c-mode-hook)))
 #+END_SRC
 
-*** eglot LSP
+*** eglot LSP and more
 
 #+begin_src emacs-lisp
   (defhydra hydra-eglot (:idle 1.0)
@@ -851,12 +844,12 @@ The main part
      _f_ormat         _t_ypeDefinition   _g_ didChange   _j_ goto diagnostic
      _q_uit           ^ ^                ^ ^             _s_how diagnostic
      "
-    ("f" eglot-format)
-    ("r" eglot-rename)
-    ("a" eglot-code-actions)
+    ("f" eglot-format :color blue)
+    ("r" eglot-rename :color blue)
+    ("a" eglot-code-actions :color blue)
     ("k" eglot-shutdown)
-    ("c" eglot-reconnect)
-    ("g" eglot-signal-didChangeConfiguration)
+    ("c" eglot-reconnect :color blue)
+    ("g" eglot-signal-didChangeConfiguration :color blue)
     ("d" eglot-find-declaration)
     ("i" eglot-find-implementation)
     ("t" eglot-find-typeDefinition)
@@ -877,6 +870,7 @@ LSP client
                 ("C-c h" . hydra-eglot/body))
     :config
     (setq eglot-stay-out-of '(company))
+    ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd" "--clang-tidy"))
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
     (setq eglot-events-buffer-size 200)
     (setq eglot-autoreconnect t)
@@ -889,6 +883,15 @@ LSP client
     ((c-mode c++-mode python-mode sh-mode typescript-mode)
      . eglot-ensure))
 #+END_SRC
+
+clang-tidy
+#+begin_src emacs-lisp
+  (use-package flycheck-clang-tidy
+    :after flycheck
+    :hook
+    (((c-mode c++-mode) . (flycheck-mode))
+     ((c-mode c++-mode) . flycheck-clang-tidy-setup)))
+#+end_src
 
 *** Tags
 
@@ -1181,10 +1184,10 @@ documentation.
 I also like using flycheck-package to ensure that my Elisp packages are correctly formatted.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package flycheck-package)
-
-  (eval-after-load 'flycheck
-    '(flycheck-package-setup))
+  (use-package flycheck-package
+    :after flycheck
+    :config
+    (flycheck-package-setup))
 #+END_SRC
 
 ** scheme
@@ -1424,7 +1427,6 @@ Hit =C-c g= to quickly open up my todo list.
     (interactive)
    ;; (MattLu/copy-tasks-from-inbox)
     (find-file org-gtd-file)
-    (flycheck-mode -1)
     (end-of-buffer))
 
   (global-set-key (kbd "C-c g") 'open-gtd-file)
