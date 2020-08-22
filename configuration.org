@@ -536,11 +536,20 @@ doesn't require any additional setup. bounding as official recommendation.
 
 ** flymake
 
+#+begin_src emacs-lisp
+  (defhydra hydra-flymake ()
+    ("j" flymake-goto-diagnostic "goto-diagnostic")
+    ("s" flymake-show-diagnostic "show-diagnostic")
+    ("]" flymake-goto-next-error "next-error")
+    ("[" flymake-goto-prev-error "prev-error")
+    ("q" nil nil))
+#+end_src
+
 #+BEGIN_SRC emacs-lisp
   (use-package flymake
     :bind (:map flymake-mode-map
-                ("C-c [" . flymake-goto-prev-error)
-                ("C-c ]" . flymake-goto-next-error))
+                ("C-c [" . hydra-flymake/flymake-goto-prev-error)
+                ("C-c ]" . hydra-flymake/flymake-goto-next-error))
     :config
     (defun flymake--transform-mode-line-format (ret)
       "Change the output of `flymake--mode-line-format'."
