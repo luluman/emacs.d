@@ -879,7 +879,6 @@ LSP client
                 ("C-c h" . hydra-eglot/body))
     :config
     (setq eglot-stay-out-of '(company))
-    ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd" "--clang-tidy"))
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
     (setq eglot-events-buffer-size 200)
     (setq eglot-autoreconnect t)
@@ -895,11 +894,11 @@ LSP client
 
 clang-tidy
 #+begin_src emacs-lisp
-  (use-package flycheck-clang-tidy
-    :after flycheck
-    :hook
-    (((c-mode c++-mode) . (flycheck-mode))
-     ((c-mode c++-mode) . flycheck-clang-tidy-setup)))
+  ;; (use-package flycheck-clang-tidy
+  ;;   :after flycheck
+  ;;   :hook
+  ;;   (((c-mode c++-mode) . flycheck-mode)
+  ;;    ((c-mode c++-mode) . flycheck-clang-tidy-setup)))
 #+end_src
 
 *** Tags
