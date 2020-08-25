@@ -395,8 +395,10 @@ programming.
 #+begin_src emacs-lisp
   (defun symon--display-update-modify (orig-fun &rest args)
     "symon step aside other message"
-    (unless (current-message)
-      (apply orig-fun args)))
+    (if (current-message)
+        (when (string-match-p "\\(MEM:+.*CPU:+.*RX:+.*TX:+.*\\|Quit\\)" (current-message))
+          (apply orig-fun args))
+    (apply orig-fun args)))
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
