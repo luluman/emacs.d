@@ -392,11 +392,19 @@ programming.
 
 ** display system Information
 
+#+begin_src emacs-lisp
+  (defun symon--display-update-modify (orig-fun &rest args)
+    "symon step aside other message"
+    (unless (current-message)
+      (apply orig-fun args)))
+#+end_src
+
 #+BEGIN_SRC emacs-lisp
   (use-package symon
     :config
-    (setq symon-delay 20)
-    (symon-mode))
+    (symon-mode)
+    (advice-add 'symon--display-update
+                :around 'symon--display-update-modify))
 #+END_SRC
 
 ** Profile
