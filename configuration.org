@@ -1195,7 +1195,7 @@ documentation.
   (use-package eldoc
     :config
     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-    (setq eldoc-idle-delay 2))
+    (setq eldoc-idle-delay 1))
 #+END_SRC
 
 I also like using flycheck-package to ensure that my Elisp packages are correctly formatted.
