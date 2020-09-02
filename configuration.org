@@ -494,7 +494,8 @@ eventually falling back to =dumb-jump=.
   (use-package smart-jump
     :custom
     (smart-jump-default-mode-list
-     '(eglot
+     '(cc-mode ;; `java-mode`, `c-mode`, `c++-mode`, `objc-mode`
+       eglot
        elisp-mode
        erlang-mode
        haskell-mode
