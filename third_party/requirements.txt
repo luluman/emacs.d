@@ -1,0 +1,7 @@
+python-language-server
+rope
+pyflakes
+mccabe
+pycodestyle
+yapf
+proselint
