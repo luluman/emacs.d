@@ -1,3 +1,5 @@
+pip>20
+setuptools>50
 python-language-server
 rope
 pyflakes
@@ -5,3 +7,5 @@ mccabe
 pycodestyle
 yapf
 proselint
+google
+protobuf
