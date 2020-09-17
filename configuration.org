@@ -1070,7 +1070,7 @@ OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
 
   (use-package clang-format
     :custom
-    (clang-format-style "llvm")
+    (clang-format-fallback-style "llvm")
     :hook ((c-mode c++-mode java-mode js-mode) .
            MattLu/clang-format-key))
 #+end_src
