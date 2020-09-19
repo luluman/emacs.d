@@ -4,6 +4,8 @@
    ((nil (:background "white" :foreground "black"))))
  '(font-lock-comment-face
    ((nil (:foreground "color-243"))))
+ '(font-lock-comment-delimiter-face
+   ((nil (:foreground "color-243"))))
  '(font-lock-doc-face
    ((nil (:foreground "color-243"))))
  '(org-drawer
