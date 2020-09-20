@@ -1,5 +1,6 @@
-(custom-set-faces
+(custom-theme-set-faces
  ;; customize some color
+ 'nord
  '(header-line
    ((nil (:background "white" :foreground "black"))))
  '(font-lock-comment-face
@@ -24,10 +25,10 @@
  '(sp-pair-overlay-face ((t (:inherit region))))
 
  ;; powerline
- '(powerline-active0 ((t (:background "brightcyan" :foreground "color-235"))))
+ '(mode-line ((t (:background "brightcyan" :foreground "color-235"))))
  '(powerline-active1 ((t (:background "black" :foreground "white"))))
  '(powerline-active2 ((t (:background "white" :foreground "color-16"))))
- '(powerline-inactive0 ((t (:background "black" :foreground "white"))))
+ '(mode-line-inactive ((t (:background "black" :foreground "white"))))
  '(powerline-inactive1 ((t (:background "brightblack" :foreground "white"))))
  '(powerline-inactive2 ((t (:background "brightblack" :foreground "white"))))
 

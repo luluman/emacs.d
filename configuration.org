@@ -170,7 +170,7 @@ Why not?
 #+END_SRC
 
 ** Load up a theme
-*** personal color preferences
+*** personal preferences
 
  better vertical border and region color
 
@@ -189,18 +189,37 @@ Why not?
     (set-frame-parameter (selected-frame) 'alpha value))
 #+end_src
 
-custom face when running in 256-color terminal
-#+begin_src emacs-lisp
-  (defun MattLu/load-custom-face-el ()
-    (if (eq 256 (display-color-cells))
-        (load-file "~/.emacs.d/custom-face.el")))
+*** theme manager
 
-  (if (daemonp)
-      (add-hook 'after-make-frame-functions
-                (lambda (frame)
-                  (with-selected-frame
-                      frame (MattLu/load-custom-face-el))))
-    (MattLu/load-custom-face-el))
+#+begin_src emacs-lisp
+  (use-package solarized-theme)
+  (use-package nord-theme)
+  (use-package modus-operandi-theme)
+  (use-package modus-vivendi-theme)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defvar theme-pool
+        '(nord
+          modus-operandi
+          modus-vivendi
+          solarized-light
+          solarized-dark))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun modus-themes-toggle ()
+    "Toggle between themes defined in theme-pool."
+    (interactive)
+    (let* ((current-theme (car custom-enabled-themes))
+           (index (cl-position current-theme theme-pool)))
+      (if index
+          (progn
+            (disable-theme current-theme)
+            (load-theme (nth (% (+ 1 index) (length theme-pool))
+                             theme-pool) t))
+        (disable-theme current-theme)
+        (load-theme (nth 0 theme-pool) t))))
 #+end_src
 
 *** solarized-theme
@@ -229,12 +248,11 @@ frame is themed appropriately.
 #+END_SRC
 
 *** nord theme
-I'm currently using the "nord" theme. I've got a scenic wallpaper, so just a
-hint of transparency looks lovely and isn't distracting or hard to read.
+"dark side"
 
 #+BEGIN_SRC emacs-lisp
   (defun MattLu/apply-nord-theme ()
-    "Apply the `nord' theme and make frames just slightly transparent."
+    "Apply the `nord' theme"
     (load-theme 'nord t))
 #+END_SRC
 
@@ -251,6 +269,62 @@ frame is themed appropriately.
                     (with-selected-frame frame (MattLu/apply-nord-theme))))
       (MattLu/apply-nord-theme)))
 #+END_SRC
+
+custom face when running in 256-color terminal
+#+begin_src emacs-lisp
+  (defun MattLu/load-custom-face-el ()
+    (if (eq 256 (display-color-cells))
+        (load-file "~/.emacs.d/custom-face.el")))
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame
+                      frame (MattLu/load-custom-face-el))))
+    (MattLu/load-custom-face-el))
+#+end_src
+
+*** COMMENT modus-operandi theme
+"light side"
+
+#+begin_src emacs-lisp
+  (defun MattLu/apply-modus-operandi-theme ()
+    "Apply my chosen theme"
+    (interactive)
+    (load-theme 'modus-operandi t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package modus-operandi-theme
+    :if (not (display-graphic-p))
+    :config
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                    (with-selected-frame frame (MattLu/apply-modus-operandi-theme))))
+      (MattLu/apply-modus-operandi-theme)))
+#+end_src
+
+*** COMMENT modus-vivendi theme
+"dark side"
+
+#+begin_src emacs-lisp
+  (defun MattLu/apply-modus-vivendi-theme ()
+    "Apply my chosen theme"
+    (interactive)
+    (load-theme 'modus-vivendi t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package modus-vivendi-theme
+    :if (not (display-graphic-p))
+    :config
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                    (with-selected-frame frame (MattLu/apply-modus-vivendi-theme))))
+      (MattLu/apply-modus-vivendi-theme)))
+#+end_src
 
 ** Configure =powerline=
 
