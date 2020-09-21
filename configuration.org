@@ -191,6 +191,8 @@ Why not?
 
 *** theme manager
 
+Those themes are what I like most.
+
 #+begin_src emacs-lisp
   (use-package solarized-theme)
   (use-package nord-theme)
@@ -198,13 +200,17 @@ Why not?
   (use-package modus-vivendi-theme)
 #+end_src
 
+Theme loading symbols.
+
 #+begin_src emacs-lisp
   (defvar theme-pool
-        '(nord
-          modus-operandi
-          modus-vivendi
-          solarized-light
-          solarized-dark))
+    '(nord
+      modus-operandi
+      modus-vivendi
+      solarized-light
+      solarized-dark))
+
+  (defvar MattLu/choosing-theme 'nord)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -216,15 +222,15 @@ Why not?
       (if index
           (progn
             (disable-theme current-theme)
-            (load-theme (nth (% (+ 1 index) (length theme-pool))
-                             theme-pool) t))
+            (setq MattLu/choosing-theme (nth (% (+ 1 index) (length theme-pool))
+                                      theme-pool))
+            (load-theme MattLu/choosing-theme t))
         (disable-theme current-theme)
-        (load-theme (nth 0 theme-pool) t))))
+        (setq MattLu/choosing-theme 'nord)
+        (load-theme MattLu/choosing-theme t))))
 #+end_src
 
-*** solarized-theme
-I like the solarized-dark theme. I prefer keeping all the characters in the same
-side and font, though.
+Using solarized theme on MacOS.
 
 #+BEGIN_SRC emacs-lisp
   (defun MattLu/apply-solarized-theme ()
@@ -233,44 +239,23 @@ side and font, though.
     (load-theme 'solarized-light t))
 #+END_SRC
 
-If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
-frame is themed appropriately.
+#+begin_src emacs-lisp
+  (if (display-graphic-p)
+      (MattLu/apply-solarized-theme)
+    (load-theme MattLu/choosing-theme t))
+#+end_src
 
 #+BEGIN_SRC emacs-lisp
-  (use-package solarized-theme
-    :if (display-graphic-p)
-    :config
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions
-                  (lambda (frame)
-                      (MattLu/apply-solarized-theme)))
-      (MattLu/apply-solarized-theme)))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame
+                    (load-theme MattLu/choosing-theme t)))))
+
 #+END_SRC
 
-*** nord theme
-"dark side"
+Custom face when running in 256-color terminal
 
-#+BEGIN_SRC emacs-lisp
-  (defun MattLu/apply-nord-theme ()
-    "Apply the `nord' theme"
-    (load-theme 'nord t))
-#+END_SRC
-
-If this code is being evaluated by =emacs --daemon=, ensure that each subsequent
-frame is themed appropriately.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package nord-theme
-    :if (not (display-graphic-p))
-    :config
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions
-                  (lambda (frame)
-                    (with-selected-frame frame (MattLu/apply-nord-theme))))
-      (MattLu/apply-nord-theme)))
-#+END_SRC
-
-custom face when running in 256-color terminal
 #+begin_src emacs-lisp
   (defun MattLu/load-custom-face-el ()
     (if (eq 256 (display-color-cells))
@@ -282,48 +267,6 @@ custom face when running in 256-color terminal
                   (with-selected-frame
                       frame (MattLu/load-custom-face-el))))
     (MattLu/load-custom-face-el))
-#+end_src
-
-*** COMMENT modus-operandi theme
-"light side"
-
-#+begin_src emacs-lisp
-  (defun MattLu/apply-modus-operandi-theme ()
-    "Apply my chosen theme"
-    (interactive)
-    (load-theme 'modus-operandi t))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package modus-operandi-theme
-    :if (not (display-graphic-p))
-    :config
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions
-                  (lambda (frame)
-                    (with-selected-frame frame (MattLu/apply-modus-operandi-theme))))
-      (MattLu/apply-modus-operandi-theme)))
-#+end_src
-
-*** COMMENT modus-vivendi theme
-"dark side"
-
-#+begin_src emacs-lisp
-  (defun MattLu/apply-modus-vivendi-theme ()
-    "Apply my chosen theme"
-    (interactive)
-    (load-theme 'modus-vivendi t))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package modus-vivendi-theme
-    :if (not (display-graphic-p))
-    :config
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions
-                  (lambda (frame)
-                    (with-selected-frame frame (MattLu/apply-modus-vivendi-theme))))
-      (MattLu/apply-modus-vivendi-theme)))
 #+end_src
 
 ** Configure =powerline=
