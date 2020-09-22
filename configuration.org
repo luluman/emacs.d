@@ -214,20 +214,17 @@ Theme loading symbols.
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun modus-themes-toggle ()
+  (defun MattLu/themes-toggle ()
     "Toggle between themes defined in theme-pool."
     (interactive)
     (let* ((current-theme (car custom-enabled-themes))
            (index (cl-position current-theme theme-pool)))
       (if index
-          (progn
-            (disable-theme current-theme)
-            (setq MattLu/choosing-theme (nth (% (+ 1 index) (length theme-pool))
-                                      theme-pool))
-            (load-theme MattLu/choosing-theme t))
-        (disable-theme current-theme)
-        (setq MattLu/choosing-theme 'nord)
-        (load-theme MattLu/choosing-theme t))))
+          (setq MattLu/choosing-theme
+                (nth (% (+ 1 index) (length theme-pool)) theme-pool))
+        (setq MattLu/choosing-theme 'nord))
+      (disable-theme current-theme)
+      (load-theme MattLu/choosing-theme t)))
 #+end_src
 
 Using solarized theme on MacOS.
