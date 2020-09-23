@@ -879,10 +879,10 @@ The main part
      ----------------------------------------------------------------
      _a_ code action  _d_eclaration      _c_ reconnect   _]_ next error
      _r_emame         _i_mplementation   _k_ shutdown    _[_ prev error
-     _f_ormat         _t_ypeDefinition   _g_ didChange   _j_ goto diagnostic
+     _\\_ format       _t_ypeDefinition   _g_ didChange   _j_ goto diagnostic
      _q_uit           ^ ^                ^ ^             _s_how diagnostic
      "
-    ("f" eglot-format :color blue)
+    ("\\" eglot-format :color blue)
     ("r" eglot-rename :color blue)
     ("a" eglot-code-actions :color blue)
     ("k" eglot-shutdown)
@@ -898,13 +898,16 @@ The main part
     ("q" nil nil))
 #+end_src
 
-LSP client
+elogt
+Emacs Polyglot: an Emacs LSP client that stays out of your way.
+
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
+    :if (executable-find "clangd")
     :commands
     (eglot eglot-ensure)
     :bind (:map eglot-mode-map
-                ("C-c u" . eglot-format)
+                ("C-M-\\" . eglot-format)
                 ("C-c h" . hydra-eglot/body))
     :config
     (setq eglot-stay-out-of '(company))
@@ -920,15 +923,6 @@ LSP client
     ((c-mode c++-mode python-mode sh-mode typescript-mode)
      . eglot-ensure))
 #+END_SRC
-
-clang-tidy
-#+begin_src emacs-lisp
-  ;; (use-package flycheck-clang-tidy
-  ;;   :after flycheck
-  ;;   :hook
-  ;;   (((c-mode c++-mode) . flycheck-mode)
-  ;;    ((c-mode c++-mode) . flycheck-clang-tidy-setup)))
-#+end_src
 
 *** Tags
 
@@ -1073,6 +1067,7 @@ use modern cpp font lock to get better semantic highlight
 
 clang-format
 OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
+
 #+begin_src emacs-lisp
   (defun MattLu/clang-format (&optional beg end)
     (interactive
@@ -1083,9 +1078,10 @@ OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
 
   (defun MattLu/clang-format-key ()
     (define-key (current-local-map) [remap eglot-format] 'MattLu/clang-format)
-    (local-set-key (kbd "C-c u") 'MattLu/clang-format))
+    (local-set-key (kbd "C-M-\\") 'MattLu/clang-format))
 
   (use-package clang-format
+    :if (executable-find "clang-format")
     :custom
     (clang-format-fallback-style "llvm")
     :hook ((c-mode c++-mode java-mode js-mode) .
