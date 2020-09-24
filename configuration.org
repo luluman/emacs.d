@@ -912,7 +912,6 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     :config
     (setq eglot-stay-out-of '(company))
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-    (setq eglot-events-buffer-size 200)
     (setq eglot-autoreconnect t)
     (setq eglot-autoshutdown t)
     (setq eglot-connect-timeout 10)
@@ -2820,10 +2819,11 @@ maximum memory allotted to Emacs.
   (add-to-list 'warning-suppress-types '(undo discard-info))
 #+END_SRC
 
-** COMMENT Increase a bit garbage collection threshold
+** Increase a bit garbage collection threshold
 
+200MB
 #+BEGIN_SRC emacs-lisp
-  (setq gc-cons-threshold 1600000)
+  (setq gc-cons-threshold 200000000)
 #+END_SRC
 
 ** using too-long-lines-mode to discard extremely long lines
