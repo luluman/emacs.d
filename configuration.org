@@ -3,6 +3,7 @@
 #+AUTHOR: MattLu
 #+EMAIL: lu.man@outlook.com
 #+OPTIONS: toc:nil num:nil
+#+STARTUP: overview
 [[https://github.com/hrs/dotfiles][Harry R. Schwartz]]
 * Configure =use-package=
 
@@ -1000,7 +1001,7 @@ Hydra short-keys
      _d_ hide block    _a_ show block              _p_revious line
      _l_ hide level
 
-     _SPC_ cancel
+     _SPC_ cancel _q_ cancel
      "
     ("s" hs-show-all)
     ("h" hs-hide-all)
@@ -1010,7 +1011,8 @@ Hydra short-keys
     ("l" hs-hide-level)
     ("n" forward-line)
     ("p" (forward-line -1))
-    ("SPC" nil))
+    ("SPC" nil)
+    ("q" nil))
 #+end_src
 
 Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
@@ -1022,7 +1024,7 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
                     (format " … <%d>"
                             (count-lines (overlay-start ov)
                                          (overlay-end ov)))
-                    'face '(:background "#ff0066" :foreground "color-16")))))
+                    'face '(:background "#ff0066" :foreground "#000000")))))
 
   (use-package hideshow
     :hook (prog-mode . hs-minor-mode)
@@ -1573,10 +1575,11 @@ of an index file (my main todo list), and archive finished tasks in
   (setq org-use-sub-superscripts nil)
   (setq org-todo-keyword-faces
         '(("STRT" . (:foreground "white" :inverse-video t))
-          ("NEXT" . (:foreground "color-45" :weight bold))
+          ("NEXT" . (:foreground "brightcyan" :weight bold))
           ("WAIT" . (:foreground "#889699" :inverse-video t))
           ("CANCELED" . (:foreground "#889699"))))
   (setq org-enforce-todo-dependencies t)
+  (setq org-enforce-todo-checkbox-dependencies t)
   (setq org-deadline-warning-days 7)
 #+END_SRC
 
