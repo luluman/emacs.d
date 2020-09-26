@@ -605,8 +605,7 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     :config
     (use-package with-editor)
     (setq magit-push-always-verify nil)
-    (setq git-commit-summary-max-length 50)
-    (add-hook 'git-commit-mode-hook 'turn-on-flyspell))
+    (setq git-commit-summary-max-length 50))
 #+end_src
 
 I've been playing around with the newly-released =forge= for managing GitHub PRs
@@ -2233,9 +2232,10 @@ composing an email, or authoring a Git commit.
           ispell-extra-args '("--sug-mode=ultra"))
     (add-to-list 'flyspell-delayed-commands 'scroll-down-command)
     (add-to-list 'flyspell-delayed-commands 'scroll-up-command)
+    (dolist (hook prose-mode-hooks)
+      (add-hook hook 'flyspell-mode))
     :hook
-    ((prog-mode . flyspell-prog-mode)
-     (prose-mode-hooks . flyspell-mode)))
+    (prog-mode . flyspell-prog-mode))
 #+END_SRC
 
 ** Wrap paragraphs automatically
@@ -2322,13 +2322,10 @@ Because I can't always use =org=.
 #+begin_src emacs-lisp
   (use-package markdown-mode
     :commands gfm-mode
-
     :mode (("\\.md$" . gfm-mode))
-
     :config
-    (setq markdown-command "pandoc --standalone --mathjax --from=markdown")
-    (custom-set-faces
-     '(markdown-code-face ((t nil)))))
+    (setq markdown-command "pandoc --standalone --mathjax --from=markdown"
+          markdown-fontify-code-blocks-natively t))
 #+end_src
 
 ** Cycle between spacing alternatives
