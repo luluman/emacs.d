@@ -175,7 +175,6 @@ Why not?
 
  better vertical border and region color
 
-
 #+BEGIN_SRC emacs-lisp
   ;; Set symbol for the border │ or ┃
   (set-display-table-slot standard-display-table
@@ -195,10 +194,14 @@ Why not?
 Those themes are what I like most.
 
 #+begin_src emacs-lisp
-  (use-package solarized-theme)
-  (use-package nord-theme)
-  (use-package modus-operandi-theme)
-  (use-package modus-vivendi-theme)
+  (use-package solarized-theme
+    :no-require t)
+  (use-package nord-theme
+    :no-require t)
+  (use-package modus-operandi-theme
+    :no-require t)
+  (use-package modus-vivendi-theme
+    :no-require t)
 #+end_src
 
 Theme loading symbols.
