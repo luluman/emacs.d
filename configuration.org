@@ -685,7 +685,13 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
 using Realgud to debug source code
 
 #+BEGIN_SRC emacs-lisp
-  (use-package realgud)
+  ;; diable company mode when realgud running
+  (use-package realgud
+    :hook
+    (realgud-track-mode . (lambda ()
+                            (if realgud-track-mode
+                                (company-mode -1)
+                              (company-mode t)))))
 #+END_SRC
 
 ** Shell config
@@ -2040,36 +2046,12 @@ Include the =minted= package in all of my LaTeX exports.
   (setq org-latex-listings 'minted)
 #+END_SRC
 
-** COMMENT org-caldav
+** COMMENT org-mobile
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-caldav)
-
-  (defun MattLu/caldav-sync-perso ()
-    (interactive)
-    (let ((org-caldav-inbox (org-file-path "rdv.org"))
-          (org-caldav-calendar-id "personnel")
-          (org-caldav-url "Google")
-          (org-caldav-files nil))
-      (call-interactively 'org-caldav-sync)))
-
-  (defun MattLu/caldav-sync-etalab-perso ()
-    (interactive)
-    (let ((org-caldav-inbox "~/.Org/rdv-etalab.org")
-          (org-caldav-calendar-id "personal")
-          (org-caldav-url "Outlook")
-          (org-caldav-files nil))
-      (call-interactively 'org-caldav-sync)))
-
-  (defun MattLu/etalab-caldav-sync ()
-    (interactive)
-    (MattLu/caldav-sync-etalab-perso))
-
-  (defun bzg-caldav-sync-all ()
-    (interactive)
-    (MattLu/etalab-caldav-sync)
-    (MattLu/caldav-sync-perso))
+  (setq org-mobile-directory )
 #+END_SRC
+
 * Writing thesis
 
  Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
