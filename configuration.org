@@ -485,12 +485,6 @@ Use =company-mode= everywhere.
                              company-oddmuse)))
 #+end_src
 
-#+begin_src emacs-lisp
-  (use-package company-statistics
-    :config
-    (add-hook 'after-init-hook 'company-statistics-mode))
-#+end_src
-
 Set TAB for complete cycle
 
 #+begin_src emacs-lisp
@@ -677,7 +671,9 @@ project root (if I'm not in a "real" project).
 I like tree-based undo management. I only rarely need it, but when I do, oh boy.
 
 #+begin_src emacs-lisp
-  (use-package undo-tree)
+  (use-package undo-tree
+    :config
+    (turn-on-undo-tree-mode))
 #+end_src
 
 ** =GDB=
@@ -3044,6 +3040,31 @@ Hydra ediff, more function with less key bindings
     (setq langtool-http-server-host "langtool-server"
           langtool-http-server-port 8010)
     (setq langtool-default-language "en-US"))
+#+end_src
+
+** prescient
+
+   simple but effective sorting and filtering for Emacs.
+
+#+begin_src emacs-lisp
+  (use-package ivy-prescient
+    :config
+    (setq ivy-prescient-mode t))
+
+  (use-package company-prescient
+    :config
+    (setq company-prescient-mode t))
+#+end_src
+
+** easy-kill
+
+Provide commands easy-kill and easy-mark to let users kill or mark things
+easily.
+
+#+begin_src emacs-lisp
+  (use-package easy-kill
+    :config
+    (global-set-key [remap kill-ring-save] 'easy-kill))
 #+end_src
 
 * Set custom keybindings
