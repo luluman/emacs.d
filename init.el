@@ -15,5 +15,6 @@
 (when (not (package-installed-p 'use-package))
   (package-refresh-contents)
   (package-install 'use-package))
+(require 'org)
 
 (org-babel-load-file "~/.emacs.d/configuration.org")
