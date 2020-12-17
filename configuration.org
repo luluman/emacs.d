@@ -556,8 +556,8 @@ doesn't require any additional setup. bounding as official recommendation.
      ("M-g z" . dumb-jump-go-prefer-external-other-window))
 
     :config
-    (setq dumb-jump-force-searcher 'rg)
-    (setq dumb-jump-selector 'ivy))
+    (setq dumb-jump-force-searcher 'rg))
+    ;; (setq dumb-jump-selector 'ivy))
 #+end_src
 
 ** flymake
@@ -657,7 +657,7 @@ project root (if I'm not in a "real" project).
     ("C-c p" . projectile-command-map)
     :config
     (setq frame-title-format '((:eval (projectile-project-name))))
-    (setq projectile-completion-system 'ivy)
+    ;; (setq projectile-completion-system 'ivy)
     (setq projectile-sort-order 'recently-active)
     (setq projectile-switch-project-action 'projectile-dired)
     (setq projectile-require-project-root nil)
@@ -936,7 +936,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (define-key ggtags-mode-map (kbd "M-]") nil))
 #+END_SRC
 
-*** Xref jump
+*** COMMENT Xref jump
 
 Use Ivy as the interface to select from xref candidates.
 
@@ -2495,7 +2495,7 @@ at the correct indentation for Python).
   (setq yas/indent-line nil)
 #+END_SRC
 
-** ivy + counsel + swiper
+** COMMENT ivy + counsel + swiper
 
   ivy configuration
 #+BEGIN_SRC emacs-lisp
@@ -2587,6 +2587,75 @@ but right now I will change ivy.el instead
   (defun ivy-thing-at-point()
     nil)
 #+END_SRC
+
+** selectrum + marginalia + ctrlf + consult
+
+Selectrum is a better solution for incremental narrowing in Emacs, replacing
+Helm, Ivy, and Ido.
+
+#+begin_src emacs-lisp
+  (use-package selectrum
+    :config
+    (selectrum-mode +1))
+#+end_src
+
+Marginalia are marks or annotations placed at the margin of the page of a book
+or in this case helpful colorful annotations placed at the margin of the
+minibuffer for your completion candidates.
+
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :init
+    ;; Must be in the :init section of use-package such that the mode gets
+    ;; enabled right away. Note that this forces loading the package.
+    (marginalia-mode)
+    :config
+    (setq marginalia-annotators '(marginalia-annotators-heavy)))
+#+end_src
+
+CTRLF (pronounced "control F") is an intuitive and efficient solution for
+single-buffer text search in Emacs, replacing packages such as Isearch, Swiper,
+and helm-swoop.
+
+#+begin_src emacs-lisp
+  (use-package ctrlf
+    :config
+    (ctrlf-mode +1))
+#+end_src
+
+This package provides various commands based on the Emacs completion function
+completing-read, in particular a more advanced buffer switching command
+consult-buffer and a Swiper-like search command consult-line.
+
+#+begin_src emacs-lisp
+  (use-package consult
+    ;; Replace bindings. Lazily loaded due to use-package.
+    :bind (("C-c o" . consult-outline)
+           ("C-x r x" . consult-register)
+           ("C-x r b" . consult-bookmark)
+           ("M-g o" . consult-outline) ;; "M-s o" is a good alternative
+           ("M-g m" . consult-mark)    ;; "M-s m" is a good alternative
+           ("M-g l" . consult-line)    ;; "M-s l" is a good alternative
+           ("M-g i" . consult-imenu)   ;; "M-s i" is a good alternative
+           ("M-g e" . consult-error)   ;; "M-s e" is a good alternative
+           ("M-s m" . consult-multi-occur)
+           ("M-y" . consult-yank-pop)
+           ("<help> a" . consult-apropos))
+    :init
+    (fset 'multi-occur #'consult-multi-occur)
+    :config
+    (consult-preview-mode))
+
+  ;; Enable Consult-Selectrum integration.
+  ;; This package should be installed if Selectrum is used.
+  (use-package consult-selectrum
+    :demand t)
+
+  ;; Optionally add the consult-flycheck command.
+  (use-package consult-flycheck
+    :bind (:map flycheck-command-map
+           ("!" . consult-flycheck)))
+#+end_src
 
 ** Switch and rebalance windows when splitting
 
@@ -3045,14 +3114,25 @@ Hydra ediff, more function with less key bindings
 
    simple but effective sorting and filtering for Emacs.
 
+*** COMMENT ivy
 #+begin_src emacs-lisp
   (use-package ivy-prescient
     :config
-    (setq ivy-prescient-mode t))
+    (ivy-prescient-mode +1))
+#+end_src
 
+*** selectrum
+#+begin_src emacs-lisp
+  (use-package selectrum-prescient
+    :config
+    (selectrum-prescient-mode +1))
+#+end_src
+
+*** company
+#+begin_src emacs-lisp
   (use-package company-prescient
     :config
-    (setq company-prescient-mode t))
+    (company-prescient-mode +1))
 #+end_src
 
 ** easy-kill
