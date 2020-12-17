@@ -710,6 +710,12 @@ Add shell completion
 #+BEGIN_SRC emacs-lisp
   (use-package bash-completion
     :config (bash-completion-setup))
+
+  (defun toggle-enable-bash-completion ()
+    (interactive)
+    (if bash-completion-enabled
+        (setq bash-completion-enabled nil)
+      (setq bash-completion-enabled t)))
 #+END_SRC
 
 use company instead of ivy which would invoke minibuffer
