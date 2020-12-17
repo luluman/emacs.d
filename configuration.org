@@ -2926,6 +2926,13 @@ Hydra short-keys
     (define-key back-button-mode-map (kbd "C-x SPC") nil))
 #+end_src
 
+Pcache required by persistent-soft required by back-botton, but it freeze emacs
+when quit.
+
+#+begin_src emacs-lisp
+  (remove-hook 'kill-emacs-hook 'pcache-kill-emacs-hook)
+#+end_src
+
 ** Ediff
 
 I like Ediff's control panel to show in the same frame, even on
