@@ -556,8 +556,8 @@ doesn't require any additional setup. bounding as official recommendation.
      ("M-g z" . dumb-jump-go-prefer-external-other-window))
 
     :config
-    (setq dumb-jump-force-searcher 'rg))
-    ;; (setq dumb-jump-selector 'ivy))
+    (setq dumb-jump-force-searcher 'rg)
+    (setq dumb-jump-selector 'popup))
 #+end_src
 
 ** flymake
