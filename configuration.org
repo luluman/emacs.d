@@ -745,14 +745,19 @@ Get environment variable in Shell and set them to Emacs
 
 #+BEGIN_SRC emacs-lisp
   (use-package workgroups2
+    :custom
+    (wg-session-load-on-start nil)
+    (wg-session-file "~/.emacs.d/.emacs_workgroups")
+    (wg-prefix-key (kbd "C-c z"))
+    (wg-workgroups-mode-exit-save-behavior 'none)
+    (wg-emacs-exit-save-behavior           'none)
+    ;; this does not work
+    (wg-mode-line-display-on nil)
     :config
-    (setq wg-session-load-on-start nil)
-    (setq wg-session-file "~/.emacs.d/.emacs_workgroups")
-    (setq wg-prefix-key (kbd "C-c z"))
-    (setq wg-dissociate-buffer-on-kill-buffer nil)
-    (setq wg-workgroups-mode-exit-save-behavior nil)
-    (setq wg-emacs-exit-save-behavior           nil)
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
+    ;; override defined in workgroups2, suppress the error.
+    (defun wg-change-modeline ()
+      nil)
     (workgroups-mode 1))
 #+END_SRC
 
@@ -2785,7 +2790,6 @@ Use ace-jump-mode to quick jump to words or char
     ("C-'"   . avy-goto-char-timer)
     ("M-g f" . avy-goto-line)
     :config
-    (setq avy-all-windows nil)
     (setq avy-background t)
     (setq avy-timeout-seconds 0.3)
     (unbind-key "C-'" org-mode-map)) ;; jump in current frame
