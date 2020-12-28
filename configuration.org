@@ -2356,10 +2356,9 @@ Binding this to =M-SPC= is strictly better than the original binding of
 
     (setq deft-directory "~/.notes"
           deft-recursive t
-          deft-use-filename-as-title t)
-
-    (evil-set-initial-state 'deft-mode 'emacs))
+          deft-use-filename-as-title t))
 #+end_src
+
 * Editing settings
 ** Rectangle Hydra
 
