@@ -751,6 +751,8 @@ Get environment variable in Shell and set them to Emacs
     (wg-prefix-key (kbd "C-c z"))
     (wg-workgroups-mode-exit-save-behavior 'none)
     (wg-emacs-exit-save-behavior           'none)
+    ;; eglot LSP server bugfix
+    (wg-dissociate-buffer-on-kill-buffer nil)
     ;; this does not work
     (wg-mode-line-display-on nil)
     :config
