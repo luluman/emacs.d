@@ -417,7 +417,8 @@ programming.
   (defun symon--display-update-modify (orig-fun &rest args)
     "symon step aside other message"
     (if (current-message)
-        (when (string-match-p "\\(MEM:+.*CPU:+.*RX:+.*TX:+.*\\|Quit\\)" (current-message))
+        (when (string-match-p "\\(MEM:+.*CPU:+.*RX:+.*TX:+.*\\|Quit\\)"
+                              (current-message))
           (apply orig-fun args))
     (apply orig-fun args)))
 #+end_src
@@ -916,6 +917,21 @@ The main part
     ("q" nil nil))
 #+end_src
 
+Cleanup function, clangd generate much .pch files, ans consume lots of space.
+
+#+begin_src emacs-lisp
+  (defun MattLu/clangd-cleanup ()
+    (mapc (lambda (x) (delete-file x 'always))
+          (directory-files "/tmp/" t "\\(.+\\.pch\\)\\|\\(symbolizer-+.+\\)"))
+    (message "clean up clangd!"))
+
+  (defun MattLu/lsp-cleanup ()
+    (if (eglot-managed-p)
+        (setq-local clangd-cleanup--timer-objects
+                    (run-with-idle-timer 3600 t 'MattLu/clangd-cleanup))
+      (cancel-timer clangd-cleanup--timer-objects)))
+#+end_src
+
 elogt
 Emacs Polyglot: an Emacs LSP client that stays out of your way.
 
@@ -937,8 +953,9 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
     :hook
-    ((c-mode c++-mode python-mode sh-mode typescript-mode)
-     . eglot-ensure))
+    (((c-mode c++-mode python-mode sh-mode typescript-mode)
+      . eglot-ensure)
+     (eglot-managed-mode . MattLu/lsp-cleanup)))
 #+END_SRC
 
 *** Tags
