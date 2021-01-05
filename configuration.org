@@ -799,6 +799,15 @@ show function and variable tree in side buffer
     (setq imenu-list-focus-after-activation t))
 #+END_SRC
 
+** ELF
+
+read elf symbols
+
+#+begin_src emacs-lisp
+  (use-package elf-mode
+    :mode "\\.\\(?:a\\|so\\)")
+#+end_src
+
 * Programming customization
 ** common settings
 *** editing
