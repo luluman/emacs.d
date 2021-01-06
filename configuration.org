@@ -921,13 +921,14 @@ Cleanup function, clangd generate much .pch files, ans consume lots of space.
 
 #+begin_src emacs-lisp
   (defun MattLu/clangd-cleanup ()
+    (interactive)
     (mapc (lambda (x) (delete-file x 'always))
           (directory-files "/tmp/" t "\\(.+\\.pch\\)\\|\\(symbolizer-+.+\\)")))
 
   (defun MattLu/lsp-cleanup ()
     (if (eglot-managed-p)
         (setq-local clangd-cleanup--timer-objects
-                    (run-with-timer 0 1000 'MattLu/clangd-cleanup))
+                    (run-with-timer 0 7200 'MattLu/clangd-cleanup))
       (cancel-timer clangd-cleanup--timer-objects)))
 #+end_src
 
@@ -954,7 +955,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     :hook
     (((c-mode c++-mode python-mode sh-mode typescript-mode)
       . eglot-ensure)
-     (eglot-managed-mode . MattLu/lsp-cleanup)))
+     ;; (eglot-managed-mode . MattLu/lsp-cleanup)
+     ))
 #+END_SRC
 
 *** Tags
