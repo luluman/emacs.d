@@ -934,7 +934,7 @@ Cleanup function, clangd generate much .pch files, ans consume lots of space.
     (mapc (lambda (x) (dired-delete-file x 'always))
           (directory-files "/tmp/" t "\\(.+\\.pch\\)\\|\\(symbolizer-+.+\\)")))
 
-  (defun MattLu/lsp-cleanup ()
+  (defun MattLu/lsp-auto-cleanup ()
     (if (eglot-managed-p)
         (setq-local clangd-cleanup--timer-objects
                     (run-with-timer 0 7200 'MattLu/clangd-cleanup))
@@ -962,10 +962,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
     :hook
-    (((c-mode c++-mode python-mode sh-mode typescript-mode)
-      . eglot-ensure)
-     ;; (eglot-managed-mode . MattLu/lsp-cleanup)
-     ))
+    ((c-mode c++-mode python-mode sh-mode typescript-mode)
+      . eglot-ensure))
 #+END_SRC
 
 *** Tags
@@ -2636,7 +2634,9 @@ Helm, Ivy, and Ido.
 #+begin_src emacs-lisp
   (use-package selectrum
     :config
-    (selectrum-mode +1))
+    (selectrum-mode +1)
+    :custom
+    (selectrum-count-style 'current/matches))
 #+end_src
 
 Marginalia are marks or annotations placed at the margin of the page of a book
@@ -2672,32 +2672,44 @@ consult-buffer and a Swiper-like search command consult-line.
 
 #+begin_src emacs-lisp
   (use-package consult
-    ;; Replace bindings. Lazily loaded due to use-package.
-    :bind (("C-c o" . consult-outline)
+    :bind (("C-x M-:" . consult-complex-command)
+           ("C-c h" . consult-history)
+           ("C-x b" . consult-buffer)
+           ("C-x 4 b" . consult-buffer-other-window)
            ("C-x r x" . consult-register)
            ("C-x r b" . consult-bookmark)
-           ("M-g o" . consult-outline) ;; "M-s o" is a good alternative
-           ("M-g m" . consult-mark)    ;; "M-s m" is a good alternative
-           ("M-g l" . consult-line)    ;; "M-s l" is a good alternative
-           ("M-g i" . consult-imenu)   ;; "M-s i" is a good alternative
-           ("M-g e" . consult-error)   ;; "M-s e" is a good alternative
+           ("M-g g" . consult-goto-line)
+           ("M-g M-g" . consult-goto-line)
+           ("M-g o" . consult-outline)       ;; "M-s o" is a good alternative.
+           ("M-g l" . consult-line)          ;; "M-s l" is a good alternative.
+           ("M-g m" . consult-mark)          ;; I recommend to bind Consult navigation
+           ("M-g k" . consult-global-mark)   ;; commands under the "M-g" prefix.
+           ("M-g r" . consult-ripgrep)      ;; or consult-grep, consult-git-grep
+           ("M-g f" . consult-find)          ;; or consult-locate, my-fdfind
+           ("M-g i" . consult-project-imenu) ;; or consult-imenu
+           ("M-g e" . consult-error)
            ("M-s m" . consult-multi-occur)
            ("M-y" . consult-yank-pop)
            ("<help> a" . consult-apropos))
     :init
     (fset 'multi-occur #'consult-multi-occur)
     :config
-    (consult-preview-mode))
+    ;; Optionally configure narrowing key.
+    ;; Both < and C-+ work reasonably well.
+    (setq consult-narrow-key "<") ;; (kbd "C-+")
+    ;; Optionally configure a function which returns the project root directory
+    (autoload 'projectile-project-root "projectile")
+    (setq consult-project-root-function #'projectile-project-root))
 
   ;; Enable Consult-Selectrum integration.
   ;; This package should be installed if Selectrum is used.
   (use-package consult-selectrum
-    :demand t)
+    :after selectrum)
 
   ;; Optionally add the consult-flycheck command.
   (use-package consult-flycheck
     :bind (:map flycheck-command-map
-           ("!" . consult-flycheck)))
+                ("!" . consult-flycheck)))
 #+end_src
 
 ** crux
@@ -2713,6 +2725,31 @@ useful interactive commands to enhance your overall Emacs experience.
      ("C-c r" . crux-rename-file-and-buffer)
      ("C-k" . crux-kill-and-join-forward)
      ("C-x M-c" . crux-capitalize-region)))
+#+end_src
+
+** prescient
+
+   simple but effective sorting and filtering for Emacs.
+
+*** COMMENT ivy
+#+begin_src emacs-lisp
+  (use-package ivy-prescient
+    :config
+    (ivy-prescient-mode +1))
+#+end_src
+
+*** selectrum
+#+begin_src emacs-lisp
+  (use-package selectrum-prescient
+    :config
+    (selectrum-prescient-mode +1))
+#+end_src
+
+*** company
+#+begin_src emacs-lisp
+  (use-package company-prescient
+    :config
+    (company-prescient-mode +1))
 #+end_src
 
 ** Switch and rebalance windows when splitting
@@ -3172,31 +3209,6 @@ Hydra ediff, more function with less key bindings
     (setq langtool-http-server-host "langtool-server"
           langtool-http-server-port 8010)
     (setq langtool-default-language "en-US"))
-#+end_src
-
-** prescient
-
-   simple but effective sorting and filtering for Emacs.
-
-*** COMMENT ivy
-#+begin_src emacs-lisp
-  (use-package ivy-prescient
-    :config
-    (ivy-prescient-mode +1))
-#+end_src
-
-*** selectrum
-#+begin_src emacs-lisp
-  (use-package selectrum-prescient
-    :config
-    (selectrum-prescient-mode +1))
-#+end_src
-
-*** company
-#+begin_src emacs-lisp
-  (use-package company-prescient
-    :config
-    (company-prescient-mode +1))
 #+end_src
 
 ** easy-kill
