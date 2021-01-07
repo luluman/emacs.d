@@ -931,7 +931,7 @@ Cleanup function, clangd generate much .pch files, ans consume lots of space.
 #+begin_src emacs-lisp
   (defun MattLu/clangd-cleanup ()
     (interactive)
-    (mapc (lambda (x) (delete-file x 'always))
+    (mapc (lambda (x) (dired-delete-file x 'always))
           (directory-files "/tmp/" t "\\(.+\\.pch\\)\\|\\(symbolizer-+.+\\)")))
 
   (defun MattLu/lsp-cleanup ()
