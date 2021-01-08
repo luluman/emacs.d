@@ -2712,21 +2712,6 @@ consult-buffer and a Swiper-like search command consult-line.
                 ("!" . consult-flycheck)))
 #+end_src
 
-** crux
-
-A Collection of Ridiculously Useful eXtensions for Emacs. crux bundles many
-useful interactive commands to enhance your overall Emacs experience.
-
-#+begin_src emacs-lisp
-  (use-package crux
-    :bind
-    (([remap kill-whole-line] . crux-kill-whole-line)
-     ("C-c d" . crux-duplicate-current-line-or-region)
-     ("C-c r" . crux-rename-file-and-buffer)
-     ("C-k" . crux-kill-and-join-forward)
-     ("C-x M-c" . crux-capitalize-region)))
-#+end_src
-
 ** prescient
 
    simple but effective sorting and filtering for Emacs.
@@ -2750,6 +2735,21 @@ useful interactive commands to enhance your overall Emacs experience.
   (use-package company-prescient
     :config
     (company-prescient-mode +1))
+#+end_src
+
+** crux
+
+A Collection of Ridiculously Useful eXtensions for Emacs. crux bundles many
+useful interactive commands to enhance your overall Emacs experience.
+
+#+begin_src emacs-lisp
+  (use-package crux
+    :bind
+    (([remap kill-whole-line] . crux-kill-whole-line)
+     ("C-c d" . crux-duplicate-current-line-or-region)
+     ("C-c r" . crux-rename-file-and-buffer)
+     ("C-k" . crux-kill-and-join-forward)
+     ("C-x M-c" . crux-capitalize-region)))
 #+end_src
 
 ** Switch and rebalance windows when splitting
