@@ -805,7 +805,7 @@ read elf symbols
 
 #+begin_src emacs-lisp
   (use-package elf-mode
-    :mode "\\.\\(?:[ao]\\|so\\)")
+    :mode "\\.\\([ao]\\|so\\)$")
 #+end_src
 
 * Programming customization
