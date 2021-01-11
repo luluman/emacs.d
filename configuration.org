@@ -504,41 +504,50 @@ Set TAB for complete cycle
 
 This packages tries to smartly go to definition leveraging several methods to do so.
 If one method fails, this package will go on to the next one,
-eventually falling back to =dumb-jump=.
 
 #+begin_src emacs-lisp
   (use-package smart-jump
+    :after xref
     :custom
     (smart-jump-default-mode-list
-     '(cc-mode ;; `java-mode`, `c-mode`, `c++-mode`, `objc-mode`
-       eglot
+     '(csharp-mode
+       clojure-mode
        elisp-mode
-       erlang-mode
-       haskell-mode
+       go-mode
        lisp-mode
+       lispy
        ruby-mode
        rust-mode
        scheme
-       swift-mode))
+       typescript-mode))
     :config
     (smart-jump-setup-default-registers)
     (smart-jump-register :modes '(c-mode c++-mode python-mode)
-                         :jump-fn 'ymcd-goto
-                         :refs-fn 'ycmd-goto-references
-                         :should-jump (lambda ()
-                                        (bound-and-true-p ycmd-mode))
-                         :heuristic 'point
-                         :async 2000
-                         :order 1)
+                          :jump-fn 'xref-find-definitions
+                          :pop-fn 'xref-pop-marker-stack
+                          :refs-fn 'xref-find-references
+                          :should-jump t
+                          :heuristic 'error
+                          :async nil
+                          :order 1)
 
     (smart-jump-register :modes '(c-mode c++-mode python-mode)
-                         :jump-fn 'ggtags-find-tag-dwim
-                         :pop-fn 'ggtags-prev-mark
-                         :refs-fn 'ggtags-find-reference
-                         :should-jump t
-                         :heuristic 'point
-                         :async 3000
-                         :order 2))
+                          :jump-fn 'ymcd-goto
+                          :refs-fn 'ycmd-goto-references
+                          :should-jump (lambda ()
+                                         (bound-and-true-p ycmd-mode))
+                          :heuristic 'point
+                          :async 2000
+                          :order 2)
+
+     (smart-jump-register :modes '(c-mode c++-mode python-mode)
+                          :jump-fn 'ggtags-find-tag-dwim
+                          :pop-fn 'ggtags-prev-mark
+                          :refs-fn 'ggtags-find-reference
+                          :should-jump t
+                          :heuristic 'point
+                          :async 3000
+                          :order 3))
 #+end_src
 
 ** =dumb-jump=
@@ -548,17 +557,13 @@ doesn't require any additional setup. bounding as official recommendation.
 
 #+begin_src emacs-lisp
   (use-package dumb-jump
-    :bind
-    (("M-g o" . dumb-jump-go-other-window)
-     ("M-g j" . dumb-jump-go)
-     ("M-g b" . dumb-jump-back)
-     ("M-g i" . dumb-jump-go-prompt)
-     ("M-g x" . dumb-jump-go-prefer-external)
-     ("M-g z" . dumb-jump-go-prefer-external-other-window))
-
-    :config
-    (setq dumb-jump-force-searcher 'rg)
-    (setq dumb-jump-selector 'popup))
+    :commands (dumb-jump-xref-activate)
+    :custom
+    (dumb-jump-quiet t)
+    (dumb-jump-force-searcher 'rg)
+    (dumb-jump-selector 'popup)
+    :init
+    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 #+end_src
 
 ** flymake
@@ -954,8 +959,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c h" . hydra-eglot/body))
     :config
     (setq eglot-stay-out-of '(company))
-    (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-    (setq eglot-autoreconnect t)
+    (add-to-list 'eglot-server-programs
+                 '((c++-mode c-mode) "clangd" "-background-index=0"))
     (setq eglot-autoshutdown t)
     (setq eglot-connect-timeout 10)
     (setq eglot-sync-connect nil)
@@ -975,21 +980,15 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (define-key ggtags-mode-map (kbd "M-]") nil))
 #+END_SRC
 
-*** COMMENT Xref jump
+*** Xref jump
 
-Use Ivy as the interface to select from xref candidates.
+Use minibuffer as the interface to select from xref candidates.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy-xref
-    :init
-    ;; xref initialization is different in Emacs 27 - there are two different
-    ;; variables which can be set rather than just one
-    (when (>= emacs-major-version 27)
-      (setq xref-show-definitions-function #'ivy-xref-show-defs))
-    ;; Necessary in Emacs <27. In Emacs 27 it will affect all xref-based
-    ;; commands other than xref-find-definitions (e.g. project-find-regexp)
-    ;; as well
-    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
+  (use-package xref
+    :custom
+    (xref-show-definitions-function 'xref--show-defs-minibuffer)
+    (xref-show-xrefs-function 'xref--show-defs-minibuffer))
 #+END_SRC
 
 *** Terminal
