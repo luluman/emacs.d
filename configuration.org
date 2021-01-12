@@ -2611,10 +2611,7 @@ minibuffer for your completion candidates.
     ;; enabled right away. Note that this forces loading the package.
     (marginalia-mode)
     :config
-    (setq marginalia-annotators '(marginalia-annotators-heavy))
-    :custom
-    (marginalia-margin-threshold 200)
-    (marginalia-truncate-width 200))
+    (setq marginalia-annotators '(marginalia-annotators-heavy)))
 #+end_src
 
 CTRLF (pronounced "control F") is an intuitive and efficient solution for
