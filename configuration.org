@@ -508,46 +508,16 @@ If one method fails, this package will go on to the next one,
 #+begin_src emacs-lisp
   (use-package smart-jump
     :after xref
-    :custom
-    (smart-jump-default-mode-list
-     '(csharp-mode
-       clojure-mode
-       elisp-mode
-       go-mode
-       lisp-mode
-       lispy
-       ruby-mode
-       rust-mode
-       scheme
-       typescript-mode))
     :config
     (smart-jump-setup-default-registers)
     (smart-jump-register :modes '(c-mode c++-mode python-mode)
-                          :jump-fn 'xref-find-definitions
-                          :pop-fn 'xref-pop-marker-stack
-                          :refs-fn 'xref-find-references
-                          :should-jump t
-                          :heuristic 'error
-                          :async nil
-                          :order 1)
-
-    (smart-jump-register :modes '(c-mode c++-mode python-mode)
-                          :jump-fn 'ymcd-goto
-                          :refs-fn 'ycmd-goto-references
-                          :should-jump (lambda ()
-                                         (bound-and-true-p ycmd-mode))
-                          :heuristic 'point
-                          :async 2000
-                          :order 2)
-
-     (smart-jump-register :modes '(c-mode c++-mode python-mode)
-                          :jump-fn 'ggtags-find-tag-dwim
-                          :pop-fn 'ggtags-prev-mark
-                          :refs-fn 'ggtags-find-reference
-                          :should-jump t
-                          :heuristic 'point
-                          :async 3000
-                          :order 3))
+                         :jump-fn 'xref-find-definitions
+                         :pop-fn 'xref-pop-marker-stack
+                         :refs-fn 'xref-find-references
+                         :should-jump t
+                         :heuristic 'error
+                         :async nil
+                         :order 1))
 #+end_src
 
 ** =dumb-jump=
@@ -971,24 +941,16 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
       . eglot-ensure))
 #+END_SRC
 
-*** Tags
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ggtags
-    :config
-    (define-key ggtags-mode-map (kbd "M-.") nil)
-    (define-key ggtags-mode-map (kbd "M-]") nil))
-#+END_SRC
-
 *** Xref jump
 
 Use minibuffer as the interface to select from xref candidates.
 
 #+BEGIN_SRC emacs-lisp
   (use-package xref
+    :commands (xref--show-defs-minibuffer)
     :custom
-    (xref-show-definitions-function 'xref--show-defs-minibuffer)
-    (xref-show-xrefs-function 'xref--show-defs-minibuffer))
+    (xref-show-definitions-function xref--show-defs-minibuffer)
+    (xref-show-xrefs-function xref--show-defs-minibuffer))
 #+END_SRC
 
 *** Terminal
