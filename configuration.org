@@ -783,6 +783,12 @@ read elf symbols
     :mode "\\.\\([ao]\\|so\\)$")
 #+end_src
 
+#+begin_src emacs-lisp
+  (use-package demangle-mode
+    :config
+    (advice-add 'elf-mode :after 'demangle-mode))
+#+end_src
+
 * Programming customization
 ** common settings
 *** editing
