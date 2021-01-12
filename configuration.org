@@ -500,7 +500,7 @@ Set TAB for complete cycle
        (define-key company-active-map (kbd "M-v") 'company-previous-page)))
 #+end_src
 
-** smart-jump
+** COMMENT smart-jump
 
 This packages tries to smartly go to definition leveraging several methods to do so.
 If one method fails, this package will go on to the next one,
@@ -949,8 +949,8 @@ Use minibuffer as the interface to select from xref candidates.
   (use-package xref
     :commands (xref--show-defs-minibuffer)
     :custom
-    (xref-show-definitions-function xref--show-defs-minibuffer)
-    (xref-show-xrefs-function xref--show-defs-minibuffer))
+    (xref-show-definitions-function #'xref--show-defs-minibuffer)
+    (xref-show-xrefs-function #'xref--show-defs-minibuffer))
 #+END_SRC
 
 *** Terminal
