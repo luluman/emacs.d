@@ -2664,16 +2664,6 @@ consult-buffer and a Swiper-like search command consult-line.
     ;; Optionally configure a function which returns the project root directory
     (autoload 'projectile-project-root "projectile")
     (setq consult-project-root-function #'projectile-project-root))
-
-  ;; Enable Consult-Selectrum integration.
-  ;; This package should be installed if Selectrum is used.
-  (use-package consult-selectrum
-    :after selectrum)
-
-  ;; Optionally add the consult-flycheck command.
-  (use-package consult-flycheck
-    :bind (:map flycheck-command-map
-                ("!" . consult-flycheck)))
 #+end_src
 
 ** prescient
