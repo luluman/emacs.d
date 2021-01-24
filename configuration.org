@@ -582,14 +582,6 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     (setq git-commit-summary-max-length 50))
 #+end_src
 
-I've been playing around with the newly-released =forge= for managing GitHub PRs
-and issues. Seems slick so far.
-
-#+begin_src emacs-lisp
-  ;; (use-package ghub)
-  ;; (use-package forge)
-#+end_src
-
 I'm also partial to =git-timemachine=, which lets you quickly page through the
 history of a file.
 
@@ -787,6 +779,19 @@ read elf symbols
   (use-package demangle-mode
     :config
     (advice-add 'elf-mode :after 'demangle-mode))
+#+end_src
+
+** UML
+
+#+begin_src emacs-lisp
+  (use-package plantuml-mode
+    :mode "\\.plantuml$"
+    :custom
+    (plantuml-server-url "http://plantuml-server:8080")
+    (plantuml-output-type "txt")
+    :config
+    (add-to-list
+     'org-src-lang-modes '("plantuml" . plantuml)))
 #+end_src
 
 * Programming customization
@@ -2988,6 +2993,7 @@ graphical environments.
 
 #+BEGIN_SRC emacs-lisp
   (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  (setq ediff-split-window-function 'split-window-horizontally)
 #+END_SRC
 
 Hydra ediff, more function with less key bindings
