@@ -783,17 +783,7 @@ read elf symbols
 
 ** UML
 
-#+begin_src emacs-lisp
-  (use-package plantuml-mode
-    :mode "\\.plantuml$"
-    :custom
-    (plantuml-exec-mode 'server)
-    (plantuml-server-url "https://www.plantuml.com/plantuml")
-    (plantuml-output-type "txt")
-    :config
-    (add-to-list
-     'org-src-lang-modes '("plantuml" . plantuml)))
-#+end_src
+bugfix https://github.com/skuro/plantuml-mode/pull/128
 
 #+begin_src emacs-lisp
   (defun MattLu/hex-encode-string (ascii-string)
@@ -808,13 +798,32 @@ read elf symbols
         (let ((hex-byte (substring hex-string (* 2 i) (* 2 (+ i 1)))))
           (push (format "%c" (string-to-number hex-byte 16)) res)))))
 
-  (defun plantuml-server-encode-url (string)
+  (setq MattLu/deflate-compress-command "echo -n \"%s\" | gzip -cf9")
+
+  (defun MattLu/encode_plantuml (string)
+    (shell-command-to-string
+     (format MattLu/deflate-compress-command string)))
+
+  (defun MattLu/plantuml-server-encode-url (string)
     "Encode the string STRING into a URL suitable for PlantUML server interactions."
     (let* ((coding-system (or buffer-file-coding-system
                               "utf8"))
            (encoded-string (MattLu/hex-encode-string (encode-coding-string string coding-system))))
-      (concat plantuml-server-url "/" plantuml-output-type "/~h" encoded-string)
-      (message (concat plantuml-server-url "/" plantuml-output-type "/~h" encoded-string))))
+      (concat plantuml-server-url "/" plantuml-output-type "/~h" encoded-string)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package plantuml-mode
+    :mode "\\.plantuml$"
+    :custom
+    (plantuml-exec-mode 'server)
+    (plantuml-server-url "https://www.plantuml.com/plantuml")
+    (plantuml-output-type "txt")
+    :config
+    (defun plantuml-server-encode-url (string)
+      (MattLu/plantuml-server-encode-url string))
+    (add-to-list
+     'org-src-lang-modes '("plantuml" . plantuml)))
 #+end_src
 
 * Programming customization
