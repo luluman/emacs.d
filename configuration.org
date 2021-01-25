@@ -805,7 +805,6 @@ bugfix https://github.com/skuro/plantuml-mode/pull/128
      (format MattLu/deflate-compress-command string)))
 
   (defun MattLu/plantuml-server-encode-url (string)
-    "Encode the string STRING into a URL suitable for PlantUML server interactions."
     (let* ((coding-system (or buffer-file-coding-system
                               "utf8"))
            (encoded-string (MattLu/hex-encode-string (encode-coding-string string coding-system))))
