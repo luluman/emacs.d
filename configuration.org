@@ -551,7 +551,8 @@ doesn't require any additional setup. bounding as official recommendation.
   (use-package flymake
     :bind (:map flymake-mode-map
                 ("C-c [" . hydra-flymake/flymake-goto-prev-error)
-                ("C-c ]" . hydra-flymake/flymake-goto-next-error))
+                ("C-c ]" . hydra-flymake/flymake-goto-next-error)
+                ("C-c !" . consult-flymake))
     :config
     (defun flymake--transform-mode-line-format (ret)
       "Change the output of `flymake--mode-line-format'."
@@ -917,47 +918,6 @@ The main part
 
 *** eglot LSP and more
 
-#+begin_src emacs-lisp
-  (defhydra hydra-eglot (:idle 1.0)
-    "
-     eglot^^           ^Navigation^       ^config^       ^flymake^
-     ----------------------------------------------------------------
-     _a_ code action  _d_eclaration      _c_ reconnect   _]_ next error
-     _r_emame         _i_mplementation   _k_ shutdown    _[_ prev error
-     _\\_ format       _t_ypeDefinition   _g_ didChange   _j_ goto diagnostic
-     _q_uit           ^ ^                ^ ^             _s_how diagnostic
-     "
-    ("\\" eglot-format :color blue)
-    ("r" eglot-rename :color blue)
-    ("a" eglot-code-actions :color blue)
-    ("k" eglot-shutdown)
-    ("c" eglot-reconnect :color blue)
-    ("g" eglot-signal-didChangeConfiguration :color blue)
-    ("d" eglot-find-declaration)
-    ("i" eglot-find-implementation)
-    ("t" eglot-find-typeDefinition)
-    ("j" flymake-goto-diagnostic)
-    ("s" flymake-show-diagnostic)
-    ("]" flymake-goto-next-error)
-    ("[" flymake-goto-prev-error)
-    ("q" nil nil))
-#+end_src
-
-Cleanup function, clangd generate much .pch files, ans consume lots of space.
-
-#+begin_src emacs-lisp
-  (defun MattLu/clangd-cleanup ()
-    (interactive)
-    (mapc (lambda (x) (dired-delete-file x 'always))
-          (directory-files "/tmp/" t "\\(.+\\.pch\\)\\|\\(symbolizer-+.+\\)")))
-
-  (defun MattLu/lsp-auto-cleanup ()
-    (if (eglot-managed-p)
-        (setq-local clangd-cleanup--timer-objects
-                    (run-with-timer 0 7200 'MattLu/clangd-cleanup))
-      (cancel-timer clangd-cleanup--timer-objects)))
-#+end_src
-
 elogt
 Emacs Polyglot: an Emacs LSP client that stays out of your way.
 
@@ -968,7 +928,10 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (eglot eglot-ensure)
     :bind (:map eglot-mode-map
                 ("C-M-\\" . eglot-format)
-                ("C-c h" . hydra-eglot/body))
+                ("C-c f r" . eglot-rename)
+                ("C-c f a" . eglot-code-actions)
+                ("C-c f c" . eglot-reconnect)
+                ("C-c f k" . eglot-shutdown))
     :config
     (setq eglot-stay-out-of '(company))
     (add-to-list 'eglot-server-programs
@@ -2692,12 +2655,11 @@ consult-buffer and a Swiper-like search command consult-line.
            ("M-y" . consult-yank-pop)
            ("<help> a" . consult-apropos))
     :init
-    (fset 'multi-occur #'consult-multi-occur)
+    (setq register-preview-delay 0
+          register-preview-function #'consult-register-format)
+    (advice-add #'register-preview :override #'consult-register-window)
     :config
-    ;; Optionally configure narrowing key.
-    ;; Both < and C-+ work reasonably well.
     (setq consult-narrow-key "<") ;; (kbd "C-+")
-    ;; Optionally configure a function which returns the project root directory
     (autoload 'projectile-project-root "projectile")
     (setq consult-project-root-function #'projectile-project-root))
 #+end_src
