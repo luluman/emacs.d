@@ -951,11 +951,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 Use minibuffer as the interface to select from xref candidates.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package xref
-    :commands (xref--show-defs-minibuffer)
-    :custom
-    (xref-show-definitions-function #'xref--show-defs-minibuffer)
-    (xref-show-xrefs-function #'xref--show-defs-minibuffer))
+  (use-package xref)
 #+END_SRC
 
 *** Terminal
@@ -2658,6 +2654,9 @@ consult-buffer and a Swiper-like search command consult-line.
     (setq register-preview-delay 0
           register-preview-function #'consult-register-format)
     (advice-add #'register-preview :override #'consult-register-window)
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref)
     :config
     (setq consult-narrow-key "<") ;; (kbd "C-+")
     (autoload 'projectile-project-root "projectile")
