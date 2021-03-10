@@ -531,7 +531,6 @@ doesn't require any additional setup. bounding as official recommendation.
     :custom
     (dumb-jump-quiet t)
     (dumb-jump-force-searcher 'rg)
-    (dumb-jump-selector 'popup)
     :init
     (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 #+end_src
