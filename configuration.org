@@ -649,7 +649,7 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
 using Realgud to debug source code
 
 #+BEGIN_SRC emacs-lisp
-  ;; diable company mode when realgud running
+  ;; disable company mode when realgud running
   (use-package realgud
     :hook
     (realgud-track-mode . (lambda ()
@@ -704,6 +704,11 @@ Get environment variable in Shell and set them to Emacs
   (define-key shell-mode-map (kbd "C-c x") 'MattLu/get-shell-env-value-and-set-emacs)
 #+end_src
 
+disable line-number in shell
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'shell-mode-hook (lambda () (display-line-numbers-mode -1)))
+#+END_SRC
+
 ** Workgroups another way to organize workspace
 
 #+BEGIN_SRC emacs-lisp
@@ -719,15 +724,8 @@ Get environment variable in Shell and set them to Emacs
     (wg-prefix-key (kbd "C-c z"))
     (wg-workgroups-mode-exit-save-behavior 'none)
     (wg-emacs-exit-save-behavior           'none)
-    ;; eglot LSP server bugfix
-    (wg-dissociate-buffer-on-kill-buffer nil)
-    ;; this does not work
-    (wg-mode-line-display-on nil)
     :config
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
-    ;; override defined in workgroups2, suppress the error.
-    (defun wg-change-modeline ()
-      nil)
     (workgroups-mode 1))
 #+END_SRC
 
@@ -962,7 +960,12 @@ Use minibuffer as the interface to select from xref candidates.
      :bind ("C-c t" . multi-term))
  #+END_SRC
 
- Use a login shell:
+disable line-number in term
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
+#+END_SRC
+
+Use a login shell:
 
  #+BEGIN_SRC emacs-lisp
     (setq multi-term-program-switches "--login")
