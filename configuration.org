@@ -686,11 +686,6 @@ Add shell completion
       (setq bash-completion-enabled t)))
 #+END_SRC
 
-use company instead of ivy which would invoke minibuffer
-#+BEGIN_SRC emacs-lisp
-  (define-key shell-mode-map (kbd "TAB") 'company-complete)
-#+END_SRC
-
 Get environment variable in Shell and set them to Emacs
 #+begin_src emacs-lisp
   (defun MattLu/get-shell-env-value-and-set-emacs ()
