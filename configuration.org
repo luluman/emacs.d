@@ -3132,14 +3132,6 @@ Hydra ediff, more function with less key bindings
  but copying a large file or moving a file across a mounted
  network drive blocks Emacs until the process is completed. Unacceptable!
 
- This uses =emacs-async= to make dired perform actions asynchronously.
-
- #+begin_src emacs-lisp
-   (use-package async
-     :config
-     (dired-async-mode 1))
- #+end_src
-
  reuse dired buffer
  #+begin_src emacs-lisp
    (put 'dired-find-alternate-file 'disabled nil)
