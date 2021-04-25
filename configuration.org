@@ -555,9 +555,9 @@ doesn't require any additional setup. bounding as official recommendation.
     :config
     (defun flymake--transform-mode-line-format (ret)
       "Change the output of `flymake--mode-line-format'."
-      (setf (seq-elt (car ret) 1) " Φ")
+      (setcar (cdr ret) " Φ")
       ret)
-    (advice-add #'flymake--mode-line-format
+    (advice-add #'flymake--mode-line-title
                 :filter-return #'flymake--transform-mode-line-format))
 #+END_SRC
 
