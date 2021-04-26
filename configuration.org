@@ -621,8 +621,6 @@ project root (if I'm not in a "real" project).
     (projectile-mode)
     :bind
     ("C-c v" . deadgrep)
-    :bind-keymap
-    ("C-c p" . projectile-command-map)
     :config
     (setq frame-title-format '((:eval (projectile-project-name))))
     ;; (setq projectile-completion-system 'ivy)
