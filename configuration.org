@@ -817,6 +817,17 @@ bugfix https://github.com/skuro/plantuml-mode/pull/128
 #+end_src
 
 * Programming customization
+** Look for executables in =/usr/local/bin=.
+
+Add system path to emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (if (eq system-type 'darwin)
+      (mapcar #'MattLu/append-to-path
+              '("/usr/local/bin"
+                "/Library/TeX/texbin"
+                "/usr/local/opt/llvm/bin/")))
+#+END_SRC
 ** common settings
 *** editing
 
@@ -927,14 +938,14 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (add-to-list 'eglot-server-programs
                  '((c++-mode c-mode) "clangd"))
     (add-to-list 'eglot-server-programs
-                 '((tex-mode latex-mode context-mode texinfo-mode bibtex-mode) "texlab"))
+                 '((tex-mode context-mode texinfo-mode bibtex-mode) "texlab"))
     (setq eglot-autoshutdown t)
     (setq eglot-connect-timeout 10)
     (setq eglot-sync-connect nil)
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
     :hook
-    ((c-mode c++-mode python-mode sh-mode typescript-mode latex-mode)
+    ((c-mode c++-mode python-mode sh-mode typescript-mode tex-mode LaTeX-mode)
       . eglot-ensure))
 #+END_SRC
 
@@ -2420,18 +2431,6 @@ buffers.
     (("C-h f" . helpful-callable)
      ("C-h v" . helpful-variable)
      ("C-h k" . helpful-key)))
-#+END_SRC
-
-** Look for executables in =/usr/local/bin=.
-
-Add system path to emacs.
-
-#+BEGIN_SRC emacs-lisp
-  (if (eq system-type 'darwin)
-      (mapcar #'MattLu/append-to-path
-              '("/usr/local/bin"
-                "/Library/TeX/texbin"
-                "/usr/local/opt/llvm/bin/")))
 #+END_SRC
 
 ** Always indent with spaces
