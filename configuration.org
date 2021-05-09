@@ -2049,18 +2049,9 @@ Include the =minted= package in all of my LaTeX exports.
 
  Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
 
-#+begin_src emacs-lisp
-  (use-package company-math)
-  (defun MattLu/latex-comapany-hook ()
-    (setq-local company-backends
-                (append '((company-math-symbols-latex company-latex-commands))
-                        company-backends)))
-#+end_src
-
 #+BEGIN_SRC emacs-lisp
   (use-package auctex
     :defer t
-    :ensure t
     :config
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)
@@ -2068,18 +2059,7 @@ Include the =minted= package in all of my LaTeX exports.
     (add-hook 'LaTeX-mode-hook 'visual-line-mode)
     (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
     (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-    (add-hook 'TeX-mode-hook 'MattLu/latex-comapany-hook)
     (setq reftex-plug-into-AUCTeX t))
-#+END_SRC
-
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company-auctex
-    :config
-    (add-hook 'TeX-mode-hook
-              (lambda ()
-                (make-local-variable 'company-backends)
-                (company-auctex-init))))
 #+END_SRC
 
 ** Set some usefull commands of latex
@@ -2898,7 +2878,7 @@ matches aw-dispatch-alist with a few extra
   (setq fast-but-imprecise-scrolling t)
 #+END_SRC
 
-** suppress undo overflow
+** COMMENT suppress undo overflow
 
 This is normal if you executed a command that made a huge change
 to the buffer.  In that case, to prevent similar problems in the
