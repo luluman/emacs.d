@@ -927,14 +927,14 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (add-to-list 'eglot-server-programs
                  '((c++-mode c-mode) "clangd"))
     (add-to-list 'eglot-server-programs
-                 '((tex-mode context-mode texinfo-mode bibtex-mode) "texlab"))
+                 '((tex-mode latex-mode context-mode texinfo-mode bibtex-mode) "texlab"))
     (setq eglot-autoshutdown t)
     (setq eglot-connect-timeout 10)
     (setq eglot-sync-connect nil)
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
     :hook
-    ((c-mode c++-mode python-mode sh-mode typescript-mode tex-mode)
+    ((c-mode c++-mode python-mode sh-mode typescript-mode latex-mode)
       . eglot-ensure))
 #+END_SRC
 
