@@ -743,7 +743,7 @@ Enable type-aware highlighting support for CMake files:
 Bazel is a build system created by Google:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package bazel-mode
+  (use-package bazel
     :defer t)
 #+END_SRC
 
