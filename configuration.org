@@ -621,6 +621,7 @@ project root (if I'm not in a "real" project).
     (projectile-mode)
     :bind
     ("C-c v" . deadgrep)
+    ("C-x f" . projectile-find-file)
     :config
     (setq frame-title-format '((:eval (projectile-project-name))))
     ;; (setq projectile-completion-system 'ivy)
@@ -2597,6 +2598,8 @@ and helm-swoop.
 
 #+begin_src emacs-lisp
   (use-package ctrlf
+    :custom
+    (ctrlf-default-search-style 'regexp)
     :config
     (ctrlf-mode +1))
 #+end_src
@@ -2625,7 +2628,15 @@ consult-buffer and a Swiper-like search command consult-line.
            ("M-g e" . consult-error)
            ("M-s m" . consult-multi-occur)
            ("M-y" . consult-yank-pop)
-           ("<help> a" . consult-apropos))
+           ("<help> a" . consult-apropos)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
+           ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
+           ("M-s l" . consult-line))                 ;; required by consult-line to detect isearch
+    ;; Enable automatic preview at point in the *Completions* buffer.
+    ;; This is relevant when you use the default completion UI,
+    ;; and not necessary for Selectrum, Vertico etc.
+    :hook (completion-list-mode . consult-preview-at-point-mode)
     :init
     (setq register-preview-delay 0
           register-preview-function #'consult-register-format)
@@ -2634,6 +2645,21 @@ consult-buffer and a Swiper-like search command consult-line.
     (setq xref-show-xrefs-function #'consult-xref
           xref-show-definitions-function #'consult-xref)
     :config
+    ;; Optionally configure preview. The default value
+    ;; is 'any, such that any key triggers the preview.
+    ;; (setq consult-preview-key 'any)
+    ;; (setq consult-preview-key (kbd "M-."))
+    ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+    ;; For some commands and buffer sources it is useful to configure the
+    ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    (consult-customize
+     consult-theme
+     :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-file consult--source-project-file consult--source-bookmark
+     :preview-key (kbd "M-."))
+
     (setq consult-narrow-key "<") ;; (kbd "C-+")
     (autoload 'projectile-project-root "projectile")
     (setq consult-project-root-function #'projectile-project-root))
@@ -2795,7 +2821,6 @@ Use ace-jump-mode to quick jump to words or char
     :bind
     ("C-c j" . avy-goto-word-or-subword-1)
     ("C-'"   . avy-goto-char-timer)
-    ("M-g f" . avy-goto-line)
     :config
     (setq avy-background t)
     (setq avy-timeout-seconds 0.3)
