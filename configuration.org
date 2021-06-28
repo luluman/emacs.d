@@ -673,6 +673,8 @@ Force open shell in the current buffer
   (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
 #+END_SRC
 
+*** COMMENT bash-completion
+
 Add shell completion
 #+BEGIN_SRC emacs-lisp
   (use-package bash-completion
@@ -684,6 +686,30 @@ Add shell completion
         (setq bash-completion-enabled nil)
       (setq bash-completion-enabled t)))
 #+END_SRC
+
+*** native-comple
+
+native shell completion
+#+BEGIN_SRC emacs-lisp
+  (use-package native-complete
+    :config
+    (with-eval-after-load 'shell
+      (native-complete-setup-bash)))
+
+  (defun shell-mode-hook-setup ()
+    "Set up `shell-mode'."
+    ;; hook `completion-at-point', optional
+    (add-hook 'completion-at-point-functions #'native-complete-at-point nil t)
+    (setq-local company-backends '((company-files company-native-complete)))
+    ;; `company-native-complete' is better than `completion-at-point'
+    (local-set-key (kbd "TAB") 'company-complete))
+
+  (use-package company-native-complete
+    :hook
+    (shell-mode . shell-mode-hook-setup))
+#+END_SRC
+
+*** user define
 
 Get environment variable in Shell and set them to Emacs
 #+begin_src emacs-lisp
