@@ -10,3 +10,4 @@ yapf
 proselint
 google
 protobuf
+cmake-language-server

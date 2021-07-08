@@ -2724,7 +2724,7 @@ consult-buffer and a Swiper-like search command consult-line.
     (company-prescient-mode +1))
 #+end_src
 
-** crux
+** crux + whole-line-or-region
 
 A Collection of Ridiculously Useful eXtensions for Emacs. crux bundles many
 useful interactive commands to enhance your overall Emacs experience.
@@ -2737,6 +2737,15 @@ useful interactive commands to enhance your overall Emacs experience.
      ("C-c r" . crux-rename-file-and-buffer)
      ("C-k" . crux-kill-and-join-forward)
      ("C-x M-c" . crux-capitalize-region)))
+#+end_src
+
+This minor mode allows functions to operate on the current line if they would
+normally operate on a region and region is currently undefined.
+
+#+begin_src emacs-lisp
+  (use-package whole-line-or-region
+    :config
+    (whole-line-or-region-global-mode))
 #+end_src
 
 ** Switch and rebalance windows when splitting
