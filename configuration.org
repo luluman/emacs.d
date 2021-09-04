@@ -673,7 +673,7 @@ Force open shell in the current buffer
   (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
 #+END_SRC
 
-*** COMMENT bash-completion
+*** bash-completion
 
 Add shell completion
 #+BEGIN_SRC emacs-lisp
@@ -687,7 +687,7 @@ Add shell completion
       (setq bash-completion-enabled t)))
 #+END_SRC
 
-*** native-comple
+*** COMMENT native-comple
 
 native shell completion
 #+BEGIN_SRC emacs-lisp
