@@ -678,7 +678,9 @@ Force open shell in the current buffer
 Add shell completion
 #+BEGIN_SRC emacs-lisp
   (use-package bash-completion
-    :config (bash-completion-setup))
+    :config (bash-completion-setup)
+    :custom
+    (bash-completion-process-timeout 0.1))
 
   (defun toggle-enable-bash-completion ()
     (interactive)
