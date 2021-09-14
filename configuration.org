@@ -681,12 +681,6 @@ Add shell completion
     :config (bash-completion-setup)
     :custom
     (bash-completion-process-timeout 0.1))
-
-  (defun toggle-enable-bash-completion ()
-    (interactive)
-    (if bash-completion-enabled
-        (setq bash-completion-enabled nil)
-      (setq bash-completion-enabled t)))
 #+END_SRC
 
 *** COMMENT native-comple
