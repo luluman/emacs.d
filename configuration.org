@@ -955,7 +955,10 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c f r" . eglot-rename)
                 ("C-c f a" . eglot-code-actions)
                 ("C-c f c" . eglot-reconnect)
-                ("C-c f k" . eglot-shutdown))
+                ("C-c f k" . eglot-shutdown)
+                ("M-." . xref-find-definitions)
+                ("M-," . xref-pop-marker-stack)
+                ("M-?" . xref-find-references))
     :config
     (setq eglot-stay-out-of '(company))
     (when (executable-find "clangd")
@@ -985,7 +988,11 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 Use minibuffer as the interface to select from xref candidates.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package xref)
+  (use-package xref
+    :config
+    (global-unset-key "\M-.")
+    (global-unset-key "\M-,")
+    (global-unset-key "\M-?"))
 #+END_SRC
 
 *** Terminal
