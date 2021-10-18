@@ -738,8 +738,8 @@ disable line-number in shell
     (wg-session-load-on-start nil)
     (wg-session-file "~/.emacs.d/.emacs_workgroups")
     (wg-prefix-key (kbd "C-c z"))
-    (wg-workgroups-mode-exit-save-behavior 'none)
-    (wg-emacs-exit-save-behavior           'none)
+    :hook
+    (window-configuration-change . wg-perform-session-maintenance)
     :config
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
     (workgroups-mode 1))
