@@ -467,23 +467,25 @@ Use =company-mode= everywhere.
 
 #+begin_src emacs-lisp
   (use-package company
-    :config
-    (add-hook 'after-init-hook 'global-company-mode)
-    (setq company-tooltip-limit 10)                      ; bigger popup window
-    (setq company-idle-delay .1)                         ; decrease delay before autocompletion popup shows
-    (setq company-echo-delay 0)                          ; remove annoying blinking
-    (setq company-minimum-prefix-length 3)
-    (setq company-transformers '(company-sort-by-occurrence)) ; weight by frequency
-    (setq company-show-numbers t)
-    (setq company-require-match nil)
-    (setq company-selection-wrap-around t)
-    (setq company-backends '(company-files
+    :custom
+    (company-tooltip-limit 10)                      ; bigger popup window
+    (company-idle-delay .1)                         ; decrease delay before autocompletion popup shows
+    (company-echo-delay 0)                          ; remove annoying blinking
+    (company-minimum-prefix-length 3)
+    (company-transformers '(company-sort-by-occurrence)) ; weight by frequency
+    (company-tooltip-align-annotations t)
+    (company-show-numbers t)
+    (company-require-match nil)
+    (company-selection-wrap-around t)
+    (company-backends '(company-files
                              company-capf
                              company-dabbrev
                              company-dabbrev-code
                              company-keywords
                              company-cmake
-                             company-oddmuse)))
+                             company-oddmuse))
+    :config
+    (add-hook 'after-init-hook 'global-company-mode))
 #+end_src
 
 Set TAB for complete cycle
