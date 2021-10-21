@@ -1412,6 +1412,13 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
+** YAML mode
+
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :mode "\\.yml$")
+#+end_src
+
 * Org
 
 Including org-tempo restores the <s-style easy-templates that were deprecated in Org 9.2.
