@@ -1898,7 +1898,8 @@ Programming languages support
      (scheme . t)
      (python . t)
      (dot . t)
-     (gnuplot . t)))
+     (gnuplot . t)
+     (C . t)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
