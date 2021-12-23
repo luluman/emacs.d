@@ -3,7 +3,6 @@
       '(("gnu"   . "https://elpa.gnu.org/packages/")
         ("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/")
         ("melpa-stable" . "https://www.mirrorservice.org/sites/stable.melpa.org/packages/")
-        ("org" . "https://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
         ("ublt" . "https://elpa.ubolonton.org/packages/")
         ))
 (package-initialize)
