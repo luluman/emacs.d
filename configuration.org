@@ -202,6 +202,8 @@ Those themes are what I like most.
     :no-require t)
   (use-package modus-vivendi-theme
     :no-require t)
+  (use-package material-theme
+    :no-require t)
 #+end_src
 
 Theme loading symbols.
@@ -212,7 +214,9 @@ Theme loading symbols.
       modus-operandi
       modus-vivendi
       solarized-light
-      solarized-dark))
+      solarized-dark
+      material
+      material-light))
 
   (defvar MattLu/choosing-theme 'nord)
 #+end_src
@@ -228,7 +232,8 @@ Theme loading symbols.
                 (nth (% (+ 1 index) (length theme-pool)) theme-pool))
         (setq MattLu/choosing-theme 'nord))
       (disable-theme current-theme)
-      (load-theme MattLu/choosing-theme t)))
+      (load-theme MattLu/choosing-theme t)
+      (message "change theme to `%s'" MattLu/choosing-theme)))
 #+end_src
 
 Using solarized theme on MacOS.
