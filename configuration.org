@@ -1510,6 +1510,8 @@ Bind a few handy keys.
   (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map "\C-cc" 'org-capture)
   (define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
+  (define-key global-map "\C-c+" 'org-increase-number-at-point)
+  (define-key global-map "\C-c-" 'org-decrease-number-at-point)
 #+END_SRC
 
 Hit =C-c g= to quickly open up my todo list.
