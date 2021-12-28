@@ -749,6 +749,20 @@ disable line-number in shell
     (window-configuration-change . wg-perform-session-maintenance)
     :config
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
+    (defun wg-open-session () t)
+    (defun wg-save-session () t)
+    (defun wg-workgroup-names ()
+      "Get all workgroup names."
+      (mapcar (lambda (group)
+                ;; re-shape group for `completing-read'
+                (cons (wg-workgroup-name group) group))
+              (wg-workgroup-list)))
+    (defun wg-create-workgroup (name)
+      "Create and add a workgroup named NAME."
+      (interactive (list (wg-read-new-workgroup-name)))
+      (wg-switch-to-workgroup-internal (wg-make-and-add-workgroup name))
+      ;; I prefer simpler UI
+      (message "Workgroup \"%s\" was created." name))
     (workgroups-mode 1))
 #+END_SRC
 
