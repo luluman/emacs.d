@@ -4,6 +4,7 @@
         ("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/")
         ("melpa-stable" . "https://www.mirrorservice.org/sites/stable.melpa.org/packages/")
         ("ublt" . "https://elpa.ubolonton.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
         ))
 (package-initialize)
 (prefer-coding-system 'utf-8)
