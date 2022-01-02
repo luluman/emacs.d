@@ -742,7 +742,6 @@ disable line-number in shell
 #+BEGIN_SRC emacs-lisp
   (use-package workgroups2
     :custom
-    (wg-session-load-on-start nil)
     (wg-session-file "~/.emacs.d/.emacs_workgroups")
     (wg-prefix-key (kbd "C-c z"))
     :hook
@@ -750,7 +749,7 @@ disable line-number in shell
     :config
     (bind-keys* ("M-s" . wg-switch-to-workgroup))
     (defun wg-open-session () t)
-    (defun wg-save-session () t)
+    (defun wg-save-session (&optional workgroup-name) t)
     (defun wg-workgroup-names ()
       "Get all workgroup names."
       (mapcar (lambda (group)
@@ -763,7 +762,22 @@ disable line-number in shell
       (wg-switch-to-workgroup-internal (wg-make-and-add-workgroup name))
       ;; I prefer simpler UI
       (message "Workgroup \"%s\" was created." name))
-    (workgroups-mode 1))
+    (defun wg-open-workgroup (&optional group-name)
+      "Open specific workgroup by GROUP-NAME."
+      (interactive)
+      (let ((group-names (wg-workgroup-names)))
+        (cond
+         (group-names
+          (unless group-name
+            (setq group-name
+                  (completing-read "Select work group: " group-names)))
+          (when group-name
+            (wg-open-session)
+            (wg-switch-to-workgroup-internal group-name)))
+         (t
+          (message "No workgroup is created yet.")))))
+    (workgroups-mode 1)
+    (wg-reset-internal (wg-make-session)))
 #+END_SRC
 
 ** CMake
