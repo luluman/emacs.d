@@ -483,12 +483,12 @@ Use =company-mode= everywhere.
     (company-require-match nil)
     (company-selection-wrap-around t)
     (company-backends '(company-files
-                             company-capf
-                             company-dabbrev
-                             company-dabbrev-code
-                             company-keywords
-                             company-cmake
-                             company-oddmuse))
+                        company-capf
+                        company-dabbrev
+                        company-dabbrev-code
+                        company-keywords
+                        company-cmake
+                        company-oddmuse))
     :config
     (add-hook 'after-init-hook 'global-company-mode))
 #+end_src
