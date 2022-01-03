@@ -2554,110 +2554,24 @@ at the correct indentation for Python).
   (setq yas/indent-line nil)
 #+END_SRC
 
-** COMMENT ivy + counsel + swiper
+** vertico + marginalia + ctrlf + consult
 
-  ivy configuration
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :config
-    (use-package ivy-hydra)
-    (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t
-          ivy-count-format "%d/%d "
-          enable-recursive-minibuffers t)
-    (setq ivy-initial-inputs-alist nil)
-    (setq ivy-re-builders-alist
-      '((swiper . ivy--regex-plus)
-        (t . ivy--regex-fuzzy)))
-    (setq ivy-do-completion-in-region nil)
-    :requires flx)
-#+END_SRC
-
-   counsel configuration (counsel package replay on swiper)
-
-#+BEGIN_SRC emacs-lisp
-  (use-package counsel
-    :bind
-    ("C-s" . 'swiper)
-    ("M-x" . 'counsel-M-x)
-    ("C-x C-f" . 'counsel-find-file)
-    ("M-y" . 'counsel-yank-pop)
-    ("C-x b" . 'ivy-switch-buffer)
-    ("C-c k" . 'counsel-rg)
-    ("C-x C-b" . 'ibuffer)
-    ("C-c C-r" . 'ivy-resume)
-    ("C-c b" . 'counsel-bookmark)
-    ("C-c d" . 'counsel-descbinds)
-    ("C-c f" . 'counsel-recentf)
-    :config
-    (use-package flx)
-    (use-package smex)
-    (use-package wgrep))
-#+END_SRC
-
-   better information for ivy switch buffer
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy-rich
-    :after (ivy)
-    :config
-    (setq ivy-initial-inputs-alist nil)
-    (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
-    (plist-put ivy-rich-display-transformers-list
-               'ivy-switch-buffer
-               '(:columns
-                 ((ivy-rich-candidate (:width 50))
-                  (ivy-rich-switch-buffer-size (:width 7))
-                  (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
-                  (ivy-rich-switch-buffer-major-mode (:width 18 :face warning))
-                  (ivy-rich-switch-buffer-project (:width 20 :face success))
-                  (ivy-rich-switch-buffer-path
-                   (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
-                 :predicate
-                 (lambda (cand) (get-buffer cand))))
-    (plist-put ivy-rich-display-transformers-list
-               'counsel-bookmark
-               '(:columns
-                 ((ivy-rich-bookmark-type (:width 10))
-                  (ivy-rich-candidate (:width 60))
-                  (ivy-rich-bookmark-info
-                   (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))))
-    (ivy-rich-mode 1)
-    (setq ivy-rich-path-style 'abbrev))
-#+END_SRC
-
-*** override ivy-thing-at-point
-
-ivy-thing-at-point call ffap-file-at-point then call comint-output-filter
-:Profile-Report:
-- ivy-completing-read                               140,189,606  88%
- - ivy-read                                         140,189,606  88%
-  - ivy--reset-state                                140,189,606  88%
-   - ivy-thing-at-point                             140,165,054  88%
-    - ffap-file-at-point                            140,072,938  88%
-     - python-ffap-module-path                      140,067,818  88%
-      - python-shell-send-string-no-output          140,067,818  88%
-       - accept-process-output                      137,134,284  86%
-        - comint-output-filter                      136,924,775  86%
-         + python-shell-output-filter                 4,601,423   2%
-:END:
-but right now I will change ivy.el instead
-
-#+BEGIN_SRC emacs-lisp
-  (defun ivy-thing-at-point()
-    nil)
-#+END_SRC
-
-** selectrum + marginalia + ctrlf + consult
-
-Selectrum is a better solution for incremental narrowing in Emacs, replacing
-Helm, Ivy, and Ido.
+Vertico provides a performant and minimalistic vertical completion UI based on
+the default completion system.
 
 #+begin_src emacs-lisp
-  (use-package selectrum
-    :config
-    (selectrum-mode +1)
-    :custom
-    (selectrum-count-style 'current/matches))
+  (use-package vertico
+    :init
+    (vertico-mode))
+
+  (use-package orderless
+    :init
+    ;; Configure a custom style dispatcher (see the Consult wiki)
+    ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+    ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+    (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
 Marginalia are marks or annotations placed at the margin of the page of a book
