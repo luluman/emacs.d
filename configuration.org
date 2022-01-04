@@ -2564,9 +2564,7 @@ the default completion system.
     ;; Configure a custom style dispatcher (see the Consult wiki)
     ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
     ;;       orderless-component-separator #'orderless-escapable-split-on-space)
-    (setq completion-styles '(orderless)
-          completion-category-defaults nil
-          completion-category-overrides '((file (styles partial-completion)))))
+    (setq completion-styles '(substring orderless)))
 #+end_src
 
 Marginalia are marks or annotations placed at the margin of the page of a book
