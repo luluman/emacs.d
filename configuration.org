@@ -934,6 +934,14 @@ The main part
     :hook ((c-mode c++-mode python-mode typescript-mode)
            . ycmd-mode)
     :config
+    ;; https://github.com/abingham/emacs-ycmd/issues/504
+    (eval-after-load "ycmd.el"
+      (if (version< emacs-version "28")
+          (defun ycmd--encode-string (s)
+            (encode-coding-string s 'utf-8 t))
+        (defun ycmd--encode-string (s)
+          (encode-coding-string s 'utf-8))))
+
     (setq request-message-level -1)
     ;; using local variable
     (let ((ycmd-path (MattLu/YCMD-get-path MattLu/YCMD-path)))
