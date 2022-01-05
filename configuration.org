@@ -1498,7 +1498,7 @@ I like seeing a little downward-pointing arrow instead of the usual ellipsis
 (=...=) that org displays when there's stuff under a header.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-ellipsis " …")
+  (setq org-ellipsis "…")
 #+END_SRC
 
 Use syntax highlighting in source blocks while editing.
