@@ -2560,7 +2560,11 @@ the default completion system.
     (vertico-mode)
     (setq vertico-multiform-commands
           '((consult-imenu buffer indexed)))
-    (vertico-multiform-mode))
+    (vertico-multiform-mode)
+
+    (setq read-file-name-completion-ignore-case t
+          read-buffer-completion-ignore-case t
+          completion-ignore-case t))
 
 
   (use-package orderless
