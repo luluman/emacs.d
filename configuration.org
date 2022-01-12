@@ -797,9 +797,12 @@ Bazel is a build system created by Google:
 show function and variable tree in side buffer
 #+BEGIN_SRC emacs-lisp
   (use-package imenu-list
+    :init
+    (use-package nav-flash)
     :bind ("C-c i" . imenu-list-smart-toggle)
     :config
-    (setq imenu-list-focus-after-activation t))
+    (setq imenu-list-focus-after-activation t)
+    (add-hook 'imenu-after-jump-hook 'nav-flash-show nil t))
 #+END_SRC
 
 ** ELF
