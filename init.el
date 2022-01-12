@@ -4,7 +4,6 @@
         ("melpa-stable" . "https://www.mirrorservice.org/sites/stable.melpa.org/packages/")
         ("gnu"   . "https://elpa.gnu.org/packages/")
         ("gnu-dev"   . "https://elpa.gnu.org/devel/")
-        ("ublt" . "https://elpa.ubolonton.org/packages/")
         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
         ))
 (package-initialize)
