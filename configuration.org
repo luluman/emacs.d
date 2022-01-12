@@ -2767,8 +2767,8 @@ makes that automatic.
     (balance-windows)
     (other-window 1))
 
- ; (global-set-key (kbd "C-x 2") 'MattLu/split-window-below-and-switch)
- ; (global-set-key (kbd "C-x 3") 'MattLu/split-window-right-and-switch)
+  (global-set-key (kbd "C-x 2") 'MattLu/split-window-below-and-switch)
+  (global-set-key (kbd "C-x 3") 'MattLu/split-window-right-and-switch)
 #+END_SRC
 
 ** Mass editing of =grep= results
