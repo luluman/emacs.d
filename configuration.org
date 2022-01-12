@@ -2902,7 +2902,7 @@ matches aw-dispatch-alist with a few extra
     ("0" delete-frame :exit t)
     ("1" delete-other-frames :exit t)
     ("2" make-frame  :exit t)
-    ("b" balance-windows)
+    ("b" balance-windows :exit t)
     ("d" kill-and-delete-frame :exit t)
     ("e" ace-swap-window)
     ("F" toggle-frame-fullscreen)   ;; is <f11>
