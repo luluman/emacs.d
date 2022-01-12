@@ -2582,12 +2582,12 @@ minibuffer for your completion candidates.
 
 #+begin_src emacs-lisp
   (use-package marginalia
+    :bind (:map minibuffer-local-map
+                ("M-A" . marginalia-cycle))
     :init
     ;; Must be in the :init section of use-package such that the mode gets
     ;; enabled right away. Note that this forces loading the package.
-    (marginalia-mode)
-    :config
-    (setq marginalia-annotators '(marginalia-annotators-heavy)))
+    (marginalia-mode))
 #+end_src
 
 CTRLF (pronounced "control F") is an intuitive and efficient solution for
