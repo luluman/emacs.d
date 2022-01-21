@@ -436,7 +436,7 @@ programming.
                 :around 'symon--display-update-modify))
 #+END_SRC
 
-** Profile
+** COMMENT Profile
 
  set profile report line wide
  most of the calling is too deep to show in 80 characters.
