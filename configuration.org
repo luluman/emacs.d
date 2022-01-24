@@ -2705,13 +2705,6 @@ consult-buffer and a Swiper-like search command consult-line.
 
    simple but effective sorting and filtering for Emacs.
 
-*** COMMENT ivy
-#+begin_src emacs-lisp
-  (use-package ivy-prescient
-    :config
-    (ivy-prescient-mode +1))
-#+end_src
-
 *** selectrum
 #+begin_src emacs-lisp
   (use-package selectrum-prescient
@@ -2940,6 +2933,33 @@ matches aw-dispatch-alist with a few extra
     (setq aw-background t)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
+
+** mange ephemeral windows
+
+Popper is a minor-mode to tame the flood of ephemeral windows Emacs produces,
+while still keeping them within arm’s reach.
+
+#+begin_src emacs-lisp
+  (use-package popper
+    :bind (("C-<tab>" . popper-toggle-latest)
+           ("C-M-<tab>" . popper-cycle)
+           ("C-<return>" . popper-toggle-type))
+    :config
+    (setq popper-reference-buffers
+          '(("Output\\*$" . hide)
+            (completion-list-mode . hide)
+            occur-mode
+            "\\*Messages\\*"
+            "\\*Async Shell Command\\*"
+            help-mode
+            "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
+            "^\\*term.*\\*$"   term-mode   ;term as a popup
+            compilation-mode))
+    (setq popper-group-function #'popper-group-by-projectile) ; projectile projects
+    (setq popper-mode-line nil)
+    (popper-mode +1)
+    (popper-echo-mode +1))                ; For echo area hints
+#+end_src
 
 ** Handle layer file
 
