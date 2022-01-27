@@ -2944,6 +2944,9 @@ while still keeping them within arm’s reach.
     :bind (("C-<tab>" . popper-toggle-latest)
            ("C-M-<tab>" . popper-cycle)
            ("C-<return>" . popper-toggle-type))
+    :custom
+    (popper-window-height 12)
+    (popper-mode-line nil)
     :config
     (setq popper-reference-buffers
           '(("Output\\*$" . hide)
@@ -2956,7 +2959,6 @@ while still keeping them within arm’s reach.
             "^\\*term.*\\*$"   term-mode   ;term as a popup
             compilation-mode))
     (setq popper-group-function #'popper-group-by-projectile) ; projectile projects
-    (setq popper-mode-line nil)
     (popper-mode +1)
     (popper-echo-mode +1))                ; For echo area hints
 #+end_src
