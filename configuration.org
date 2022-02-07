@@ -3220,7 +3220,7 @@ Hydra ediff, more function with less key bindings
                  ("/" . dired-narrow)))
  #+end_src
 
-** LanguageTool
+** COMMENT LanguageTool
 
 #+begin_src emacs-lisp
   (use-package langtool
