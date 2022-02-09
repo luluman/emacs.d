@@ -733,8 +733,9 @@ disable line-number in shell
     (wg-prefix-key (kbd "C-c z"))
     :hook
     (window-configuration-change . wg-perform-session-maintenance)
+    :bind
+    ("M-s s" . wg-switch-to-workgroup)
     :config
-    (bind-keys* ("M-s" . wg-switch-to-workgroup))
     (defun wg-open-session () t)
     (defun wg-save-session (&optional workgroup-name) t)
     (defun wg-workgroup-names ()
@@ -2558,6 +2559,22 @@ at the correct indentation for Python).
 
 ** vertico + marginalia + ctrlf + consult
 
+*** COMMENT ctrlf
+
+CTRLF (pronounced "control F") is an intuitive and efficient solution for
+single-buffer text search in Emacs, replacing packages such as Isearch, Swiper,
+and helm-swoop.
+
+#+begin_src emacs-lisp
+  (use-package ctrlf
+    :custom
+    (ctrlf-default-search-style 'regexp)
+    :config
+    (ctrlf-mode +1))
+#+end_src
+
+*** vertico
+
 Vertico provides a performant and minimalistic vertical completion UI based on
 the default completion system.
 
@@ -2593,17 +2610,7 @@ minibuffer for your completion candidates.
     (marginalia-mode))
 #+end_src
 
-CTRLF (pronounced "control F") is an intuitive and efficient solution for
-single-buffer text search in Emacs, replacing packages such as Isearch, Swiper,
-and helm-swoop.
-
-#+begin_src emacs-lisp
-  (use-package ctrlf
-    :custom
-    (ctrlf-default-search-style 'regexp)
-    :config
-    (ctrlf-mode +1))
-#+end_src
+*** consult
 
 This package provides various commands based on the Emacs completion function
 completing-read, in particular a more advanced buffer switching command
