@@ -2557,22 +2557,7 @@ at the correct indentation for Python).
   (setq yas/indent-line nil)
 #+END_SRC
 
-** vertico + marginalia + ctrlf + consult
-
-*** COMMENT ctrlf
-
-CTRLF (pronounced "control F") is an intuitive and efficient solution for
-single-buffer text search in Emacs, replacing packages such as Isearch, Swiper,
-and helm-swoop.
-
-#+begin_src emacs-lisp
-  (use-package ctrlf
-    :custom
-    (ctrlf-default-search-style 'regexp)
-    :config
-    (ctrlf-mode +1))
-#+end_src
-
+** vertico + marginalia + consult + embark + ctrlf
 *** vertico
 
 Vertico provides a performant and minimalistic vertical completion UI based on
@@ -2595,6 +2580,8 @@ the default completion system.
     :init
     (setq completion-styles '(substring orderless)))
 #+end_src
+
+*** marginalia
 
 Marginalia are marks or annotations placed at the margin of the page of a book
 or in this case helpful colorful annotations placed at the margin of the
@@ -2700,12 +2687,52 @@ consult-buffer and a Swiper-like search command consult-line.
      :preview-key '(:debounce 0.2 any)
      consult-ripgrep consult-git-grep consult-grep
      consult-bookmark consult-recent-file consult-xref
-     consult--source-file consult--source-project-file consult--source-bookmark
+     consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
      :preview-key (kbd "M-."))
 
     (setq consult-narrow-key "<") ;; (kbd "C-+")
     (autoload 'projectile-project-root "projectile")
     (setq consult-project-root-function #'projectile-project-root))
+#+end_src
+
+*** embark
+
+Emacs Mini-Buffer Actions Rooted in Keymaps
+
+#+begin_src emacs-lisp
+  (use-package embark
+    :bind
+    (("C-;" . embark-act)         ;; pick some comfortable binding
+     ("C-=" . embark-dwim)        ;; good alternative: M-.
+     ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+    :init
+    ;; Optionally replace the key help with a completing-read interface
+    (setq prefix-help-command #'embark-prefix-help-command))
+
+  ;; Consult users will also want the embark-consult package.
+  (use-package embark-consult
+    :after (embark consult)
+    :demand t ; only necessary if you have the hook below
+    ;; if you want to have consult previews as you move around an
+    ;; auto-updating embark collect buffer
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode))
+#+end_src
+
+#+RESULTS:
+
+*** ctrlf
+
+CTRLF (pronounced "control F") is an intuitive and efficient solution for
+single-buffer text search in Emacs, replacing packages such as Isearch, Swiper,
+and helm-swoop.
+
+#+begin_src emacs-lisp
+  (use-package ctrlf
+    :custom
+    (ctrlf-default-search-style 'literal)
+    :config
+    (ctrlf-mode +1))
 #+end_src
 
 ** prescient
@@ -2948,13 +2975,13 @@ while still keeping them within arm’s reach.
 
 #+begin_src emacs-lisp
   (use-package popper
-    :bind (("C-<tab>" . popper-toggle-latest)
-           ("C-M-<tab>" . popper-cycle)
+    :bind (("C-M-<tab>" . popper-cycle)
            ("C-<return>" . popper-toggle-type))
     :custom
     (popper-window-height 12)
     (popper-mode-line nil)
     :config
+    (bind-keys* ("C-<tab>" . popper-toggle-latest))
     (setq popper-reference-buffers
           '(("Output\\*$" . hide)
             (completion-list-mode . hide)
