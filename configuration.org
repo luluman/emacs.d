@@ -2283,17 +2283,44 @@ prose-related mode, so I store those in a list:
 I want to make sure that I've enabled spell-checking if I'm editing text,
 composing an email, or authoring a Git commit.
 
+https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e2a59/emacs/init.el#L295
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell
+    :custom
+    (flyspell-prog-text-faces '(tree-sitter-hl-face:comment
+                                tree-sitter-hl-face:doc
+                                tree-sitter-hl-face:string
+                                font-lock-comment-face
+                                font-lock-doc-face
+                                font-lock-string-face))
     :config
-    (setq ispell-program-name "aspell"; use aspell instead of ispell
-          ispell-extra-args '("--sug-mode=ultra"))
+    (setq ispell-dictionary "en_US"
+          ispell-program-name "aspell"
+          ispell-extra-args '("--camel-case")
+          flyspell-issue-message-flag nil
+          flyspell-mode-line-string nil
+          flyspell-duplicate-distance 0)
+
     (add-to-list 'flyspell-delayed-commands 'scroll-down-command)
     (add-to-list 'flyspell-delayed-commands 'scroll-up-command)
-    (dolist (hook prose-mode-hooks)
-      (add-hook hook 'flyspell-mode))
+
+    (defun flyspell-configure-jit-lock ()
+      "Set `flyspell-region' in jit-lock functions matching `flyspell-mode'."
+      (if flyspell-mode
+          (jit-lock-register #'flyspell-region)
+        (jit-lock-unregister #'flyspell-region)))
+
+    (defun inhibit-redisplay-advice (orig-fun &rest args)
+      "Call ORIG-FUN with ARGS with display inhibited."
+      (let ((inhibit-redisplay t))
+        (apply orig-fun args)))
+
+    (advice-add #'flyspell-region :around #'inhibit-redisplay-advice)
+
     :hook
-    (prog-mode . flyspell-prog-mode))
+    (prog-mode . flyspell-prog-mode)
+    (text-mode . flyspell-mode)
+    (flyspell-mode . flyspell-configure-jit-lock))
 #+END_SRC
 
 ** Wrap paragraphs automatically
