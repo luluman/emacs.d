@@ -594,7 +594,7 @@ Some projectile is managed by git-lfs, we need to extent magit
 
 Projectile's default binding of =projectile-ag= to =C-c p s s= is clunky enough
 that I rarely use it (and forget it when I need it). This binds it to the
-easier-to-type =C-c v= to useful searches.
+easier-to-type =C-c s= to useful searches.
 
 Bind =C-p= to fuzzy-finding files in the current project. We also need to
 explicitly set that in a few other modes.
@@ -614,7 +614,7 @@ project root (if I'm not in a "real" project).
     :init
     (projectile-mode)
     :bind
-    ("C-c v" . deadgrep)
+    ("C-c s" . deadgrep)
     ("C-x f" . projectile-find-file)
     :config
     (setq frame-title-format '((:eval (projectile-project-name))))
@@ -1035,18 +1035,11 @@ Use minibuffer as the interface to select from xref candidates.
 
  #+BEGIN_SRC emacs-lisp
    (use-package multi-term
+     :config
+     (add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
+     ;; Use a login shell:
+     (setq multi-term-program-switches "--login")
      :bind ("C-c t" . multi-term))
- #+END_SRC
-
-disable line-number in term
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
-#+END_SRC
-
-Use a login shell:
-
- #+BEGIN_SRC emacs-lisp
-    (setq multi-term-program-switches "--login")
  #+END_SRC
 
  I add a bunch of hooks to =term-mode=:
@@ -1073,6 +1066,20 @@ Use a login shell:
                (define-key term-raw-map (kbd "M-o") 'other-window)
                (setq yas-dont-activate t)))
  #+END_SRC
+
+Emacs-libvterm (vterm) is fully-fledged terminal emulator inside GNU Emacs based
+on libvterm, a C library. As a result of using compiled code (instead of elisp),
+emacs-libvterm is fully capable, fast, and it can seamlessly handle large
+outputs.
+
+#+begin_src emacs-lisp
+  (use-package vterm
+    :hook
+    (vterm-mode . (lambda () (display-line-numbers-mode -1))))
+
+  (use-package multi-vterm
+    :bind ("C-c v" . multi-vterm))
+#+end_src
 
 *** Fold and unfold code blocks
 
@@ -2504,7 +2511,7 @@ Scroll preserve screen position or not.
     ("v" scroll-up-command)
     ("V" scroll-down-command)
     ("q" nil "quit"))
-  (global-set-key (kbd "C-c s") #'hydra-scroll/body)
+  (global-set-key (kbd "C-c b") #'hydra-scroll/body)
 #+end_src
 
 ** Quickly visit Emacs
