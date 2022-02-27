@@ -3049,13 +3049,6 @@ maximum memory allotted to Emacs.
   (add-to-list 'warning-suppress-types '(undo discard-info))
 #+END_SRC
 
-** Increase a bit garbage collection threshold
-
-200MB
-#+BEGIN_SRC emacs-lisp
-  (setq gc-cons-threshold 200000000)
-#+END_SRC
-
 ** using too-long-lines-mode to discard extremely long lines
 
 #+BEGIN_SRC emacs-lisp
@@ -3307,6 +3300,18 @@ easily.
   (use-package easy-kill
     :config
     (global-set-key [remap kill-ring-save] 'easy-kill))
+#+end_src
+
+** useful settings
+
+https://youtu.be/51eSeqcaikM
+
+#+begin_src emacs-lisp
+  (recentf-mode 1)
+  (setq history-length 25)
+  (savehist-mode 1)
+  (save-place-mode 1)
+  (setq global-auto-revert-non-file-buffers t)
 #+end_src
 
 * Set custom keybindings
