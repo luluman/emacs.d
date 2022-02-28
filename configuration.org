@@ -3009,7 +3009,8 @@ while still keeping them within arm’s reach.
 
 #+begin_src emacs-lisp
   (use-package popper
-    :bind (("C-M-<tab>" . popper-cycle)
+    :bind (("C-<tab>" . popper-toggle-latest)
+           ("C-M-<tab>" . popper-cycle)
            ("C-<return>" . popper-toggle-type))
     :custom
     (popper-window-height 12)
@@ -3017,14 +3018,14 @@ while still keeping them within arm’s reach.
     :config
     (bind-keys* ("C-<tab>" . popper-toggle-latest))
     (setq popper-reference-buffers
-          '(("Output\\*$" . hide)
+          '(;;("Output\\*$" . hide)
             (completion-list-mode . hide)
             occur-mode
             "\\*Messages\\*"
             "\\*Async Shell Command\\*"
-            help-mode
             "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
             "^\\*term.*\\*$"   term-mode   ;term as a popup
+            "^\\*vterminal.*\\*$"   vterm-mode   ;vterm as a popup
             compilation-mode))
     (setq popper-group-function #'popper-group-by-projectile) ; projectile projects
     (popper-mode +1)
