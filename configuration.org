@@ -1380,6 +1380,25 @@ using Jupyter
     :commands (ein:notebooklist-open))
 #+END_SRC
 
+code format
+
+#+begin_src emacs-lisp
+  (defun MattLu/python-format ()
+    (interactive)
+    (if (region-active-p)
+        (python-black-partial-dwim)
+      (python-black-buffer)))
+
+  (defun MattLu/python-format-key ()
+    (define-key (current-local-map) [remap eglot-format] 'MattLu/python-format)
+    (local-set-key (kbd "C-M-\\") 'MattLu/python-format))
+
+  (use-package python-black
+    :if (executable-find "black")
+    :after python
+    :hook (python-mode . MattLu/python-format-key))
+#+end_src
+
 ** =web-mode=
 
 If I'm in =web-mode=, I'd like to:
@@ -3021,7 +3040,6 @@ while still keeping them within arm’s reach.
           '(;;("Output\\*$" . hide)
             (completion-list-mode . hide)
             occur-mode
-            "\\*Messages\\*"
             "\\*Async Shell Command\\*"
             "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
             "^\\*term.*\\*$"   term-mode   ;term as a popup

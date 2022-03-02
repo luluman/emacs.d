@@ -1,12 +1,7 @@
 pip>20
 setuptools>50
 wheel
-python-language-server
-rope
-pyflakes
-mccabe
-pycodestyle
-yapf
+pyright
 proselint
 google
 protobuf
