@@ -706,7 +706,7 @@ Get environment variable in Shell and set them to Emacs
   (defun MattLu/get-shell-env-value-and-set-emacs ()
   ; get environment variable form shell and set to emacs
     (interactive)
-    (let ((env-var '("PATH" "LD_LIBRARY_PATH")))
+    (let ((env-var '("PATH" "LD_LIBRARY_PATH" "PYTHONPATH")))
       (mapcar #'shell-copy-environment-variable env-var)
       (setq python-shell-process-environment
             (mapcar (lambda (x) (format "%s=%s" x (getenv x)))
