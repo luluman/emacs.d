@@ -803,7 +803,8 @@ show function and variable tree in side buffer
     :bind ("C-c i" . imenu-list-smart-toggle)
     :config
     (setq imenu-list-focus-after-activation t)
-    (add-hook 'imenu-after-jump-hook 'nav-flash-show nil t))
+    :hook
+    (imenu-after-jump . nav-flash-show))
 #+END_SRC
 
 ** ELF
@@ -3318,6 +3319,56 @@ easily.
     :config
     (global-set-key [remap kill-ring-save] 'easy-kill))
 #+end_src
+
+** grammatical-edit
+
+#+BEGIN_SRC emacs-lisp
+  (use-package grammatical-edit
+    ;; using use-package PATH
+    :load-path "~/.emacs.d/grammatical-edit"
+    :hook
+    ((c-mode-common
+      c-mode
+      c++-mode
+      sh-mode
+      python-mode
+      js-mode
+      css-mode
+      rust-mode
+      swift-mode
+      typescript-mode) .
+      (lambda () (grammatical-edit-mode 1)))
+    :bind (:map grammatical-edit-mode-map
+                ("(" . grammatical-edit-open-round)
+                ("[" . grammatical-edit-open-bracket)
+                ("{" . grammatical-edit-open-curly)
+                (")" . grammatical-edit-close-round)
+                ("]" . grammatical-edit-close-bracket)
+                ("}" . grammatical-edit-close-curly)
+                ("=" . grammatical-edit-equal)
+
+                ("%" . grammatical-edit-match-paren)
+                ("\"" . grammatical-edit-double-quote)
+                ("'" . grammatical-edit-single-quote)
+
+                ("SPC" . grammatical-edit-space)
+                ("RET" . grammatical-edit-newline)
+
+                ("DEL" . grammatical-edit-backward-delete)
+                ("C-d" . grammatical-edit-forward-delete)
+                ("C-k" . grammatical-edit-kill)
+
+                ("M-\"" . grammatical-edit-wrap-double-quote)
+                ("M-'" . grammatical-edit-wrap-single-quote)
+                ("M-[" . grammatical-edit-wrap-bracket)
+                ("M-{" . grammatical-edit-wrap-curly)
+                ("M-(" . grammatical-edit-wrap-round)
+                ("M-)" . grammatical-edit-unwrap)
+
+                ("M-p" . grammatical-edit-jump-right)
+                ("M-n" . grammatical-edit-jump-left)
+                ("M-:" . grammatical-edit-jump-out-pair-and-newline)))
+#+END_SRC
 
 ** useful settings
 
