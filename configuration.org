@@ -3337,7 +3337,9 @@ easily.
       rust-mode
       swift-mode
       typescript-mode) .
-      (lambda () (grammatical-edit-mode 1)))
+      (lambda ()
+        (grammatical-edit-mode 1)
+        (smartparens-mode -1)))
     :bind (:map grammatical-edit-mode-map
                 ("(" . grammatical-edit-open-round)
                 ("[" . grammatical-edit-open-bracket)
