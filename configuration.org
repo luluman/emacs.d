@@ -3324,8 +3324,8 @@ easily.
 
 #+BEGIN_SRC emacs-lisp
   (use-package grammatical-edit
-    ;; using use-package PATH
     :load-path "~/.emacs.d/grammatical-edit"
+    :commands grammatical-edit-mode
     :hook
     ((c-mode-common
       c-mode
