@@ -3335,7 +3335,7 @@ easily.
   :load-path "~/.emacs.d/combobulate")
 #+end_src
 
-*** grammatical-edit
+*** COMMENT grammatical-edit
 
 #+BEGIN_SRC emacs-lisp
   (use-package grammatical-edit
