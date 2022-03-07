@@ -4,3 +4,6 @@
 [submodule "grammatical-edit"]
 	path = grammatical-edit
 	url = https://github.com/manateelazycat/grammatical-edit
+[submodule "combobulate"]
+	path = combobulate
+	url = https://github.com/mickeynp/combobulate

@@ -3322,7 +3322,20 @@ easily.
     (global-set-key [remap kill-ring-save] 'easy-kill))
 #+end_src
 
-** grammatical-edit
+** structured navigation and editing code
+
+*** combobulate
+
+#+begin_src emacs-lisp
+  (use-package combobulate
+  ;; Ensure `combobulate-mode` is activated when you launch a mode it supports
+  :hook ((python-mode . combobulate-mode)
+         (js-mode . combobulate-mode)
+         (typescript-mode . combobulate-mode))
+  :load-path "~/.emacs.d/combobulate")
+#+end_src
+
+*** grammatical-edit
 
 #+BEGIN_SRC emacs-lisp
   (use-package grammatical-edit
