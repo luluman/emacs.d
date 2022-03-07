@@ -995,7 +995,6 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("M-," . xref-pop-marker-stack)
                 ("M-?" . xref-find-references))
     :config
-    (setq eglot-stay-out-of '(company))
     (when (executable-find "clangd")
       (add-to-list 'eglot-server-programs
                    '((c++-mode c-mode) "clangd")))
@@ -1398,6 +1397,9 @@ code format
     :if (executable-find "black")
     :after python
     :hook (python-mode . MattLu/python-format-key))
+
+  (unless (executable-find "black")
+    (setq eglot-stay-out-of '(company)))
 #+end_src
 
 ** =web-mode=
