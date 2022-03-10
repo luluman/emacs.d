@@ -936,6 +936,7 @@ Set different path for docker and host
 The main part
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
+    :if (MattLu/YCMD-get-path MattLu/YCMD-path)
     :hook ((c-mode c++-mode python-mode typescript-mode)
            . ycmd-mode)
     :config
@@ -968,6 +969,7 @@ The main part
                  'company-ycmd))
 
   (use-package company-ycmd
+    :if (MattLu/YCMD-get-path MattLu/YCMD-path)
     :config
     (setq company-ycmd-insert-arguments t)
     :hook
@@ -994,6 +996,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("M-." . xref-find-definitions)
                 ("M-," . xref-pop-marker-stack)
                 ("M-?" . xref-find-references))
+    :custom
+    (eglot-stay-out-of '(company))
     :config
     (when (executable-find "clangd")
       (add-to-list 'eglot-server-programs
@@ -1013,7 +1017,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
     :hook
-    ((c-mode c++-mode python-mode sh-mode typescript-mode)
+    ((c-mode c++-mode python-mode sh-mode typescript-mode js-mode)
      . eglot-ensure))
 #+END_SRC
 
@@ -1257,18 +1261,6 @@ Indent everything by 2 spaces.
               (setq coffee-tab-width 2)))
 #+END_SRC
 
-Clear js-mode-hook when parser json file
-
-#+begin_src emacs-lisp
-  (defun MattLu/js-mode-hook ()
-    (unless (and (stringp buffer-file-name)
-               (string-match "\\.json\\'" buffer-file-name))
-      (eglot-ensure)
-      (ycmd-mode)
-      (MattLu/company-mode-py/ts/js-mode-hook)))
-  (add-hook 'js-mode-hook 'MattLu/js-mode-hook)
-#+end_src
-
 ** Lisps
 
 I like to use =paredit= in Lisp modes to balance parentheses (and more!).
@@ -1397,9 +1389,6 @@ code format
     :if (executable-find "black")
     :after python
     :hook (python-mode . MattLu/python-format-key))
-
-  (unless (executable-find "black")
-    (setq eglot-stay-out-of '(company)))
 #+end_src
 
 ** =web-mode=
