@@ -1156,6 +1156,24 @@ using tree-sitter to manage Parser
     (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 #+end_src
 
+structured navigation and editing code
+
+**** combobulate
+
+#+begin_src emacs-lisp
+  (use-package combobulate
+  ;; Ensure `combobulate-mode` is activated when you launch a mode it supports
+  :hook ((python-mode . combobulate-mode)
+         (js-mode . combobulate-mode)
+         (typescript-mode . combobulate-mode))
+  :load-path "~/.emacs.d/combobulate")
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package tree-edit)
+  (use-package evil-tree-edit)
+#+end_src
+
 ** C++
 
 use modern cpp font lock to get better semantic highlight
@@ -3312,71 +3330,6 @@ easily.
     :config
     (global-set-key [remap kill-ring-save] 'easy-kill))
 #+end_src
-
-** structured navigation and editing code
-
-*** combobulate
-
-#+begin_src emacs-lisp
-  (use-package combobulate
-  ;; Ensure `combobulate-mode` is activated when you launch a mode it supports
-  :hook ((python-mode . combobulate-mode)
-         (js-mode . combobulate-mode)
-         (typescript-mode . combobulate-mode))
-  :load-path "~/.emacs.d/combobulate")
-#+end_src
-
-*** COMMENT grammatical-edit
-
-#+BEGIN_SRC emacs-lisp
-  (use-package grammatical-edit
-    :load-path "~/.emacs.d/grammatical-edit"
-    :commands grammatical-edit-mode
-    :hook
-    ((c-mode-common
-      c-mode
-      c++-mode
-      sh-mode
-      python-mode
-      js-mode
-      css-mode
-      rust-mode
-      swift-mode
-      typescript-mode) .
-      (lambda ()
-        (grammatical-edit-mode 1)
-        (smartparens-mode -1)))
-    :bind (:map grammatical-edit-mode-map
-                ("(" . grammatical-edit-open-round)
-                ("[" . grammatical-edit-open-bracket)
-                ("{" . grammatical-edit-open-curly)
-                (")" . grammatical-edit-close-round)
-                ("]" . grammatical-edit-close-bracket)
-                ("}" . grammatical-edit-close-curly)
-                ("=" . grammatical-edit-equal)
-
-                ("%" . grammatical-edit-match-paren)
-                ("\"" . grammatical-edit-double-quote)
-                ("'" . grammatical-edit-single-quote)
-
-                ("SPC" . grammatical-edit-space)
-                ("RET" . grammatical-edit-newline)
-
-                ("DEL" . grammatical-edit-backward-delete)
-                ("C-d" . grammatical-edit-forward-delete)
-                ("C-k" . grammatical-edit-kill)
-
-                ("M-\"" . grammatical-edit-wrap-double-quote)
-                ("M-'" . grammatical-edit-wrap-single-quote)
-                ("M-[" . grammatical-edit-wrap-bracket)
-                ("M-{" . grammatical-edit-wrap-curly)
-                ("M-(" . grammatical-edit-wrap-round)
-                ("M-)" . grammatical-edit-unwrap)
-
-                ("M-p" . grammatical-edit-jump-right)
-                ("M-n" . grammatical-edit-jump-left)
-                ("M-:" . grammatical-edit-jump-out-pair-and-newline)))
-#+END_SRC
 
 ** useful settings
 
