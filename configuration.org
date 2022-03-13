@@ -40,6 +40,10 @@ use-package supports git repository
     (setq use-package-ensure-function 'quelpa))
 #+end_src
 
+#+begin_src emacs-lisp
+  (setq comp-deferred-compilation t)
+#+end_src
+
 * Use sensible-defaults.el
 
 Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
@@ -1171,7 +1175,6 @@ structured navigation and editing code
 
 #+begin_src emacs-lisp
   (use-package tree-edit)
-  (use-package evil-tree-edit)
 #+end_src
 
 ** C++
