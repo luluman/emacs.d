@@ -1438,13 +1438,13 @@ If I'm in =web-mode=, I'd like to:
 
 Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 
-** flatten buffer
+** FlatBuffer
 
 #+begin_src emacs-lisp
   (use-package flatbuffers-mode)
 #+end_src
 
-** protocol buffer
+** ProtoBuffer
 
    add Google protocol buffer support
 #+begin_src emacs-lisp
