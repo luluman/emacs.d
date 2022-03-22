@@ -1015,9 +1015,6 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
       (add-to-list 'eglot-server-programs
                    '(cmake-mode "cmake-language-server"))
       (add-hook 'cmake-mode-hook 'eglot-ensure))
-    (setq eglot-autoshutdown t)
-    (setq eglot-connect-timeout 10)
-    (setq eglot-sync-connect nil)
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
     :hook
