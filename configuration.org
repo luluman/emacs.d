@@ -735,8 +735,6 @@ disable line-number in shell
     :custom
     (wg-session-file "~/.emacs.d/.emacs_workgroups")
     (wg-prefix-key (kbd "C-c z"))
-    :hook
-    (window-configuration-change . wg-perform-session-maintenance)
     :bind
     ("M-s s" . wg-switch-to-workgroup)
     :config
@@ -768,8 +766,13 @@ disable line-number in shell
             (wg-switch-to-workgroup-internal group-name)))
          (t
           (message "No workgroup is created yet.")))))
+    (defun MattLu/wg-perform-session-maintenance ()
+      (when (and (wg-minibuffer-inactive-p) workgroups-mode)
+        (wg-perform-session-maintenance)))
     (workgroups-mode 1)
-    (wg-reset-internal (wg-make-session)))
+    (wg-reset-internal (wg-make-session))
+    :hook
+    (window-configuration-change . MattLu/wg-perform-session-maintenance))
 #+END_SRC
 
 ** CMake
@@ -991,6 +994,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     :if (executable-find "clangd")
     :init
     (use-package jsonrpc)
+    (use-package consult-eglot)
     :commands
     (eglot eglot-ensure)
     :bind (:map eglot-mode-map
@@ -999,6 +1003,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c f a" . eglot-code-actions)
                 ("C-c f c" . eglot-reconnect)
                 ("C-c f k" . eglot-shutdown)
+                ("C-c f s" . consult-eglot-symbols)
                 ("M-." . xref-find-definitions)
                 ("M-," . xref-pop-marker-stack)
                 ("M-?" . xref-find-references))
