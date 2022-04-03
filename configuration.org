@@ -989,6 +989,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
     :if (executable-find "clangd")
+    :init
+    (use-package jsonrpc)
     :commands
     (eglot eglot-ensure)
     :bind (:map eglot-mode-map
@@ -1084,7 +1086,10 @@ outputs.
     (vterm-mode . (lambda () (display-line-numbers-mode -1)))
     :init
     (use-package multi-vterm)
-    :bind ("C-c v" . multi-vterm))
+    :bind ("C-c v" . multi-vterm)
+    :custom
+    (vterm-always-compile-module t)
+    (vterm-buffer-name-string "vterm %s"))
 #+end_src
 
 *** Fold and unfold code blocks
