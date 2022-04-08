@@ -1094,7 +1094,9 @@ outputs.
     :bind ("C-c v" . multi-vterm)
     :custom
     (vterm-always-compile-module t)
-    (vterm-buffer-name-string "vterm %s"))
+    (vterm-buffer-name-string "VT %s")
+    (vterm-keymap-exceptions
+     '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" "M-s")))
 #+end_src
 
 *** Fold and unfold code blocks
