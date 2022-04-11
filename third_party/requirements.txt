@@ -1,8 +1,5 @@
 pip>20
 setuptools>50
 wheel
-pyright
 proselint
-google
-protobuf
 cmake-language-server

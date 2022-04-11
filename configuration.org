@@ -919,71 +919,6 @@ Use =smartparens=
     (smartparens-global-mode 1))
 #+END_SRC
 
-*** YCMD
-
-YouCompltedMe setup
-
-Set different path for docker and host
-#+begin_src emacs-lisp
-  (setq MattLu/YCMD-path '("/usr/local/lib/ycmd/"
-                           (file-truename "~/.emacs.d/ycmd/")))
-  (defun MattLu/YCMD-get-path (path-list)
-    ;; get ycmd build path
-    ;; this dirctiry should contain the excutable server and config file.
-    ;; check path validation and return list.
-    (let ((ycmd-path (remove-if-not
-                      (lambda (x)
-                        (file-directory-p (eval x)))
-                      path-list)))
-      (if ycmd-path
-          (eval (car ycmd-path))
-        nil)))
-#+end_src
-
-The main part
-#+BEGIN_SRC emacs-lisp
-  (use-package ycmd
-    :if (MattLu/YCMD-get-path MattLu/YCMD-path)
-    :hook ((c-mode c++-mode python-mode typescript-mode)
-           . ycmd-mode)
-    :config
-    ;; https://github.com/abingham/emacs-ycmd/issues/504
-    (eval-after-load "ycmd.el"
-      (if (version< emacs-version "28")
-          (defun ycmd--encode-string (s)
-            (encode-coding-string s 'utf-8 t))
-        (defun ycmd--encode-string (s)
-          (encode-coding-string s 'utf-8))))
-
-    (setq request-message-level -1)
-    ;; using local variable
-    (let ((ycmd-path (MattLu/YCMD-get-path MattLu/YCMD-path)))
-      (when ycmd-path
-        (set-variable 'ycmd-server-command
-                      `("python3" "-u"
-                        ,(concat ycmd-path "ycmd/")))
-        (set-variable 'ycmd-global-config
-                      (concat ycmd-path "examples/.ycm_extra_conf.py")))))
-
-  (defun MattLu/company-mode-c-mode-hook ()
-    (set (make-local-variable 'company-backends)
-         (remove 'company-capf company-backends))
-    (add-to-list 'company-backends 'company-ycmd)
-    (add-to-list 'company-backends 'company-capf))
-
-  (defun MattLu/company-mode-py/ts/js-mode-hook ()
-    (add-to-list (make-local-variable 'company-backends)
-                 'company-ycmd))
-
-  (use-package company-ycmd
-    :if (MattLu/YCMD-get-path MattLu/YCMD-path)
-    :config
-    (setq company-ycmd-insert-arguments t)
-    :hook
-    (((python-mode typescript-mode) . MattLu/company-mode-py/ts/js-mode-hook)
-     ((c-mode c++-mode) . MattLu/company-mode-c-mode-hook)))
-#+END_SRC
-
 *** eglot LSP and more
 
 elogt
@@ -1352,6 +1287,20 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
 
 ** Python
 
+#+begin_src emacs-lisp
+  (defun MattLu/get-first-valid-path (path-list)
+  ;; get build path
+  ;; this dirctiry should contain the excutable server and config file.
+  ;; check path validation and return list.
+  (let ((path (remove-if-not
+                    (lambda (x)
+                      (file-directory-p (eval x)))
+                    path-list)))
+    (if path
+        (eval (car path))
+      nil)))
+#+end_src
+
 #+BEGIN_SRC emacs-lisp
   (use-package virtualenvwrapper
     :config
@@ -1359,7 +1308,7 @@ I also like using flycheck-package to ensure that my Elisp packages are correctl
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
                           "~/python/ufw/"))
-    (let ((venv-py (MattLu/YCMD-get-path venv-location)))
+    (let ((venv-py (MattLu/get-first-valid-path venv-location)))
       (when venv-py
         (venv-workon (car (last (split-string venv-py "\/") 2))))))
 #+END_SRC
