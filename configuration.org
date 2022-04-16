@@ -791,6 +791,22 @@ Enable type-aware highlighting support for CMake files:
     :hook (cmake-mode . cmake-font-lock-activate))
 #+END_SRC
 
+#+begin_src emacs-lisp
+  (use-package cmake-project
+    :config
+    (defun maybe-cmake-project-mode ()
+      (if (or (file-exists-p "CMakeLists.txt")
+              (file-exists-p
+               (expand-file-name "CMakeLists.txt" (car (project-roots (project-current))))))
+          (cmake-project-mode)))
+    :hook
+    ((c-mode c++-mode) . maybe-cmake-project-mode)
+    :bind (:map c++-mode-map
+                ("C-c C-c" . compile))
+    :custom
+    (cmake-project-default-build-dir-name "build/"))
+#+end_src
+
 ** Bazel
 
 Bazel is a build system created by Google:
@@ -1266,15 +1282,6 @@ documentation.
     :config
     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
     (setq eldoc-idle-delay 1))
-#+END_SRC
-
-I also like using flycheck-package to ensure that my Elisp packages are correctly formatted.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package flycheck-package
-    :after flycheck
-    :config
-    (flycheck-package-setup))
 #+END_SRC
 
 ** scheme
@@ -2273,8 +2280,6 @@ prose-related mode, so I store those in a list:
       git-commit-mode
       markdown-mode
       message-mode
-      mu4e-compose-mode
-      org-mode
       text-mode))
 
   (defvar prose-mode-hooks
@@ -2784,7 +2789,7 @@ and helm-swoop.
     (company-prescient-mode +1))
 #+end_src
 
-** crux + whole-line-or-region
+** crux
 
 A Collection of Ridiculously Useful eXtensions for Emacs. crux bundles many
 useful interactive commands to enhance your overall Emacs experience.
@@ -2797,15 +2802,6 @@ useful interactive commands to enhance your overall Emacs experience.
      ("C-c r" . crux-rename-file-and-buffer)
      ("C-k" . crux-kill-and-join-forward)
      ("C-x M-c" . crux-capitalize-region)))
-#+end_src
-
-This minor mode allows functions to operate on the current line if they would
-normally operate on a region and region is currently undefined.
-
-#+begin_src emacs-lisp
-  (use-package whole-line-or-region
-    :config
-    (whole-line-or-region-global-mode))
 #+end_src
 
 ** Switch and rebalance windows when splitting
