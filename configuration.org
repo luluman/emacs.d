@@ -275,21 +275,13 @@ Custom face when running in 256-color terminal
 ** Configure =powerline=
 
 #+begin_src emacs-lisp
-  (setq MattLu/minor-mode-direct '(flymake-mode project-mode))
+  (setq MattLu/minor-mode-direct '(flymake-mode project-mode-line-tag-mode))
   (defun powerline-minor-modes-modify (orig-fun &rest args)
     "Change poweline-minor-modes display"
-    (let* ((MattLu/default-mode-alist minor-mode-alist)
-           (minor-mode-alist
-            (list `(:propertize
-                    ("" (:eval (--filter (memq (car it) MattLu/minor-mode-direct)
-                                         MattLu/default-mode-alist)))
-                    mouse-face mode-line-highlight
-                    help-echo "Minor mode
-    mouse-1: Display minor mode menu
-    mouse-2: Show help for minor mode
-    mouse-3: Toggle minor modes"
-                    local-map ,mode-line-minor-mode-keymap)
-                  " ")))
+    (let ((minor-mode-alist
+           (cl-remove-if-not (lambda (mode)
+                               (memq (car mode) MattLu/minor-mode-direct))
+                             (append minor-mode-alist mode-line-misc-info))))
       (apply orig-fun args)))
 #+end_src
 
@@ -433,17 +425,6 @@ programming.
                 :around 'symon--display-update-modify))
 #+END_SRC
 
-** COMMENT Profile
-
- set profile report line wide
- most of the calling is too deep to show in 80 characters.
-#+begin_src emacs-lisp
-  (eval-after-load "profiler"
-    '(progn
-       (setf (caar profiler-report-cpu-line-format) 200
-             (caar profiler-report-memory-line-format) 200)))
-#+end_src
-
 * Hydra
 
 #+begin_src emacs-lisp
@@ -462,7 +443,22 @@ when I'm in a Projectile-defined project. I use the current directory as a
 project root (if I'm not in a "real" project).
 
 #+begin_src emacs-lisp
-  (use-package project)
+  (use-package project
+    :config
+    (declare-function grep-read-files "rg")
+    (setq find-program "fd"))
+#+end_src
+
+
+Provides a global minor mode to display information about a buffer’s project (a
+“project tag”) in its mode line.
+
+#+begin_src emacs-lisp
+  (use-package project-mode-line-tag
+    :config
+    (add-to-list 'mode-line-misc-info
+      '(project-mode-line-tag-mode (:eval (project-mode-line-tag)) " "))
+    (project-mode-line-tag-mode 1))
 #+end_src
 
 ** =ripgrep=
