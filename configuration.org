@@ -113,13 +113,6 @@ Define a big ol' bunch of handy utility functions.
     (previous-line)
     (dired-find-file))
 
-  (defun MattLu/visit-last-migration ()
-    "Open the last file in 'db/migrate/'. Relies on projectile. Pretty sloppy."
-    (interactive)
-    (dired (expand-file-name "db/migrate" (projectile-project-root)))
-    (MattLu/visit-last-dired-file)
-    (kill-buffer "migrate"))
-
   (defun MattLu/add-auto-mode (mode &rest patterns)
     "Add entries to `auto-mode-alist' to use `MODE' for all given file `PATTERNS'."
     (dolist (pattern patterns)
@@ -282,7 +275,7 @@ Custom face when running in 256-color terminal
 ** Configure =powerline=
 
 #+begin_src emacs-lisp
-  (setq MattLu/minor-mode-direct '(flymake-mode projectile-mode))
+  (setq MattLu/minor-mode-direct '(flymake-mode project-mode))
   (defun powerline-minor-modes-modify (orig-fun &rest args)
     "Change poweline-minor-modes display"
     (let* ((MattLu/default-mode-alist minor-mode-alist)
@@ -462,12 +455,36 @@ I use a few packages in virtually every programming or writing environment to
 manage the project, handle auto-completion, search for terms, and deal with
 version control. That's all in here.
 
+** =project=
+
+I'd like to /always/ be able to recursively fuzzy-search for files, not just
+when I'm in a Projectile-defined project. I use the current directory as a
+project root (if I'm not in a "real" project).
+
+#+begin_src emacs-lisp
+  (use-package project)
+#+end_src
+
 ** =ripgrep=
 
 Install and configure [[https://github.com/Wilfred/deadgrep][deadgrep]] as an interface to =ripgrep=.
 
 #+begin_src emacs-lisp
-  (use-package deadgrep)
+  (use-package deadgrep
+    :bind
+    ("C-x s" . deadgrep))
+#+end_src
+
+** find-file-in-project
+
+Find file/directory and review Diff/Patch/Commit quickly everywhere.
+
+#+begin_src emacs-lisp
+  (use-package find-file-in-project
+    :bind
+    ("C-x f" . find-file-in-project)
+    :config
+    (setq ffip-use-rust-fd t))
 #+end_src
 
 ** =company-mode=
@@ -509,26 +526,6 @@ Set TAB for complete cycle
        (define-key company-active-map (kbd "C-p") 'company-select-previous)
        (define-key company-active-map (kbd "C-v") 'company-next-page)
        (define-key company-active-map (kbd "M-v") 'company-previous-page)))
-#+end_src
-
-** COMMENT smart-jump
-
-This packages tries to smartly go to definition leveraging several methods to do so.
-If one method fails, this package will go on to the next one,
-
-#+begin_src emacs-lisp
-  (use-package smart-jump
-    :after xref
-    :config
-    (smart-jump-setup-default-registers)
-    (smart-jump-register :modes '(c-mode c++-mode python-mode)
-                         :jump-fn 'xref-find-definitions
-                         :pop-fn 'xref-pop-marker-stack
-                         :refs-fn 'xref-find-references
-                         :should-jump t
-                         :heuristic 'error
-                         :async nil
-                         :order 1))
 #+end_src
 
 ** =dumb-jump=
@@ -587,48 +584,11 @@ history of a file.
   (use-package git-timemachine)
 #+end_src
 
-Some projectile is managed by git-lfs, we need to extent magit
+Some project is managed by git-lfs, we need to extent magit
 
 #+begin_src emacs-lisp
   (use-package magit-lfs
     :after (magit))
-#+end_src
-
-** =projectile=
-
-Projectile's default binding of =projectile-ag= to =C-c p s s= is clunky enough
-that I rarely use it (and forget it when I need it). This binds it to the
-easier-to-type =C-c s= to useful searches.
-
-Bind =C-p= to fuzzy-finding files in the current project. We also need to
-explicitly set that in a few other modes.
-
-I use =ivy= as my completion system.
-
-When I visit a project with =projectile-switch-project=, the default action is
-to search for a file in that project. I'd rather just open up the top-level
-directory of the project in =dired= and find (or create) new files from there.
-
-I'd like to /always/ be able to recursively fuzzy-search for files, not just
-when I'm in a Projectile-defined project. I use the current directory as a
-project root (if I'm not in a "real" project).
-
-#+begin_src emacs-lisp
-  (use-package projectile
-    :init
-    (projectile-mode)
-    :bind
-    ("C-c s" . deadgrep)
-    ("C-x f" . projectile-find-file)
-    :config
-    (setq frame-title-format '((:eval (projectile-project-name))))
-    ;; (setq projectile-completion-system 'ivy)
-    (setq projectile-sort-order 'recently-active)
-    (setq projectile-switch-project-action 'projectile-dired)
-    (setq projectile-require-project-root nil)
-    (setq projectile-mode-line-prefix "P")
-    (setq projectile-mode-line-function
-          '(lambda () (format "[%s]" (projectile-project-name)))))
 #+end_src
 
 ** =undo-tree=
@@ -2397,12 +2357,12 @@ Use flycheck in the appropriate buffers:
 
 ** Look up words in a thesaurus
 
-Hitting =C-x s= searches for synonyms for the word at point.
+Hitting =C-c s= searches for synonyms for the word at point.
 
 #+begin_src emacs-lisp
   (use-package powerthesaurus
     :bind
-    ("C-x s" . powerthesaurus-lookup-word-dwim))
+    ("C-c s" . powerthesaurus-lookup-word-dwim))
 #+end_src
 
 ** Editing with Markdown
@@ -2566,7 +2526,7 @@ Never use tabs. Tabs are the devil’s whitespace.
 ** Install and configure which-key
 
 which-key displays the possible completions for a long keybinding. That’s really helpful
-for some modes (like projectile, for example).
+for some modes (like project, for example).
 
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
@@ -2727,8 +2687,7 @@ consult-buffer and a Swiper-like search command consult-line.
      :preview-key (kbd "M-."))
 
     (setq consult-narrow-key "<") ;; (kbd "C-+")
-    (autoload 'projectile-project-root "projectile")
-    (setq consult-project-root-function #'projectile-project-root))
+    )
 #+end_src
 
 *** embark
@@ -3019,7 +2978,7 @@ while still keeping them within arm’s reach.
             "^\\*term.*\\*$"   term-mode   ;term as a popup
             "^\\*vterminal.*\\*$"   vterm-mode   ;vterm as a popup
             compilation-mode))
-    (setq popper-group-function #'popper-group-by-projectile) ; projectile projects
+    (setq popper-group-function #'popper-group-by-project)
     (popper-mode +1)
     (popper-echo-mode +1))                ; For echo area hints
 #+end_src
