@@ -751,22 +751,6 @@ Enable type-aware highlighting support for CMake files:
     :hook (cmake-mode . cmake-font-lock-activate))
 #+END_SRC
 
-#+begin_src emacs-lisp
-  (use-package cmake-project
-    :config
-    (defun maybe-cmake-project-mode ()
-      (if (or (file-exists-p "CMakeLists.txt")
-              (file-exists-p
-               (expand-file-name "CMakeLists.txt" (car (project-roots (project-current))))))
-          (cmake-project-mode)))
-    :hook
-    ((c-mode c++-mode) . maybe-cmake-project-mode)
-    :bind (:map c++-mode-map
-                ("C-c C-c" . compile))
-    :custom
-    (cmake-project-default-build-dir-name "build/"))
-#+end_src
-
 ** Bazel
 
 Bazel is a build system created by Google:
