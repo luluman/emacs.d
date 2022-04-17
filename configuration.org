@@ -445,8 +445,10 @@ project root (if I'm not in a "real" project).
 #+begin_src emacs-lisp
   (use-package project
     :config
-    (declare-function grep-read-files "rg")
-    (setq find-program "fd"))
+    (when (executable-find "rg")
+      (declare-function grep-read-files "rg"))
+    (when (executable-find "fd")
+      (setq find-program "fd")))
 #+end_src
 
 
