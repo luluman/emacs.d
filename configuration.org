@@ -2662,7 +2662,7 @@ consult-buffer and a Swiper-like search command consult-line.
     (consult-customize
      consult-theme
      :preview-key '(:debounce 0.2 any)
-     consult-ripgrep consult-git-grep
+     consult-git-grep
      consult-bookmark consult-recent-file
      consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
      :preview-key (kbd "M-."))
