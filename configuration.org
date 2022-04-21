@@ -387,7 +387,9 @@ programming.
 
 #+BEGIN_SRC emacs-lisp
   (setq display-line-numbers-type 'visual)
-  (global-display-line-numbers-mode)
+  (add-hook 'text-mode-hook (lambda () (display-line-numbers-mode t)))
+  (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode t)))
+  (add-hook 'conf-mode-hook (lambda () (display-line-numbers-mode t)))
 #+END_SRC
 
 ** Using highlight indentation
@@ -677,11 +679,6 @@ Get environment variable in Shell and set them to Emacs
   (define-key shell-mode-map (kbd "C-c x") 'MattLu/get-shell-env-value-and-set-emacs)
 #+end_src
 
-disable line-number in shell
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'shell-mode-hook (lambda () (display-line-numbers-mode -1)))
-#+END_SRC
-
 ** Workgroups another way to organize workspace
 
 #+BEGIN_SRC emacs-lisp
@@ -942,7 +939,6 @@ Use minibuffer as the interface to select from xref candidates.
  #+BEGIN_SRC emacs-lisp
    (use-package multi-term
      :config
-     (add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
      ;; Use a login shell:
      (setq multi-term-program-switches "--login")
      :bind ("C-c t" . multi-term))
@@ -981,8 +977,6 @@ outputs.
 #+begin_src emacs-lisp
   (use-package vterm
     :if (eq system-type 'gnu/linux)
-    :hook
-    (vterm-mode . (lambda () (display-line-numbers-mode -1)))
     :init
     (use-package multi-vterm)
     :bind ("C-c v" . multi-vterm)
