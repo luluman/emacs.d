@@ -2529,7 +2529,7 @@ at the correct indentation for Python).
   (setq yas/indent-line nil)
 #+END_SRC
 
-** vertico + marginalia + consult + embark + ctrlf
+** vertico + marginalia + consult + embark
 *** vertico
 
 Vertico provides a performant and minimalistic vertical completion UI based on
@@ -2717,20 +2717,6 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     ;; auto-updating embark collect buffer
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
-#+end_src
-
-*** ctrlf
-
-CTRLF (pronounced "control F") is an intuitive and efficient solution for
-single-buffer text search in Emacs, replacing packages such as Isearch, Swiper,
-and helm-swoop.
-
-#+begin_src emacs-lisp
-  (use-package ctrlf
-    :custom
-    (ctrlf-default-search-style 'literal)
-    :config
-    (ctrlf-mode +1))
 #+end_src
 
 ** prescient
@@ -3279,6 +3265,17 @@ in Emacs, making it more convenient to edit foreign files.
   (use-package dtrt-indent
     :config
     (dtrt-indent-global-mode 1))
+#+end_src
+
+** I-search
+
+#+begin_src emacs-lisp
+  (setq-default
+   ;; Match count next to the minibuffer prompt
+   isearch-lazy-count t
+   ;; Don't be stingy with history; default is to keep just 16 entries
+   search-ring-max 100
+   regexp-search-ring-max 100)
 #+end_src
 
 * Set custom keybindings
