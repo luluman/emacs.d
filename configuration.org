@@ -506,10 +506,10 @@ Use =company-mode= everywhere.
     (company-selection-wrap-around t)
     (company-backends '(company-files
                         company-capf
+                        company-yasnippet
                         company-dabbrev
                         company-dabbrev-code
                         company-keywords
-                        company-cmake
                         company-oddmuse))
     :config
     (add-hook 'after-init-hook 'global-company-mode))
@@ -882,7 +882,6 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
-    :if (executable-find "clangd")
     :init
     (use-package jsonrpc)
     (use-package consult-eglot)
@@ -894,29 +893,18 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c f a" . eglot-code-actions)
                 ("C-c f c" . eglot-reconnect)
                 ("C-c f k" . eglot-shutdown)
-                ("C-c f s" . consult-eglot-symbols)
-                ("M-." . xref-find-definitions)
-                ("M-," . xref-pop-marker-stack)
-                ("M-?" . xref-find-references))
+                ("C-c f s" . consult-eglot-symbols))
     :custom
     (eglot-stay-out-of '(company))
     :config
-    (when (executable-find "clangd")
-      (add-to-list 'eglot-server-programs
-                   '((c++-mode c-mode) "clangd")))
     (when (executable-find "texlab")
       (add-to-list 'eglot-server-programs
-                   '((tex-mode context-mode texinfo-mode bibtex-mode) "texlab"))
-      (add-hook 'LaTeX-mode-hook 'eglot-ensure)
-      (add-hook 'tex-mode-hook 'eglot-ensure))
-    (when (executable-find "cmake-language-server")
-      (add-to-list 'eglot-server-programs
-                   '(cmake-mode "cmake-language-server"))
-      (add-hook 'cmake-mode-hook 'eglot-ensure))
+                   '((tex-mode context-mode texinfo-mode bibtex-mode) "texlab")))
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
     :hook
-    ((c-mode c++-mode python-mode sh-mode typescript-mode js-mode)
+    ((c-mode c++-mode python-mode sh-mode typescript-mode js-mode
+             LaTeX-mode tex-mode cmake-mode)
      . eglot-ensure))
 #+END_SRC
 
@@ -925,11 +913,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 Use minibuffer as the interface to select from xref candidates.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package xref
-    :config
-    (global-unset-key "\M-.")
-    (global-unset-key "\M-,")
-    (global-unset-key "\M-?"))
+  (use-package xref)
 #+END_SRC
 
 *** Terminal
