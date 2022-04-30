@@ -881,7 +881,7 @@ elogt
 Emacs Polyglot: an Emacs LSP client that stays out of your way.
 
 #+begin_src emacs-lisp
-  (defun MattLu/test-then-add-eglot (program mode-list &optional command)
+  (defun MattLu/test-then-add-eglot (mode-list program &optional command)
     (when (executable-find program)
       (if command
           (add-to-list 'eglot-server-programs
@@ -916,12 +916,11 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     :config
     (add-to-list 'eglot-ignored-server-capabilites
                  :documentHighlightProvider)
-    (MattLu/test-then-add-eglot "clangd" '(c-mode c++-mode))
-    (MattLu/test-then-add-eglot "pyright-langserver" '(python-mode) "--stdio")
-    (MattLu/test-then-add-eglot "texlab" '(tex-mode context-mode texinfo-mode bibtex-mode))
-    (MattLu/test-then-add-eglot "cmake-language-server" '(cmake-mode))
-    (MattLu/test-then-add-eglot "typescript-language-server" '(js-mode typescript-mode) "--stdio")
-    (MattLu/test-then-add-eglot "bash-language-server" '(sh-mode) "start"))
+    (MattLu/test-then-add-eglot '(c-mode c++-mode) "clangd")
+    (MattLu/test-then-add-eglot '(python-mode) "pyright-langserver" "--stdio")
+    (MattLu/test-then-add-eglot '(tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
+    (MattLu/test-then-add-eglot '(js-mode typescript-mode) "typescript-language-server" "--stdio")
+    (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start"))
 #+END_SRC
 
 *** Xref jump
@@ -1247,7 +1246,8 @@ documentation.
                           "~/python/ufw/"))
     (let ((venv-py (MattLu/get-first-valid-path venv-location)))
       (when venv-py
-        (venv-workon (car (last (split-string venv-py "\/") 2))))))
+        (venv-workon (car (last (split-string venv-py "\/") 2)))))
+    (MattLu/test-then-add-eglot '(cmake-mode) "cmake-language-server"))
 #+END_SRC
 
 Set ipython as interpreter
