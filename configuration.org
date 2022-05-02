@@ -1174,33 +1174,28 @@ Indent everything by 2 spaces.
 
 ** Lisps
 
-I like to use =paredit= in Lisp modes to balance parentheses (and more!).
-
-#+begin_src emacs-lisp
-  (use-package paredit)
-#+end_src
-
 =rainbow-delimiters= is convenient for coloring matching parentheses.
 
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters)
 #+end_src
 
+Lispy package reimagines Paredit - a popular method to navigate and edit LISP
+code in Emacs.
+
 All the lisps have some shared features, so we want to do the same things for
- all of them. That includes using paredit, rainbow-delimiters, and highlighting
- the whole expression when point is on a parenthesis.
+all of them. That includes using lispy, rainbow-delimiters, and highlighting the
+whole expression when point is on a parenthesis.
 
 #+BEGIN_SRC emacs-lisp
-  (setq lispy-mode-hooks
-        '(clojure-mode-hook
-          emacs-lisp-mode-hook
-          lisp-mode-hook
-          scheme-mode-hook))
-
-  (dolist (hook lispy-mode-hooks)
-    (add-hook hook (lambda ()
-                     (paredit-mode)
-                     (rainbow-delimiters-mode))))
+  (use-package lispy
+    :hook
+    ((clojure-mode
+      emacs-lisp-mode
+      lisp-mode
+      scheme-mode) . (lambda ()
+                       (lispy-mode 1)
+                       (rainbow-delimiters-mode))))
 #+END_SRC
 
 If I'm writing in Emacs lisp I'd like to use =eldoc-mode= to display
