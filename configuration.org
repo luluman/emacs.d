@@ -275,9 +275,12 @@ Custom face when running in 256-color terminal
 ** Configure =powerline=
 
 #+begin_src emacs-lisp
-  (setq MattLu/minor-mode-direct '(flymake-mode project-mode-line-tag-mode))
+  (setq MattLu/minor-mode-direct
+        '(flymake-mode
+          project-mode-line-tag-mode
+          monkeytype-mode))
   (defun powerline-minor-modes-modify (orig-fun &rest args)
-    "Change poweline-minor-modes display"
+    "Change powerline-minor-modes display"
     (let ((minor-mode-alist
            (cl-remove-if-not (lambda (mode)
                                (memq (car mode) MattLu/minor-mode-direct))
@@ -3265,6 +3268,14 @@ in Emacs, making it more convenient to edit foreign files.
    ;; Don't be stingy with history; default is to keep just 16 entries
    search-ring-max 100
    regexp-search-ring-max 100)
+#+end_src
+
+** MonkeyType
+
+#+begin_src emacs-lisp
+  (use-package monkeytype
+    :custom
+    (monkeytype-directory "~/.emacs.d/.monkeytype"))
 #+end_src
 
 * Set custom keybindings
