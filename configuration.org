@@ -3275,7 +3275,10 @@ in Emacs, making it more convenient to edit foreign files.
 #+begin_src emacs-lisp
   (use-package monkeytype
     :custom
-    (monkeytype-directory "~/.emacs.d/.monkeytype"))
+    (monkeytype-directory "~/.emacs.d/.monkeytype")
+    (fortune-program "/usr/games/fortune")
+    (fortune-dir "/usr/share/games/fortunes")
+    (fortune-file "/usr/share/games/fortunes/fortunes"))
 #+end_src
 
 * Set custom keybindings
