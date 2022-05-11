@@ -277,8 +277,7 @@ Custom face when running in 256-color terminal
 #+begin_src emacs-lisp
   (setq MattLu/minor-mode-direct
         '(flymake-mode
-          project-mode-line-tag-mode
-          monkeytype-mode))
+          project-mode-line-tag-mode))
   (defun powerline-minor-modes-modify (orig-fun &rest args)
     "Change powerline-minor-modes display"
     (let ((minor-mode-alist
@@ -1251,19 +1250,22 @@ documentation.
 Set ipython as interpreter
 
 #+BEGIN_SRC emacs-lisp
-  (setq python-shell-interpreter "ipython")
-  (setq python-shell-interpreter-args "--simple-prompt -i")
-  (setq py-ipython-command-args "--simple-prompt -i")
+  (use-package python
+    :custom
+    (python-shell-interpreter "ipython")
+    (python-shell-interpreter-args "--simple-prompt -i")
+    (py-ipython-command-args "--simple-prompt -i")
+    (python-indent-offset 4)
+    :hook
+    (python-mode . (lambda ()
+                     (setq indent-tabs-mode nil)
+                     (setq python-indent 4)
+                     (setq tab-width 4))))
+
   (add-hook 'inferior-python-mode-hook
-          (lambda ()
-            (set (make-local-variable 'company-backends)
-                 (remove 'company-capf company-backends))))
-#+END_SRC
-
-Indent 2 spaces.
-
-#+BEGIN_SRC emacs-lisp
-  (setq python-indent 4)
+            (lambda ()
+              (set (make-local-variable 'company-backends)
+                   (remove 'company-capf company-backends))))
 #+END_SRC
 
 set realgud python debug command
@@ -3000,6 +3002,12 @@ maximum memory allotted to Emacs.
          '(shell-mode ag-mode inferior-python-mode comint-mode))
     (too-long-lines-mode))
 #+END_SRC
+
+#+begin_src emacs-lisp
+  (setq large-file-warning-threshold 800000)
+  (setq find-file-suppress-same-file-warnings t)
+  (global-so-long-mode 1)
+#+end_src
 
 ** jump back and forth
 
