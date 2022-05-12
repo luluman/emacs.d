@@ -277,7 +277,7 @@ Custom face when running in 256-color terminal
 #+begin_src emacs-lisp
   (setq MattLu/minor-mode-direct
         '(flymake-mode
-          project-mode-line-tag-mode))
+          ""))
   (defun powerline-minor-modes-modify (orig-fun &rest args)
     "Change powerline-minor-modes display"
     (let ((minor-mode-alist
@@ -463,8 +463,6 @@ Provides a global minor mode to display information about a buffer’s project (
 #+begin_src emacs-lisp
   (use-package project-mode-line-tag
     :config
-    (add-to-list 'mode-line-misc-info
-      '(project-mode-line-tag-mode (:eval (project-mode-line-tag)) " "))
     (project-mode-line-tag-mode 1))
 #+end_src
 
@@ -1416,7 +1414,10 @@ Including org-tempo restores the <s-style easy-templates that were deprecated in
                                  org-capture
                                  ox-latex
                                  ox-odt
-                                 org-gnus)))))
+                                 org-gnus))))
+    (bind-keys*
+     ("C-c l" . org-store-link)
+     ("C-c C-l" .  org-insert-link)))
 #+END_SRC
 
 I’d like the initial scratch buffer to be in Org:
@@ -1486,8 +1487,6 @@ Using build-in hide leading starts
 Bind a few handy keys.
 
 #+BEGIN_SRC emacs-lisp
-  (define-key global-map "\C-cl" 'org-store-link)
-  (global-set-key (kbd "C-c C-l") 'org-insert-link)
   (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map "\C-cc" 'org-capture)
   (define-key global-map "\C-cL" 'org-occur-link-in-agenda-files)
@@ -2535,13 +2534,12 @@ the default completion system.
 
 #+begin_src emacs-lisp
   (use-package vertico
-    :config
-    (vertico-mode)
-    ;; Enable vertico-multiform
-    (vertico-multiform-mode)
-
-    (setq vertico-multiform-commands
-          '((consult-imenu buffer indexed))))
+    ;; More convenient directory navigation commands
+    :bind (:map vertico-map
+                ("DEL" . vertico-directory-delete-char)
+                ("M-DEL" . vertico-directory-delete-word))
+    :init
+    (vertico-mode))
 
   ;; Persist history over Emacs restarts. Vertico sorts by history position.
   (use-package savehist
