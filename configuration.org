@@ -2296,7 +2296,7 @@ Use the [[https://elpa.gnu.org/packages/orgalist.html][=orgalist=]] package for 
     (add-hook 'message-mode-hook 'orgalist-mode))
 #+end_src
 
-** Linting prose
+** COMMENT Linting prose
 
 I use [[http://proselint.com/][proselint]] to check my prose for common errors. This creates a flycheck
 checker that runs proselint in texty buffers and displays my errors.
