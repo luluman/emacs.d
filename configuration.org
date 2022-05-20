@@ -277,13 +277,14 @@ Custom face when running in 256-color terminal
 #+begin_src emacs-lisp
   (setq MattLu/minor-mode-direct
         '(flymake-mode
-          ""))
+          projectile-mode))
+
   (defun powerline-minor-modes-modify (orig-fun &rest args)
     "Change powerline-minor-modes display"
     (let ((minor-mode-alist
            (cl-remove-if-not (lambda (mode)
                                (memq (car mode) MattLu/minor-mode-direct))
-                             (append minor-mode-alist mode-line-misc-info))))
+                             minor-mode-alist)))
       (apply orig-fun args)))
 #+end_src
 
@@ -447,23 +448,24 @@ when I'm in a Projectile-defined project. I use the current directory as a
 project root (if I'm not in a "real" project).
 
 #+begin_src emacs-lisp
-  (use-package project
+  (use-package projectile
+    :init
+    (projectile-mode +1)
+    :bind (:map projectile-mode-map
+                ("C-c p" . projectile-command-map))
     :config
-    (use-package cc-mode)
-    (define-key c++-mode-map (kbd "C-c C-c") 'project-compile)
-    (when (executable-find "rg")
-      (declare-function grep-read-files "rg"))
-    (when (executable-find "fd")
-      (setq find-program "fd")))
-#+end_src
-
-Provides a global minor mode to display information about a buffer’s project (a
-“project tag”) in its mode line.
-
-#+begin_src emacs-lisp
-  (use-package project-mode-line-tag
-    :config
-    (project-mode-line-tag-mode 1))
+    ;; Some local variables of projectile are not marked as saft by default.
+    (put 'projectile-project-configure-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-compilation-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-test-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-install-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-package-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-run-cmd 'safe-local-variable #'stringp)
+    ;; (put 'leo-special-var 'safe-local-variable (lambda (_) t)) ;; all values
+    (setq projectile-sort-order 'recently-active)
+    (setq projectile-require-project-root nil)
+    (setq projectile-mode-line-function
+          '(lambda () (format "[%s]" (projectile-project-name)))))
 #+end_src
 
 ** =ripgrep=
@@ -473,7 +475,12 @@ Install and configure [[https://github.com/Wilfred/deadgrep][deadgrep]] as an in
 #+begin_src emacs-lisp
   (use-package deadgrep
     :bind
-    ("C-x s" . deadgrep))
+    ("C-x s" . deadgrep)
+    :config
+    (defun deadgrep--include-args (rg-args)
+      (push "--hidden" rg-args))
+    (advice-add 'deadgrep--arguments
+                :filter-return #'deadgrep--include-args))
 #+end_src
 
 ** find-file-in-project
