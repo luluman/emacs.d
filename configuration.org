@@ -2574,13 +2574,6 @@ the default completion system.
     (setq large-file-warning-threshold 1000000))
 #+end_src
 
-*** COMMENT fido
-
-#+begin_src emacs-lisp
-  (fido-vertical-mode 1)
-  (setq completion-styles '(initials partial-completion flex)) ; > Emacs 27.1
-#+end_src
-
 *** marginalia
 
 Marginalia are marks or annotations placed at the margin of the page of a book
