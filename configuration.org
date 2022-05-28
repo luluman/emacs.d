@@ -614,13 +614,7 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
 using Realgud to debug source code
 
 #+BEGIN_SRC emacs-lisp
-  ;; disable company mode when realgud running
-  (use-package realgud
-    :hook
-    (realgud-track-mode . (lambda ()
-                            (if realgud-track-mode
-                                (company-mode -1)
-                              (company-mode t)))))
+  (use-package realgud)
 #+END_SRC
 
 ** Shell config
@@ -647,28 +641,6 @@ Add shell completion
     :config (bash-completion-setup)
     :custom
     (bash-completion-process-timeout 0.1))
-#+END_SRC
-
-*** COMMENT native-comple
-
-native shell completion
-#+BEGIN_SRC emacs-lisp
-  (use-package native-complete
-    :config
-    (with-eval-after-load 'shell
-      (native-complete-setup-bash)))
-
-  (defun shell-mode-hook-setup ()
-    "Set up `shell-mode'."
-    ;; hook `completion-at-point', optional
-    (add-hook 'completion-at-point-functions #'native-complete-at-point nil t)
-    (setq-local company-backends '((company-files company-native-complete)))
-    ;; `company-native-complete' is better than `completion-at-point'
-    (local-set-key (kbd "TAB") 'company-complete))
-
-  (use-package company-native-complete
-    :hook
-    (shell-mode . shell-mode-hook-setup))
 #+END_SRC
 
 *** user define
@@ -1269,11 +1241,6 @@ Set ipython as interpreter
                      (setq indent-tabs-mode nil)
                      (setq python-indent 4)
                      (setq tab-width 4))))
-
-  (add-hook 'inferior-python-mode-hook
-            (lambda ()
-              (set (make-local-variable 'company-backends)
-                   (remove 'company-capf company-backends))))
 #+END_SRC
 
 set realgud python debug command
@@ -1289,11 +1256,6 @@ using Jupyter
     :config
     (require 'ein-notebook)
     (setq ein:cell-max-num-outputs 10)
-    (setq ein:completion-backend 'ein:use-company-backend)
-    (add-hook 'ein:notebook-mode-hook
-              (lambda ()
-                (add-to-list (make-local-variable 'company-backends)
-                             'ein:company-backend)))
     :commands (ein:notebooklist-open))
 #+END_SRC
 
@@ -2556,7 +2518,9 @@ the default completion system.
   (use-package orderless
     :custom
     (completion-styles '(orderless basic))
-    (completion-category-overrides '((file (styles basic partial-completion)))))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles . (partial-completion)))))
+    )
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2745,8 +2709,6 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     :custom
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
-    (corfu-separator ?\s)          ;; Orderless field separator
-    (corfu-preselect-first nil) ;; Disable candidate preselection
     :bind
     (:map corfu-map
           ("TAB" . corfu-next)
@@ -2754,8 +2716,6 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
           ("S-TAB" . corfu-previous)
           ([backtab] . corfu-previous))
 
-    ;; Recommended: Enable Corfu globally.
-    ;; This is recommended since Dabbrev can be used globally (M-/).
     ;; See also `corfu-excluded-modes'.
     :init
     (global-corfu-mode))
@@ -2767,13 +2727,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
     (add-to-list 'completion-at-point-functions #'cape-history)
-    (add-to-list 'completion-at-point-functions #'cape-keyword)
-    (add-to-list 'completion-at-point-functions #'cape-tex)
-    (add-to-list 'completion-at-point-functions #'cape-sgml)
-    (add-to-list 'completion-at-point-functions #'cape-rfc1345)
-    (add-to-list 'completion-at-point-functions #'cape-abbrev)
-    (add-to-list 'completion-at-point-functions #'cape-ispell)
-    (add-to-list 'completion-at-point-functions #'cape-symbol))
+    (add-to-list 'completion-at-point-functions #'cape-keyword))
 
   ;; A few more useful configurations...
   (use-package emacs
@@ -2800,8 +2754,10 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
 #+begin_src emacs-lisp
   (use-package flymake-popon
-    :custom
-    (global-flymake-popon-mode t))
+    :custom-face
+    (flymake-popon ((t (:inherit default :background "black"))))
+    :hook
+    (flymake-mode . flymake-popon-mode))
 #+end_src
 
 ** crux
@@ -3058,7 +3014,8 @@ maximum memory allotted to Emacs.
   (add-to-list 'warning-suppress-types '(undo discard-info))
 #+END_SRC
 
-** using too-long-lines-mode to discard extremely long lines
+** too-long-lines
+*** using too-long-lines-mode to discard extremely long lines
 
 #+BEGIN_SRC emacs-lisp
   (use-package too-long-lines-mode
@@ -3076,6 +3033,12 @@ maximum memory allotted to Emacs.
          '(shell-mode ag-mode inferior-python-mode comint-mode))
     (too-long-lines-mode))
 #+END_SRC
+
+*** COMMENT so-long
+
+#+begin_src emacs-lisp
+  (global-so-long-mode 1)
+#+end_src
 
 ** jump back and forth
 
@@ -3321,18 +3284,6 @@ https://youtu.be/51eSeqcaikM
   (savehist-mode 1)
   (save-place-mode 1)
   (setq global-auto-revert-non-file-buffers t)
-#+end_src
-
-** indentation style
-
-An Emacs minor mode that guesses the indentation offset originally used for
-creating source code files and transparently adjusts the corresponding settings
-in Emacs, making it more convenient to edit foreign files.
-
-#+begin_src emacs-lisp
-  (use-package dtrt-indent
-    :config
-    (dtrt-indent-global-mode 1))
 #+end_src
 
 ** I-search
