@@ -495,7 +495,7 @@ Find file/directory and review Diff/Patch/Commit quickly everywhere.
     (setq ffip-use-rust-fd t))
 #+end_src
 
-** =company-mode=
+** COMMENT =company-mode=
 
 Use =company-mode= everywhere.
 
@@ -918,7 +918,6 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c f k" . eglot-shutdown)
                 ("C-c f s" . consult-eglot-symbols))
     :custom
-    (eglot-stay-out-of '(company))
     (eglot-autoshutdown t)
     :config
     (add-to-list 'eglot-ignored-server-capabilites
@@ -927,7 +926,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(python-mode) "pyright-langserver" "--stdio")
     (MattLu/test-then-add-eglot '(tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
     (MattLu/test-then-add-eglot '(js-mode typescript-mode) "typescript-language-server" "--stdio")
-    (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start"))
+    (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start")
+    (setq completion-category-defaults nil))
 #+END_SRC
 
 *** Xref jump
@@ -2738,22 +2738,70 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 
-** prescient
+** corfu
 
-   simple but effective sorting and filtering for Emacs.
-
-*** selectrum
 #+begin_src emacs-lisp
-  (use-package selectrum-prescient
-    :config
-    (selectrum-prescient-mode +1))
+  (use-package corfu
+    :custom
+    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+    (corfu-auto t)                 ;; Enable auto completion
+    (corfu-separator ?\s)          ;; Orderless field separator
+    (corfu-preselect-first nil) ;; Disable candidate preselection
+    :bind
+    (:map corfu-map
+          ("TAB" . corfu-next)
+          ([tab] . corfu-next)
+          ("S-TAB" . corfu-previous)
+          ([backtab] . corfu-previous))
+
+    ;; Recommended: Enable Corfu globally.
+    ;; This is recommended since Dabbrev can be used globally (M-/).
+    ;; See also `corfu-excluded-modes'.
+    :init
+    (global-corfu-mode))
+
+  ;; Add extensions
+  (use-package cape
+    :init
+    ;; Add `completion-at-point-functions', used by `completion-at-point'.
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+    (add-to-list 'completion-at-point-functions #'cape-history)
+    (add-to-list 'completion-at-point-functions #'cape-keyword)
+    (add-to-list 'completion-at-point-functions #'cape-tex)
+    (add-to-list 'completion-at-point-functions #'cape-sgml)
+    (add-to-list 'completion-at-point-functions #'cape-rfc1345)
+    (add-to-list 'completion-at-point-functions #'cape-abbrev)
+    (add-to-list 'completion-at-point-functions #'cape-ispell)
+    (add-to-list 'completion-at-point-functions #'cape-symbol))
+
+  ;; A few more useful configurations...
+  (use-package emacs
+    :init
+    ;; TAB cycle if there are only few candidates
+    (setq completion-cycle-threshold 3)
+
+    ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+    ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+    (setq read-extended-command-predicate
+          #'command-completion-default-include-p)
+
+    ;; Enable indentation+completion using the TAB key.
+    ;; `completion-at-point' is often bound to M-TAB.
+    (setq tab-always-indent 'complete))
 #+end_src
 
-*** company
 #+begin_src emacs-lisp
-  (use-package company-prescient
-    :config
-    (company-prescient-mode +1))
+  (use-package corfu-terminal
+    :init
+    (unless (display-graphic-p)
+      (corfu-terminal-mode +1)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package flymake-popon
+    :custom
+    (global-flymake-popon-mode t))
 #+end_src
 
 ** crux
@@ -2977,6 +3025,8 @@ while still keeping them within arm’s reach.
     (popper-mode-line nil)
     :config
     (bind-keys* ("C-<tab>" . popper-toggle-latest))
+    (setq popper-group-function #'popper-group-by-project)
+    :init
     (setq popper-reference-buffers
           '(;;("Output\\*$" . hide)
             (completion-list-mode . hide)
@@ -2986,7 +3036,6 @@ while still keeping them within arm’s reach.
             "^\\*term.*\\*$"   term-mode   ;term as a popup
             "^\\*vterminal.*\\*$"   vterm-mode   ;vterm as a popup
             compilation-mode))
-    (setq popper-group-function #'popper-group-by-project)
     (popper-mode +1)
     (popper-echo-mode +1))                ; For echo area hints
 #+end_src
