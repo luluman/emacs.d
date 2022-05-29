@@ -2517,6 +2517,7 @@ the default completion system.
 
   (use-package orderless
     :custom
+    (orderless-matching-styles '(orderless-regexp orderless-literal orderless-flex))
     (completion-styles '(orderless basic))
     (completion-category-defaults nil)
     (completion-category-overrides '((file (styles . (partial-completion)))))
