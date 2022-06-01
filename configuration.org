@@ -475,12 +475,7 @@ Install and configure [[https://github.com/Wilfred/deadgrep][deadgrep]] as an in
 #+begin_src emacs-lisp
   (use-package deadgrep
     :bind
-    ("C-x s" . deadgrep)
-    :config
-    (defun deadgrep--include-args (rg-args)
-      (push "--hidden" rg-args))
-    (advice-add 'deadgrep--arguments
-                :filter-return #'deadgrep--include-args))
+    ("C-x s" . deadgrep))
 #+end_src
 
 ** find-file-in-project
@@ -2514,14 +2509,22 @@ the default completion system.
   (use-package savehist
     :init
     (savehist-mode))
+#+end_src
 
-  (use-package orderless
+#+begin_src emacs-lisp
+  (setq fuz-core-bin "/usr/local/lib/libfuz_core.so")
+  (use-package fussy
+    :config
+    (when (file-exists-p fuz-core-bin)
+      (use-package fuz
+        :config
+        (load fuz-core-bin nil t))
+      (setq fussy-filter-fn 'fussy-filter-fast)
+      (setq fussy-score-fn 'fussy-fuz-score))
     :custom
-    (orderless-matching-styles '(orderless-regexp orderless-literal orderless-flex))
-    (completion-styles '(orderless basic))
+    (completion-styles '(fussy basic))
     (completion-category-defaults nil)
-    (completion-category-overrides '((file (styles . (partial-completion)))))
-    )
+    (completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
 #+begin_src emacs-lisp
