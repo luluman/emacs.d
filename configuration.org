@@ -1033,17 +1033,6 @@ using tree-sitter to manage Parser
 
 structured navigation and editing code
 
-**** combobulate
-
-#+begin_src emacs-lisp
-  (use-package combobulate
-  ;; Ensure `combobulate-mode` is activated when you launch a mode it supports
-  :hook ((python-mode . combobulate-mode)
-         (js-mode . combobulate-mode)
-         (typescript-mode . combobulate-mode))
-  :load-path "~/.emacs.d/combobulate")
-#+end_src
-
 #+begin_src emacs-lisp
   (use-package tree-edit)
 #+end_src
@@ -2498,17 +2487,14 @@ the default completion system.
 
 #+begin_src emacs-lisp
   (use-package vertico
+    :custom
+    (vertico-sort-function nil)
     ;; More convenient directory navigation commands
     :bind (:map vertico-map
                 ("DEL" . vertico-directory-delete-char)
                 ("M-DEL" . vertico-directory-delete-word))
     :init
     (vertico-mode))
-
-  ;; Persist history over Emacs restarts. Vertico sorts by history position.
-  (use-package savehist
-    :init
-    (savehist-mode))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2519,12 +2505,10 @@ the default completion system.
       (use-package fuz
         :config
         (load fuz-core-bin nil t))
-      (setq fussy-filter-fn 'fussy-filter-fast)
       (setq fussy-score-fn 'fussy-fuz-score))
     :custom
     (completion-styles '(fussy basic))
-    (completion-category-defaults nil)
-    (completion-category-overrides '((file (styles partial-completion)))))
+    (completion-category-defaults nil))
 #+end_src
 
 #+begin_src emacs-lisp
