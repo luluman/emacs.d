@@ -2501,13 +2501,15 @@ the default completion system.
   (setq fuz-core-bin "/usr/local/lib/libfuz_core.so")
   (use-package fussy
     :config
+    (use-package orderless)
     (when (file-exists-p fuz-core-bin)
       (use-package fuz
         :config
         (load fuz-core-bin nil t))
       (setq fussy-score-fn 'fussy-fuz-score))
     :custom
-    (completion-styles '(fussy basic))
+    (fussy-filter-fn 'fussy-filter-fast)
+    (completion-styles '(fussy orderless basic))
     (completion-category-defaults nil))
 #+end_src
 
