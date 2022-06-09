@@ -886,9 +886,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c f s" . consult-eglot-symbols))
     :custom
     (eglot-autoshutdown t)
+    (eglot-ignored-server-capabilities '(:hoverProvider :documentHighlightProvider))
     :config
-    (add-to-list 'eglot-ignored-server-capabilites
-                 :documentHighlightProvider)
     (MattLu/test-then-add-eglot '(c-mode c++-mode) "clangd")
     (MattLu/test-then-add-eglot '(python-mode) "pyright-langserver" "--stdio")
     (MattLu/test-then-add-eglot '(tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
@@ -2509,6 +2508,7 @@ the default completion system.
       (setq fussy-score-fn 'fussy-fuz-score))
     :custom
     (fussy-filter-fn 'fussy-filter-fast)
+    (fussy-fast-regex-fn 'fussy-pattern-flex-1)
     (completion-styles '(fussy orderless basic))
     (completion-category-defaults nil))
 #+end_src
