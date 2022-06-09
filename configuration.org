@@ -953,6 +953,7 @@ outputs.
     (use-package multi-vterm)
     :bind ("C-c v" . multi-vterm)
     :custom
+    (vterm-kill-buffer-on-exit nil)
     (vterm-always-compile-module t)
     (vterm-buffer-name-string "VT %s")
     (vterm-keymap-exceptions
@@ -1232,7 +1233,7 @@ set realgud python debug command
 #+END_SRC
 
 
-using Jupyter
+*** COMMENT using Jupyter
 
 #+BEGIN_SRC emacs-lisp
   (use-package ein
@@ -1242,7 +1243,7 @@ using Jupyter
     :commands (ein:notebooklist-open))
 #+END_SRC
 
-code format
+*** code format
 
 #+begin_src emacs-lisp
   (defun MattLu/python-format ()
@@ -2486,8 +2487,6 @@ the default completion system.
 
 #+begin_src emacs-lisp
   (use-package vertico
-    :custom
-    (vertico-sort-function nil)
     ;; More convenient directory navigation commands
     :bind (:map vertico-map
                 ("DEL" . vertico-directory-delete-char)
