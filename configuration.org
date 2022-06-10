@@ -2703,6 +2703,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 #+begin_src emacs-lisp
   (use-package corfu
     :custom
+    (corfu-auto-delay 0.1)
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
     :bind
