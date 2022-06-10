@@ -891,7 +891,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     :config
     (MattLu/test-then-add-eglot '(c-mode c++-mode) "clangd")
     (MattLu/test-then-add-eglot '(python-mode) "pyright-langserver" "--stdio")
-    (MattLu/test-then-add-eglot '(tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
+    (MattLu/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
     (MattLu/test-then-add-eglot '(js-mode typescript-mode) "typescript-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start")
     (setq completion-category-defaults nil))
@@ -2065,27 +2065,12 @@ Include the =minted= package in all of my LaTeX exports.
                    '(("XeLaTeX_SyncteX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil
                       (latex-mode doctex-mode)
                       :help "Run XeLaTeX")
-                     ("TeX" "%(PDF)%(tex) %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil
-                      (plain-tex-mode texinfo-mode ams-tex-mode)
-                      :help "Run plain TeX")
-                     ("LaTeX" "%`%l%(mode)%' %t" TeX-run-TeX nil
-                      (latex-mode doctex-mode)
-                      :help "Run LaTeX")
                      ("Makeinfo" "makeinfo %t" TeX-run-compile nil
                       (texinfo-mode)
                       :help "Run Makeinfo with Info output")
                      ("Makeinfo HTML" "makeinfo --html %t" TeX-run-compile nil
                       (texinfo-mode)
                       :help "Run Makeinfo with HTML output")
-                     ("AmSTeX" "%(PDF)amstex %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil
-                      (ams-tex-mode)
-                      :help "Run AMSTeX")
-                     ("ConTeXt" "texexec --once --texutil %(execopts)%t" TeX-run-TeX nil
-                      (context-mode)
-                      :help "Run ConTeXt once")
-                     ("ConTeXt Full" "texexec %(execopts)%t" TeX-run-TeX nil
-                      (context-mode)
-                      :help "Run ConTeXt until completion")
                      ("BibTeX" "bibtex %s" TeX-run-BibTeX nil t
                       :help "Run BibTeX")
                      ("View" "%V" TeX-run-discard-or-function nil t
