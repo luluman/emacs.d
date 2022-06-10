@@ -2192,7 +2192,7 @@ https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e
     :config
     (setq ispell-dictionary "en_US"
           ispell-program-name "aspell"
-          ispell-extra-args '("--camel-case")
+          ispell-extra-args '("--camel-case" "--sug-mode=ultra" "--run-together" "--run-together-limit=16")
           flyspell-issue-message-flag nil
           flyspell-mode-line-string nil
           flyspell-duplicate-distance 0)
@@ -2200,23 +2200,9 @@ https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e
     (add-to-list 'flyspell-delayed-commands 'scroll-down-command)
     (add-to-list 'flyspell-delayed-commands 'scroll-up-command)
 
-    (defun flyspell-configure-jit-lock ()
-      "Set `flyspell-region' in jit-lock functions matching `flyspell-mode'."
-      (if flyspell-mode
-          (jit-lock-register #'flyspell-region)
-        (jit-lock-unregister #'flyspell-region)))
-
-    (defun inhibit-redisplay-advice (orig-fun &rest args)
-      "Call ORIG-FUN with ARGS with display inhibited."
-      (let ((inhibit-redisplay t))
-        (apply orig-fun args)))
-
-    (advice-add #'flyspell-region :around #'inhibit-redisplay-advice)
-
     :hook
     (prog-mode . flyspell-prog-mode)
-    (text-mode . flyspell-mode)
-    (flyspell-mode . flyspell-configure-jit-lock))
+    (text-mode . flyspell-mode))
 #+END_SRC
 
 ** Wrap paragraphs automatically
