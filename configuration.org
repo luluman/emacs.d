@@ -155,7 +155,8 @@ I don't usually use the menu or scroll bar, and they take up useful space.
 
 #+BEGIN_SRC emacs-lisp
   (tool-bar-mode 0)
-  (menu-bar-mode 0)
+  (when (eq system-type 'gnu/linux)
+    (menu-bar-mode 0))
   (scroll-bar-mode -1)
 #+END_SRC
 
@@ -321,9 +322,9 @@ Note that this overrides the default font-related keybindings from
 #+BEGIN_SRC emacs-lisp
   (if (eq system-type 'gnu/linux)
       (setq MattLu/default-font "Ubuntu Mono")
-    (setq MattLu/default-font "Source Code Variable"))
+    (setq MattLu/default-font "Source Code Pro"))
 
-  (setq MattLu/default-font-size 12)
+  (setq MattLu/default-font-size 14)
   (setq MattLu/current-font-size MattLu/default-font-size)
 
   (setq MattLu/font-change-increment 1.1)
