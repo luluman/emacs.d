@@ -2496,7 +2496,9 @@ the default completion system.
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq fuz-core-bin "/usr/local/lib/libfuz_core.so")
+  (if (eq system-type 'darwin)
+      (setq fuz-core-bin "/usr/local/lib/libfuz_core.dylib")
+    (setq fuz-core-bin "/usr/local/lib/libfuz_core.so"))
   (use-package fussy
     :config
     (use-package orderless)
@@ -2984,6 +2986,7 @@ while still keeping them within arm’s reach.
             "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
             "^\\*term.*\\*$"   term-mode   ;term as a popup
             "^\\*vterminal.*\\*$"   vterm-mode   ;vterm as a popup
+            "^\\*TeX Help.*\\*$"  tex-mode
             compilation-mode))
     (popper-mode +1)
     (popper-echo-mode +1))                ; For echo area hints
