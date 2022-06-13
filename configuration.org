@@ -417,7 +417,7 @@ programming.
   (defun symon--display-update-modify (orig-fun &rest args)
     "symon step aside other message"
     (if (current-message)
-        (when (string-match-p "\\(MEM:+.*CPU:+.*RX:+.*TX:+.*\\|Quit\\)"
+        (when (string-match-p "\\(MEM:+.*CPU:+.*RX:+.*TX:+.*\\|Quit\\|Mark\\ set\\)"
                               (current-message))
           (apply orig-fun args))
     (apply orig-fun args)))
