@@ -3283,13 +3283,11 @@ https://youtu.be/51eSeqcaikM
 #+begin_src emacs-lisp
   (use-package pyim
     :custom
-    ;; (pyim-page-tooltip 'popon)
     (default-input-method "pyim")
     (pyim-dcache-backend 'pyim-dregcache)
     (pyim-page-length 5)
     :config
     (use-package pyim-basedict)
-    (use-package popon)
     (pyim-basedict-enable))
 #+end_src
 
