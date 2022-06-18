@@ -210,11 +210,12 @@ Theme loading symbols.
   (defvar theme-pool
     '(nord
       modus-operandi
-      modus-vivendi
-      solarized-light
-      solarized-dark
-      material
-      material-light))
+      ;; modus-vivendi
+      ;; solarized-light
+      ;; solarized-dark
+      ;; material
+      ;; material-light
+      ))
 
   (defvar MattLu/choosing-theme 'nord)
 #+end_src
@@ -2723,7 +2724,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 #+begin_src emacs-lisp
   (use-package flymake-popon
     :custom-face
-    (flymake-popon ((t (:inherit default :background "black"))))
+    (flymake-popon ((t (:inherit corfu-default))))
     :hook
     (flymake-mode . flymake-popon-mode))
 #+end_src
