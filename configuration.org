@@ -3284,7 +3284,8 @@ https://youtu.be/51eSeqcaikM
   (use-package pyim
     :custom
     (default-input-method "pyim")
-    (pyim-dcache-backend 'pyim-dregcache)
+    ;; (pyim-page-tooltip 'popon)
+    ;; (pyim-dcache-backend 'pyim-dregcache)
     (pyim-page-length 5)
     :config
     (use-package pyim-basedict)
