@@ -3223,6 +3223,14 @@ Hydra ediff, more function with less key bindings
                  ("/" . dired-narrow)))
  #+end_src
 
+ #+begin_src emacs-lisp
+   (use-package peep-dired
+     :custom
+     (peep-dired-enable-on-directories t)
+     (peep-dired-cleanup-on-disable t)
+     (peep-dired-ignored-extensions '("mkv" "iso" "mp4")))
+ #+end_src
+
 ** COMMENT LanguageTool
 
 #+begin_src emacs-lisp
