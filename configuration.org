@@ -895,6 +895,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
     (MattLu/test-then-add-eglot '(js-mode typescript-mode) "typescript-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start")
+    (MattLu/test-then-add-eglot '(rust-mode) "rust-analyzer")
     (setq completion-category-defaults nil))
 #+END_SRC
 
@@ -1093,6 +1094,32 @@ For running Google Tests from a given buffer
     :load-path "~/.emacs.d/third_party/danielmartin-gtest"
     :after cc-mode)
 #+END_SRC
+
+** Rust
+
+#+begin_src emacs-lisp
+  (use-package rust-mode
+    :hook
+    (rust-mode-hook . (lambda ()
+                        (setq indent-tabs-mode nil)
+                        (prettify-symbols-mode)))
+    :config
+    (defun MattLu/project-try-cargo-toml (dir)
+      (when-let* ((output
+                   (let ((default-directory dir))
+                     (shell-command-to-string "cargo metadata --no-deps --format-version 1")))
+                  (js (ignore-errors (json-read-from-string output)))
+                  (found (cdr (assq 'workspace_root js))))
+        (cons 'eglot-project found)))
+    (cl-defmethod project-roots (project)
+      (if (consp project) (list (cdr project))
+        (error "No `project-roots' method for %s.  Go write one" project)))
+    (add-hook 'project-find-functions 'MattLu/project-try-cargo-toml nil nil))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package rust-playground)
+#+end_src
 
 ** COMMENT Coq
 
@@ -3313,7 +3340,7 @@ https://youtu.be/51eSeqcaikM
   (use-package pyim
     :custom
     (default-input-method "pyim")
-    ;; (pyim-page-tooltip 'popon)
+    (pyim-page-tooltip 'popon)
     ;; (pyim-dcache-backend 'pyim-dregcache)
     (pyim-page-length 5)
     :config
