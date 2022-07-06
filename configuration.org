@@ -2531,7 +2531,7 @@ the default completion system.
     :custom
     (fussy-filter-fn 'fussy-filter-fast)
     (fussy-fast-regex-fn 'fussy-pattern-flex-1)
-    (completion-styles '(fussy orderless basic))
+    (completion-styles '(fussy basic))
     (completion-category-defaults nil))
 #+end_src
 
