@@ -2529,7 +2529,7 @@ the default completion system.
         (load fuz-core-bin nil t))
       (setq fussy-score-fn 'fussy-fuz-score))
     :custom
-    (fussy-filter-fn 'fussy-filter-fast)
+    (fussy-filter-fn 'fussy-filter-default)
     (fussy-fast-regex-fn 'fussy-pattern-flex-1)
     (completion-styles '(fussy basic))
     (completion-category-defaults nil))
