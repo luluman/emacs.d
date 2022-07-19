@@ -2216,6 +2216,9 @@ composing an email, or authoring a Git commit.
 https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e2a59/emacs/init.el#L295
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell
+    :config
+    (use-package flyspell-lazy)
+    (flyspell-lazy-mode 1)
     :custom
     (flyspell-prog-text-faces '(tree-sitter-hl-face:comment
                                 tree-sitter-hl-face:doc
@@ -2226,7 +2229,7 @@ https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e
     :config
     (setq ispell-dictionary "en_US"
           ispell-program-name "aspell"
-          ispell-extra-args '("--camel-case" "--sug-mode=ultra" "--run-together" "--run-together-limit=16")
+          ispell-extra-args '("--camel-case" "--sug-mode=ultra")
           flyspell-issue-message-flag nil
           flyspell-mode-line-string nil
           flyspell-duplicate-distance 0)
