@@ -457,8 +457,13 @@ project root (if I'm not in a "real" project).
                 ("C-c p" . projectile-command-map))
     :config
     ;; Some local variables of projectile are not marked as saft by default.
-    (put 'projectile--cmake-manual-command-alist 'safe-local-variable (lambda (_) t))
-    ;; all values (lambda (_) t) / #'stringp
+    (put 'projectile-project-configure-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-compilation-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-test-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-install-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-package-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-run-cmd 'safe-local-variable #'stringp)
+    ;; (put 'leo-special-var 'safe-local-variable (lambda (_) t)) ;; all values
     (setq projectile-sort-order 'recently-active)
     (setq projectile-require-project-root nil)
     (setq projectile-mode-line-function
