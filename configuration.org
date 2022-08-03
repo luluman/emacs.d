@@ -3330,6 +3330,12 @@ https://youtu.be/51eSeqcaikM
 
 #+begin_src emacs-lisp
   (use-package monkeytype
+    :bind (:map monkeytype-mode-map
+                ("C-c C-c k" .
+                 (lambda ()
+                   (interactive)
+                   (kill-matching-buffers "\\*fortune\\*" nil t)
+                   (kill-matching-buffers "^\\*Monkeytype\\*\\(<[0-9]*>\\)?$" nil t))))
     :custom
     (monkeytype-directory "~/.emacs.d/.monkeytype")
     (fortune-program "/usr/games/fortune")
