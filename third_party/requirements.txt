@@ -3,3 +3,4 @@ setuptools>50
 wheel
 proselint
 cmake-language-server
+cmakelang

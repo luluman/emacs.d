@@ -443,7 +443,7 @@ I use a few packages in virtually every programming or writing environment to
 manage the project, handle auto-completion, search for terms, and deal with
 version control. That's all in here.
 
-** =project=
+** COMMENT =project=
 
 I'd like to /always/ be able to recursively fuzzy-search for files, not just
 when I'm in a Projectile-defined project. I use the current directory as a
@@ -470,6 +470,23 @@ project root (if I'm not in a "real" project).
           '(lambda () (format "[%s]" (projectile-project-name)))))
 #+end_src
 
+** project
+
+The package project-cmake incorporates the required logic to understand that a
+project is to be configured, built and tested using CMake and CTest.
+
+#+begin_src emacs-lisp
+  (use-package project-cmake
+    :load-path "~/.emacs.d/project-cmake/"
+    :custom
+    (project-cmake-build-directory-name "build")
+    :config
+    (put 'project-cmake-configuration-arguments 'safe-local-variable #'stringp)
+    (put 'project-cmake-build-type 'safe-local-variable #'stringp)
+    (put 'project-cmake-generator 'safe-local-variable #'stringp)
+    (project-cmake-scan-kits))
+#+end_src
+
 ** =ripgrep=
 
 Install and configure [[https://github.com/Wilfred/deadgrep][deadgrep]] as an interface to =ripgrep=.
@@ -490,47 +507,6 @@ Find file/directory and review Diff/Patch/Commit quickly everywhere.
     ("C-x f" . find-file-in-project)
     :config
     (setq ffip-use-rust-fd t))
-#+end_src
-
-** COMMENT =company-mode=
-
-Use =company-mode= everywhere.
-
-#+begin_src emacs-lisp
-  (use-package company
-    :custom
-    (company-tooltip-limit 10)                      ; bigger popup window
-    (company-idle-delay .1)                         ; decrease delay before autocompletion popup shows
-    (company-echo-delay 0)                          ; remove annoying blinking
-    (company-minimum-prefix-length 3)
-    (company-transformers '(company-sort-by-occurrence)) ; weight by frequency
-    (company-tooltip-align-annotations t)
-    (company-show-numbers t)
-    (company-require-match nil)
-    (company-selection-wrap-around t)
-    (company-backends '(company-files
-                        company-capf
-                        company-yasnippet
-                        company-dabbrev
-                        company-dabbrev-code
-                        company-keywords
-                        company-oddmuse))
-    :config
-    (add-hook 'after-init-hook 'global-company-mode))
-#+end_src
-
-Set TAB for complete cycle
-
-#+begin_src emacs-lisp
-  (eval-after-load 'company
-    '(progn
-       (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-       (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-       (define-key company-active-map (kbd "C-n") 'company-select-next)
-       (define-key company-active-map (kbd "C-o") 'company-other-backend)
-       (define-key company-active-map (kbd "C-p") 'company-select-previous)
-       (define-key company-active-map (kbd "C-v") 'company-next-page)
-       (define-key company-active-map (kbd "M-v") 'company-previous-page)))
 #+end_src
 
 ** =dumb-jump=
@@ -896,6 +872,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(js-mode typescript-mode) "typescript-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start")
     (MattLu/test-then-add-eglot '(rust-mode) "rust-analyzer")
+    (MattLu/test-then-add-eglot '(yaml-mode) "yaml-language-server" "--stdio")
     (setq completion-category-defaults nil))
 #+END_SRC
 
@@ -3054,12 +3031,6 @@ maximum memory allotted to Emacs.
          '(shell-mode ag-mode inferior-python-mode comint-mode))
     (too-long-lines-mode))
 #+END_SRC
-
-*** COMMENT so-long
-
-#+begin_src emacs-lisp
-  (global-so-long-mode 1)
-#+end_src
 
 ** jump back and forth
 
