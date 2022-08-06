@@ -481,9 +481,10 @@ project is to be configured, built and tested using CMake and CTest.
     :custom
     (project-cmake-build-directory-name "build")
     :config
-    (put 'project-cmake-configuration-arguments 'safe-local-variable #'stringp)
+    (put 'project-cmake-configuration-arguments 'safe-local-variable #'listp)
     (put 'project-cmake-build-type 'safe-local-variable #'stringp)
     (put 'project-cmake-generator 'safe-local-variable #'stringp)
+    (put 'project-cmake-source-directory-name 'safe-local-variable #'stringp)
     (project-cmake-scan-kits))
 #+end_src
 
@@ -873,6 +874,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start")
     (MattLu/test-then-add-eglot '(rust-mode) "rust-analyzer")
     (MattLu/test-then-add-eglot '(yaml-mode) "yaml-language-server" "--stdio")
+    (MattLu/test-then-add-eglot '(dockerfile-mode) "docker-langserver" "--stdio")
+    (MattLu/test-then-add-eglot '(json-mode) "vscode-json-language-server" "--stdio")
     (setq completion-category-defaults nil))
 #+END_SRC
 
@@ -1375,6 +1378,18 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 #+begin_src emacs-lisp
   (use-package yaml-mode
     :mode "\\.yml$")
+#+end_src
+
+** Dockerfile mode
+
+#+begin_src emacs-lisp
+  (use-package dockerfile-mode)
+#+end_src
+
+** JSON mode
+
+#+begin_src emacs-lisp
+  (use-package json-mode)
 #+end_src
 
 * Org
