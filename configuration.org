@@ -443,33 +443,6 @@ I use a few packages in virtually every programming or writing environment to
 manage the project, handle auto-completion, search for terms, and deal with
 version control. That's all in here.
 
-** COMMENT =project=
-
-I'd like to /always/ be able to recursively fuzzy-search for files, not just
-when I'm in a Projectile-defined project. I use the current directory as a
-project root (if I'm not in a "real" project).
-
-#+begin_src emacs-lisp
-  (use-package projectile
-    :init
-    (projectile-mode +1)
-    :bind (:map projectile-mode-map
-                ("C-c p" . projectile-command-map))
-    :config
-    ;; Some local variables of projectile are not marked as saft by default.
-    (put 'projectile-project-configure-cmd 'safe-local-variable #'stringp)
-    (put 'projectile-project-compilation-cmd 'safe-local-variable #'stringp)
-    (put 'projectile-project-test-cmd 'safe-local-variable #'stringp)
-    (put 'projectile-project-install-cmd 'safe-local-variable #'stringp)
-    (put 'projectile-project-package-cmd 'safe-local-variable #'stringp)
-    (put 'projectile-project-run-cmd 'safe-local-variable #'stringp)
-    ;; (put 'leo-special-var 'safe-local-variable (lambda (_) t)) ;; all values
-    (setq projectile-sort-order 'recently-active)
-    (setq projectile-require-project-root nil)
-    (setq projectile-mode-line-function
-          '(lambda () (format "[%s]" (projectile-project-name)))))
-#+end_src
-
 ** project
 
 The package project-cmake incorporates the required logic to understand that a
@@ -555,8 +528,10 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     ("C-x g" . magit-status)
     :config
     (use-package with-editor)
-    (setq magit-push-always-verify nil)
-    (setq git-commit-summary-max-length 50))
+    :custom
+    (magit-bind-magit-project-status nil)
+    (magit-push-always-verify nil)
+    (git-commit-summary-max-length 50))
 #+end_src
 
 I'm also partial to =git-timemachine=, which lets you quickly page through the
