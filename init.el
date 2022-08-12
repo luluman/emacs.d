@@ -21,5 +21,6 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'org)
+(require 'bind-key)
 
 (org-babel-load-file "~/.emacs.d/configuration.org")

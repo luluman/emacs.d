@@ -380,13 +380,14 @@ pairing or presenting code.
 
 ** Highlight uncommitted changes
 
-Use the =diff-hl= package to highlight changed-and-uncommitted lines when
+Use the =git-gutter= package to highlight changed-and-uncommitted lines when
 programming.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package diff-hl
-   :hook ((prog-mode vc-dir-mode) . turn-on-diff-hl-mode))
- #+END_SRC
+  (use-package git-gutter
+    :config
+    (global-git-gutter-mode t))
+#+END_SRC
 
 ** Display line number
 
@@ -456,6 +457,7 @@ project is to be configured, built and tested using CMake and CTest.
     :config
     (put 'project-cmake-configuration-arguments 'safe-local-variable #'listp)
     (put 'project-cmake-build-type 'safe-local-variable #'stringp)
+    (put 'project-cmake-kit 'safe-local-variable #'symbolp)
     (put 'project-cmake-generator 'safe-local-variable #'stringp)
     (put 'project-cmake-source-directory-name 'safe-local-variable #'stringp)
     (project-cmake-scan-kits))
@@ -769,6 +771,7 @@ Add system path to emacs.
                 "/Library/TeX/texbin"
                 "/usr/local/opt/llvm/bin/")))
 #+END_SRC
+
 ** common settings
 *** editing
 
