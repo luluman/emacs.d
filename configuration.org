@@ -584,6 +584,13 @@ Force open shell in the current buffer
   (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
 #+END_SRC
 
+#+begin_src emacs-lisp
+  (setq comint-buffer-maximum-size 20000)
+  (setq comint-prompt-read-only t)
+  (setq read-process-output-max (* 1024 1024))
+  (setq process-adaptive-read-buffering nil)
+#+end_src
+
 *** bash-completion
 
 Add shell completion
@@ -866,41 +873,6 @@ Use minibuffer as the interface to select from xref candidates.
 #+END_SRC
 
 *** Terminal
-
- I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
-
- #+BEGIN_SRC emacs-lisp
-   (use-package multi-term
-     :config
-     ;; Use a login shell:
-     (setq multi-term-program-switches "--login")
-     :bind ("C-c t" . multi-term))
- #+END_SRC
-
- I add a bunch of hooks to =term-mode=:
-
- - I'd like links (URLs, etc) to be clickable.
- - Yanking in =term-mode= doesn't quite work. The text from the paste appears in
-   the buffer but isn't sent to the shell process. This correctly binds =C-y= and
-   middle-click to yank the way we'd expect.
- - I bind =M-o= to quickly change windows. I'd like that in terminals, too.
- - I don't want to perform =yasnippet= expansion when tab-completing.
-
- #+BEGIN_SRC emacs-lisp
-   (defun MattLu/term-paste (&optional string)
-     (interactive)
-     (process-send-string
-          (get-buffer-process (current-buffer))
-          (if string string (current-kill 0))))
-
-   (add-hook 'term-mode-hook
-             (lambda ()
-               (goto-address-mode)
-               (define-key term-raw-map (kbd "C-y") 'MattLu/term-paste)
-               (define-key term-raw-map (kbd "<mouse-2>") 'MattLu/term-paste)
-               (define-key term-raw-map (kbd "M-o") 'other-window)
-               (setq yas-dont-activate t)))
- #+END_SRC
 
 Emacs-libvterm (vterm) is fully-fledged terminal emulator inside GNU Emacs based
 on libvterm, a C library. As a result of using compiled code (instead of elisp),
@@ -2453,7 +2425,7 @@ for some modes (like project, for example).
     :config (which-key-mode))
 #+END_SRC
 
-** Configure yasnippet
+** COMMENT Configure yasnippet
 
 I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippet=
 enabled.
