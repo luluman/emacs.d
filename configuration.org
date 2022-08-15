@@ -530,8 +530,8 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     ("C-x g" . magit-status)
     :config
     (use-package with-editor)
+    (setq magit-bind-magit-project-status nil)
     :custom
-    (magit-bind-magit-project-status nil)
     (magit-push-always-verify nil)
     (git-commit-summary-max-length 50))
 #+end_src
@@ -2939,7 +2939,7 @@ while still keeping them within arm’s reach.
            ("C-M-<tab>" . popper-cycle)
            ("C-<return>" . popper-toggle-type))
     :custom
-    (popper-window-height 12)
+    ;; (popper-window-height 12)
     (popper-mode-line nil)
     :config
     (bind-keys* ("C-<tab>" . popper-toggle-latest))
