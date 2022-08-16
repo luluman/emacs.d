@@ -278,8 +278,7 @@ Custom face when running in 256-color terminal
 
 #+begin_src emacs-lisp
   (setq MattLu/minor-mode-direct
-        '(flymake-mode
-          projectile-mode))
+        '(flymake-mode))
 
   (defun powerline-minor-modes-modify (orig-fun &rest args)
     "Change powerline-minor-modes display"
@@ -298,7 +297,7 @@ Custom face when running in 256-color terminal
                 :around 'powerline-minor-modes-modify))
 #+end_SRC
 
-** Scroll conservatively
+** COMMENT Scroll conservatively
 
 When point goes outside the window, Emacs usually recenters the buffer point.
 I'm not crazy about that. This changes scrolling behavior to only scroll as far
@@ -392,7 +391,9 @@ programming.
 ** Display line number
 
 #+BEGIN_SRC emacs-lisp
-  (setq display-line-numbers-type 'visual)
+  ;; (setq display-line-numbers-type 'visual)
+  ;; (setq-default display-line-numbers-width 4)
+  (setq display-line-numbers-grow-only t)
   (add-hook 'text-mode-hook (lambda () (display-line-numbers-mode t)))
   (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode t)))
   (add-hook 'conf-mode-hook (lambda () (display-line-numbers-mode t)))
@@ -403,10 +404,11 @@ programming.
 #+BEGIN_SRC emacs-lisp
   (use-package highlight-indent-guides
     :hook (prog-mode . highlight-indent-guides-mode)
+    :custom
+    (highlight-indent-guides-method 'character)
+    (highlight-indent-guides-responsive 'top)
+    (highlight-indent-guides-delay 1)
     :config
-    (setq highlight-indent-guides-method 'character)
-    (setq highlight-indent-guides-responsive 'top)
-    (setq highlight-indent-guides-auto-enabled nil)
     (when (= (display-color-cells) 16777216)
       (set-face-background 'highlight-indent-guides-odd-face "darkgray")
       (set-face-background 'highlight-indent-guides-even-face "dimgray")
@@ -860,7 +862,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(rust-mode) "rust-analyzer")
     (MattLu/test-then-add-eglot '(yaml-mode) "yaml-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(dockerfile-mode) "docker-langserver" "--stdio")
-    (MattLu/test-then-add-eglot '(json-mode) "vscode-json-language-server" "--stdio")
+    ;; (MattLu/test-then-add-eglot '(json-mode) "vscode-json-language-server" "--stdio")
     (setq completion-category-defaults nil))
 #+END_SRC
 
@@ -1041,7 +1043,7 @@ For running Google Tests from a given buffer
                   (js (ignore-errors (json-read-from-string output)))
                   (found (cdr (assq 'workspace_root js))))
         (cons 'eglot-project found)))
-    (cl-defmethod project-roots (project)
+    (cl-defmethod project-root (project)
       (if (consp project) (list (cdr project))
         (error "No `project-roots' method for %s.  Go write one" project)))
     (add-hook 'project-find-functions 'MattLu/project-try-cargo-toml nil nil))
@@ -2159,8 +2161,8 @@ https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell
     :config
-    (use-package flyspell-lazy)
-    (flyspell-lazy-mode 1)
+    ;; (use-package flyspell-lazy)
+    ;; (flyspell-lazy-mode 1)
     :custom
     (flyspell-prog-text-faces '(tree-sitter-hl-face:comment
                                 tree-sitter-hl-face:doc
@@ -2178,6 +2180,11 @@ https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e
 
     (add-to-list 'flyspell-delayed-commands 'scroll-down-command)
     (add-to-list 'flyspell-delayed-commands 'scroll-up-command)
+    (add-to-list 'flyspell-delayed-commands 'previous-line)
+    (add-to-list 'flyspell-delayed-commands 'next-line)
+    (add-to-list 'flyspell-delayed-commands 'line-move)
+    (add-to-list 'flyspell-delayed-commands 'compilation-read-command)
+    (add-to-list 'flyspell-delayed-commands 'completion-at-point-functions)
 
     :hook
     (prog-mode . flyspell-prog-mode)
@@ -2495,8 +2502,7 @@ the default completion system.
     ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
     ;; Vertico commands are hidden in normal buffers.
     (setq read-extended-command-predicate
-          #'command-completion-default-include-p)
-    (setq large-file-warning-threshold 1000000))
+          #'command-completion-default-include-p))
 #+end_src
 
 *** marginalia
