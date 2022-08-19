@@ -567,7 +567,9 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
 using Realgud to debug source code
 
 #+BEGIN_SRC emacs-lisp
-  (use-package realgud)
+  (use-package realgud
+    :custom
+    (realgud:pdb-command-name "python -m pdb"))
 #+END_SRC
 
 ** Shell config
@@ -1181,12 +1183,6 @@ Set ipython as interpreter
                      (setq python-indent 4)
                      (setq tab-width 4))))
 #+END_SRC
-
-set realgud python debug command
-#+BEGIN_SRC emacs-lisp
-  (setq realgud:pdb-command-name "python -m pdb")
-#+END_SRC
-
 
 *** COMMENT using Jupyter
 
