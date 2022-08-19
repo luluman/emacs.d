@@ -726,44 +726,17 @@ read elf symbols
 
 ** UML
 
-bugfix https://github.com/skuro/plantuml-mode/pull/128
-
-#+begin_src emacs-lisp
-  (defun MattLu/hex-encode-string (ascii-string)
-    (let ((res nil))
-      (dotimes (i (length ascii-string) (apply #'concat (reverse res)))
-        (let ((ascii-char (substring ascii-string i  (+ i 1))))
-          (push (format "%02x" (string-to-char ascii-char)) res)))))
-
-  (defun MattLu/hex-decode-string (hex-string)
-    (let ((res nil))
-      (dotimes (i (/ (length hex-string) 2) (apply #'concat (reverse res)))
-        (let ((hex-byte (substring hex-string (* 2 i) (* 2 (+ i 1)))))
-          (push (format "%c" (string-to-number hex-byte 16)) res)))))
-
-  (setq MattLu/deflate-compress-command "echo -n \"%s\" | gzip -cf9")
-
-  (defun MattLu/encode_plantuml (string)
-    (shell-command-to-string
-     (format MattLu/deflate-compress-command string)))
-
-  (defun MattLu/plantuml-server-encode-url (string)
-    (let* ((coding-system (or buffer-file-coding-system
-                              "utf8"))
-           (encoded-string (MattLu/hex-encode-string (encode-coding-string string coding-system))))
-      (concat plantuml-server-url "/" plantuml-output-type "/~h" encoded-string)))
-#+end_src
-
 #+begin_src emacs-lisp
   (use-package plantuml-mode
     :mode "\\.plantuml$"
-    :custom
-    (plantuml-exec-mode 'server)
-    (plantuml-server-url "https://www.plantuml.com/plantuml")
-    (plantuml-output-type "txt")
     :config
-    (defun plantuml-server-encode-url (string)
-      (MattLu/plantuml-server-encode-url string))
+    ;; not promote to `utxt`.
+    (defun plantuml-jar-output-type-opt (output-type)
+      "Create the flag to pass to PlantUML according to OUTPUT-TYPE."
+      (concat "-t" output-type))
+    (setq plantuml-jar-path "~/.emacs.d/plantuml.jar")
+    (when (file-exists-p plantuml-jar-path)
+      (setq plantuml-default-exec-mode 'jar))
     (add-to-list
      'org-src-lang-modes '("plantuml" . plantuml)))
 #+end_src
