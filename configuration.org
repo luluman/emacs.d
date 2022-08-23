@@ -446,7 +446,7 @@ I use a few packages in virtually every programming or writing environment to
 manage the project, handle auto-completion, search for terms, and deal with
 version control. That's all in here.
 
-** project
+** project-cmake
 
 The package project-cmake incorporates the required logic to understand that a
 project is to be configured, built and tested using CMake and CTest.
@@ -2451,7 +2451,7 @@ the default completion system.
       (setq fussy-score-fn 'fussy-fuz-score))
     :custom
     (fussy-filter-fn 'fussy-filter-default)
-    (fussy-fast-regex-fn 'fussy-pattern-flex-1)
+    ;; (fussy-fast-regex-fn 'fussy-pattern-flex-1)
     (completion-styles '(fussy basic))
     (completion-category-defaults nil))
 #+end_src
