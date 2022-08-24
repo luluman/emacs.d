@@ -385,7 +385,9 @@ programming.
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
     :config
-    (global-git-gutter-mode t))
+    (global-git-gutter-mode t)
+    :bind
+    ("C-x C-g" . git-gutter))
 #+END_SRC
 
 ** Display line number
@@ -1017,10 +1019,7 @@ For running Google Tests from a given buffer
                      (shell-command-to-string "cargo metadata --no-deps --format-version 1")))
                   (js (ignore-errors (json-read-from-string output)))
                   (found (cdr (assq 'workspace_root js))))
-        (cons 'eglot-project found)))
-    (cl-defmethod project-root (project)
-      (if (consp project) (list (cdr project))
-        (error "No `project-roots' method for %s.  Go write one" project)))
+        (cons 'transient found)))
     (add-hook 'project-find-functions 'MattLu/project-try-cargo-toml nil nil))
 #+end_src
 
@@ -2498,8 +2497,6 @@ consult-buffer and a Swiper-like search command consult-line.
   (use-package consult
     ;; Replace bindings. Lazily loaded due by `use-package'.
     :bind (;; C-c bindings (mode-specific-map)
-           ("C-c h" . consult-history)
-           ("C-c m" . consult-mode-command)
            ("C-c k" . consult-kmacro)
            ;; C-x bindings (ctl-x-map)
            ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
