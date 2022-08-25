@@ -839,7 +839,20 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(rust-mode) "rust-analyzer")
     (MattLu/test-then-add-eglot '(yaml-mode) "yaml-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(dockerfile-mode) "docker-langserver" "--stdio")
-    ;; (MattLu/test-then-add-eglot '(json-mode) "vscode-json-language-server" "--stdio")
+    (MattLu/test-then-add-eglot '(json-mode) "vscode-json-language-server" "--stdio")
+    (MattLu/test-then-add-eglot '(mlir-mode) "mlir-lsp-server")
+
+    (defun eglot-tblgen-command-args (interactive-p)
+      (let* ((build-directory (project-cmake-build-directory))
+             (database (expand-file-name "tablegen_compile_commands.yml"
+                                         build-directory)))
+        (list "tblgen-lsp-server"
+              (format "--tablegen-compilation-database=%s" database))))
+
+    (when (executable-find "tblgen-lsp-server")
+      (add-to-list 'eglot-server-programs
+                   '((tablegen-mode) . eglot-tblgen-command-args))
+      (add-hook 'tablegen-mode-hook 'eglot-ensure))
     (setq completion-category-defaults nil))
 #+END_SRC
 
