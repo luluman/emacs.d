@@ -1038,6 +1038,8 @@ For running Google Tests from a given buffer
 
 #+begin_src emacs-lisp
   (use-package rust-playground
+    :bind
+    ("C-x r p" . rust-playground)
     :config
     (defun rust-playground ()
       "Run playground for Rust language in a new buffer."
