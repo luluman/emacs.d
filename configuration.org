@@ -457,6 +457,7 @@ project is to be configured, built and tested using CMake and CTest.
   (use-package project-cmake
     :load-path "~/.emacs.d/project-cmake/"
     :custom
+    (project-vc-merge-submodules nil)
     (project-cmake-build-directory-name "build")
     :config
     (put 'project-cmake-configuration-arguments 'safe-local-variable #'listp)
@@ -1016,6 +1017,12 @@ For running Google Tests from a given buffer
     :load-path "~/.emacs.d/third_party/danielmartin-gtest"
     :after cc-mode)
 #+END_SRC
+
+Treat ".h" files as C++ files.
+
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+#+end_src
 
 ** Rust
 
@@ -2044,6 +2051,64 @@ Include the =minted= package in all of my LaTeX exports.
 #+BEGIN_SRC emacs-lisp
   (setq org-mobile-directory )
 #+END_SRC
+
+** org-roam
+
+Org-roam is a plain-text knowledge management system. It brings some of Roam's
+more powerful features into the Org-mode ecosystem.
+
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/.Org/org-roam"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today))
+    :config
+    ;; If you're using a vertical completion framework, you might want a more informative completion interface
+    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+    (org-roam-db-autosync-mode)
+    ;; If using org-roam-protocol
+    (require 'org-roam-protocol))
+#+end_src
+
+** org-brain
+
+org-brain implements a variant of concept mapping in Emacs, using org-mode. It
+is heavily inspired by a piece of software called The Brain, and you can view an
+introduction to that program here. They also provide a blog with great ideas of
+how you can think when organizing your Brain.
+
+#+begin_src emacs-lisp
+  (use-package org-brain
+    :init
+    (setq org-brain-path "~/.Org/org-brain")
+    ;; For Evil users
+    (with-eval-after-load 'evil
+      (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+    :config
+    (bind-key "C-c b" 'org-brain-prefix-map org-mode-map)
+    (setq org-id-track-globally t)
+    (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
+    (add-hook 'before-save-hook #'org-brain-ensure-ids-in-buffer)
+    (push '("b" "Brain" plain (function org-brain-goto-end)
+            "* %i%?" :empty-lines 1)
+          org-capture-templates)
+    (setq org-brain-visualize-default-choices 'all)
+    (setq org-brain-title-max-length 12)
+    (setq org-brain-include-file-entries nil
+          org-brain-file-entries-use-title nil))
+
+  ;; Allows you to edit entries directly from org-brain-visualize
+  (use-package polymode
+    :config
+    (add-hook 'org-brain-visualize-mode-hook #'org-brain-polymode))
+#+end_src
 
 * Writing thesis
 
