@@ -455,6 +455,7 @@ project is to be configured, built and tested using CMake and CTest.
 
 #+begin_src emacs-lisp
   (use-package project-cmake
+    :if (eq system-type 'gnu/linux)
     :load-path "~/.emacs.d/project-cmake/"
     :custom
     (project-vc-merge-submodules nil)
@@ -2052,7 +2053,7 @@ Include the =minted= package in all of my LaTeX exports.
   (setq org-mobile-directory )
 #+END_SRC
 
-** org-roam
+** COMMENT org-roam
 
 Org-roam is a plain-text knowledge management system. It brings some of Roam's
 more powerful features into the Org-mode ecosystem.
@@ -2077,7 +2078,7 @@ more powerful features into the Org-mode ecosystem.
     (require 'org-roam-protocol))
 #+end_src
 
-** org-brain
+** COMMENT org-brain
 
 org-brain implements a variant of concept mapping in Emacs, using org-mode. It
 is heavily inspired by a piece of software called The Brain, and you can view an
