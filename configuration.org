@@ -985,6 +985,82 @@ structured navigation and editing code
   (use-package tree-edit)
 #+end_src
 
+** Python
+
+Pip can install binary file.
+
+#+begin_src emacs-lisp
+  (defun MattLu/get-first-valid-path (path-list)
+  ;; get build path
+  ;; this dirctiry should contain the excutable server and config file.
+  ;; check path validation and return list.
+  (let ((path (remove-if-not
+                    (lambda (x)
+                      (file-directory-p (eval x)))
+                    path-list)))
+    (if path
+        (eval (car path))
+      nil)))
+#+end_src
+
+#+BEGIN_SRC emacs-lisp
+  (use-package virtualenvwrapper
+    :config
+    (venv-initialize-interactive-shells) ;; if you want interactive shell support
+    (venv-initialize-eshell) ;; if you want eshell support
+    (setq venv-location '("~/venvPy/py3/"
+                          "~/python/ufw/"))
+    (let ((venv-py (MattLu/get-first-valid-path venv-location)))
+      (when venv-py
+        (venv-workon (car (last (split-string venv-py "\/") 2)))))
+    (MattLu/test-then-add-eglot '(cmake-mode) "cmake-language-server"))
+#+END_SRC
+
+Set ipython as interpreter
+
+#+BEGIN_SRC emacs-lisp
+  (use-package python
+    :custom
+    (python-shell-interpreter "ipython")
+    (python-shell-interpreter-args "--simple-prompt -i")
+    (py-ipython-command-args "--simple-prompt -i")
+    (python-indent-offset 4)
+    :hook
+    (python-mode . (lambda ()
+                     (setq indent-tabs-mode nil)
+                     (setq python-indent 4)
+                     (setq tab-width 4))))
+#+END_SRC
+
+*** COMMENT using Jupyter
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ein
+    :config
+    (require 'ein-notebook)
+    (setq ein:cell-max-num-outputs 10)
+    :commands (ein:notebooklist-open))
+#+END_SRC
+
+*** code format
+
+#+begin_src emacs-lisp
+  (defun MattLu/python-format ()
+    (interactive)
+    (if (region-active-p)
+        (python-black-partial-dwim)
+      (python-black-buffer)))
+
+  (defun MattLu/python-format-key ()
+    (define-key (current-local-map) [remap eglot-format] 'MattLu/python-format)
+    (local-set-key (kbd "C-M-\\") 'MattLu/python-format))
+
+  (use-package python-black
+    :if (executable-find "black")
+    :after python
+    :hook (python-mode . MattLu/python-format-key))
+#+end_src
+
 ** C++
 
 clang-format
@@ -1189,80 +1265,6 @@ documentation.
     :config
     (setq geiser-active-implementations '(mit chicken guile racket chez)))
 #+END_SRC
-
-** Python
-
-#+begin_src emacs-lisp
-  (defun MattLu/get-first-valid-path (path-list)
-  ;; get build path
-  ;; this dirctiry should contain the excutable server and config file.
-  ;; check path validation and return list.
-  (let ((path (remove-if-not
-                    (lambda (x)
-                      (file-directory-p (eval x)))
-                    path-list)))
-    (if path
-        (eval (car path))
-      nil)))
-#+end_src
-
-#+BEGIN_SRC emacs-lisp
-  (use-package virtualenvwrapper
-    :config
-    (venv-initialize-interactive-shells) ;; if you want interactive shell support
-    (venv-initialize-eshell) ;; if you want eshell support
-    (setq venv-location '("~/venvPy/py3/"
-                          "~/python/ufw/"))
-    (let ((venv-py (MattLu/get-first-valid-path venv-location)))
-      (when venv-py
-        (venv-workon (car (last (split-string venv-py "\/") 2)))))
-    (MattLu/test-then-add-eglot '(cmake-mode) "cmake-language-server"))
-#+END_SRC
-
-Set ipython as interpreter
-
-#+BEGIN_SRC emacs-lisp
-  (use-package python
-    :custom
-    (python-shell-interpreter "ipython")
-    (python-shell-interpreter-args "--simple-prompt -i")
-    (py-ipython-command-args "--simple-prompt -i")
-    (python-indent-offset 4)
-    :hook
-    (python-mode . (lambda ()
-                     (setq indent-tabs-mode nil)
-                     (setq python-indent 4)
-                     (setq tab-width 4))))
-#+END_SRC
-
-*** COMMENT using Jupyter
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ein
-    :config
-    (require 'ein-notebook)
-    (setq ein:cell-max-num-outputs 10)
-    :commands (ein:notebooklist-open))
-#+END_SRC
-
-*** code format
-
-#+begin_src emacs-lisp
-  (defun MattLu/python-format ()
-    (interactive)
-    (if (region-active-p)
-        (python-black-partial-dwim)
-      (python-black-buffer)))
-
-  (defun MattLu/python-format-key ()
-    (define-key (current-local-map) [remap eglot-format] 'MattLu/python-format)
-    (local-set-key (kbd "C-M-\\") 'MattLu/python-format))
-
-  (use-package python-black
-    :if (executable-find "black")
-    :after python
-    :hook (python-mode . MattLu/python-format-key))
-#+end_src
 
 ** =web-mode=
 
