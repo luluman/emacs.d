@@ -501,6 +501,7 @@ doesn't require any additional setup. bounding as official recommendation.
     :commands (dumb-jump-xref-activate)
     :custom
     (dumb-jump-quiet t)
+    (dumb-jump-selector 'completing-read)
     (dumb-jump-force-searcher 'rg)
     :init
     (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
