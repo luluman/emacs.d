@@ -384,7 +384,9 @@ programming.
 
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
-    :config
+    :custom
+    (git-gutter:update-interval 1)
+    :init
     (global-git-gutter-mode t)
     :bind
     ("C-x C-g" . git-gutter))
