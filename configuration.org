@@ -377,7 +377,7 @@ pairing or presenting code.
   (global-hl-line-mode)
 #+END_SRC
 
-** Highlight uncommitted changes
+** COMMENT Highlight uncommitted changes
 
 Use the =git-gutter= package to highlight changed-and-uncommitted lines when
 programming.
@@ -385,7 +385,12 @@ programming.
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
     :custom
+    (git-gutter:window-width 2)
     (git-gutter:update-interval 1)
+    ;; :hook
+    ;; (git-gutter-mode
+    ;; . (lambda ()
+    ;;     (git-gutter:set-window-margin (git-gutter:window-margin))))
     :init
     (global-git-gutter-mode t)
     :bind
@@ -395,8 +400,7 @@ programming.
 ** Display line number
 
 #+BEGIN_SRC emacs-lisp
-  ;; (setq display-line-numbers-type 'visual)
-  ;; (setq-default display-line-numbers-width 4)
+  (setq-default display-line-numbers-width 4)
   (setq display-line-numbers-grow-only t)
   (add-hook 'text-mode-hook (lambda () (display-line-numbers-mode t)))
   (add-hook 'prog-mode-hook (lambda () (display-line-numbers-mode t)))
@@ -2401,40 +2405,6 @@ Binding this to =M-SPC= is strictly better than the original binding of
 #+end_src
 
 * Editing settings
-** Rectangle Hydra
-
-rectangle-mark-mode, copy form hydra/hydra-examples.el. Awesome.
-
-#+begin_src emacs-lisp
-  (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
-                                       :color pink
-                                       :post (deactivate-mark))
-    "
-    ^_p_^     _d_elete    _s_tring
-  _b_   _f_   _q_uit      _y_ank
-    ^_n_^     _w_-copy    _r_eset
-  ^^^^        _e_xchange  _/_ndo
-  ^^^^        ^ ^         _k_ill
-  "
-    ("b" rectangle-backward-char nil)
-    ("f" rectangle-forward-char nil)
-    ("p" rectangle-previous-line nil)
-    ("n" rectangle-next-line nil)
-    ("e" hydra-ex-point-mark nil)
-    ("w" copy-rectangle-as-kill nil)
-    ("d" delete-rectangle nil)
-    ("r" (if (region-active-p)
-             (deactivate-mark)
-           (rectangle-mark-mode 1)) nil)
-    ("y" yank-rectangle nil)
-    ("/" undo nil)
-    ("s" string-rectangle nil)
-    ("k" kill-rectangle nil)
-    ("q" nil nil))
-
-  (global-set-key (kbd "C-x SPC") 'hydra-rectangle/body)
-#+end_src
-
 ** Scroll Hydra
 
 Scroll preserve screen position or not.
