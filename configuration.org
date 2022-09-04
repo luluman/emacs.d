@@ -491,10 +491,12 @@ Find file/directory and review Diff/Patch/Commit quickly everywhere.
 
 #+begin_src emacs-lisp
   (use-package find-file-in-project
+    :custom
+    (ffip-use-rust-fd t)
     :bind
     ("C-x f" . find-file-in-project)
     :config
-    (setq ffip-use-rust-fd t))
+    (push "*/.cache" ffip-prune-patterns))
 #+end_src
 
 ** =dumb-jump=
@@ -2557,8 +2559,9 @@ the default completion system.
     (fussy-compare-same-score-fn 'fussy-histlen->strlen<)
     (fussy-filter-fn 'fussy-filter-default)
     ;; (fussy-fast-regex-fn 'fussy-pattern-flex-1)
-    (completion-styles '(fussy basic))
-    (completion-category-defaults nil))
+    (completion-styles '(fussy))
+    (completion-category-defaults nil)
+    (completion-category-overrides nil))
 #+end_src
 
 #+begin_src emacs-lisp
