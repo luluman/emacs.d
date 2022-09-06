@@ -843,7 +843,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (eglot-ignored-server-capabilities '(:hoverProvider :documentHighlightProvider))
     :config
     (MattLu/test-then-add-eglot '(c-mode c++-mode) "clangd")
-    (MattLu/test-then-add-eglot '(python-mode) "pyright-langserver" "--stdio")
+    ;; (MattLu/test-then-add-eglot '(python-mode) "pyright-langserver" "--stdio")
     (MattLu/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
     (MattLu/test-then-add-eglot '(js-mode typescript-mode) "typescript-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start")
@@ -1022,7 +1022,8 @@ Pip can install binary file.
     (let ((venv-py (MattLu/get-first-valid-path venv-location)))
       (when venv-py
         (venv-workon (car (last (split-string venv-py "\/") 2)))))
-    (MattLu/test-then-add-eglot '(cmake-mode) "cmake-language-server"))
+    (MattLu/test-then-add-eglot '(cmake-mode) "cmake-language-server")
+    (MattLu/test-then-add-eglot '(python-mode) "pylsp"))
 #+END_SRC
 
 Set ipython as interpreter
@@ -2776,12 +2777,16 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (setq tab-always-indent 'complete))
 #+end_src
 
+*** terminal popup
+
 #+begin_src emacs-lisp
   (use-package corfu-terminal
     :init
     (unless (display-graphic-p)
       (corfu-terminal-mode +1)))
 #+end_src
+
+*** show diagnose information
 
 #+begin_src emacs-lisp
   (use-package flymake-popon
