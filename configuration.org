@@ -3292,6 +3292,14 @@ Hydra ediff, more function with less key bindings
      (peep-dired-ignored-extensions '("mkv" "iso" "mp4")))
  #+end_src
 
+ dired-rsync – asynchronous rsync from dired
+
+ #+begin_src emacs-lisp
+   (use-package dired-rsync
+     :config
+     (bind-key "C-c C-r" 'dired-rsync dired-mode-map))
+ #+end_src
+
 ** COMMENT LanguageTool
 
 #+begin_src emacs-lisp
@@ -3350,7 +3358,12 @@ https://youtu.be/51eSeqcaikM
     (monkeytype-directory "~/.emacs.d/.monkeytype")
     (fortune-program "/usr/games/fortune")
     (fortune-dir "/usr/share/games/fortunes")
-    (fortune-file "/usr/share/games/fortunes/fortunes"))
+    (fortune-file "/usr/share/games/fortunes/fortunes")
+    (monkeytype-auto-fill t)
+    (monkeytype-colored-mode-line nil)
+    (monkeytype-downcase nil)
+    (monkeytype-mode-line-interval-update 50)
+    (monkeytype-most-mistyped-amount 10))
 #+end_src
 
 ** Add Pinyin
