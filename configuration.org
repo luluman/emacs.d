@@ -1501,7 +1501,7 @@ Hit =M-n= to quickly open up a capture template for a new todo.
   (setq org-support-shift-select t)
 #+end_src
 
-** Timing
+** COMMENT Timing
 
 Set headlines to STRT and clock-in when running a countdown
 
