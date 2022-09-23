@@ -1092,7 +1092,7 @@ OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
     :if (executable-find "clang-format")
     :custom
     (clang-format-fallback-style "llvm")
-    :hook ((c-mode c++-mode java-mode js-mode) .
+    :hook ((c-mode c++-mode java-mode js-mode tablegen-mode) .
            MattLu/clang-format-key))
 #+end_src
 
