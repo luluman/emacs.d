@@ -908,13 +908,19 @@ outputs.
      env-var)
     (setq Mattlu/vterm-cmd (mapconcat (lambda (x) (format "vterm_read_%s\n" x)) env-var ""))
     (defun MattLu/setup-vterm-python-env ()
-      ; get environment variable form vterm and set to emacs
+      ;; get environment variable form vterm and set to emacs
       (interactive)
       (setq python-shell-process-environment nil)
       (vterm-send-string Mattlu/vterm-cmd))
     :bind
     (:map vterm-mode-map
-          ("C-c x" . MattLu/setup-vterm-python-env)))
+          ("C-c x" . MattLu/setup-vterm-python-env)
+          ("M-f" . (lambda ()
+                     (interactive)
+                     (vterm-send-key "f" nil t)))
+          ("M-b" . (lambda ()
+                   (interactive)
+                   (vterm-send-key "b" nil t)))))
 #+end_src
 
 *** Fold and unfold code blocks
