@@ -2134,8 +2134,8 @@ how you can think when organizing your Brain.
  Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
 
 #+BEGIN_SRC emacs-lisp
-  (use-package auctex
-    :defer t
+  (use-package tex
+    :ensure auctex
     :config
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)
