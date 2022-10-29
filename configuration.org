@@ -1240,29 +1240,9 @@ Indent everything by 2 spaces.
 =rainbow-delimiters= is convenient for coloring matching parentheses.
 
 #+begin_src emacs-lisp
-  (use-package rainbow-delimiters)
+  (use-package rainbow-delimiters
+    :hook ((emacs-lisp-mode lisp-mode racket-mode) . rainbow-delimiters-mode))
 #+end_src
-
-Lispy package reimagines Paredit - a popular method to navigate and edit LISP
-code in Emacs.
-
-All the lisps have some shared features, so we want to do the same things for
-all of them. That includes using lispy, rainbow-delimiters, and highlighting the
-whole expression when point is on a parenthesis.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package lispy
-    :bind (:map lispy-mode-map
-                ("M-o" . ace-window)
-                ("M-i" . symbol-overlay-put))
-    :hook
-    ((clojure-mode
-      emacs-lisp-mode
-      lisp-mode
-      scheme-mode) . (lambda ()
-                       (lispy-mode 1)
-                       (rainbow-delimiters-mode))))
-#+END_SRC
 
 If I'm writing in Emacs lisp I'd like to use =eldoc-mode= to display
 documentation.
