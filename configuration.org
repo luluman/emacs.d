@@ -3366,6 +3366,14 @@ https://youtu.be/51eSeqcaikM
     (pyim-basedict-enable))
 #+end_src
 
+** fancy-narrow
+
+#+begin_src emacs-lisp
+  (use-package fancy-narrow
+    :config
+    (fancy-narrow-mode))
+#+end_src
+
 * Set custom keybindings
 
 Just a few handy functions.
