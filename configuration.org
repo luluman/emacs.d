@@ -196,9 +196,7 @@ Those themes are what I like most.
     :no-require t)
   (use-package nord-theme
     :no-require t)
-  (use-package modus-operandi-theme
-    :no-require t)
-  (use-package modus-vivendi-theme
+  (use-package modus-themes
     :no-require t)
   (use-package material-theme
     :no-require t)
@@ -827,7 +825,6 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
     :init
-    (use-package jsonrpc)
     (use-package consult-eglot)
     :commands
     (eglot eglot-ensure)
