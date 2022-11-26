@@ -839,7 +839,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (eglot-autoshutdown t)
     (eglot-ignored-server-capabilities '(:hoverProvider :documentHighlightProvider))
     :config
-    (MattLu/test-then-add-eglot '(c-mode c++-mode) "clangd")
+    (MattLu/test-then-add-eglot '(c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
     ;; (MattLu/test-then-add-eglot '(python-mode) "pyright-langserver" "--stdio")
     (MattLu/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
     (MattLu/test-then-add-eglot '(js-mode typescript-mode) "typescript-language-server" "--stdio")
@@ -847,7 +847,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(rust-mode) "rust-analyzer")
     (MattLu/test-then-add-eglot '(yaml-mode) "yaml-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(dockerfile-mode) "docker-langserver" "--stdio")
-    (MattLu/test-then-add-eglot '(json-mode) "vscode-json-language-server" "--stdio")
+    ;; (MattLu/test-then-add-eglot '(json-ts-mode) "vscode-json-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(mlir-mode) "mlir-lsp-server")
 
     (defun eglot-tblgen-command-args (interactive-p)
@@ -982,19 +982,30 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
 
 using tree-sitter to manage Parser
 #+begin_src emacs-lisp
-  (use-package tree-sitter
+  (use-package treesit
+    :custom
+    (treesit-extra-load-path
+     '("/usr/local/lib/tree-sitter-langs/"))
+    (treesit-max-buffer-size (* 100 1024 1024))
     :config
-    (global-tree-sitter-mode))
-
-  (use-package tree-sitter-langs
-    :config
-    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+    (cl-loop for item in auto-mode-alist
+             do (case (cdr item)
+                  ('c++-mode (setf (cdr item) 'c++-ts-mode))
+                  ('python-mode (setf (cdr item) 'python-ts-mode))
+                  ('c-mode (setf (cdr item) 'c-ts-mode))
+                  ('c-or-c++-mode (setf (cdr item) 'c++-ts-mode))
+                  ))
+    :mode
+    ("\\.json\\'" . json-ts-mode))
 #+end_src
 
-structured navigation and editing code
+** JSON
 
 #+begin_src emacs-lisp
-  (use-package tree-edit)
+  (add-hook 'json-ts-mode-hook
+            (lambda ()
+              (flyspell-mode 0)
+              (highlight-indent-guides-mode 0)) nil nil)
 #+end_src
 
 ** Python
@@ -1026,7 +1037,7 @@ Pip can install binary file.
       (when venv-py
         (venv-workon (car (last (split-string venv-py "\/") 2)))))
     (MattLu/test-then-add-eglot '(cmake-mode) "cmake-language-server")
-    (MattLu/test-then-add-eglot '(python-mode) "pylsp"))
+    (MattLu/test-then-add-eglot '(python-mode python-ts-mode) "pylsp"))
 #+END_SRC
 
 Set ipython as interpreter
@@ -1071,7 +1082,9 @@ Set ipython as interpreter
   (use-package python-black
     :if (executable-find "black")
     :after python
-    :hook (python-mode . MattLu/python-format-key))
+    :hook
+    (python-mode . MattLu/python-format-key)
+    (python-ts-mode . MattLu/python-format-key))
 #+end_src
 
 ** C++
@@ -1095,7 +1108,7 @@ OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
     :if (executable-find "clang-format")
     :custom
     (clang-format-fallback-style "llvm")
-    :hook ((c-mode c++-mode java-mode js-mode tablegen-mode) .
+    :hook ((c-mode c++-mode java-mode js-mode tablegen-mode c++-ts-mode c-ts-mode) .
            MattLu/clang-format-key))
 #+end_src
 
@@ -1107,12 +1120,6 @@ For running Google Tests from a given buffer
     :load-path "~/.emacs.d/third_party/danielmartin-gtest"
     :after cc-mode)
 #+END_SRC
-
-Treat ".h" files as C++ files.
-
-#+begin_src emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-#+end_src
 
 ** Rust
 
@@ -1351,12 +1358,6 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 
 #+begin_src emacs-lisp
   (use-package dockerfile-mode)
-#+end_src
-
-** JSON mode
-
-#+begin_src emacs-lisp
-  (use-package json-mode)
 #+end_src
 
 * Org
@@ -2236,13 +2237,6 @@ https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e
     :config
     ;; (use-package flyspell-lazy)
     ;; (flyspell-lazy-mode 1)
-    :custom
-    (flyspell-prog-text-faces '(tree-sitter-hl-face:comment
-                                tree-sitter-hl-face:doc
-                                tree-sitter-hl-face:string
-                                font-lock-comment-face
-                                font-lock-doc-face
-                                font-lock-string-face))
     :config
     (setq ispell-dictionary "en_US"
           ispell-program-name "aspell"
@@ -3366,12 +3360,19 @@ https://youtu.be/51eSeqcaikM
     (pyim-basedict-enable))
 #+end_src
 
-** fancy-narrow
+** COMMENT fancy-narrow
 
 #+begin_src emacs-lisp
   (use-package fancy-narrow
     :config
     (fancy-narrow-mode))
+#+end_src
+
+** performance tuning
+
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold 100000000)
+  (setq read-process-output-max (* 8 1024 1024)) ;; 8mb
 #+end_src
 
 * Set custom keybindings
