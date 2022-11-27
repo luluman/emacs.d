@@ -405,7 +405,7 @@ programming.
   (add-hook 'conf-mode-hook (lambda () (display-line-numbers-mode t)))
 #+END_SRC
 
-** Using highlight indentation
+** COMMENT Using highlight indentation
 
 #+BEGIN_SRC emacs-lisp
   (use-package highlight-indent-guides
@@ -991,11 +991,11 @@ using tree-sitter to manage Parser
     (treesit-max-buffer-size (* 100 1024 1024))
     :config
     (cl-loop for item in auto-mode-alist
-             do (case (cdr item)
-                  ('c++-mode (setf (cdr item) 'c++-ts-mode))
-                  ('python-mode (setf (cdr item) 'python-ts-mode))
-                  ('c-mode (setf (cdr item) 'c-ts-mode))
-                  ('c-or-c++-mode (setf (cdr item) 'c++-ts-mode))
+             do (cl-case (cdr item)
+                  (c++-mode (setf (cdr item) 'c++-ts-mode))
+                  (python-mode (setf (cdr item) 'python-ts-mode))
+                  (c-mode (setf (cdr item) 'c-ts-mode))
+                  (c-or-c++-mode (setf (cdr item) 'c++-ts-mode))
                   ))
     :mode
     ("\\.json\\'" . json-ts-mode))
