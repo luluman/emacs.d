@@ -844,7 +844,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
     ;; (MattLu/test-then-add-eglot '(python-mode) "pyright-langserver" "--stdio")
     (MattLu/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
-    (MattLu/test-then-add-eglot '(js-mode typescript-mode) "typescript-language-server" "--stdio")
+    (MattLu/test-then-add-eglot '(js-mode typescript-mode js-ts-mode) "typescript-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start")
     (MattLu/test-then-add-eglot '(rust-mode) "rust-analyzer")
     (MattLu/test-then-add-eglot '(yaml-mode) "yaml-language-server" "--stdio")
@@ -996,9 +996,9 @@ using tree-sitter to manage Parser
                   (python-mode (setf (cdr item) 'python-ts-mode))
                   (c-mode (setf (cdr item) 'c-ts-mode))
                   (c-or-c++-mode (setf (cdr item) 'c++-ts-mode))
-                  ))
-    :mode
-    ("\\.json\\'" . json-ts-mode))
+                  (javascript-mode (setf (cdr item) 'js-ts-mode))
+                  (js-json-mode (setf (cdr item) 'json-ts-mode))
+                  )))
 #+end_src
 
 ** Python
