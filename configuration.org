@@ -196,9 +196,7 @@ Those themes are what I like most.
     :no-require t)
   (use-package nord-theme
     :no-require t)
-  (use-package modus-themes
-    :no-require t)
-  (use-package material-theme
+  (use-package doom-themes
     :no-require t)
 #+end_src
 
@@ -208,14 +206,15 @@ Theme loading symbols.
   (defvar theme-pool
     '(nord
       modus-operandi
-      ;; modus-vivendi
-      ;; solarized-light
-      ;; solarized-dark
-      ;; material
-      ;; material-light
+      modus-vivendi
+      doom-xcode
+      doom-monokai-pro
+      doom-one
+      solarized-light
+      solarized-dark
       ))
 
-  (defvar MattLu/choosing-theme 'nord)
+  (defvar MattLu/choosing-theme 'doom-xcode)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1064,7 +1063,7 @@ Set ipython as interpreter
     :commands (ein:notebooklist-open))
 #+END_SRC
 
-*** code format
+*** COMMENT code format
 
 #+begin_src emacs-lisp
   (defun MattLu/python-format ()
