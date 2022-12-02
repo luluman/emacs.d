@@ -218,6 +218,14 @@ Theme loading symbols.
 #+end_src
 
 #+begin_src emacs-lisp
+  (defun MattLu/load-theme (theme)
+    (face-remap-add-relative 'vertical-border '(:inherit default))
+    (load-theme theme t)
+    (when (cl-search "doom" (symbol-name  theme))
+      (set-face-background 'vertical-border "bg")))
+#+end_src
+
+#+begin_src emacs-lisp
   (defun MattLu/themes-toggle ()
     "Toggle between themes defined in theme-pool."
     (interactive)
@@ -228,10 +236,7 @@ Theme loading symbols.
                 (nth (% (+ 1 index) (length theme-pool)) theme-pool))
         (setq MattLu/choosing-theme 'nord))
       (disable-theme current-theme)
-      (load-theme MattLu/choosing-theme t)
-      (if (cl-search "doom" (symbol-name  MattLu/choosing-theme))
-          (set-face-background 'vertical-border "bg")
-        (face-remap-add-relative 'vertical-border '(:inherit default)))
+      (MattLu/load-theme MattLu/choosing-theme)
       (message "change theme to `%s'" MattLu/choosing-theme)))
 #+end_src
 
@@ -247,7 +252,7 @@ Using solarized theme on MacOS.
 #+begin_src emacs-lisp
   (if (display-graphic-p)
       (MattLu/apply-solarized-theme)
-    (load-theme MattLu/choosing-theme t))
+    (MattLu/load-theme MattLu/choosing-theme))
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
@@ -255,7 +260,7 @@ Using solarized theme on MacOS.
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
                   (with-selected-frame frame
-                    (load-theme MattLu/choosing-theme t)))))
+                    (MattLu/load-theme MattLu/choosing-theme)))))
 
 #+END_SRC
 
