@@ -229,6 +229,9 @@ Theme loading symbols.
         (setq MattLu/choosing-theme 'nord))
       (disable-theme current-theme)
       (load-theme MattLu/choosing-theme t)
+      (if (cl-search "doom" (symbol-name  MattLu/choosing-theme))
+          (set-face-background 'vertical-border "bg")
+        (face-remap-add-relative 'vertical-border '(:inherit default)))
       (message "change theme to `%s'" MattLu/choosing-theme)))
 #+end_src
 
