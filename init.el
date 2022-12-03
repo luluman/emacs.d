@@ -12,6 +12,7 @@
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (setq-default buffer-file-coding-system 'utf-8)
+(setq native-comp-async-report-warnings-errors nil) ;; suppress the native compile warning.
 ;; Ensure that use-package is installed.
 ;;
 ;; If use-package isn't already installed, it's extremely likely that this is a

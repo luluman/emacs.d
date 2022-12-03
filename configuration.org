@@ -999,15 +999,18 @@ using tree-sitter to manage Parser
     (treesit-max-buffer-size (* 100 1024 1024))
     (enable-local-variables nil) ;; disable checking the ‘-*-’ line
     :config
-    (cl-loop for item in auto-mode-alist
-             do (cl-case (cdr item)
-                  (c++-mode (setf (cdr item) 'c++-ts-mode))
-                  (python-mode (setf (cdr item) 'python-ts-mode))
-                  (c-mode (setf (cdr item) 'c-ts-mode))
-                  (c-or-c++-mode (setf (cdr item) 'c++-ts-mode))
-                  (javascript-mode (setf (cdr item) 'js-ts-mode))
-                  (js-json-mode (setf (cdr item) 'json-ts-mode))
-                  ))
+    (defun MattLu/change-mode-to-treesit (mode-alist)
+      (cl-loop for item in mode-alist
+               do (cl-case (cdr item)
+                    (c++-mode (setf (cdr item) 'c++-ts-mode))
+                    (python-mode (setf (cdr item) 'python-ts-mode))
+                    (c-mode (setf (cdr item) 'c-ts-mode))
+                    (c-or-c++-mode (setf (cdr item) 'c++-ts-mode))
+                    (javascript-mode (setf (cdr item) 'js-ts-mode))
+                    (js-json-mode (setf (cdr item) 'json-ts-mode))
+                    )))
+    (MattLu/change-mode-to-treesit auto-mode-alist)
+    (MattLu/change-mode-to-treesit interpreter-mode-alist)
     :mode
     ("\\.h\\.inc\\'" . c++-ts-mode)
     ("\\.cpp\\.inc\\'" . c++-ts-mode))
