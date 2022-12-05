@@ -1109,7 +1109,8 @@ OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
       (clang-format-buffer)))
 
   (defun MattLu/clang-format-key ()
-    (define-key (current-local-map) [remap eglot-format] 'MattLu/clang-format)
+    (when (current-local-map)
+      (define-key (current-local-map) [remap eglot-format] 'MattLu/clang-format))
     (local-set-key (kbd "C-M-\\") 'MattLu/clang-format))
 
   (use-package clang-format
