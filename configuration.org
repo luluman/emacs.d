@@ -991,11 +991,11 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
 
 using tree-sitter to manage Parser
 #+begin_src emacs-lisp
-  (setq treesit-langs "/usr/local/lib/tree-sitter-langs")
+  (setq treesit-langs-cpp "/usr/local/lib/libtree-sitter-cpp.so")
   (use-package treesit
-    :if (file-directory-p treesit-langs)
+    :if (file-exists-p treesit-langs-cpp)
     :custom
-    (treesit-extra-load-path `(,treesit-langs))
+    ;; (treesit-extra-load-path `(,treesit-langs-folder))
     (treesit-max-buffer-size (* 100 1024 1024))
     (enable-local-variables nil) ;; disable checking the ‘-*-’ line
     :config
