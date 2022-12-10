@@ -849,7 +849,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (eglot-ignored-server-capabilities '(:hoverProvider :documentHighlightProvider))
     :config
     (MattLu/test-then-add-eglot '(c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
-    ;; (MattLu/test-then-add-eglot '(python-mode) "pyright-langserver" "--stdio")
+    (MattLu/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
     (MattLu/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
     (MattLu/test-then-add-eglot '(js-mode typescript-mode js-ts-mode) "typescript-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start")
@@ -997,7 +997,8 @@ using tree-sitter to manage Parser
     :custom
     ;; (treesit-extra-load-path `(,treesit-langs-folder))
     (treesit-max-buffer-size (* 100 1024 1024))
-    (enable-local-variables nil) ;; disable checking the ‘-*-’ line
+    ;; disable checking the ‘-*-’ line, this will disable loading .dir-locals.el
+    ;; (enable-local-variables nil)
     :config
     (defun MattLu/change-mode-to-treesit (mode-alist)
       (cl-loop for item in mode-alist
@@ -1011,9 +1012,11 @@ using tree-sitter to manage Parser
                     )))
     (MattLu/change-mode-to-treesit auto-mode-alist)
     (MattLu/change-mode-to-treesit interpreter-mode-alist)
-    :mode
-    ("\\.h\\.inc\\'" . c++-ts-mode)
-    ("\\.cpp\\.inc\\'" . c++-ts-mode))
+    :hook
+    (c++-mode . c++-ts-mode)
+    (c-mode . c-ts-mode)
+    (c-or-c++-mode . c++-ts-mode)
+    (python-mode . python-ts-mode))
 #+end_src
 
 ** Python
@@ -1045,7 +1048,8 @@ Pip can install binary file.
       (when venv-py
         (venv-workon (car (last (split-string venv-py "\/") 2)))))
     (MattLu/test-then-add-eglot '(cmake-mode) "cmake-language-server")
-    (MattLu/test-then-add-eglot '(python-mode python-ts-mode) "pylsp"))
+    ;; (MattLu/test-then-add-eglot '(python-mode python-ts-mode) "pylsp")
+    )
 #+END_SRC
 
 Set ipython as interpreter
@@ -1074,7 +1078,7 @@ Set ipython as interpreter
     :commands (ein:notebooklist-open))
 #+END_SRC
 
-*** COMMENT code format
+*** code format
 
 #+begin_src emacs-lisp
   (defun MattLu/python-format ()
