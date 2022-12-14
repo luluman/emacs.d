@@ -1016,7 +1016,10 @@ using tree-sitter to manage Parser
     (c++-mode . c++-ts-mode)
     (c-mode . c-ts-mode)
     (c-or-c++-mode . c++-ts-mode)
-    (python-mode . python-ts-mode))
+    (python-mode . python-ts-mode)
+    :mode
+    ("\\.h\\.inc\\'" . c++-ts-mode)
+    ("\\.cpp\\.inc\\'" . c++-ts-mode))
 #+end_src
 
 ** Python
