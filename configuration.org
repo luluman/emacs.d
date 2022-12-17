@@ -852,10 +852,10 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
     (MattLu/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
     (MattLu/test-then-add-eglot '(js-mode typescript-mode js-ts-mode) "typescript-language-server" "--stdio")
-    (MattLu/test-then-add-eglot '(sh-mode) "bash-language-server" "start")
+    (MattLu/test-then-add-eglot '(bash-ts-mode) "bash-language-server" "start")
     (MattLu/test-then-add-eglot '(rust-mode) "rust-analyzer")
     (MattLu/test-then-add-eglot '(yaml-mode) "yaml-language-server" "--stdio")
-    (MattLu/test-then-add-eglot '(dockerfile-mode) "docker-langserver" "--stdio")
+    (MattLu/test-then-add-eglot '(dockerfile-ts-mode) "docker-langserver" "--stdio")
     ;; (MattLu/test-then-add-eglot '(json-ts-mode) "vscode-json-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(mlir-mode) "mlir-lsp-server")
 
@@ -1009,6 +1009,7 @@ using tree-sitter to manage Parser
                     (c-or-c++-mode (setf (cdr item) 'c++-ts-mode))
                     (javascript-mode (setf (cdr item) 'js-ts-mode))
                     (js-json-mode (setf (cdr item) 'json-ts-mode))
+                    (sh-mode (setf (cdr item) 'bash-ts-mode))
                     )))
     (MattLu/change-mode-to-treesit auto-mode-alist)
     (MattLu/change-mode-to-treesit interpreter-mode-alist)
@@ -1017,6 +1018,7 @@ using tree-sitter to manage Parser
     (c-mode . c-ts-mode)
     (c-or-c++-mode . c++-ts-mode)
     (python-mode . python-ts-mode)
+    (sh-mode . bash-ts-mode)
     :mode
     ("\\.h\\.inc\\'" . c++-ts-mode)
     ("\\.cpp\\.inc\\'" . c++-ts-mode))
@@ -1360,6 +1362,7 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 
 #+begin_src emacs-lisp
   (use-package mlir-mode
+    :mode "\\.pdll$"
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
@@ -1368,12 +1371,6 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 #+begin_src emacs-lisp
   (use-package yaml-mode
     :mode "\\.yml$")
-#+end_src
-
-** Dockerfile mode
-
-#+begin_src emacs-lisp
-  (use-package dockerfile-mode)
 #+end_src
 
 * Org
