@@ -692,22 +692,6 @@ Get environment variable in Shell and set them to Emacs
     (window-configuration-change . MattLu/wg-perform-session-maintenance))
 #+END_SRC
 
-** CMake
-
-CMake is a meta-build system that is commonly used in C++ projects.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package cmake-mode
-    :mode ("CMakeLists.txt" "\\.cmake\\'"))
-#+END_SRC
-
-Enable type-aware highlighting support for CMake files:
-
-#+BEGIN_SRC emacs-lisp
-  (use-package cmake-font-lock
-    :hook (cmake-mode . cmake-font-lock-activate))
-#+END_SRC
-
 ** Bazel
 
 Bazel is a build system created by Google:
@@ -851,10 +835,10 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (MattLu/test-then-add-eglot '(c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
     (MattLu/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
     (MattLu/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
-    (MattLu/test-then-add-eglot '(js-mode typescript-mode js-ts-mode) "typescript-language-server" "--stdio")
+    (MattLu/test-then-add-eglot '(js-ts-mode) "typescript-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(bash-ts-mode) "bash-language-server" "start")
-    (MattLu/test-then-add-eglot '(rust-mode) "rust-analyzer")
-    (MattLu/test-then-add-eglot '(yaml-mode) "yaml-language-server" "--stdio")
+    (MattLu/test-then-add-eglot '(rust-ts-mode) "rust-analyzer")
+    (MattLu/test-then-add-eglot '(yaml-ts-mode) "yaml-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(dockerfile-ts-mode) "docker-langserver" "--stdio")
     ;; (MattLu/test-then-add-eglot '(json-ts-mode) "vscode-json-language-server" "--stdio")
     (MattLu/test-then-add-eglot '(mlir-mode) "mlir-lsp-server")
@@ -991,34 +975,21 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
 
 using tree-sitter to manage Parser
 #+begin_src emacs-lisp
-  (setq treesit-langs-cpp "/usr/local/lib/libtree-sitter-cpp.so")
   (use-package treesit
-    :if (file-exists-p treesit-langs-cpp)
+    :if (treesit-available-p)
     :custom
     ;; (treesit-extra-load-path `(,treesit-langs-folder))
     (treesit-max-buffer-size (* 100 1024 1024))
     ;; disable checking the ‘-*-’ line, this will disable loading .dir-locals.el
     ;; (enable-local-variables nil)
     :config
-    (defun MattLu/change-mode-to-treesit (mode-alist)
-      (cl-loop for item in mode-alist
-               do (cl-case (cdr item)
-                    (c++-mode (setf (cdr item) 'c++-ts-mode))
-                    (python-mode (setf (cdr item) 'python-ts-mode))
-                    (c-mode (setf (cdr item) 'c-ts-mode))
-                    (c-or-c++-mode (setf (cdr item) 'c++-ts-mode))
-                    (javascript-mode (setf (cdr item) 'js-ts-mode))
-                    (js-json-mode (setf (cdr item) 'json-ts-mode))
-                    (sh-mode (setf (cdr item) 'bash-ts-mode))
-                    )))
-    (MattLu/change-mode-to-treesit auto-mode-alist)
-    (MattLu/change-mode-to-treesit interpreter-mode-alist)
-    :hook
-    (c++-mode . c++-ts-mode)
-    (c-mode . c-ts-mode)
-    (c-or-c++-mode . c++-ts-mode)
-    (python-mode . python-ts-mode)
-    (sh-mode . bash-ts-mode)
+    (push '(c++-mode . c++-ts-mode) major-mode-remap-alist)
+    (push '(c-mode . c-ts-mode) major-mode-remap-alist)
+    (push '(c-or-c++-mode . c++-ts-mode) major-mode-remap-alist)
+    (push '(python-mode . python-ts-mode) major-mode-remap-alist)
+    (push '(js-json-mode . json-ts-mode) major-mode-remap-alist)
+    (push '(javascript-mode . js-ts-mode) major-mode-remap-alist)
+    (push '(sh-mode . bash-ts-mode) major-mode-remap-alist)
     :mode
     ("\\.h\\.inc\\'" . c++-ts-mode)
     ("\\.cpp\\.inc\\'" . c++-ts-mode))
@@ -1142,20 +1113,14 @@ For running Google Tests from a given buffer
 ** Rust
 
 #+begin_src emacs-lisp
-  (use-package rust-mode
-    :hook
-    (rust-mode-hook . (lambda ()
-                        (setq indent-tabs-mode nil)
-                        (prettify-symbols-mode)))
-    :config
-    (defun MattLu/project-try-cargo-toml (dir)
-      (when-let* ((output
-                   (let ((default-directory dir))
-                     (shell-command-to-string "cargo metadata --no-deps --format-version 1")))
-                  (js (ignore-errors (json-read-from-string output)))
-                  (found (cdr (assq 'workspace_root js))))
-        (cons 'transient found)))
-    (add-hook 'project-find-functions 'MattLu/project-try-cargo-toml nil nil))
+  (defun MattLu/project-try-cargo-toml (dir)
+    (when-let* ((output
+                 (let ((default-directory dir))
+                   (shell-command-to-string "cargo metadata --no-deps --format-version 1")))
+                (js (ignore-errors (json-read-from-string output)))
+                (found (cdr (assq 'workspace_root js))))
+      (cons 'transient found)))
+  (add-hook 'project-find-functions 'MattLu/project-try-cargo-toml nil nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1341,12 +1306,6 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
   (use-package rst)
 #+END_SRC
 
-** typescript-mode
-
-#+begin_src emacs-lisp
-  (use-package typescript-mode)
-#+end_src
-
 ** LLVM mode
 
 These are syntax highlighting files for the Emacs and XEmacs editors.
@@ -1364,13 +1323,6 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
   (use-package mlir-mode
     :mode "\\.pdll$"
     :load-path "~/.emacs.d/third_party/llvm-mode+")
-#+end_src
-
-** YAML mode
-
-#+begin_src emacs-lisp
-  (use-package yaml-mode
-    :mode "\\.yml$")
 #+end_src
 
 * Org
