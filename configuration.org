@@ -204,17 +204,17 @@ Theme loading symbols.
 
 #+begin_src emacs-lisp
   (defvar theme-pool
-    '(nord
-      modus-operandi
+    '(modus-operandi
       modus-vivendi
-      doom-xcode
-      doom-monokai-pro
-      doom-one
-      solarized-light
-      solarized-dark
+      ;; doom-xcode
+      ;; doom-monokai-pro
+      ;; doom-one
+      ;; solarized-light
+      ;; solarized-dark
+      ;; nord
       ))
 
-  (defvar MattLu/choosing-theme 'doom-xcode)
+  (defvar MattLu/choosing-theme 'modus-vivendi)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1321,7 +1321,7 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 
 #+begin_src emacs-lisp
   (use-package mlir-mode
-    :mode "\\.pdll$"
+    :mode "\\.pdll$" "\\.mlir$"
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
