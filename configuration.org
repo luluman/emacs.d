@@ -3102,6 +3102,15 @@ Hydra ediff, more function with less key bindings
 
 ** =dired=
 
+Use =c-x d= to enter current folder.
+
+#+begin_src emacs-lisp
+  (defun MattLu/dired ()
+    (interactive)
+    (dired nil))
+  (global-set-key (kbd "C-x d") 'MattLu/dired)
+#+end_src
+
  These are the switches that get passed to =ls= when =dired= gets a list of
  files. We're using:
 
@@ -3226,17 +3235,6 @@ Hydra ediff, more function with less key bindings
    (use-package dired-narrow
      :bind (:map dired-mode-map
                  ("/" . dired-narrow)))
- #+end_src
-
- #+begin_src emacs-lisp
-   (use-package peep-dired
-     :bind
-     (:map dired-mode-map
-      ("V" . peep-dired))
-     :custom
-     (peep-dired-enable-on-directories t)
-     (peep-dired-cleanup-on-disable t)
-     (peep-dired-ignored-extensions '("mkv" "iso" "mp4")))
  #+end_src
 
  dired-rsync – asynchronous rsync from dired
