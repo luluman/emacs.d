@@ -2635,6 +2635,18 @@ consult-dir: insert paths into minibuffer prompts in Emacs
 
 *** embark
 
+#+begin_src emacs-lisp
+  (defun MattLu/scp-file (arg input1)
+    ;; Copy files to My local device.
+    (interactive "P\nsInput 1:")
+    (let* ((device (completing-read "Select: " '("Mac" "EVB")))
+           (cmd (format "rsync -r %s %s:~/man.lu.huawei/" input1 device))
+           (cmd-out (shell-command-to-string cmd)))
+      (if (equal cmd-out "")
+          (message "Success: %s" cmd)
+        (message "Failed: %s\n%s"cmd cmd-out))))
+#+end_src
+
 embark with ace-windows
 https://karthinks.com/software/fifteen-ways-to-use-embark/
 
@@ -2658,6 +2670,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (define-key embark-file-map     (kbd "o") (MattLu/embark-ace-action find-file))
     (define-key embark-buffer-map   (kbd "o") (MattLu/embark-ace-action switch-to-buffer))
     (define-key embark-bookmark-map (kbd "o") (MattLu/embark-ace-action bookmark-jump))
+    (define-key embark-file-map  (kbd "s") 'MattLu/scp-file)
     :bind
     (("C-=" . embark-dwim)        ;; good alternative: M-.
      ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
