@@ -2640,7 +2640,7 @@ consult-dir: insert paths into minibuffer prompts in Emacs
     ;; Copy files to My local device.
     (interactive "P\nsInput 1:")
     (let* ((device (completing-read "Select: " '("Mac" "EVB")))
-           (cmd (format "rsync -r %s %s:~/man.lu.huawei/" input1 device))
+           (cmd (format "rsync -rlt %s %s:~/man.lu.huawei/" input1 device))
            (cmd-out (shell-command-to-string cmd)))
       (if (equal cmd-out "")
           (message "Success: %s" cmd)
