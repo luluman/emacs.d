@@ -2662,6 +2662,38 @@ https://karthinks.com/software/fifteen-ways-to-use-embark/
              (call-interactively (symbol-function ',fn)))))))
 #+end_src
 
+#+begin_src emacs-lisp
+  (defun embark-which-key-indicator ()
+    "An embark indicator that displays keymaps using which-key.
+  The which-key help message will show the type and value of the
+  current target followed by an ellipsis if there are further
+  targets."
+    (lambda (&optional keymap targets prefix)
+      (if (null keymap)
+          (which-key--hide-popup-ignore-command)
+        (which-key--show-keymap
+         (if (eq (plist-get (car targets) :type) 'embark-become)
+             "Become"
+           (format "Act on %s '%s'%s"
+                   (plist-get (car targets) :type)
+                   (embark--truncate-target (plist-get (car targets) :target))
+                   (if (cdr targets) "…" "")))
+         (if prefix
+             (pcase (lookup-key keymap prefix 'accept-default)
+               ((and (pred keymapp) km) km)
+               (_ (key-binding prefix 'accept-default)))
+           keymap)
+         nil nil t (lambda (binding)
+                     (not (string-suffix-p "-argument" (cdr binding))))))))
+
+  (defun embark-hide-which-key-indicator (fn &rest args)
+    "Hide the which-key indicator immediately when using the completing-read prompter."
+    (which-key--hide-popup-ignore-command)
+    (let ((embark-indicators
+           (remq #'embark-which-key-indicator embark-indicators)))
+      (apply fn args)))
+#+end_src
+
 Emacs Mini-Buffer Actions Rooted in Keymaps
 
 #+begin_src emacs-lisp
@@ -2672,12 +2704,18 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (define-key embark-bookmark-map (kbd "o") (MattLu/embark-ace-action bookmark-jump))
     (define-key embark-file-map  (kbd "s") 'MattLu/scp-file)
     :bind
-    (("C-=" . embark-dwim)        ;; good alternative: M-.
-     ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+    ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
     :init
     ;; Optionally replace the key help with a completing-read interface
     (setq prefix-help-command #'embark-prefix-help-command)
-    (bind-keys* ("C-;" . embark-act)))
+    (bind-keys* ("C-;" . embark-act))
+    :config
+    (setq embark-indicators
+          '(embark-which-key-indicator
+            embark-highlight-indicator
+            embark-isearch-highlight-indicator))
+    (advice-add #'embark-completing-read-prompter
+                :around #'embark-hide-which-key-indicator))
 
   ;; Consult users will also want the embark-consult package.
   (use-package embark-consult
@@ -2871,7 +2909,9 @@ Just keep pressing the key until it selects what you want.
 
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region
-   :bind  ("C-c q" . er/expand-region))
+    :bind
+    ("C-c q" . er/expand-region)
+    ("C-=" . mark-sexp))
 #+END_SRC
 
 ** Use ace-jump
