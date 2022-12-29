@@ -976,6 +976,7 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
 using tree-sitter to manage Parser
 #+begin_src emacs-lisp
   (use-package treesit
+    :ensure nil
     :if (treesit-available-p)
     :custom
     ;; (treesit-extra-load-path `(,treesit-langs-folder))
