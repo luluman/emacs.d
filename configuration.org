@@ -1033,6 +1033,8 @@ Set ipython as interpreter
 
 #+BEGIN_SRC emacs-lisp
   (use-package python
+    :config
+    (put 'python-shell-process-environment 'safe-local-variable #'listp)
     :custom
     (python-shell-interpreter "ipython")
     (python-shell-interpreter-args "--simple-prompt -i")
