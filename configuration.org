@@ -876,13 +876,12 @@ outputs.
   (use-package vterm
     :if (eq system-type 'gnu/linux)
     :init
-    (use-package multi-vterm)
-    :bind ("C-c v" . multi-vterm)
+    :bind ("C-c v" . vterm)
     :custom
     (vterm-kill-buffer-on-exit nil)
     (vterm-always-compile-module t)
     (term-copy-exclude-prompt t)
-    (vterm-buffer-name-string "VT %s")
+    (vterm-buffer-name-string "*vterm %s*")
     (vterm-keymap-exceptions
      '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" "M-s"))
     :config
@@ -3025,7 +3024,7 @@ while still keeping them within arm’s reach.
             "\\*Async Shell Command\\*"
             "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
             "^\\*term.*\\*$"   term-mode   ;term as a popup
-            "^\\*vterminal.*\\*$"   vterm-mode   ;vterm as a popup
+            "^\\*vterm.*\\*$"   vterm-mode   ;vterm as a popup
             "^\\*TeX Help.*\\*$"  tex-mode
             compilation-mode))
     (popper-mode +1)
