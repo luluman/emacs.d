@@ -3317,7 +3317,13 @@ easily.
 #+begin_src emacs-lisp
   (use-package easy-kill
     :config
-    (global-set-key [remap kill-ring-save] 'easy-kill))
+    (global-set-key [remap kill-ring-save] 'easy-kill)
+    :bind
+    ("C-=" . easy-mark)
+    (:map easy-kill-base-map
+          ("=" . easy-kill-expand)
+          ("C-=" . easy-kill-expand)
+          ("q" . easy-kill-expand)))
 #+end_src
 
 ** useful settings
