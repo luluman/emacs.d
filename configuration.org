@@ -873,9 +873,26 @@ emacs-libvterm is fully capable, fast, and it can seamlessly handle large
 outputs.
 
 #+begin_src emacs-lisp
+  (defun MattLu/vterm-env ()
+    (interactive)
+    (setq vterm-environment (cdr (assq 'vterm-env dir-local-variables-alist))) ;; FixMe
+    (vterm))
+
+  (define-derived-mode MattLu/vterm-mode fundamental-mode "MattLu/VTerm"
+    "Major mode for vterm buffer."
+    (hack-dir-local-variables)
+    (let ((vterm-env (cdr (assq 'vterm-environment dir-local-variables-alist))))
+      (when vterm-env
+        (make-local-variable 'vterm-environment)
+        (setq vterm-environment vterm-env)))
+    )
+#+end_src
+
+#+begin_src emacs-lisp
   (use-package vterm
     :if (eq system-type 'gnu/linux)
     :init
+    (put 'vterm-environment 'safe-local-variable #'listp)
     :bind ("C-c v" . vterm)
     :custom
     (vterm-kill-buffer-on-exit nil)
