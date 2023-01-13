@@ -555,7 +555,8 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     (setq magit-bind-magit-project-status nil)
     :custom
     (magit-push-always-verify nil)
-    (git-commit-summary-max-length 50))
+    (git-commit-summary-max-length 50)
+    (magit-blame-goto-chunk-hook '(magit-blame-maybe-show-message)))
 #+end_src
 
 I'm also partial to =git-timemachine=, which lets you quickly page through the
