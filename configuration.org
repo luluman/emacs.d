@@ -246,7 +246,7 @@ Using solarized theme on MacOS.
   (defun MattLu/apply-solarized-theme ()
     (setq solarized-scale-org-headlines nil)
     (transparency 98)
-    (load-theme 'solarized-light t))
+    (load-theme 'modus-operandi t))
 #+END_SRC
 
 #+begin_src emacs-lisp
