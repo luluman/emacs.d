@@ -1008,6 +1008,12 @@ using tree-sitter to manage Parser
     (push '(js-json-mode . json-ts-mode) major-mode-remap-alist)
     (push '(javascript-mode . js-ts-mode) major-mode-remap-alist)
     (push '(sh-mode . bash-ts-mode) major-mode-remap-alist)
+    (mapcar #'require '(cmake-ts-mode
+                        dockerfile-ts-mode
+                        go-ts-mode
+                        rust-ts-mode
+                        yaml-ts-mode
+                        toml-ts-mode))
     :mode
     ("\\.h\\.inc\\'" . c++-ts-mode)
     ("\\.cpp\\.inc\\'" . c++-ts-mode))
@@ -1041,7 +1047,7 @@ Pip can install binary file.
     (let ((venv-py (MattLu/get-first-valid-path venv-location)))
       (when venv-py
         (venv-workon (car (last (split-string venv-py "\/") 2)))))
-    (MattLu/test-then-add-eglot '(cmake-mode) "cmake-language-server")
+    (MattLu/test-then-add-eglot '(cmake-ts-mode) "cmake-language-server")
     ;; (MattLu/test-then-add-eglot '(python-mode python-ts-mode) "pylsp")
     )
 #+END_SRC
