@@ -2529,7 +2529,7 @@ the default completion system.
     (fussy-use-cache t)
     (fussy-compare-same-score-fn 'fussy-histlen->strlen<)
     (fussy-filter-fn 'fussy-filter-default)
-    (fussy-fast-regex-fn 'fussy-pattern-flex-1)
+    (fussy-default-regex-fn 'fussy-pattern-flex-1)
     (completion-styles '(fussy))
     (completion-category-defaults nil)
     (completion-category-overrides nil))
