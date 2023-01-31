@@ -1351,6 +1351,18 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
+** Groovy mode
+
+#+begin_src emacs-lisp
+  (use-package groovy-mode
+    :config
+    (let ((groovy-lsp "/usr/local/lib/groovy-language-server-all.jar"))
+      (when (file-exists-p groovy-lsp)
+        (add-to-list 'eglot-server-programs
+                     `(groovy-mode . ("java" "-jar" ,groovy-lsp)))
+        (add-hook 'groovy-mode-hook 'eglot-ensure))))
+#+end_src
+
 * Org
 
 Including org-tempo restores the <s-style easy-templates that were deprecated in Org 9.2.
