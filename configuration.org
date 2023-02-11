@@ -268,7 +268,8 @@ Custom face when running in 256-color terminal
 
 #+begin_src emacs-lisp
   (defun MattLu/load-custom-face-el ()
-    (if (eq 256 (display-color-cells))
+    (if (and (eq MattLu/choosing-theme 'nord)
+             (eq 256 (display-color-cells)))
         (load-file "~/.emacs.d/custom-face.el")))
 
   (if (daemonp)
