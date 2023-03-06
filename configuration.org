@@ -1364,6 +1364,14 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
         (add-hook 'groovy-mode-hook 'eglot-ensure))))
 #+end_src
 
+** EPUB mode
+
+#+begin_src emacs-lisp
+  (use-package nov
+    :mode
+    ("\\.epub\\'" . nov-mode))
+#+end_src
+
 * Org
 
 Including org-tempo restores the <s-style easy-templates that were deprecated in Org 9.2.
