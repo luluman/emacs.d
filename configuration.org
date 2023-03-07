@@ -2663,7 +2663,7 @@ consult-buffer and a Swiper-like search command consult-line.
      consult-bookmark consult-recent-file consult-xref
      consult--source-bookmark consult--source-recent-file
      consult--source-project-recent-file
-     :preview-key (kbd "M-."))
+     :preview-key '(:debounce 0.4 any))
 
     (setq consult-narrow-key "<") ;; (kbd "C-+")
     )
@@ -3377,7 +3377,7 @@ easily.
 
 #+begin_src emacs-lisp
   (use-package easy-kill
-    :config
+    :init
     (global-set-key [remap kill-ring-save] 'easy-kill)
     :bind
     ("C-=" . easy-mark)
