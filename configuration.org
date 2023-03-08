@@ -3064,7 +3064,7 @@ while still keeping them within arm’s reach.
   (use-package popper
     :bind (("C-<tab>" . popper-toggle-latest)
            ("C-M-<tab>" . popper-cycle)
-           ("C-<return>" . popper-toggle-type))
+           ("C-M-<return>" . popper-toggle-type))
     :custom
     ;; (popper-window-height 12)
     (popper-mode-line nil)
