@@ -2959,22 +2959,17 @@ Just keep pressing the key until it selects what you want.
     :bind
     ("C-c q" . er/expand-region)
     ;; ("C-=" . mark-sexp)
-    :config
-    ;; https://emacs-china.org/t/treesit-expand-region-el/23406
-    (defun MattLu/treesit-mark-bigger-node ()
-      (let* ((root (treesit-buffer-root-node))
-             (node (treesit-node-descendant-for-range root (region-beginning) (region-end)))
-             (node-start (treesit-node-start node))
-             (node-end (treesit-node-end node)))
-        ;; Node fits the region exactly. Try its parent node instead.
-        (when (and (= (region-beginning) node-start) (= (region-end) node-end))
-          (when-let ((node (treesit-node-parent node)))
-            (setq node-start (treesit-node-start node)
-                  node-end (treesit-node-end node))))
-        (set-mark node-end)
-        (goto-char node-start)))
-    (add-to-list 'er/try-expand-list 'MattLu/treesit-mark-bigger-node))
+    )
 #+END_SRC
+
+#+begin_src emacs-lisp
+  (use-package expreg
+    ;; using use-package PATH
+    :load-path "~/.emacs.d/third_party/lunarymacs"
+    :bind
+    ("C-=" . expreg-expand)
+    ("C--" . expreg-contract))
+#+end_src
 
 ** Use ace-jump
 
@@ -3379,12 +3374,13 @@ easily.
   (use-package easy-kill
     :init
     (global-set-key [remap kill-ring-save] 'easy-kill)
-    :bind
-    ("C-=" . easy-mark)
-    (:map easy-kill-base-map
-          ("=" . easy-kill-expand)
-          ("C-=" . easy-kill-expand)
-          ("q" . easy-kill-expand)))
+    ;; :bind
+    ;; ("C-=" . easy-mark)
+    ;; (:map easy-kill-base-map
+    ;;       ("=" . easy-kill-expand)
+    ;;       ("C-=" . easy-kill-expand)
+    ;;       ("q" . easy-kill-expand))
+    )
 #+end_src
 
 ** useful settings
