@@ -4,3 +4,10 @@ wheel
 proselint
 cmake-language-server
 cmakelang
+
+# for ChatGPT
+requests[socks]
+openai
+epc
+sexpdata
+six

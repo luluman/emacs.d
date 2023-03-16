@@ -1343,7 +1343,9 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 
 #+begin_src emacs-lisp
   (use-package tablegen-mode
-    :load-path "~/.emacs.d/third_party/llvm-mode+")
+    :load-path "~/.emacs.d/third_party/llvm-mode+"
+    :hook
+    (tablegen-mode . display-line-numbers-mode))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1370,6 +1372,16 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
   (use-package nov
     :mode
     ("\\.epub\\'" . nov-mode))
+#+end_src
+
+** ChatGPT
+
+#+begin_src emacs-lisp
+  (use-package mind-wave
+    ;; using use-package PATH
+    :load-path "~/.emacs.d/mind-wave"
+    :custom
+    (mind-wave-api-key-path (expand-file-name "~/.ssh/chatgpt_api_key")))
 #+end_src
 
 * Org
