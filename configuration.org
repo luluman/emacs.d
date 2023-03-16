@@ -1338,11 +1338,13 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 These are syntax highlighting files for the Emacs and XEmacs editors.
 #+begin_src emacs-lisp
   (use-package llvm-mode
+    :mode "\\.ll$"
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package tablegen-mode
+    :mode "\\.td$"
     :load-path "~/.emacs.d/third_party/llvm-mode+"
     :hook
     (tablegen-mode . display-line-numbers-mode))
