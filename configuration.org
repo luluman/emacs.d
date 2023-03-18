@@ -148,6 +148,62 @@ Define a big ol' bunch of handy utility functions.
     (add-to-list 'exec-path path))
 #+END_SRC
 
+proxy settings
+#+begin_src emacs-lisp
+  ;; https://github.com/happyo/emacs.d/blob/main/lisp/init-proxy.el
+  (setq centaur-socks-proxy "127.0.0.1:7890")    ; SOCKS proxy
+  (setq MattLu/remote-host-name "EVB")
+  (setq MattLu/socks5 nil)
+
+  (defun MattLu/new-socks5-proxy ()
+    (apply #'start-process "socks5-proxy"
+           (format "*socks5-proxy-%s*" MattLu/remote-host-name)
+           "ssh" (list "-ND" centaur-socks-proxy MattLu/remote-host-name)))
+
+  (defun proxy-socks-show ()
+    "Show SOCKS proxy."
+    (interactive)
+    (if (bound-and-true-p socks-noproxy)
+        (message "Current SOCKS%d proxy is %s:%s"
+                 (cadddr socks-server) (cadr socks-server) (caddr socks-server))
+      (message "No SOCKS proxy")))
+
+  (defun proxy-socks-enable ()
+    "Enable SOCKS proxy."
+    (interactive)
+    (unless (process-live-p MattLu/socks5)
+      (setq MattLu/socks5 (MattLu/new-socks5-proxy)))
+    (require 'socks)
+    (setq url-gateway-method 'socks
+          socks-noproxy '("localhost"))
+    (let* ((proxy (split-string centaur-socks-proxy ":"))
+           (host (car proxy))
+           (port (string-to-number (cadr proxy))))
+      (setq socks-server `("Default server" ,host ,port 5)))
+    ;; (setenv "all_proxy" (concat "socks5://" centaur-socks-proxy))
+    (proxy-socks-show))
+
+  (defun proxy-socks-disable ()
+    "Disable SOCKS proxy."
+    (interactive)
+    (when MattLu/socks5
+      (kill-process MattLu/socks5)
+      (setq MattLu/socks5 nil))
+    (setq url-gateway-method 'native
+          socks-noproxy nil
+          socks-server nil)
+    ;; (setenv "all_proxy" "")
+    (proxy-socks-show))
+
+  (defun proxy-socks-toggle ()
+    "Toggle SOCKS proxy."
+    (interactive)
+    (if (or (bound-and-true-p socks-noproxy)
+            (process-live-p MattLu/socks5))
+        (proxy-socks-disable)
+      (proxy-socks-enable)))
+#+end_src
+
 * UI preferences
 ** Tweak window chrome
 
