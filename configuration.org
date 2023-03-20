@@ -1435,7 +1435,6 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 
 #+begin_src emacs-lisp
   (use-package gptel
-    :load-path "~/.emacs.d/gptel"
     :config
     ;; (setq gptel--debug t)
     (advice-add
@@ -1445,8 +1444,6 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
        (push (format "-xsocks5h://%s" MattLu/socks-proxy) args)))
     :init
     (require 'f)
-    (require 'gptel-curl)
-    (require 'gptel-transient)
     :custom
     (gptel-default-mode 'markdown-mode)
     (gptel-api-key (lambda ()
@@ -3158,6 +3155,7 @@ while still keeping them within arm’s reach.
           '(;;("Output\\*$" . hide)
             (completion-list-mode . hide)
             occur-mode
+            "^\\*socks5-proxy-.*\\*$"
             "\\*Async Shell Command\\*"
             "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
             "^\\*term.*\\*$"   term-mode   ;term as a popup
