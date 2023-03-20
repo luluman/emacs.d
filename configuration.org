@@ -163,7 +163,7 @@ proxy settings
   (defun proxy-socks-show ()
     "Show SOCKS proxy."
     (interactive)
-    (if (bound-and-true-p socks-noproxy)
+    (if (process-live-p MattLu/socks5)
         (message "Current SOCKS%d proxy is %s:%s"
                  (cadddr socks-server) (cadr socks-server) (caddr socks-server))
       (message "No SOCKS proxy")))
@@ -198,8 +198,7 @@ proxy settings
   (defun proxy-socks-toggle ()
     "Toggle SOCKS proxy."
     (interactive)
-    (if (or (bound-and-true-p socks-noproxy)
-            (process-live-p MattLu/socks5))
+    (if (process-live-p MattLu/socks5)
         (proxy-socks-disable)
       (proxy-socks-enable)))
 #+end_src
