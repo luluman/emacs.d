@@ -3537,6 +3537,23 @@ https://youtu.be/51eSeqcaikM
   (setq read-process-output-max (* 8 1024 1024)) ;; 8mb
 #+end_src
 
+** Persistent Prefix Keymaps
+
+https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
+
+#+begin_src emacs-lisp
+  (defun repeated-prefix-help-command ()
+    (interactive)
+    (when-let* ((keys (this-command-keys-vector))
+                (prefix (seq-take keys (1- (length keys))))
+                (orig-keymap (key-binding prefix 'accept-default))
+                (keymap (copy-keymap orig-keymap))
+                (exit-func (set-transient-map keymap t )))
+      (which-key--create-buffer-and-show nil keymap)))
+
+  (setq prefix-help-command #'repeated-prefix-help-command)
+#+end_src
+
 * Set custom keybindings
 
 Just a few handy functions.
