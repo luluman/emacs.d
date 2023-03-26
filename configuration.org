@@ -152,7 +152,7 @@ proxy settings
 #+begin_src emacs-lisp
   ;; https://github.com/happyo/emacs.d/blob/main/lisp/init-proxy.el
   (setq MattLu/socks-proxy "127.0.0.1:7890")    ; SOCKS proxy
-  (setq MattLu/remote-host-name "Jap")
+  (setq MattLu/remote-host-name "Mac")
   (setq MattLu/socks5 nil)
 
   (defun MattLu/new-socks5-proxy ()
@@ -878,6 +878,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (use-package consult-eglot)
     :commands
     (eglot eglot-ensure)
+    :hook
+    (eglot-mode . (lambda () (eglot-inlay-hints-mode -1)))
     :bind (:map eglot-mode-map
                 ("C-M-\\" . eglot-format)
                 ("C-c f r" . eglot-rename)
@@ -1066,7 +1068,6 @@ using tree-sitter to manage Parser
     (push '(sh-mode . bash-ts-mode) major-mode-remap-alist)
     (mapcar #'require '(cmake-ts-mode
                         dockerfile-ts-mode
-                        go-ts-mode
                         rust-ts-mode
                         yaml-ts-mode
                         toml-ts-mode))
@@ -1437,6 +1438,7 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
   (use-package gptel
     :config
     ;; (setq gptel--debug t)
+    (setq gptel-default-mode 'org-mode)
     (advice-add
      'gptel-curl--get-args
      :filter-return
@@ -1445,7 +1447,6 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
     :init
     (require 'f)
     :custom
-    (gptel-default-mode 'markdown-mode)
     (gptel-api-key (lambda ()
                      (string-trim-right
                       (f-read-text "~/.ssh/chatgpt_api_key")))))
