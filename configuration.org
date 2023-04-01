@@ -1447,6 +1447,8 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
     :init
     (require 'f)
     :custom
+    (gptel-use-curl t)
+    (gptel-playback t)
     (gptel-api-key (lambda ()
                      (string-trim-right
                       (f-read-text "~/.ssh/chatgpt_api_key")))))
