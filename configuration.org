@@ -879,14 +879,15 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     :commands
     (eglot eglot-ensure)
     :hook
-    (eglot-mode . (lambda () (eglot-inlay-hints-mode -1)))
+    (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
     :bind (:map eglot-mode-map
                 ("C-M-\\" . eglot-format)
                 ("C-c f r" . eglot-rename)
                 ("C-c f a" . eglot-code-actions)
                 ("C-c f c" . eglot-reconnect)
                 ("C-c f k" . eglot-shutdown)
-                ("C-c f s" . consult-eglot-symbols))
+                ("C-c f s" . consult-eglot-symbols)
+                ("C-c f i" . eglot-inlay-hints-mode))
     :custom
     (eglot-autoshutdown t)
     (eglot-ignored-server-capabilities '(:hoverProvider :documentHighlightProvider))
