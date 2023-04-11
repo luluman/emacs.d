@@ -2312,6 +2312,7 @@ prose-related mode, so I store those in a list:
   (defvar prose-modes
     '(gfm-mode
       git-commit-mode
+      org-mode
       markdown-mode
       message-mode
       text-mode))
