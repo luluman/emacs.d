@@ -1083,16 +1083,16 @@ Pip can install binary file.
 
 #+begin_src emacs-lisp
   (defun MattLu/get-first-valid-path (path-list)
-  ;; get build path
-  ;; this dirctiry should contain the excutable server and config file.
-  ;; check path validation and return list.
-  (let ((path (remove-if-not
-                    (lambda (x)
-                      (file-directory-p (eval x)))
-                    path-list)))
-    (if path
-        (eval (car path))
-      nil)))
+    ;; get build path
+    ;; this dirctiry should contain the excutable server and config file.
+    ;; check path validation and return list.
+    (let ((path (cl-remove-if-not
+                 (lambda (x)
+                   (file-directory-p (eval x)))
+                 path-list)))
+      (if path
+          (eval (car path))
+        nil)))
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
