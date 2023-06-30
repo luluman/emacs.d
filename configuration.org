@@ -546,6 +546,8 @@ Install and configure [[https://github.com/Wilfred/deadgrep][deadgrep]] as an in
   (use-package deadgrep
     :bind
     ("C-x s" . deadgrep))
+
+  (use-package wgrep-deadgrep)
 #+end_src
 
 ** find-file-in-project
