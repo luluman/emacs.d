@@ -2914,7 +2914,9 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
   (use-package corfu-terminal
     :init
     (unless (display-graphic-p)
-      (corfu-terminal-mode +1)))
+      (corfu-terminal-mode +1))
+    :custom
+    (corfu-terminal-position-right-margin 1))
 #+end_src
 
 *** COMMENT show diagnose information
