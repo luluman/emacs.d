@@ -32,7 +32,7 @@ window:
   # to the window manager's recommended size
   dimensions:
     columns: 90
-    lines: 40
+    lines: 30
 
   # Window position (changes require restart)
   #
@@ -46,9 +46,9 @@ window:
   #
   # Blank space added around the window in pixels. This padding is scaled
   # by DPI and the specified value is always added at both opposing sides.
-  #padding:
-  #  x: 2
-  #  y: 2
+  padding:
+    x: 5
+    y: 5
 
   # Spread additional padding evenly around the terminal content.
   #dynamic_padding: false
@@ -202,7 +202,7 @@ colors:
   # Default colors
   primary:
     background: '#000000'
-    foreground: '#FFFFFF'
+    foreground: '#eaeaea'
 
     # Bright and dim foreground colors
     #
@@ -219,9 +219,9 @@ colors:
   #
   # Allowed values are CellForeground/CellBackground, which reference the
   # affected cell, or hexadecimal colors like #ff00ff.
-  #cursor:
-  #  text: CellBackground
-  #  cursor: CellForeground
+  cursor:
+    text: CellBackground
+    cursor: '#00FF00'
 
   # Vi mode cursor colors
   #
@@ -876,7 +876,7 @@ key_bindings:
   - { key: Slash,          mods: Control,                     chars: "\x1b[27;5;47~"        }
 
   - { key: Tab,            mods: Control|Alt,                 chars: "\x1b[27;13;9~"        }
-  - { key: Return,         mods: Control|Alt,                 chars: "\x1b[27;13;9~"        }
+  - { key: Return,         mods: Control|Alt,                 chars: "\x1b[27;13;13~"       }
   - { key: Apostrophe,     mods: Control,                     chars: "\x1b[27;5;39~"        }
   - { key: Comma,          mods: Control,                     chars: "\x1b[27;5;44~"        }
   - { key: Period,         mods: Control,                     chars: "\x1b[27;5;46~"        }
