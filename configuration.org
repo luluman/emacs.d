@@ -637,8 +637,11 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
 
 #+begin_src emacs-lisp
   (use-package undo-tree
-    :config
-    (turn-on-undo-tree-mode))
+    :custom
+    (global-undo-tree-mode t)
+    (undo-tree-auto-save-history nil)
+    (undo-tree-visualizer-relative-timestamps t)
+    (undo-tree-visualizer-timestamps t))
 #+end_src
 
 ** =GDB=
@@ -1166,6 +1169,33 @@ Set ipython as interpreter
 #+end_src
 
 ** C++
+
+LLVM-format-style
+
+#+begin_src emacs-lisp
+  (defun llvm-lineup-statement (langelem)
+    (let ((in-assign (c-lineup-assignments langelem)))
+      (if (not in-assign)
+          '++
+        (aset in-assign 0
+              (+ (aref in-assign 0)
+                 (* 2 c-basic-offset)))
+        in-assign)))
+
+  ;; Add a cc-mode style for editing LLVM C and C++ code
+  (c-add-style "llvm.org"
+               '("gnu"
+                 (fill-column . 80)
+                 (c++-indent-level . 2)
+                 (c-basic-offset . 2)
+                 (indent-tabs-mode . nil)
+                 (c-offsets-alist . ((arglist-intro . ++)
+                                     (innamespace . 0)
+                                     (member-init-intro . ++)
+                                     (statement-cont . llvm-lineup-statement)))))
+#+end_src
+
+
 
 clang-format
 OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
@@ -3583,10 +3613,6 @@ Remap when working in terminal Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (setq ns-right-option-modifier 'super)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-_") 'undo)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
