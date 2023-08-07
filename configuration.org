@@ -253,6 +253,15 @@ Those themes are what I like most.
     :no-require t)
   (use-package doom-themes
     :no-require t)
+  (use-package modus-themes
+    :no-require t
+    :custom
+    (modus-themes-italic-constructs t)
+    (modus-themes-bold-constructs nil)
+    (modus-themes-common-palette-overrides
+     '((bg-mode-line-active bg-blue-intense)
+       (fg-mode-line-active fg-main)
+       (border-mode-line-active blue-intense))))
 #+end_src
 
 Theme loading symbols.
@@ -335,7 +344,7 @@ Custom face when running in 256-color terminal
     (MattLu/load-custom-face-el))
 #+end_src
 
-** Configure =powerline=
+** COMMENT Configure =powerline=
 
 #+begin_src emacs-lisp
   (setq MattLu/minor-mode-direct
@@ -357,6 +366,31 @@ Custom face when running in 256-color terminal
     (advice-add 'powerline-minor-modes
                 :around 'powerline-minor-modes-modify))
 #+end_SRC
+
+** Mode-Line
+
+#+begin_src emacs-lisp
+  (use-package minions
+    :custom
+    (minions-mode-line-delimiters (cons "" ""))
+    (minions-prominent-modes '(flymake-mode))
+
+    :config
+    (defun +set-minions-mode-line-lighter ()
+      (setq minions-mode-line-lighter
+            (if (display-graphic-p) "⚙" "#")))
+
+    (add-hook 'server-after-make-frame-hook #'+set-minions-mode-line-lighter)
+    (minions-mode 1))
+#+end_src
+
+#+BEGIN_SRC emacs-lisp
+  (size-indication-mode)
+  (column-number-mode)
+  (display-time)
+  (setq mode-line-frame-identification " ")
+  (setq mode-line-end-spaces "")
+#+END_SRC
 
 ** COMMENT Scroll conservatively
 
