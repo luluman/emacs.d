@@ -3621,7 +3621,9 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
                 (prefix (seq-take keys (1- (length keys))))
                 (orig-keymap (key-binding prefix 'accept-default))
                 (keymap (copy-keymap orig-keymap))
-                (exit-func (set-transient-map keymap t )))
+                (exit-func (set-transient-map keymap t #'which-key-abort)))
+      (define-key keymap [remap keyboard-quit]
+                  (lambda () (interactive) (funcall exit-func)))
       (which-key--create-buffer-and-show nil keymap)))
 
   (setq prefix-help-command #'repeated-prefix-help-command)
