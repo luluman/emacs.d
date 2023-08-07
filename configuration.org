@@ -257,11 +257,7 @@ Those themes are what I like most.
     :no-require t
     :custom
     (modus-themes-italic-constructs t)
-    (modus-themes-bold-constructs nil)
-    (modus-themes-common-palette-overrides
-     '((bg-mode-line-active bg-blue-intense)
-       (fg-mode-line-active fg-main)
-       (border-mode-line-active blue-intense))))
+    (modus-themes-bold-constructs nil))
 #+end_src
 
 Theme loading symbols.
