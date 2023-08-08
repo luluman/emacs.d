@@ -130,7 +130,7 @@ font:
     #   - (macOS) Source Code Pro
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
-    family: Source Code Pro
+    family: SF Mono
     style: Regular
 
   # Bold font face
@@ -143,7 +143,7 @@ font:
     # - (macOS) SauceCodePro Nerd Font Mono
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
-    family: Source Code Pro
+    family: SF Mono
 
     # The `style` can be specified to pick a specific face.
     style: Bold
@@ -154,10 +154,10 @@ font:
     #
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Source Code Pro
+    family: SF Mono
 
     # The `style` can be specified to pick a specific face.
-    style: Italic
+    style: Regular Italic
 
   # Bold italic font face
   #bold_italic:
