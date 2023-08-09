@@ -127,7 +127,7 @@ font:
   normal:
     #
     # Default:
-    #   - (macOS) Source Code Pro
+    #   - (macOS) Source Code Pro, Fira Code, JetBrains Mono, SF Mono
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
     family: SF Mono
@@ -171,14 +171,14 @@ font:
     #style: Bold Italic
 
   # Point size
-  size: 15.5
+  size: 15
 
   # Offset is the extra space around each character. `offset.y` can be thought
   # of as modifying the line spacing, and `offset.x` as modifying the letter
   # spacing.
   offset:
     x: 2
-    y: 3
+    y: 4
 
   # Glyph offset determines the locations of the glyphs within their cells with
   # the default being at the bottom. Increasing `x` moves the glyph to the
