@@ -3116,8 +3116,6 @@ Just keep pressing the key until it selects what you want.
 
 #+begin_src emacs-lisp
   (use-package expreg
-    ;; using use-package PATH
-    :load-path "~/.emacs.d/third_party/lunarymacs"
     :bind
     ("C-=" . expreg-expand)
     ("C--" . expreg-contract))
