@@ -2664,7 +2664,7 @@ at the correct indentation for Python).
 #+END_SRC
 
 ** vertico + marginalia + consult + embark
-*** vertico
+*** COMMENT vertico
 
 Vertico provides a performant and minimalistic vertical completion UI based on
 the default completion system.
@@ -2679,11 +2679,15 @@ the default completion system.
     (vertico-mode))
 #+end_src
 
+*** completion
+
 #+begin_src emacs-lisp
   ;; A few more useful configurations...
   (use-package emacs
     :init
+    (fido-vertical-mode t)
     ;; set completion case insensitive
+    (setq completion-auto-help nil)
     (setq completion-ignore-case t)
     (setq read-file-name-completion-ignore-case t)
     (setq read-buffer-completion-ignore-case t)
@@ -2692,9 +2696,23 @@ the default completion system.
           '(read-only t cursor-intangible t face minibuffer-prompt))
     (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
     ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-    ;; Vertico commands are hidden in normal buffers.
     (setq read-extended-command-predicate
           #'command-completion-default-include-p))
+#+end_src
+
+
+#+begin_src emacs-lisp
+  (use-package icomplete
+    :config
+    (defun fussy-fido-setup ()
+      "Use `fussy' with `fido-mode'."
+      (setq-local completion-styles '(fussy)))
+    (advice-add 'icomplete--fido-mode-setup :after 'fussy-fido-setup)
+    :custom
+    (icomplete-tidy-shadowed-file-names t)
+    (icomplete-show-matches-on-no-input t)
+    (icomplete-compute-delay 0)
+    (icomplete-delay-completions-threshold 50))
 #+end_src
 
 *** fussy
