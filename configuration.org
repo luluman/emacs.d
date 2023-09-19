@@ -803,6 +803,7 @@ show function and variable tree in side buffer
     :bind ("C-c i" . imenu-list-smart-toggle)
     :config
     (setq imenu-list-focus-after-activation t)
+    (setq imenu-list-auto-update nil)
     :hook
     (imenu-after-jump . nav-flash-show))
 #+END_SRC
