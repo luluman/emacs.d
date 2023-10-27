@@ -1499,7 +1499,6 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 #+end_src
 
 
-
 ** EPUB mode
 
 #+begin_src emacs-lisp
@@ -2665,22 +2664,6 @@ at the correct indentation for Python).
 #+END_SRC
 
 ** vertico + marginalia + consult + embark
-*** COMMENT vertico
-
-Vertico provides a performant and minimalistic vertical completion UI based on
-the default completion system.
-
-#+begin_src emacs-lisp
-  (use-package vertico
-    ;; More convenient directory navigation commands
-    :bind (:map vertico-map
-                ("DEL" . vertico-directory-delete-char)
-                ("M-DEL" . vertico-directory-delete-word))
-    :init
-    (vertico-mode))
-#+end_src
-
-*** completion
 
 #+begin_src emacs-lisp
   ;; A few more useful configurations...
@@ -2714,6 +2697,25 @@ the default completion system.
     (icomplete-show-matches-on-no-input t)
     (icomplete-compute-delay 0)
     (icomplete-delay-completions-threshold 50))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun MattLu/quit-all ()
+      (interactive)
+      (if (eq last-command 'MattLu/quit-all)
+           (cond ((region-active-p)
+                  (deactivate-mark))
+                 ((> (minibuffer-depth) 0)
+                  (abort-recursive-edit))
+                 (current-prefix-arg
+                  nil)
+                 ((> (recursion-depth) 0)
+                  (exit-recursive-edit))
+                 (buffer-quit-function
+                  (funcall buffer-quit-function)))
+          (keyboard-quit)))
+  (setq enable-recursive-minibuffers t)
+  (global-set-key (kbd "C-g") 'MattLu/quit-all)
 #+end_src
 
 *** fussy
