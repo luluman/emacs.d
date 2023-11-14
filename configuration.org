@@ -3684,3 +3684,11 @@ Remap when working in terminal Emacs.
   (global-unset-key (kbd "C-x 5 1"))
   (local-unset-key (kbd "C-x 5 1"))
 #+END_SRC
+
+get current buffer's name
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c o")
+                  (lambda () (interactive)
+                    (message buffer-file-name)
+                    (kill-new buffer-file-name)))
+#+END_SRC
