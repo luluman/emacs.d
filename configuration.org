@@ -152,7 +152,7 @@ proxy settings
 #+begin_src emacs-lisp
   ;; https://github.com/happyo/emacs.d/blob/main/lisp/init-proxy.el
   (setq MattLu/socks-proxy "127.0.0.1:7890")    ; SOCKS proxy
-  (setq MattLu/remote-host-name "Mac")
+  (setq MattLu/remote-host-name "mac")
   (setq MattLu/socks5 nil)
 
   (defun MattLu/new-socks5-proxy ()
@@ -522,10 +522,10 @@ programming.
   (defun symon--display-update-modify (orig-fun &rest args)
     "symon step aside other message"
     (if (current-message)
-        (when (string-match-p "\\(MEM:+.*CPU:+.*RX:+.*TX:+.*\\|Quit\\|Mark\\ set\\)"
+        (when (string-match-p "\\(MEM:+.*CPU:+.*RX:+.*TX:+.*\\|Quit\\|Reverting\\ buffer\\|Mark\\ set\\)"
                               (current-message))
           (apply orig-fun args))
-    (apply orig-fun args)))
+      (apply orig-fun args)))
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
