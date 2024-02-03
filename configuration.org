@@ -1096,13 +1096,15 @@ using tree-sitter to manage Parser
     ;; disable checking the ‘-*-’ line, this will disable loading .dir-locals.el
     ;; (enable-local-variables nil)
     :config
-    (push '(c++-mode . c++-ts-mode) major-mode-remap-alist)
-    (push '(c-mode . c-ts-mode) major-mode-remap-alist)
-    (push '(c-or-c++-mode . c++-ts-mode) major-mode-remap-alist)
-    (push '(python-mode . python-ts-mode) major-mode-remap-alist)
-    (push '(js-json-mode . json-ts-mode) major-mode-remap-alist)
-    (push '(javascript-mode . js-ts-mode) major-mode-remap-alist)
-    (push '(sh-mode . bash-ts-mode) major-mode-remap-alist)
+    (setq major-mode-remap-alist
+          '((sh-mode . bash-ts-mode)
+            (javascript-mode . js-ts-mode)
+            (js-json-mode . json-ts-mode)
+            (python-mode . python-ts-mode)
+            (c-or-c++-mode . c++-ts-mode)
+            (c-mode . c-ts-mode)
+            (c++-mode . c++-ts-mode))
+          )
     (mapcar #'require '(cmake-ts-mode
                         dockerfile-ts-mode
                         rust-ts-mode
