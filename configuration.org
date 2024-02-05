@@ -926,6 +926,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c f i" . eglot-inlay-hints-mode))
     :custom
     (eglot-autoshutdown t)
+    (eglot-events-buffer-size 0)
     (eglot-ignored-server-capabilities '(:hoverProvider :documentHighlightProvider))
     :config
     (MattLu/test-then-add-eglot '(c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
@@ -1113,6 +1114,24 @@ using tree-sitter to manage Parser
     :mode
     ("\\.h\\.inc\\'" . c++-ts-mode)
     ("\\.cpp\\.inc\\'" . c++-ts-mode))
+#+end_src
+
+*** Indent Highlight
+
+#+begin_src emacs-lisp
+  (use-package indent-bars
+    :load-path "~/.emacs.d/indent-bars"
+    :custom
+    (indent-bars-treesit-support t)
+    (indent-bars-no-descend-string t)
+    (indent-bars-highlight-current-depth '(:color "white"))
+    (indent-bars-display-on-blank-lines nil)
+    (indent-bars-treesit-ignore-blank-lines-types '("module"))
+    (indent-bars-treesit-wrap '((python argument_list parameters ; for python, as an example
+                        list list_comprehension
+                        dictionary dictionary_comprehension
+                        parenthesized_expression subscript)))
+    :hook ((python-base-mode c-ts-base-mode) . indent-bars-mode))
 #+end_src
 
 ** Python
@@ -3251,7 +3270,8 @@ while still keeping them within arm’s reach.
   (use-package popper
     :bind (("C-<tab>" . popper-toggle-latest)
            ("C-M-<tab>" . popper-cycle)
-           ("C-M-<return>" . popper-toggle-type))
+           ("C-M-<return>" . popper-toggle-type)
+           ("C-M-k" . popper-kill-latest-popup))
     :custom
     ;; (popper-window-height 12)
     (popper-mode-line nil)

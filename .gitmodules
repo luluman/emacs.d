@@ -4,3 +4,6 @@
 [submodule "project-cmake"]
 	path = project-cmake
 	url = https://github.com/luluman/project-cmake.git
+[submodule "indent-bars"]
+	path = indent-bars
+	url = https://github.com/jdtsmith/indent-bars
