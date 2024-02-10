@@ -1531,15 +1531,23 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 ** ChatGPT
 
 #+begin_src emacs-lisp
+  (defun MattLu/internet-up-p (&optional host)
+    (= 0 (call-process "ping" nil nil nil "-c" "1" "-W" "1"
+                       (if host host "www.google.com"))))
+#+end_src
+
+#+begin_src emacs-lisp
   (use-package gptel
     :config
     ;; (setq gptel--debug t)
     (setq gptel-default-mode 'org-mode)
-    (advice-add
-     'gptel-curl--get-args
-     :filter-return
-     (lambda (args)
-       (push (format "-xsocks5h://%s" MattLu/socks-proxy) args)))
+    ;; (unless (MattLu/internet-up-p "google.com")
+    (setq-default gptel-proxy
+                  (format "socks5://%s" MattLu/socks-proxy))
+    (setq-default gptel-model "gemini-pro" ;Pick your default model
+                  gptel-backend (gptel-make-gemini "Gemini"
+                                  :key 'gptel-api-key
+                                  :stream t))
     :init
     (require 'f)
     :custom
@@ -1547,7 +1555,7 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
     (gptel-playback t)
     (gptel-api-key (lambda ()
                      (string-trim-right
-                      (f-read-text "~/.ssh/chatgpt_api_key")))))
+                      (f-read-text "~/.ssh/gemini_api_key")))))
 #+end_src
 
 ** BuildBot
