@@ -1097,7 +1097,7 @@ using tree-sitter to manage Parser
     ;; disable checking the ‘-*-’ line, this will disable loading .dir-locals.el
     ;; (enable-local-variables nil)
     :config
-    (setq major-mode-remap-alist
+    (add-to-list 'major-mode-remap-alist
           '((sh-mode . bash-ts-mode)
             (javascript-mode . js-ts-mode)
             (js-json-mode . json-ts-mode)
@@ -2318,6 +2318,8 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
 #+BEGIN_SRC emacs-lisp
   (use-package tex
     :ensure auctex
+    :custom
+    (TeX-engine 'xetex)
     :config
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)
@@ -2329,49 +2331,6 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
 #+END_SRC
 
 ** Set some usefull commands of latex
-
-#+BEGIN_SRC emacs-lisp
-  (eval-after-load "tex"
-    '(setq TeX-command-list
-           '(("XeLaTeX_SyncteX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil
-              (latex-mode doctex-mode)
-              :help "Run XeLaTeX")
-             ("Makeinfo" "makeinfo %t" TeX-run-compile nil
-              (texinfo-mode)
-              :help "Run Makeinfo with Info output")
-             ("Makeinfo HTML" "makeinfo --html %t" TeX-run-compile nil
-              (texinfo-mode)
-              :help "Run Makeinfo with HTML output")
-             ("BibTeX" "bibtex %s" TeX-run-BibTeX nil t
-              :help "Run BibTeX")
-             ("View" "%V" TeX-run-discard-or-function nil t
-              :help "Run Viewer")
-             ("Print" "%p" TeX-run-command t t
-              :help "Print the file")
-             ("Queue" "%q" TeX-run-background nil t
-              :help "View the printer queue" :visible TeX-queue-command)
-             ("File" "%(o?)dvips %d -o %f " TeX-run-command t t
-              :help "Generate PostScript file")
-             ("Index" "makeindex %s" TeX-run-command nil t
-              :help "Create index file")
-             ("Check" "lacheck %s" TeX-run-compile nil
-              (latex-mode)
-              :help "Check LaTeX file for correctness")
-             ("Spell" "(TeX-ispell-document \"\")" TeX-run-function nil t
-              :help "Spell-check the document")
-             ("Clean" "TeX-clean" TeX-run-function nil t
-              :help "Delete generated intermediate files")
-             ("Clean All" "(TeX-clean t)" TeX-run-function nil t
-              :help "Delete generated intermediate and output files")
-             ("Other" "" TeX-run-command t t
-              :help "Run an arbitrary command")
-             ("Jump to PDF" "%V" TeX-run-discard-or-function nil t
-              :help "Run Viewer")
-             ("TeXcount" "texcount %s.tex" TeX-run-compile nil t
-              :help "Run texcount")
-             ) ))
-#+END_SRC
-
 ** Enable forward and inverse search
 
 #+BEGIN_SRC emacs-lisp
@@ -3297,6 +3256,7 @@ while still keeping them within arm’s reach.
             "^\\*term.*\\*$"   term-mode   ;term as a popup
             "^\\*vterm.*\\*$"   vterm-mode   ;vterm as a popup
             "^\\*TeX Help.*\\*$"  tex-mode
+            "^\\*tex-shell.*\\*$"  tex-mode
             compilation-mode))
     (popper-mode +1)
     (popper-echo-mode +1))                ; For echo area hints
@@ -3650,7 +3610,7 @@ https://youtu.be/51eSeqcaikM
   (use-package pyim
     :custom
     (default-input-method "pyim")
-    (pyim-page-tooltip 'popon)
+    (pyim-page-tooltip '(posframe popon))
     ;; (pyim-dcache-backend 'pyim-dregcache)
     (pyim-page-length 5)
     :config
