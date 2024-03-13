@@ -1158,7 +1158,7 @@ Pip can install binary file.
     (venv-initialize-interactive-shells) ;; if you want interactive shell support
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/venvPy/py3/"
-                          "~/python/ufw/"))
+                          "~/py3.10/"))
     (let ((venv-py (MattLu/get-first-valid-path venv-location)))
       (when venv-py
         (venv-workon (car (last (split-string venv-py "\/") 2)))))
@@ -1541,7 +1541,7 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
     :config
     ;; (setq gptel--debug t)
     (setq gptel-default-mode 'org-mode)
-    ;; (unless (MattLu/internet-up-p "google.com")
+    ;; (unless (MattLu/internet-up-p)
     (setq-default gptel-proxy
                   (format "socks5://%s" MattLu/socks-proxy))
     (setq-default gptel-model "gemini-pro" ;Pick your default model
