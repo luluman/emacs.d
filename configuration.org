@@ -1519,6 +1519,17 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
   (use-package lua-mode)
 #+end_src
 
+** JQ mode
+
+jq is a lightweight and flexible command-line JSON processor akin to
+sed,awk,grep, and friends for JSON data.
+
+#+begin_src emacs-lisp
+  (use-package jq-mode
+    :bind ("C-c C-j" . jq-interactively)
+    :mode
+    ("\\.jq$" . jq-mode))
+#+end_src
 
 ** EPUB mode
 
@@ -2651,7 +2662,7 @@ at the correct indentation for Python).
   (setq yas/indent-line nil)
 #+END_SRC
 
-** vertico + marginalia + consult + embark
+** marginalia + consult + embark
 
 #+begin_src emacs-lisp
   ;; A few more useful configurations...
