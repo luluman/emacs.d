@@ -864,7 +864,7 @@ key_bindings:
   - { key: N,              mods: Command,                     action: CreateNewWindow       }
   - { key: W,              mods: Command,                     action: None                  }
   - { key: M,              mods: Command,                     action: Minimize              }
-  - { key: F,              mods: Command,                     action: ToggleFullscreen      }
+  # - { key: F,              mods: Command,                     action: ToggleFullscreen      } 
   - { key: S,              mods: Command,                     action: SearchForward         }
   - { key: R,              mods: Command,                     action: SearchBackward        }
   - { key: Equals,         mods: Command,                     action: ResetFontSize         }
