@@ -171,7 +171,7 @@ font:
     #style: Bold Italic
 
   # Point size
-  size: 15
+  size: 13
 
   # Offset is the extra space around each character. `offset.y` can be thought
   # of as modifying the line spacing, and `offset.x` as modifying the letter
@@ -864,7 +864,7 @@ key_bindings:
   - { key: N,              mods: Command,                     action: CreateNewWindow       }
   - { key: W,              mods: Command,                     action: None                  }
   - { key: M,              mods: Command,                     action: Minimize              }
-  # - { key: F,              mods: Command,                     action: ToggleFullscreen      } 
+  - { key: F,              mods: Command,                     action: ToggleFullscreen      }
   - { key: S,              mods: Command,                     action: SearchForward         }
   - { key: R,              mods: Command,                     action: SearchBackward        }
   - { key: Equals,         mods: Command,                     action: ResetFontSize         }
@@ -877,7 +877,7 @@ key_bindings:
 
   - { key: Tab,            mods: Control|Alt,                 chars: "\x1b[27;13;9~"        }
   - { key: Return,         mods: Control|Alt,                 chars: "\x1b[27;13;13~"       }
-  - { key: Apostrophe,     mods: Control,                     chars: "\x1b[27;5;39~"        }
+  # - { key: Apostrophe,     mods: Control,                     chars: "\x1b[27;5;39~"        }
   - { key: Comma,          mods: Control,                     chars: "\x1b[27;5;44~"        }
   - { key: Minus,          mods: Control,                     chars: "\x1b[27;5;45~"        }
   - { key: Period,         mods: Control,                     chars: "\x1b[27;5;46~"        }

@@ -209,10 +209,10 @@ proxy settings
 I don't usually use the menu or scroll bar, and they take up useful space.
 
 #+BEGIN_SRC emacs-lisp
-  (tool-bar-mode 0)
-  (when (eq system-type 'gnu/linux)
-    (menu-bar-mode 0))
-  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (if (display-graphic-p)
+      (progn (scroll-bar-mode -1))
+    (menu-bar-mode -1))
 #+END_SRC
 
 ** Use fancy lambdas
@@ -987,7 +987,6 @@ outputs.
 
 #+begin_src emacs-lisp
   (use-package vterm
-    :if (eq system-type 'gnu/linux)
     :init
     (put 'vterm-environment 'safe-local-variable #'listp)
     :bind ("C-c v" . vterm)
@@ -1109,8 +1108,7 @@ using tree-sitter to manage Parser
     (mapcar #'require '(cmake-ts-mode
                         dockerfile-ts-mode
                         rust-ts-mode
-                        yaml-ts-mode
-                        toml-ts-mode))
+                        yaml-ts-mode))
     :mode
     ("\\.h\\.inc\\'" . c++-ts-mode)
     ("\\.cpp\\.inc\\'" . c++-ts-mode))

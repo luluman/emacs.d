@@ -1,0 +1,74 @@
+[colors.cursor]
+cursor = "#00FF00"
+text = "CellBackground"
+
+[colors.primary]
+background = "#000000"
+foreground = "#eaeaea"
+
+[cursor.style]
+blinking = "Always"
+shape = "Block"
+
+[font]
+size = 13
+
+[font.bold]
+family = "Menlo"
+style = "Bold"
+
+[font.italic]
+family = "Menlo"
+style = "Regular Italic"
+
+[font.normal]
+family = "Menlo"
+style = "Regular"
+
+[font.offset]
+x = 2
+y = 4
+
+[keyboard]
+bindings = [
+  {action = "Paste", key = "Paste"},
+  {action = "Copy", key = "Copy"},
+  {action = "Paste", key = "V", mods = "Command"},
+  {action = "Copy", key = "C", mods = "Command"},
+  {action = "CreateNewWindow", key = "N", mods = "Command"},
+  {action = "None", key = "W", mods = "Command"},
+  {action = "Minimize", key = "M", mods = "Command"},
+  {action = "ToggleFullscreen", key = "F", mods = "Command"},
+  {action = "SearchForward", key = "S", mods = "Command"},
+  {action = "SearchBackward", key = "R", mods = "Command"},
+  {action = "ResetFontSize", key = "Equals", mods = "Command"},
+  {action = "IncreaseFontSize", key = "Equals", mods = "Command|Shift"},
+  {action = "DecreaseFontSize", key = "Minus", mods = "Command"},
+  {chars = "\u001B[27;5;9~", key = "Tab", mods = "Control"},
+  {chars = "\u001B[27;5;13~", key = "Return", mods = "Control"},
+  {chars = "\u001B[27;5;47~", key = "Slash", mods = "Control"},
+  {chars = "\u001B[27;13;9~", key = "Tab", mods = "Control|Alt"},
+  {chars = "\u001B[27;13;13~", key = "Return", mods = "Control|Alt"},
+  {chars = "\u001B[27;5;44~", key = "Comma", mods = "Control"},
+  {chars = "\u001B[27;5;45~", key = "Minus", mods = "Control"},
+  {chars = "\u001B[27;5;46~", key = "Period", mods = "Control"},
+  {chars = "\u001B[27;5;59~", key = "Semicolon", mods = "Control"},
+  {chars = "\u001B[27;5;61~", key = "Equals", mods = "Control"},
+]
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[window]
+dynamic_title = true
+opacity = 0.95
+option_as_alt = "Both"
+
+[window.dimensions]
+columns = 90
+lines = 30
+
+[window.padding]
+x = 5
+y = 5
