@@ -914,8 +914,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (use-package consult-eglot)
     :commands
     (eglot eglot-ensure)
-    :hook
-    (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
+    ;; :hook
+    ;; (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
     :bind (:map eglot-mode-map
                 ("C-M-\\" . eglot-format)
                 ("C-c f r" . eglot-rename)
@@ -2689,6 +2689,11 @@ at the correct indentation for Python).
       "Use `fussy' with `fido-mode'."
       (setq-local completion-styles '(fussy)))
     (advice-add 'icomplete--fido-mode-setup :after 'fussy-fido-setup)
+    (add-to-list 'completion-ignored-extensions "../")
+    ;; :bind
+    ;; (:map icomplete-minibuffer-map
+    ;; ("TAB" . icomplete-force-complete)
+    ;; ([tab] . icomplete-force-complete))
     :custom
     (icomplete-tidy-shadowed-file-names t)
     (icomplete-show-matches-on-no-input t)
@@ -2729,7 +2734,7 @@ at the correct indentation for Python).
         (load fuz-core-bin nil t))
       (setq fussy-score-fn 'fussy-fuz-score))
     :custom
-    (fussy-use-cache t)
+    (fussy-use-cache nil)
     (fussy-compare-same-score-fn 'fussy-histlen->strlen<)
     (fussy-filter-fn 'fussy-filter-default)
     (fussy-default-regex-fn 'fussy-pattern-flex-1)
@@ -2964,14 +2969,13 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (corfu-auto-delay 0.1)
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
+    (global-corfu-modes '((not shell-mode) t))
     :bind
     (:map corfu-map
           ("TAB" . corfu-next)
           ([tab] . corfu-next)
           ("S-TAB" . corfu-previous)
           ([backtab] . corfu-previous))
-
-    ;; See also `corfu-excluded-modes'.
     :init
     (global-corfu-mode))
 
@@ -3244,7 +3248,7 @@ while still keeping them within arm’s reach.
 
 #+begin_src emacs-lisp
   (use-package popper
-    :bind (("C-<tab>" . popper-toggle-latest)
+    :bind (("C-<tab>" . popper-toggle)
            ("C-M-<tab>" . popper-cycle)
            ("C-M-<return>" . popper-toggle-type)
            ("C-M-k" . popper-kill-latest-popup))
