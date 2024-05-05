@@ -11,18 +11,18 @@ blinking = "Always"
 shape = "Block"
 
 [font]
-size = 13
+size = 15
 
 [font.bold]
-family = "Menlo"
+family = "SF Mono"
 style = "Bold"
 
 [font.italic]
-family = "Menlo"
+family = "SF Mono"
 style = "Regular Italic"
 
 [font.normal]
-family = "Menlo"
+family = "SF Mono"
 style = "Regular"
 
 [font.offset]
@@ -42,7 +42,7 @@ bindings = [
   {action = "SearchForward", key = "S", mods = "Command"},
   {action = "SearchBackward", key = "R", mods = "Command"},
   {action = "ResetFontSize", key = "Equals", mods = "Command"},
-  {action = "IncreaseFontSize", key = "Equals", mods = "Command|Shift"},
+  {action = "IncreaseFontSize", key = "Plus", mods = "Command|Shift"},
   {action = "DecreaseFontSize", key = "Minus", mods = "Command"},
   {chars = "\u001B[27;5;9~", key = "Tab", mods = "Control"},
   {chars = "\u001B[27;5;13~", key = "Return", mods = "Control"},

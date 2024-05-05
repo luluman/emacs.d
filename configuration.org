@@ -1172,6 +1172,7 @@ Set ipython as interpreter
     :config
     (put 'python-shell-process-environment 'safe-local-variable #'listp)
     :custom
+    (python-shell-completion-native-enable nil)
     (python-shell-interpreter "ipython")
     (python-shell-interpreter-args "--simple-prompt -i")
     (py-ipython-command-args "--simple-prompt -i")
