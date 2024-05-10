@@ -1551,9 +1551,9 @@ sed,awk,grep, and friends for JSON data.
     :config
     ;; (setq gptel--debug t)
     (setq gptel-default-mode 'org-mode)
-    ;; (unless (MattLu/internet-up-p)
-    (setq-default gptel-proxy
-                  (format "socks5://%s" MattLu/socks-proxy))
+    (unless (MattLu/internet-up-p)
+      (setq-default gptel-proxy
+                    (format "socks5h://%s" MattLu/socks-proxy)))
     (setq-default gptel-model "gemini-pro" ;Pick your default model
                   gptel-backend (gptel-make-gemini "Gemini"
                                   :key 'gptel-api-key
@@ -1572,6 +1572,14 @@ sed,awk,grep, and friends for JSON data.
 
 #+begin_src emacs-lisp
   (use-package buildbot)
+#+end_src
+
+** Graphviz-dot
+
+#+begin_src emacs-lisp
+  (use-package graphviz-dot-mode
+    :config
+    (setq graphviz-dot-indent-width 4))
 #+end_src
 
 * Org
@@ -1657,6 +1665,12 @@ Using build-in hide leading starts
   (setq org-pretty-entities t)
   (setq org-allow-promoting-top-level-subtree t)
   (setq org-email-link-description-format "%c: %.50s")
+#+END_SRC
+
+Wrap long text lines.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-mode-hook 'visual-line-mode)
 #+END_SRC
 
 ** Key-bindings
