@@ -151,14 +151,17 @@ Define a big ol' bunch of handy utility functions.
 proxy settings
 #+begin_src emacs-lisp
   ;; https://github.com/happyo/emacs.d/blob/main/lisp/init-proxy.el
-  (setq MattLu/socks-proxy "127.0.0.1:7890")    ; SOCKS proxy
-  (setq MattLu/remote-host-name "mac")
+  (setq MattLu/socks-proxy "127.0.0.1:7891")    ; SOCKS proxy
   (setq MattLu/socks5 nil)
 
   (defun MattLu/new-socks5-proxy ()
-    (apply #'start-process "socks5-proxy"
-           (format "*socks5-proxy-%s*" MattLu/remote-host-name)
-           "ssh" (list "-ND" MattLu/socks-proxy MattLu/remote-host-name)))
+    (let* ((command-output (shell-command-to-string (expand-file-name "~/.ssh/vpn-config.py")))
+           (command (split-string-and-unquote command-output))
+           (program (car command))
+           (args (cdr command)))
+      (apply #'start-process "socks5-proxy"
+             (format "*socks5-proxy-%s*" "vpn")
+             program args)))
 
   (defun proxy-socks-show ()
     "Show SOCKS proxy."
@@ -265,7 +268,13 @@ Theme loading symbols.
 #+begin_src emacs-lisp
   (defvar theme-pool
     '(modus-operandi
+      modus-operandi-tinted
+      modus-operandi-deuteranopia
+      modus-operandi-tritanopia
       modus-vivendi
+      modus-vivendi-tinted
+      modus-vivendi-deuteranopia
+      modus-vivendi-tritanopia
       ;; doom-xcode
       ;; doom-monokai-pro
       ;; doom-one
@@ -294,7 +303,7 @@ Theme loading symbols.
       (if index
           (setq MattLu/choosing-theme
                 (nth (% (+ 1 index) (length theme-pool)) theme-pool))
-        (setq MattLu/choosing-theme 'nord))
+        (setq MattLu/choosing-theme (car theme-pool)))
       (disable-theme current-theme)
       (MattLu/load-theme MattLu/choosing-theme)
       (message "change theme to `%s'" MattLu/choosing-theme)))
