@@ -1563,7 +1563,7 @@ sed,awk,grep, and friends for JSON data.
     (unless (MattLu/internet-up-p)
       (setq-default gptel-proxy
                     (format "socks5h://%s" MattLu/socks-proxy)))
-    (setq-default gptel-model "gemini-pro" ;Pick your default model
+    (setq-default gptel-model "gemini-1.5-pro-latest" ;Pick your default model
                   gptel-backend (gptel-make-gemini "Gemini"
                                   :key 'gptel-api-key
                                   :stream t))
