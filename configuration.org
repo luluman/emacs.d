@@ -261,6 +261,8 @@ Those themes are what I like most.
     :custom
     (modus-themes-italic-constructs t)
     (modus-themes-bold-constructs nil))
+  (use-package ef-themes
+    :no-require t)
 #+end_src
 
 Theme loading symbols.
@@ -268,13 +270,21 @@ Theme loading symbols.
 #+begin_src emacs-lisp
   (defvar theme-pool
     '(modus-operandi
-      modus-operandi-tinted
-      modus-operandi-deuteranopia
-      modus-operandi-tritanopia
       modus-vivendi
+      modus-operandi-tinted
       modus-vivendi-tinted
+      modus-operandi-deuteranopia
       modus-vivendi-deuteranopia
+      modus-operandi-tritanopia
       modus-vivendi-tritanopia
+      ef-light
+      ef-dark
+      ef-spring
+      ef-summer
+      ef-autumn
+      ef-winter
+      ef-day
+      ef-night
       ;; doom-xcode
       ;; doom-monokai-pro
       ;; doom-one
