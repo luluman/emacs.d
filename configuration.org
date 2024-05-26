@@ -77,12 +77,12 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 Define a big ol' bunch of handy utility functions.
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/view-buffer-name ()
+  (defun my/view-buffer-name ()
     "Display the filename of the current buffer."
     (interactive)
     (message (buffer-file-name)))
 
-  (defun MattLu/rename-file (new-name)
+  (defun my/rename-file (new-name)
     (interactive "FNew name: ")
     (let ((filename (buffer-file-name)))
       (if filename
@@ -95,54 +95,54 @@ Define a big ol' bunch of handy utility functions.
             (message "Renamed '%s' -> '%s'" filename new-name))
         (message "Buffer '%s' isn't backed by a file!" (buffer-name)))))
 
-  (defun MattLu/generate-scratch-buffer ()
+  (defun my/generate-scratch-buffer ()
     "Create and switch to a temporary scratch buffer with a random
        name."
     (interactive)
     (switch-to-buffer (make-temp-name "scratch-")))
 
-  (defun MattLu/unfill-paragraph ()
+  (defun my/unfill-paragraph ()
     "Takes a multi-line paragraph and makes it into a single line of text."
     (interactive)
     (let ((fill-column (point-max)))
       (fill-paragraph nil)))
 
-  (defun MattLu/visit-last-dired-file ()
+  (defun my/visit-last-dired-file ()
     "Open the last file in an open dired buffer."
     (end-of-buffer)
     (previous-line)
     (dired-find-file))
 
-  (defun MattLu/add-auto-mode (mode &rest patterns)
+  (defun my/add-auto-mode (mode &rest patterns)
     "Add entries to `auto-mode-alist' to use `MODE' for all given file `PATTERNS'."
     (dolist (pattern patterns)
       (add-to-list 'auto-mode-alist (cons pattern mode))))
 
-  (defun MattLu/find-file-as-sudo ()
+  (defun my/find-file-as-sudo ()
     (interactive)
     (let ((file-name (buffer-file-name)))
       (when file-name
         (find-alternate-file (concat "/sudo::" file-name)))))
 
-  (defun MattLu/region-or-word ()
+  (defun my/region-or-word ()
     (if mark-active
         (buffer-substring-no-properties (region-beginning)
                                         (region-end))
       (thing-at-point 'word)))
 
-  (defun MattLu/insert-random-string (len)
+  (defun my/insert-random-string (len)
     "Insert a random alphanumeric string of length len."
     (interactive)
     (let ((mycharset "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstyvwxyz"))
       (dotimes (i len)
         (insert (elt mycharset (random (length mycharset)))))))
 
-  (defun MattLu/generate-password ()
+  (defun my/generate-password ()
     "Insert a good alphanumeric password of length 30."
     (interactive)
-    (MattLu/insert-random-string 30))
+    (my/insert-random-string 30))
 
-  (defun MattLu/append-to-path (path)
+  (defun my/append-to-path (path)
     "Add a path both to the $PATH variable and to Emacs' exec-path."
     (setenv "PATH" (concat (getenv "PATH") ":" path))
     (add-to-list 'exec-path path))
@@ -151,10 +151,10 @@ Define a big ol' bunch of handy utility functions.
 proxy settings
 #+begin_src emacs-lisp
   ;; https://github.com/happyo/emacs.d/blob/main/lisp/init-proxy.el
-  (setq MattLu/socks-proxy "127.0.0.1:7891")    ; SOCKS proxy
-  (setq MattLu/socks5 nil)
+  (setq my/socks-proxy "127.0.0.1:7891")    ; SOCKS proxy
+  (setq my/socks5 nil)
 
-  (defun MattLu/new-socks5-proxy ()
+  (defun my/new-socks5-proxy ()
     (let* ((command-output (shell-command-to-string (expand-file-name "~/.ssh/vpn-config.py")))
            (command (split-string-and-unquote command-output))
            (program (car command))
@@ -166,7 +166,7 @@ proxy settings
   (defun proxy-socks-show ()
     "Show SOCKS proxy."
     (interactive)
-    (if (process-live-p MattLu/socks5)
+    (if (process-live-p my/socks5)
         (message "Current SOCKS%d proxy is %s:%s"
                  (cadddr socks-server) (cadr socks-server) (caddr socks-server))
       (message "No SOCKS proxy")))
@@ -174,24 +174,24 @@ proxy settings
   (defun proxy-socks-enable ()
     "Enable SOCKS proxy."
     (interactive)
-    (unless (process-live-p MattLu/socks5)
-      (setq MattLu/socks5 (MattLu/new-socks5-proxy)))
+    (unless (process-live-p my/socks5)
+      (setq my/socks5 (my/new-socks5-proxy)))
     (require 'socks)
     (setq url-gateway-method 'socks
           socks-noproxy '("localhost"))
-    (let* ((proxy (split-string MattLu/socks-proxy ":"))
+    (let* ((proxy (split-string my/socks-proxy ":"))
            (host (car proxy))
            (port (string-to-number (cadr proxy))))
       (setq socks-server `("Default server" ,host ,port 5)))
-    ;; (setenv "all_proxy" (concat "socks5://" MattLu/socks-proxy))
+    ;; (setenv "all_proxy" (concat "socks5://" my/socks-proxy))
     (proxy-socks-show))
 
   (defun proxy-socks-disable ()
     "Disable SOCKS proxy."
     (interactive)
-    (when MattLu/socks5
-      (kill-process MattLu/socks5)
-      (setq MattLu/socks5 nil))
+    (when my/socks5
+      (kill-process my/socks5)
+      (setq my/socks5 nil))
     (setq url-gateway-method 'native
           socks-noproxy nil
           socks-server nil)
@@ -201,7 +201,7 @@ proxy settings
   (defun proxy-socks-toggle ()
     "Toggle SOCKS proxy."
     (interactive)
-    (if (process-live-p MattLu/socks5)
+    (if (process-live-p my/socks5)
         (proxy-socks-disable)
       (proxy-socks-enable)))
 #+end_src
@@ -279,10 +279,6 @@ Theme loading symbols.
       modus-vivendi-tritanopia
       ef-light
       ef-dark
-      ef-spring
-      ef-summer
-      ef-autumn
-      ef-winter
       ef-day
       ef-night
       ;; doom-xcode
@@ -293,11 +289,11 @@ Theme loading symbols.
       ;; nord
       ))
 
-  (defvar MattLu/choosing-theme 'modus-vivendi)
+  (defvar my/choosing-theme 'modus-vivendi)
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun MattLu/load-theme (theme)
+  (defun my/load-theme (theme)
     (face-remap-add-relative 'vertical-border '(:inherit default))
     (load-theme theme t)
     (when (cl-search "doom" (symbol-name  theme))
@@ -305,24 +301,24 @@ Theme loading symbols.
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun MattLu/themes-toggle ()
+  (defun my/themes-toggle ()
     "Toggle between themes defined in theme-pool."
     (interactive)
     (let* ((current-theme (car custom-enabled-themes))
            (index (cl-position current-theme theme-pool)))
       (if index
-          (setq MattLu/choosing-theme
+          (setq my/choosing-theme
                 (nth (% (+ 1 index) (length theme-pool)) theme-pool))
-        (setq MattLu/choosing-theme (car theme-pool)))
+        (setq my/choosing-theme (car theme-pool)))
       (disable-theme current-theme)
-      (MattLu/load-theme MattLu/choosing-theme)
-      (message "change theme to `%s'" MattLu/choosing-theme)))
+      (my/load-theme my/choosing-theme)
+      (message "change theme to `%s'" my/choosing-theme)))
 #+end_src
 
 Using solarized theme on MacOS.
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/apply-solarized-theme ()
+  (defun my/apply-solarized-theme ()
     (setq solarized-scale-org-headlines nil)
     (transparency 98)
     (load-theme 'modus-operandi t))
@@ -330,8 +326,8 @@ Using solarized theme on MacOS.
 
 #+begin_src emacs-lisp
   (if (display-graphic-p)
-      (MattLu/apply-solarized-theme)
-    (MattLu/load-theme MattLu/choosing-theme))
+      (my/apply-solarized-theme)
+    (my/load-theme my/choosing-theme))
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
@@ -339,15 +335,15 @@ Using solarized theme on MacOS.
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
                   (with-selected-frame frame
-                    (MattLu/load-theme MattLu/choosing-theme)))))
+                    (my/load-theme my/choosing-theme)))))
 
 #+END_SRC
 
 Custom face when running in 256-color terminal
 
 #+begin_src emacs-lisp
-  (defun MattLu/load-custom-face-el ()
-    (if (and (eq MattLu/choosing-theme 'nord)
+  (defun my/load-custom-face-el ()
+    (if (and (eq my/choosing-theme 'nord)
              (eq 256 (display-color-cells)))
         (load-file "~/.emacs.d/custom-face.el")))
 
@@ -355,21 +351,21 @@ Custom face when running in 256-color terminal
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
                   (with-selected-frame
-                      frame (MattLu/load-custom-face-el))))
-    (MattLu/load-custom-face-el))
+                      frame (my/load-custom-face-el))))
+    (my/load-custom-face-el))
 #+end_src
 
 ** COMMENT Configure =powerline=
 
 #+begin_src emacs-lisp
-  (setq MattLu/minor-mode-direct
+  (setq my/minor-mode-direct
         '(flymake-mode))
 
   (defun powerline-minor-modes-modify (orig-fun &rest args)
     "Change powerline-minor-modes display"
     (let ((minor-mode-alist
            (cl-remove-if-not (lambda (mode)
-                               (memq (car mode) MattLu/minor-mode-direct))
+                               (memq (car mode) my/minor-mode-direct))
                              minor-mode-alist)))
       (apply orig-fun args)))
 #+end_src
@@ -431,50 +427,50 @@ Note that this overrides the default font-related keybindings from
 
 #+BEGIN_SRC emacs-lisp
   (if (eq system-type 'gnu/linux)
-      (setq MattLu/default-font "Ubuntu Mono")
-    (setq MattLu/default-font "Source Code Pro"))
+      (setq my/default-font "Ubuntu Mono")
+    (setq my/default-font "Source Code Pro"))
 
-  (setq MattLu/default-font-size 14)
-  (setq MattLu/current-font-size MattLu/default-font-size)
+  (setq my/default-font-size 14)
+  (setq my/current-font-size my/default-font-size)
 
-  (setq MattLu/font-change-increment 1.1)
+  (setq my/font-change-increment 1.1)
 
-  (defun MattLu/font-code ()
+  (defun my/font-code ()
     "Return a string representing the current font (like \"Inconsolata-14\")."
-    (concat MattLu/default-font "-" (number-to-string MattLu/current-font-size)))
+    (concat my/default-font "-" (number-to-string my/current-font-size)))
 
-  (defun MattLu/set-font-size ()
-    "Set the font to `MattLu/default-font' at `MattLu/current-font-size'.
+  (defun my/set-font-size ()
+    "Set the font to `my/default-font' at `my/current-font-size'.
         Set that for the current frame, and also make it the default for
         other, future frames."
-    (let ((font-code (MattLu/font-code)))
+    (let ((font-code (my/font-code)))
       (add-to-list 'default-frame-alist (cons 'font font-code))
       (set-frame-font font-code)))
 
-  (defun MattLu/reset-font-size ()
-    "Change font size back to `MattLu/default-font-size'."
+  (defun my/reset-font-size ()
+    "Change font size back to `my/default-font-size'."
     (interactive)
-    (setq MattLu/current-font-size MattLu/default-font-size)
-    (MattLu/set-font-size))
+    (setq my/current-font-size my/default-font-size)
+    (my/set-font-size))
 
-  (defun MattLu/increase-font-size ()
-    "Increase current font size by a factor of `MattLu/font-change-increment'."
+  (defun my/increase-font-size ()
+    "Increase current font size by a factor of `my/font-change-increment'."
     (interactive)
-    (setq MattLu/current-font-size
-          (ceiling (* MattLu/current-font-size MattLu/font-change-increment)))
-    (MattLu/set-font-size))
+    (setq my/current-font-size
+          (ceiling (* my/current-font-size my/font-change-increment)))
+    (my/set-font-size))
 
-  (defun MattLu/decrease-font-size ()
-    "Decrease current font size by a factor of `MattLu/font-change-increment', down to a minimum size of 1."
+  (defun my/decrease-font-size ()
+    "Decrease current font size by a factor of `my/font-change-increment', down to a minimum size of 1."
     (interactive)
-    (setq MattLu/current-font-size
+    (setq my/current-font-size
           (max 1
-               (floor (/ MattLu/current-font-size MattLu/font-change-increment))))
-    (MattLu/set-font-size))
+               (floor (/ my/current-font-size my/font-change-increment))))
+    (my/set-font-size))
 
-  (when (member MattLu/default-font
+  (when (member my/default-font
                 (font-family-list))
-    (MattLu/reset-font-size))
+    (my/reset-font-size))
 #+END_SRC
 
 ** Highlight the current line
@@ -577,6 +573,7 @@ project is to be configured, built and tested using CMake and CTest.
     :load-path "~/.emacs.d/project-cmake/"
     :custom
     (project-vc-merge-submodules nil)
+    (project-vc-extra-root-markers '(".dir-locals.el"))
     (project-cmake-build-directory-name "build")
     :config
     (put 'project-cmake-configuration-arguments 'safe-local-variable #'listp)
@@ -740,7 +737,7 @@ Add shell completion
 
 Get environment variable in Shell and set them to Emacs
 #+begin_src emacs-lisp
-  (defun MattLu/get-shell-env-value-and-set-emacs ()
+  (defun my/get-shell-env-value-and-set-emacs ()
   ; get environment variable form shell and set to emacs
     (interactive)
     (let ((env-var '("PATH" "LD_LIBRARY_PATH" "PYTHONPATH")))
@@ -748,7 +745,7 @@ Get environment variable in Shell and set them to Emacs
       (setq python-shell-process-environment
             (mapcar (lambda (x) (format "%s=%s" x (getenv x)))
                     env-var))))
-  (define-key shell-mode-map (kbd "C-c x") 'MattLu/get-shell-env-value-and-set-emacs)
+  (define-key shell-mode-map (kbd "C-c x") 'my/get-shell-env-value-and-set-emacs)
 #+end_src
 
 ** Workgroups another way to organize workspace
@@ -794,13 +791,13 @@ Get environment variable in Shell and set them to Emacs
             (wg-switch-to-workgroup-internal group-name)))
          (t
           (message "No workgroup is created yet.")))))
-    (defun MattLu/wg-perform-session-maintenance ()
+    (defun my/wg-perform-session-maintenance ()
       (when (and (wg-minibuffer-inactive-p) workgroups-mode)
         (wg-perform-session-maintenance)))
     (workgroups-mode 1)
     (wg-reset-internal (wg-make-session))
     :hook
-    (window-configuration-change . MattLu/wg-perform-session-maintenance))
+    (window-configuration-change . my/wg-perform-session-maintenance))
 #+END_SRC
 
 ** Bazel
@@ -866,7 +863,7 @@ Add system path to emacs.
 
 #+BEGIN_SRC emacs-lisp
   (if (eq system-type 'darwin)
-      (mapcar #'MattLu/append-to-path
+      (mapcar #'my/append-to-path
               '("/usr/local/bin"
                 "/Library/TeX/texbin"
                 "/usr/local/opt/llvm/bin/")))
@@ -912,7 +909,7 @@ elogt
 Emacs Polyglot: an Emacs LSP client that stays out of your way.
 
 #+begin_src emacs-lisp
-  (defun MattLu/test-then-add-eglot (mode-list program &optional command)
+  (defun my/test-then-add-eglot (mode-list program &optional command)
     (when (executable-find program)
       (if command
           (add-to-list 'eglot-server-programs
@@ -948,16 +945,16 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (eglot-events-buffer-size 0)
     (eglot-ignored-server-capabilities '(:hoverProvider :documentHighlightProvider))
     :config
-    (MattLu/test-then-add-eglot '(c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
-    (MattLu/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
-    (MattLu/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
-    (MattLu/test-then-add-eglot '(js-ts-mode) "typescript-language-server" "--stdio")
-    (MattLu/test-then-add-eglot '(bash-ts-mode) "bash-language-server" "start")
-    (MattLu/test-then-add-eglot '(rust-ts-mode) "rust-analyzer")
-    (MattLu/test-then-add-eglot '(yaml-ts-mode) "yaml-language-server" "--stdio")
-    (MattLu/test-then-add-eglot '(dockerfile-ts-mode) "docker-langserver" "--stdio")
-    ;; (MattLu/test-then-add-eglot '(json-ts-mode) "vscode-json-language-server" "--stdio")
-    (MattLu/test-then-add-eglot '(mlir-mode) "mlir-lsp-server")
+    (my/test-then-add-eglot '(c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
+    (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
+    (my/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
+    (my/test-then-add-eglot '(js-ts-mode) "typescript-language-server" "--stdio")
+    (my/test-then-add-eglot '(bash-ts-mode) "bash-language-server" "start")
+    (my/test-then-add-eglot '(rust-ts-mode) "rust-analyzer")
+    (my/test-then-add-eglot '(yaml-ts-mode) "yaml-language-server" "--stdio")
+    (my/test-then-add-eglot '(dockerfile-ts-mode) "docker-langserver" "--stdio")
+    ;; (my/test-then-add-eglot '(json-ts-mode) "vscode-json-language-server" "--stdio")
+    (my/test-then-add-eglot '(mlir-mode) "mlir-lsp-server")
 
     (defun eglot-tblgen-command-args (interactive-p)
       (let* ((build-directory (project-cmake-build-directory))
@@ -989,12 +986,12 @@ emacs-libvterm is fully capable, fast, and it can seamlessly handle large
 outputs.
 
 #+begin_src emacs-lisp
-  (defun MattLu/vterm-env ()
+  (defun my/vterm-env ()
     (interactive)
     (setq vterm-environment (cdr (assq 'vterm-env dir-local-variables-alist))) ;; FixMe
     (vterm))
 
-  (define-derived-mode MattLu/vterm-mode fundamental-mode "MattLu/VTerm"
+  (define-derived-mode my/vterm-mode fundamental-mode "my/VTerm"
     "Major mode for vterm buffer."
     (hack-dir-local-variables)
     (let ((vterm-env (cdr (assq 'vterm-environment dir-local-variables-alist))))
@@ -1027,15 +1024,15 @@ outputs.
                          'python-shell-process-environment
                          (format ,(concat x "=%s") path))))))
      env-var)
-    (setq Mattlu/vterm-cmd (mapconcat (lambda (x) (format "vterm_read_%s\n" x)) env-var ""))
-    (defun MattLu/setup-vterm-python-env ()
+    (setq my/vterm-cmd (mapconcat (lambda (x) (format "vterm_read_%s\n" x)) env-var ""))
+    (defun my/setup-vterm-python-env ()
       ;; get environment variable form vterm and set to emacs
       (interactive)
       (setq python-shell-process-environment nil)
-      (vterm-send-string Mattlu/vterm-cmd))
+      (vterm-send-string my/vterm-cmd))
     :bind
     (:map vterm-mode-map
-          ("C-c x" . MattLu/setup-vterm-python-env)
+          ("C-c x" . my/setup-vterm-python-env)
           ("M-f" . (lambda ()
                      (interactive)
                      (vterm-send-key "f" nil t)))
@@ -1072,7 +1069,7 @@ Hydra short-keys
 
 Emacs has a minor mode called hs-minor-mode that allows users to fold and hide blocks of text
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/display-code-line-counts (ov)
+  (defun my/display-code-line-counts (ov)
     (when (eq 'code (overlay-get ov 'hs))
       (overlay-put ov 'display
                    (propertize
@@ -1086,7 +1083,7 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
     :bind (:map hs-minor-mode-map
                 ("C-c @" . hydra-hs/body))
     :config
-    (setq hs-set-up-overlay 'MattLu/display-code-line-counts))
+    (setq hs-set-up-overlay 'my/display-code-line-counts))
 #+END_SRC
 
 *** Highlight variables
@@ -1156,7 +1153,7 @@ using tree-sitter to manage Parser
 Pip can install binary file.
 
 #+begin_src emacs-lisp
-  (defun MattLu/get-first-valid-path (path-list)
+  (defun my/get-first-valid-path (path-list)
     ;; get build path
     ;; this dirctiry should contain the excutable server and config file.
     ;; check path validation and return list.
@@ -1176,11 +1173,11 @@ Pip can install binary file.
     (venv-initialize-eshell) ;; if you want eshell support
     (setq venv-location '("~/py3/"
                           "~/py3.10/"))
-    (let ((venv-py (MattLu/get-first-valid-path venv-location)))
+    (let ((venv-py (my/get-first-valid-path venv-location)))
       (when venv-py
         (venv-workon (car (last (split-string venv-py "\/") 2)))))
-    (MattLu/test-then-add-eglot '(cmake-ts-mode) "cmake-language-server")
-    ;; (MattLu/test-then-add-eglot '(python-mode python-ts-mode) "pylsp")
+    (my/test-then-add-eglot '(cmake-ts-mode) "cmake-language-server")
+    ;; (my/test-then-add-eglot '(python-mode python-ts-mode) "pylsp")
     )
 #+END_SRC
 
@@ -1220,22 +1217,22 @@ Set ipython as interpreter
 *** code format
 
 #+begin_src emacs-lisp
-  (defun MattLu/python-format ()
+  (defun my/python-format ()
     (interactive)
     (if (region-active-p)
         (python-black-partial-dwim)
       (python-black-buffer)))
 
-  (defun MattLu/python-format-key ()
-    (define-key (current-local-map) [remap eglot-format] 'MattLu/python-format)
-    (local-set-key (kbd "C-M-\\") 'MattLu/python-format))
+  (defun my/python-format-key ()
+    (define-key (current-local-map) [remap eglot-format] 'my/python-format)
+    (local-set-key (kbd "C-M-\\") 'my/python-format))
 
   (use-package python-black
     :if (executable-find "black")
     :after python
     :hook
-    (python-mode . MattLu/python-format-key)
-    (python-ts-mode . MattLu/python-format-key))
+    (python-mode . my/python-format-key)
+    (python-ts-mode . my/python-format-key))
 #+end_src
 
 ** C++
@@ -1271,24 +1268,24 @@ clang-format
 OVERVIEW: A tool to format C/C++/Java/JavaScript/Objective-C/Protobuf/C# code.
 
 #+begin_src emacs-lisp
-  (defun MattLu/clang-format (&optional beg end)
+  (defun my/clang-format (&optional beg end)
     (interactive
      (and (region-active-p) (list (region-beginning) (region-end))))
     (if (and beg end)
         (clang-format beg end)
       (clang-format-buffer)))
 
-  (defun MattLu/clang-format-key ()
+  (defun my/clang-format-key ()
     (when (current-local-map)
-      (define-key (current-local-map) [remap eglot-format] 'MattLu/clang-format))
-    (local-set-key (kbd "C-M-\\") 'MattLu/clang-format))
+      (define-key (current-local-map) [remap eglot-format] 'my/clang-format))
+    (local-set-key (kbd "C-M-\\") 'my/clang-format))
 
   (use-package clang-format
     :if (executable-find "clang-format")
     :custom
     (clang-format-fallback-style "llvm")
     :hook ((c-mode c++-mode java-mode js-mode tablegen-mode c++-ts-mode c-ts-mode) .
-           MattLu/clang-format-key))
+           my/clang-format-key))
 #+end_src
 
 Google Test
@@ -1303,14 +1300,14 @@ For running Google Tests from a given buffer
 ** Rust
 
 #+begin_src emacs-lisp
-  (defun MattLu/project-try-cargo-toml (dir)
+  (defun my/project-try-cargo-toml (dir)
     (when-let* ((output
                  (let ((default-directory dir))
                    (shell-command-to-string "cargo metadata --no-deps --format-version 1")))
                 (js (ignore-errors (json-read-from-string output)))
                 (found (cdr (assq 'workspace_root js))))
       (cons 'transient found)))
-  (add-hook 'project-find-functions 'MattLu/project-try-cargo-toml nil nil)
+  (add-hook 'project-find-functions 'my/project-try-cargo-toml nil nil)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1386,7 +1383,7 @@ Enable =haskell-doc-mode=, which displays the type signature of a function, and
 use smart indentation.
 
 #+BEGIN_SRC emacs-lisp
-  ;;  (MattLu/append-to-path "~/.cabal/bin")
+  ;;  (my/append-to-path "~/.cabal/bin")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1474,7 +1471,7 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 
 add Google protocol buffer support
 #+begin_src emacs-lisp
-  (defun MattLu/prototxt-mode-hook ()
+  (defun my/prototxt-mode-hook ()
     (when (and (stringp buffer-file-name)
                (string-match "\\.prototxt\\'" buffer-file-name))
       (setq-local comment-start "# ")
@@ -1487,7 +1484,7 @@ add Google protocol buffer support
   (use-package protobuf-mode
     :mode "\\.prototxt$"
     :hook
-    (protobuf-mode . MattLu/prototxt-mode-hook))
+    (protobuf-mode . my/prototxt-mode-hook))
 #+END_SRC
 
 ** ReStructuredText
@@ -1560,19 +1557,23 @@ sed,awk,grep, and friends for JSON data.
 ** ChatGPT
 
 #+begin_src emacs-lisp
-  (defun MattLu/internet-up-p (&optional host)
+  (defun my/internet-up-p (&optional host)
     (= 0 (call-process "ping" nil nil nil "-c" "1" "-W" "1"
                        (if host host "www.google.com"))))
 #+end_src
 
 #+begin_src emacs-lisp
   (use-package gptel
+    :bind (("C-c <return>" . gptel-send)
+           ("C-c C-<return>" . gptel-menu)
+           :map gptel-mode-map
+           ("C-c C-x t" . gptel-set-topic))
     :config
     ;; (setq gptel--debug t)
     (setq gptel-default-mode 'org-mode)
-    (unless (MattLu/internet-up-p)
+    (unless (my/internet-up-p)
       (setq-default gptel-proxy
-                    (format "socks5h://%s" MattLu/socks-proxy)))
+                    (format "socks5h://%s" my/socks-proxy)))
     (setq-default gptel-model "gemini-1.5-pro-latest" ;Pick your default model
                   gptel-backend (gptel-make-gemini "Gemini"
                                   :key 'gptel-api-key
@@ -1635,13 +1636,13 @@ I’d like the initial scratch buffer to be in Org:
 I like to see an outline of pretty bullets instead of a list of asterisks.
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/change-cdr-value (in-list key value)
+  (defun my/change-cdr-value (in-list key value)
     (when (consp in-list)
       (if (eq (car in-list) key)
           (setcdr in-list value)
         (progn
-          (MattLu/change-cdr-value (car in-list) key value)
-          (MattLu/change-cdr-value (cdr in-list) key value))
+          (my/change-cdr-value (car in-list) key value)
+          (my/change-cdr-value (cdr in-list) key value))
         )))
 #+END_SRC
 
@@ -1710,7 +1711,7 @@ Hit =C-c g= to quickly open up my todo list.
   (defun open-gtd-file ()
     "Open the master org TODO list."
     (interactive)
-    ;; (MattLu/copy-tasks-from-inbox)
+    ;; (my/copy-tasks-from-inbox)
     (find-file org-gtd-file)
     (end-of-buffer))
 
@@ -1890,7 +1891,7 @@ place in the archive.
   (setq org-archive-location
         (concat (org-file-path "archive.org") "::datetree/"))
 
-  (defun MattLu/mark-done-and-archive ()
+  (defun my/mark-done-and-archive ()
     "Mark the state of an org-mode item as DONE and archive it."
     (interactive)
     (let ((ts (org-get-todo-state)))
@@ -1900,7 +1901,7 @@ place in the archive.
         (org-todo 'done)))
     (org-archive-subtree))
 
-  (define-key org-mode-map (kbd "C-c C-x C-s") 'MattLu/mark-done-and-archive)
+  (define-key org-mode-map (kbd "C-c C-x C-s") 'my/mark-done-and-archive)
 #+END_SRC
 
 Record the time that a todo was archived.
@@ -2244,7 +2245,7 @@ of every exported HTML document.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/org-html-export-planning (planning-string backend info)
+  (defun my/org-html-export-planning (planning-string backend info)
     (when (string-match "<p>.+><\\([0-9]+-[0-9]+-[0-9]+\\)[^>]+><.+</p>" planning-string)
       (concat "<span class=\"planning\">" (match-string 1 planning-string) "</span>")))
 #+END_SRC
@@ -2624,11 +2625,11 @@ I futz around with my dotfiles a lot. This binds =C-c e= to quickly open my
 Emacs configuration file.
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/visit-emacs-config ()
+  (defun my/visit-emacs-config ()
     (interactive)
     (find-file "~/.emacs.d/configuration.org"))
 
-  (global-set-key (kbd "C-c e") 'MattLu/visit-emacs-config)
+  (global-set-key (kbd "C-c e") 'my/visit-emacs-config)
 #+END_SRC
 
 ** Always kill current buffer
@@ -2636,11 +2637,11 @@ Emacs configuration file.
 Assume that I always want to kill the current buffer when hitting =C-x k=.
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/kill-current-buffer ()
+  (defun my/kill-current-buffer ()
     "Kill the current buffer without prompting."
     (interactive)
     (kill-buffer (current-buffer)))
-  (global-set-key (kbd "C-x k") 'MattLu/kill-current-buffer)
+  (global-set-key (kbd "C-x k") 'my/kill-current-buffer)
 #+END_SRC
 
 ** Set up =helpful=
@@ -2736,9 +2737,9 @@ at the correct indentation for Python).
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun MattLu/quit-all ()
+  (defun my/quit-all ()
       (interactive)
-      (if (eq last-command 'MattLu/quit-all)
+      (if (eq last-command 'my/quit-all)
            (cond ((region-active-p)
                   (deactivate-mark))
                  ((> (minibuffer-depth) 0)
@@ -2751,7 +2752,7 @@ at the correct indentation for Python).
                   (funcall buffer-quit-function)))
           (keyboard-quit)))
   (setq enable-recursive-minibuffers t)
-  (global-set-key (kbd "C-g") 'MattLu/quit-all)
+  (global-set-key (kbd "C-g") 'my/quit-all)
 #+end_src
 
 *** fussy
@@ -2904,7 +2905,7 @@ consult-dir: insert paths into minibuffer prompts in Emacs
 *** embark
 
 #+begin_src emacs-lisp
-  (defun MattLu/scp-file (arg input1)
+  (defun my/scp-file (arg input1)
     ;; Copy files to My local device.
     (interactive "P\nsInput 1:")
     (let* ((device (completing-read "Select: " '("Mac" "EVB")))
@@ -2920,8 +2921,8 @@ https://karthinks.com/software/fifteen-ways-to-use-embark/
 
 #+begin_src emacs-lisp
   (eval-when-compile
-    (defmacro MattLu/embark-ace-action (fn)
-      `(defun ,(intern (concat "MattLu/embark-ace-" (symbol-name fn))) ()
+    (defmacro my/embark-ace-action (fn)
+      `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
          (interactive)
          (with-demoted-errors "%s"
            (require 'ace-window)
@@ -2967,10 +2968,10 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 #+begin_src emacs-lisp
   (use-package embark
     :config
-    (define-key embark-file-map     (kbd "o") (MattLu/embark-ace-action find-file))
-    (define-key embark-buffer-map   (kbd "o") (MattLu/embark-ace-action switch-to-buffer))
-    (define-key embark-bookmark-map (kbd "o") (MattLu/embark-ace-action bookmark-jump))
-    (define-key embark-file-map  (kbd "s") 'MattLu/scp-file)
+    (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
+    (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
+    (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
+    (define-key embark-file-map  (kbd "s") 'my/scp-file)
     :bind
     ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
     :init
@@ -3080,22 +3081,22 @@ When splitting a window, I invariably want to switch to the new window. This
 makes that automatic.
 
 #+BEGIN_SRC emacs-lisp
-  (defun MattLu/split-window-below-and-switch ()
+  (defun my/split-window-below-and-switch ()
     "Split the window horizontally, then switch to the new pane."
     (interactive)
     (split-window-below)
     (balance-windows)
     (other-window 1))
 
-  (defun MattLu/split-window-right-and-switch ()
+  (defun my/split-window-right-and-switch ()
     "Split the window vertically, then switch to the new pane."
     (interactive)
     (split-window-right)
     (balance-windows)
     (other-window 1))
 
-  (global-set-key (kbd "C-x 2") 'MattLu/split-window-below-and-switch)
-  (global-set-key (kbd "C-x 3") 'MattLu/split-window-right-and-switch)
+  (global-set-key (kbd "C-x 2") 'my/split-window-below-and-switch)
+  (global-set-key (kbd "C-x 3") 'my/split-window-right-and-switch)
 #+END_SRC
 
 ** Mass editing of =grep= results
@@ -3253,9 +3254,9 @@ matches aw-dispatch-alist with a few extra
     ("K" text-scale-decrease)
     ("J" text-scale-increase)
     ("L" sensible-defaults/reset-text-size)
-    ("+" MattLu/increase-font-size)
-    ("-" MattLu/decrease-font-size)
-    ("=" MattLu/reset-font-size)
+    ("+" my/increase-font-size)
+    ("-" my/decrease-font-size)
+    ("=" my/reset-font-size)
     ("h" shrink-window-horizontally)
     ("k" shrink-window)
     ("j" enlarge-window)
@@ -3438,10 +3439,10 @@ Hydra ediff, more function with less key bindings
 Use =c-x d= to enter current folder.
 
 #+begin_src emacs-lisp
-  (defun MattLu/dired ()
+  (defun my/dired ()
     (interactive)
     (dired nil))
-  (global-set-key (kbd "C-x d") 'MattLu/dired)
+  (global-set-key (kbd "C-x d") 'my/dired)
 #+end_src
 
  These are the switches that get passed to =ls= when =dired= gets a list of
