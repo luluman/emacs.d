@@ -1574,18 +1574,29 @@ sed,awk,grep, and friends for JSON data.
     (unless (my/internet-up-p)
       (setq-default gptel-proxy
                     (format "socks5h://%s" my/socks-proxy)))
-    (setq-default gptel-model "gemini-1.5-pro-latest" ;Pick your default model
-                  gptel-backend (gptel-make-gemini "Gemini"
-                                  :key 'gptel-api-key
-                                  :stream t))
+
+    (defun +get-api-key (path)
+      (string-trim-right (f-read-text path)))
+
+    (gptel-make-openai "ChatGPT"
+      :key (+get-api-key "~/.ssh/gpt_api_key")
+      :stream t
+      :models '("gpt-3.5-turbo" "gpt-3.5-turbo-16k" "gpt-4" "gpt-4o"
+                "gpt-4-turbo" "gpt-4-turbo-preview" "gpt-4-32k"
+                "gpt-4-1106-preview" "gpt-4-0125-preview")) ;;  bug
+
+    (defvar gptel--gemini
+      (gptel-make-gemini "Gemini" :stream t :key (+get-api-key "~/.ssh/gemini_api_key"))) ;; free
+    (defvar gptel--anthropic
+      (gptel-make-anthropic "Claude" :stream t :key (+get-api-key "~/.ssh/claude_api_key")))
+
+    (setq-default gptel-backend gptel--gemini
+                  gptel-model "gemini-1.5-pro-latest")
     :init
     (require 'f)
     :custom
     (gptel-use-curl t)
-    (gptel-playback t)
-    (gptel-api-key (lambda ()
-                     (string-trim-right
-                      (f-read-text "~/.ssh/gemini_api_key")))))
+    (gptel-playback t))
 #+end_src
 
 ** BuildBot
