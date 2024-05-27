@@ -355,29 +355,6 @@ Custom face when running in 256-color terminal
     (my/load-custom-face-el))
 #+end_src
 
-** COMMENT Configure =powerline=
-
-#+begin_src emacs-lisp
-  (setq my/minor-mode-direct
-        '(flymake-mode))
-
-  (defun powerline-minor-modes-modify (orig-fun &rest args)
-    "Change powerline-minor-modes display"
-    (let ((minor-mode-alist
-           (cl-remove-if-not (lambda (mode)
-                               (memq (car mode) my/minor-mode-direct))
-                             minor-mode-alist)))
-      (apply orig-fun args)))
-#+end_src
-
-#+BEGIN_SRC emacs-lisp
-  (use-package powerline
-    :config
-    (powerline-default-theme)
-    (advice-add 'powerline-minor-modes
-                :around 'powerline-minor-modes-modify))
-#+end_SRC
-
 ** Mode-Line
 
 #+begin_src emacs-lisp
@@ -1581,14 +1558,19 @@ sed,awk,grep, and friends for JSON data.
     (gptel-make-openai "ChatGPT"
       :key (+get-api-key "~/.ssh/gpt_api_key")
       :stream t
-      :models '("gpt-3.5-turbo" "gpt-3.5-turbo-16k" "gpt-4" "gpt-4o"
-                "gpt-4-turbo" "gpt-4-turbo-preview" "gpt-4-32k"
-                "gpt-4-1106-preview" "gpt-4-0125-preview")) ;;  bug
+      :models '("gpt-4o", "gpt-4-turbo"))
 
     (defvar gptel--gemini
-      (gptel-make-gemini "Gemini" :stream t :key (+get-api-key "~/.ssh/gemini_api_key"))) ;; free
+      (gptel-make-gemini "Gemini"
+        :key (+get-api-key "~/.ssh/gemini_api_key")
+        :stream t
+        :models '("gemini-1.5-pro-latest"))) ;; free
+
     (defvar gptel--anthropic
-      (gptel-make-anthropic "Claude" :stream t :key (+get-api-key "~/.ssh/claude_api_key")))
+      (gptel-make-anthropic "Claude"
+        :key (+get-api-key "~/.ssh/claude_api_key")
+        :stream t
+        :models '("claude-3-opus-20240229")))
 
     (setq-default gptel-backend gptel--gemini
                   gptel-model "gemini-1.5-pro-latest")
