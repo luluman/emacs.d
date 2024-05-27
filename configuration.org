@@ -1541,7 +1541,8 @@ sed,awk,grep, and friends for JSON data.
 
 #+begin_src emacs-lisp
   (use-package gptel
-    :bind (("C-c <return>" . gptel-send)
+    :bind (("C-c RET" . gptel-send)
+           ("C-c <return>" . gptel-send)
            ("C-c C-<return>" . gptel-menu)
            :map gptel-mode-map
            ("C-c C-x t" . gptel-set-topic))
@@ -1558,7 +1559,7 @@ sed,awk,grep, and friends for JSON data.
     (gptel-make-openai "ChatGPT"
       :key (+get-api-key "~/.ssh/gpt_api_key")
       :stream t
-      :models '("gpt-4o", "gpt-4-turbo"))
+      :models '("gpt-4o" "gpt-4-turbo"))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
