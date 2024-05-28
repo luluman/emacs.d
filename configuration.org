@@ -460,7 +460,7 @@ pairing or presenting code.
   (global-hl-line-mode)
 #+END_SRC
 
-** COMMENT Highlight uncommitted changes
+** Highlight uncommitted changes
 
 Use the =git-gutter= package to highlight changed-and-uncommitted lines when
 programming.
@@ -468,7 +468,7 @@ programming.
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
     :custom
-    (git-gutter:window-width 2)
+    (git-gutter:window-width 1)
     (git-gutter:update-interval 1)
     ;; :hook
     ;; (git-gutter-mode
