@@ -469,7 +469,8 @@ programming.
   (use-package git-gutter
     :custom
     (git-gutter:window-width 1)
-    (git-gutter:update-interval 1)
+    (git-gutter:update-interval 0.3)
+    (git-gutter:always-show-separator t)
     ;; :hook
     ;; (git-gutter-mode
     ;; . (lambda ()
@@ -3262,7 +3263,6 @@ matches aw-dispatch-alist with a few extra
   (use-package ace-window
     :bind
     ("M-o" . 'ace-window)
-    ("C-x o" . 'ace-window)
     ("C-x w" . hydra-frame-window/body)
     :config
     (setq aw-scope 'frame)   ; only the windows of the current frame
@@ -3680,18 +3680,8 @@ https://youtu.be/51eSeqcaikM
 https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
 
 #+begin_src emacs-lisp
-  (defun repeated-prefix-help-command ()
-    (interactive)
-    (when-let* ((keys (this-command-keys-vector))
-                (prefix (seq-take keys (1- (length keys))))
-                (orig-keymap (key-binding prefix 'accept-default))
-                (keymap (copy-keymap orig-keymap))
-                (exit-func (set-transient-map keymap t #'which-key-abort)))
-      (define-key keymap [remap keyboard-quit]
-                  (lambda () (interactive) (funcall exit-func)))
-      (which-key--create-buffer-and-show nil keymap)))
-
-  (setq prefix-help-command #'repeated-prefix-help-command)
+  (use-package repeat-help
+    :hook (repeat-mode . repeat-help-mode))
 #+end_src
 
 * Set custom keybindings
