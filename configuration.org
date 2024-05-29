@@ -471,6 +471,9 @@ programming.
     (git-gutter:window-width 1)
     (git-gutter:update-interval 0.3)
     (git-gutter:always-show-separator t)
+    (git-gutter:deleted-sign " ")
+    (git-gutter:added-sign " ")
+    (git-gutter:modified-sign " ")
     ;; :hook
     ;; (git-gutter-mode
     ;; . (lambda ()
@@ -1566,7 +1569,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key (+get-api-key "~/.ssh/gemini_api_key")
         :stream t
-        :models '("gemini-1.5-pro-latest"))) ;; free
+        :models '("gemini-1.5-pro-latest")))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
