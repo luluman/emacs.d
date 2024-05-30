@@ -3288,7 +3288,7 @@ while still keeping them within arm’s reach.
     ;; (popper-window-height 12)
     (popper-mode-line nil)
     :config
-    (bind-keys* ("C-<tab>" . popper-toggle-latest))
+    (bind-keys* ("C-<tab>" . popper-toggle))
     (setq popper-group-function #'popper-group-by-project)
     :init
     (setq popper-reference-buffers
