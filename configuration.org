@@ -1561,19 +1561,19 @@ sed,awk,grep, and friends for JSON data.
       (string-trim-right (f-read-text path)))
 
     (gptel-make-openai "ChatGPT"
-      :key (+get-api-key "~/.ssh/gpt_api_key")
+      :key (+get-api-key "~/.ssh/gpt-api-key")
       :stream t
       :models '("gpt-4o" "gpt-4-turbo"))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
-        :key (+get-api-key "~/.ssh/gemini_api_key")
+        :key (+get-api-key "~/.ssh/gemini-api-key")
         :stream t
         :models '("gemini-1.5-pro-latest")))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
-        :key (+get-api-key "~/.ssh/claude_api_key")
+        :key (+get-api-key "~/.ssh/claude-api-key")
         :stream t
         :models '("claude-3-opus-20240229")))
 
