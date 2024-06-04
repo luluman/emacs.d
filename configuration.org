@@ -475,14 +475,10 @@ programming.
     (git-gutter:added-sign "▕")
     (git-gutter:deleted-sign "▕")
     (git-gutter:modified-sign "▕")
-    :config
-    (defmacro +change-face (var color)
-      `(set-face-attribute ,var nil
-                           :foreground ,color
-                           :background (face-background 'default)))
-    (+change-face 'git-gutter:added "green")
-    (+change-face 'git-gutter:deleted "red")
-    (+change-face 'git-gutter:modified "yellow")
+    :custom-face
+    (git-gutter:added ((t (:foreground "green" :background nil))))
+    (git-gutter:deleted ((t (:foreground "red" :background nil))))
+    (git-gutter:modified ((t (:foreground "yellow" :background nil))))
     ;; :hook
     ;; (git-gutter-mode
     ;; . (lambda ()
