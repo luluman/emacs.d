@@ -1,9 +1,9 @@
 [submodule "too-long-lines-mode"]
 	path = too-long-lines-mode
-	url = https://github.com/rakete/too-long-lines-mode
+	url = git@github.com:rakete/too-long-lines-mode
 [submodule "project-cmake"]
 	path = project-cmake
-	url = https://github.com/luluman/project-cmake.git
+	url = git@github.com:luluman/project-cmake.git
 [submodule "indent-bars"]
 	path = indent-bars
-	url = https://github.com/jdtsmith/indent-bars
+	url = git@github.com:jdtsmith/indent-bars
