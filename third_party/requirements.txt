@@ -6,3 +6,6 @@ cmake-language-server
 cmakelang
 black
 black-macchiato
+ipython
+requests
+pyyaml

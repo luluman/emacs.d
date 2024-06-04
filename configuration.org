@@ -475,10 +475,14 @@ programming.
     (git-gutter:added-sign "▕")
     (git-gutter:deleted-sign "▕")
     (git-gutter:modified-sign "▕")
-    :custom-face
-    (git-gutter:added ((t (:foreground "green" :background nil))))
-    (git-gutter:deleted ((t (:foreground "red" :background nil))))
-    (git-gutter:modified ((t (:foreground "yellow" :background nil))))
+    :config
+    (defmacro +change-face (var color)
+      `(set-face-attribute ,var nil
+                           :foreground ,color
+                           :background (face-background 'default)))
+    (+change-face 'git-gutter:added "green")
+    (+change-face 'git-gutter:deleted "red")
+    (+change-face 'git-gutter:modified "yellow")
     ;; :hook
     ;; (git-gutter-mode
     ;; . (lambda ()
@@ -1121,6 +1125,8 @@ using tree-sitter to manage Parser
 #+begin_src emacs-lisp
   (use-package indent-bars
     :load-path "~/.emacs.d/indent-bars"
+    :config
+    (require 'indent-bars-ts)
     :custom
     (indent-bars-treesit-support t)
     (indent-bars-no-descend-string t)
