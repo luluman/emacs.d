@@ -643,6 +643,10 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     :config
     (use-package with-editor)
     (setq magit-bind-magit-project-status nil)
+    :hook
+    (git-commit-mode . (lambda ()
+                         "Set up the Git commit message buffer."
+                         (setq fill-column 72)))
     :custom
     (magit-push-always-verify nil)
     (git-commit-summary-max-length 50)
