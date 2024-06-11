@@ -935,11 +935,11 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (eglot-events-buffer-size 0)
     (eglot-ignored-server-capabilities '(:hoverProvider :documentHighlightProvider))
     :config
-    (my/test-then-add-eglot '(c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
+    (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
     (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
     (my/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
-    (my/test-then-add-eglot '(js-ts-mode) "typescript-language-server" "--stdio")
-    (my/test-then-add-eglot '(bash-ts-mode) "bash-language-server" "start")
+    (my/test-then-add-eglot '(javascript-mode js-ts-mode) "typescript-language-server" "--stdio")
+    (my/test-then-add-eglot '(sh-mode bash-ts-mode) "bash-language-server" "start")
     (my/test-then-add-eglot '(rust-ts-mode) "rust-analyzer")
     (my/test-then-add-eglot '(yaml-ts-mode) "yaml-language-server" "--stdio")
     (my/test-then-add-eglot '(dockerfile-ts-mode) "docker-langserver" "--stdio")
@@ -959,6 +959,18 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
       (add-hook 'tablegen-mode-hook 'eglot-ensure))
     (setq completion-category-defaults nil))
 #+END_SRC
+
+*** DAP mode
+
+Dape is a debug adapter client for Emacs.
+
+#+begin_src emacs-lisp
+  (use-package dape
+    :custom
+    (dape-buffer-window-arrangement 'right) ;; Info buffers to the right
+    )
+  ;; ▶
+#+end_src
 
 *** Xref jump
 
