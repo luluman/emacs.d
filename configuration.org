@@ -966,11 +966,14 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 Dape is a debug adapter client for Emacs.
 
 #+begin_src emacs-lisp
-  (use-package dape
+  (use-package dape ;; should use gnu-dev:version
     :custom
     (dape-buffer-window-arrangement 'right) ;; Info buffers to the right
-    )
-  ;; ▶
+    (dape-breakpoint-margin-string "●") ;; ◯
+    :config
+    (put 'dape--overlay-arrow-position
+         'overlay-arrow-string   ;; ▶ →
+         (propertize "▶" 'face 'dape-stack-trace-face)))
 #+end_src
 
 *** Xref jump
