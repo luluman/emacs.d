@@ -1,10 +1,7 @@
 #+TITLE: Emacs Configuration
 #+ORIGNAL:Harry R. Schwartz
-#+AUTHOR: MattLu
-#+EMAIL: lu.man@outlook.com
 #+OPTIONS: toc:nil num:nil
 #+STARTUP: overview
-[[https://github.com/hrs/dotfiles][Harry R. Schwartz]]
 * Configure =use-package=
 
 #+BEGIN_SRC emacs-lisp
@@ -53,17 +50,6 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
   (sensible-defaults/use-all-settings)
   (sensible-defaults/use-all-keybindings)
   (sensible-defaults/backup-to-temp-directory)
-#+END_SRC
-
-* Set personal information
-** Who am I? Where am I?
-
-#+BEGIN_SRC emacs-lisp
-  (setq user-full-name "MattLu"
-        user-mail-address "lu.man@outlook.com"
-        calendar-latitude 39.97
-        calendar-longitude 116.34
-        calendar-location-name "zhongkeyuanQingniangongyu H2209")
 #+END_SRC
 
 * Add =resources= to =load-path=
@@ -152,16 +138,13 @@ proxy settings
 #+begin_src emacs-lisp
   ;; https://github.com/happyo/emacs.d/blob/main/lisp/init-proxy.el
   (setq my/socks-proxy "127.0.0.1:7891")    ; SOCKS proxy
+  (setq my/remote-host-name "mac")
   (setq my/socks5 nil)
 
   (defun my/new-socks5-proxy ()
-    (let* ((command-output (shell-command-to-string (expand-file-name "~/.ssh/vpn-config.py")))
-           (command (split-string-and-unquote command-output))
-           (program (car command))
-           (args (cdr command)))
-      (apply #'start-process "socks5-proxy"
-             (format "*socks5-proxy-%s*" "vpn")
-             program args)))
+    (apply #'start-process "socks5-proxy"
+           (format "*socks5-proxy-%s*" my/remote-host-name)
+           "ssh" (list "-ND" my/socks-proxy my/remote-host-name)))
 
   (defun proxy-socks-show ()
     "Show SOCKS proxy."
@@ -578,7 +561,7 @@ Install and configure [[https://github.com/Wilfred/deadgrep][deadgrep]] as an in
 #+begin_src emacs-lisp
   (use-package deadgrep
     :bind
-    ("C-x s" . deadgrep))
+    ("C-c s" . deadgrep))
 
   (use-package wgrep-deadgrep)
 #+end_src
@@ -709,7 +692,7 @@ Force open shell in the current buffer
 
 #+begin_src emacs-lisp
   (setq comint-buffer-maximum-size 20000)
-  (setq comint-prompt-read-only t)
+  (setq comint-prompt-read-only nil) ;; If non-nil, the comint prompt is read only.
   (setq read-process-output-max (* 1024 1024))
   (setq process-adaptive-read-buffering nil)
 #+end_src
@@ -925,16 +908,15 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     ;; (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
     :bind (:map eglot-mode-map
                 ("C-M-\\" . eglot-format)
-                ("C-c f r" . eglot-rename)
-                ("C-c f a" . eglot-code-actions)
-                ("C-c f c" . eglot-reconnect)
-                ("C-c f k" . eglot-shutdown)
-                ("C-c f s" . consult-eglot-symbols)
-                ("C-c f i" . eglot-inlay-hints-mode))
+                ("C-c e r" . eglot-rename)
+                ("C-c e a" . eglot-code-actions)
+                ("C-c e c" . eglot-reconnect)
+                ("C-c e k" . eglot-shutdown)
+                ("C-c e s" . consult-eglot-symbols)
+                ("C-c e i" . eglot-inlay-hints-mode))
     :custom
     (eglot-autoshutdown t)
     (eglot-events-buffer-size 0)
-    (eglot-ignored-server-capabilities '(:hoverProvider :documentHighlightProvider))
     :config
     (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
     (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
@@ -1011,7 +993,7 @@ outputs.
   (use-package vterm
     :init
     (put 'vterm-environment 'safe-local-variable #'listp)
-    :bind ("C-c v" . vterm)
+    :bind ("C-c t" . vterm) ;; terminal
     :custom
     (vterm-kill-buffer-on-exit nil)
     (vterm-always-compile-module t)
@@ -1799,8 +1781,8 @@ Set headlines to STRT and clock-in when running a countdown
 *** COMMENT icalendar
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-combined-agenda-icalendar-file "~/.Org/matt.ics")
-  (setq org-icalendar-combined-name "MattLu ORG")
+  (setq org-combined-agenda-icalendar-file "~/.Org/my.ics")
+  (setq org-icalendar-combined-name "My ORG")
   (setq org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
   (setq org-icalendar-use-deadline '(todo-due event-if-todo event-if-not-todo))
   (setq org-icalendar-timezone "China/Beijing")
@@ -2021,7 +2003,7 @@ using priority to organize my life
           ("" . "Task and rendez-vous for today")
           ("" "Travail (tout)" agenda "Tasks and rdv for today"
            ((org-agenda-span 1)
-            (org-agenda-files (org-file-path '("gtd.org" "matt.org")))
+            (org-agenda-files (org-file-path '("gtd.org" "my.org")))
             (org-deadline-warning-days 3)
             (org-agenda-sorting-strategy
              '(todo-state-up time-up priority-down))))
@@ -2244,7 +2226,7 @@ when exporting.
   (setq org-attach-directory "~/.Org/data/")
   (setq org-link-display-descriptive nil)
   (setq org-export-filter-planning-functions
-        '(MatttLu/org-html-export-planning))
+        '(my/org-html-export-planning))
   (setq org-export-with-broken-links t)
 #+END_SRC
 
@@ -2556,7 +2538,7 @@ Use flycheck in the appropriate buffers:
     (add-hook hook 'flycheck-mode))
 #+end_src
 
-** Look up words in a thesaurus
+** COMMENT Look up words in a thesaurus
 
 Hitting =C-c s= searches for synonyms for the word at point.
 
@@ -2646,7 +2628,7 @@ Scroll preserve screen position or not.
 ** Quickly visit Emacs
 configuration
 
-I futz around with my dotfiles a lot. This binds =C-c e= to quickly open my
+I futz around with my dotfiles a lot. This binds =C-c f= to quickly open my
 Emacs configuration file.
 
 #+BEGIN_SRC emacs-lisp
@@ -2654,7 +2636,7 @@ Emacs configuration file.
     (interactive)
     (find-file "~/.emacs.d/configuration.org"))
 
-  (global-set-key (kbd "C-c e") 'my/visit-emacs-config)
+  (global-set-key (kbd "C-c f") 'my/visit-emacs-config)
 #+END_SRC
 
 ** Always kill current buffer
@@ -3324,8 +3306,6 @@ while still keeping them within arm’s reach.
             occur-mode
             "^\\*socks5-proxy-.*\\*$"
             "\\*Async Shell Command\\*"
-            "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
-            "^\\*term.*\\*$"   term-mode   ;term as a popup
             "^\\*vterm.*\\*$"   vterm-mode   ;vterm as a popup
             "^\\*TeX Help.*\\*$"  tex-mode
             "^\\*tex-shell.*\\*$"  tex-mode
