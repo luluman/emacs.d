@@ -2446,9 +2446,12 @@ prose-related mode, so I store those in a list:
 I want to make sure that I've enabled spell-checking if I'm editing text,
 composing an email, or authoring a Git commit.
 
+*** flyspell
+
 https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e2a59/emacs/init.el#L295
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell
+    :if (eq system-type 'darwin)
     :config
     ;; (use-package flyspell-lazy)
     ;; (flyspell-lazy-mode 1)
@@ -2474,6 +2477,23 @@ https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e
                      (flyspell-prog-mode))))
     (text-mode . flyspell-mode))
 #+END_SRC
+
+*** jinx
+
+Jinx is a fast just-in-time spell-checker for Emacs. Jinx highlights misspelled
+words in the text of the visible portion of the buffer.
+
+#+begin_src emacs-lisp
+  (use-package jinx
+    :if (eq system-type 'gnu/linux)
+    :hook (emacs-startup . global-jinx-mode)
+    :config
+    :bind (:map jinx-mode-map
+           ("M-$" . jinx-correct)
+           ("C-M-c" . jinx-correct)
+           ("C-M-p" . jinx-previous)
+           ("C-M-n" . jinx-next)))
+#+end_src
 
 ** Wrap paragraphs automatically
 
@@ -2509,7 +2529,7 @@ Use the [[https://elpa.gnu.org/packages/orgalist.html][=orgalist=]] package for 
 ** COMMENT Linting prose
 
 I use [[http://proselint.com/][proselint]] to check my prose for common errors. This creates a flycheck
-checker that runs proselint in texty buffers and displays my errors.
+checker that runs proselint in text buffers and displays my errors.
 
 #+begin_src emacs-lisp
   (use-package flycheck
@@ -2902,7 +2922,6 @@ consult-dir: insert paths into minibuffer prompts in Emacs
 
 #+begin_src emacs-lisp
   (use-package consult-dir
-    :ensure t
     :bind (("C-x C-d" . consult-dir)
            :map vertico-map
            ("C-x C-d" . consult-dir)
@@ -3561,11 +3580,6 @@ Use =c-x d= to enter current folder.
  reuse dired buffer
  #+begin_src emacs-lisp
    (put 'dired-find-alternate-file 'disabled nil)
- #+end_src
-
- disable flyspell in dired mode
- #+begin_src emacs-lisp
-   (add-hook 'dired-mode-hook (lambda () (flyspell-mode -1)))
  #+end_src
 
  narrow dired to match filter
