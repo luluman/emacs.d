@@ -1000,33 +1000,7 @@ outputs.
     (term-copy-exclude-prompt t)
     (vterm-buffer-name-string "*vterm %s*")
     (vterm-keymap-exceptions
-     '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" "M-s"))
-    :config
-    (setq env-var '("PATH" "LD_LIBRARY_PATH" "PYTHONPATH"))
-    (mapcar
-     (lambda (x)
-       (add-to-list 'vterm-eval-cmds
-                    `(,(format "read-%s" x)
-                      (lambda (path)
-                        (add-to-list
-                         'python-shell-process-environment
-                         (format ,(concat x "=%s") path))))))
-     env-var)
-    (setq my/vterm-cmd (mapconcat (lambda (x) (format "vterm_read_%s\n" x)) env-var ""))
-    (defun my/setup-vterm-python-env ()
-      ;; get environment variable form vterm and set to emacs
-      (interactive)
-      (setq python-shell-process-environment nil)
-      (vterm-send-string my/vterm-cmd))
-    :bind
-    (:map vterm-mode-map
-          ("C-c x" . my/setup-vterm-python-env)
-          ("M-f" . (lambda ()
-                     (interactive)
-                     (vterm-send-key "f" nil t)))
-          ("M-b" . (lambda ()
-                   (interactive)
-                   (vterm-send-key "b" nil t)))))
+     '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" "M-s")))
 #+end_src
 
 *** Fold and unfold code blocks
