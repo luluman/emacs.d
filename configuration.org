@@ -1541,7 +1541,9 @@ sed,awk,grep, and friends for JSON data.
                     (format "socks5h://%s" my/socks-proxy)))
 
     (defun +get-api-key (path)
-      (string-trim-right (f-read-text path)))
+      (if (file-exists-p path)
+          (string-trim-right (f-read-text path))
+        ""))
 
     (gptel-make-openai "ChatGPT"
       :key (+get-api-key "~/.ssh/gpt-api-key")
