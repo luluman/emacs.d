@@ -2463,10 +2463,10 @@ words in the text of the visible portion of the buffer.
     :hook (emacs-startup . global-jinx-mode)
     :config
     :bind (:map jinx-mode-map
-           ("M-$" . jinx-correct)
-           ("C-M-c" . jinx-correct)
-           ("C-M-p" . jinx-previous)
-           ("C-M-n" . jinx-next)))
+                ("M-$" . jinx-correct)
+                ("C-M-c" . jinx-correct)
+                ("C-M-p" . jinx-previous)
+                ("C-M-n" . jinx-next)))
 #+end_src
 
 ** Wrap paragraphs automatically
