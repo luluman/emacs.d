@@ -3365,16 +3365,14 @@ Hydra short-keys
 #+begin_src emacs-lisp
   (use-package back-button
     :bind (:map back-button-mode-map
-                ("C-<right>" . hydra-back-and-forth/back-button-local-forward)
-                ("C-<left>" . hydra-back-and-forth/back-button-local-backward)
-                ("C-<up>" . hydra-back-and-forth/back-button-global-backward)
-                ("C-<down>" . hydra-back-and-forth/back-button-global-forward))
+                ("C-x <right>" . hydra-back-and-forth/back-button-local-forward)
+                ("C-x <left>" . hydra-back-and-forth/back-button-local-backward)
+                ("C-x <up>" . hydra-back-and-forth/back-button-global-backward)
+                ("C-x <down>" . hydra-back-and-forth/back-button-global-forward))
     :init
     (back-button-mode 1)
     (define-key back-button-mode-map (kbd "C-x <C-left>") nil)
     (define-key back-button-mode-map (kbd "C-x <C-right>") nil)
-    (define-key back-button-mode-map (kbd "C-x <left>") nil)
-    (define-key back-button-mode-map (kbd "C-x <right>") nil)
     (define-key back-button-mode-map (kbd "C-x C-SPC") nil)
     (define-key back-button-mode-map (kbd "C-x SPC") nil))
 #+end_src
@@ -3610,7 +3608,6 @@ https://youtu.be/51eSeqcaikM
   (setq history-length 25)
   (savehist-mode 1)
   (save-place-mode 1)
-  (setq global-auto-revert-non-file-buffers t)
 #+end_src
 
 ** I-search
