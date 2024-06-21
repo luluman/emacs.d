@@ -2471,6 +2471,43 @@ words in the text of the visible portion of the buffer.
                 ("C-M-n" . jinx-next)))
 #+end_src
 
+
+*** define-word
+
+A minimalists' Emacs extension to search http://www.bing.com/dict. Support
+English to Chinese and Chinese to English.
+
+#+begin_src emacs-lisp
+  (use-package bing-dict
+    :config
+    ;; from fanyi.el
+    (defun bing-dict-dwim ()
+      "A more dwim version of `bing-dict'.
+  No prompt if the region is active or `thing-at-point' returns
+  non-nil."
+      (interactive)
+      (if-let ((word (if (use-region-p)
+                         (buffer-substring-no-properties (region-beginning) (region-end))
+                       (thing-at-point 'word t))))
+          (progn
+            (bing-dict-brief word))
+        (call-interactively #'bing-dict-brief)))
+    :bind ("C-x d" . 'bing-dict-dwim))
+#+end_src
+
+fanyi.el is a simple yet powerful multi-dictionaries interface for Emacs,
+currently it includes:
+海词
+有道同义词, Unofficial API
+etymonline
+Longman.
+
+#+begin_src emacs-lisp
+  (use-package fanyi
+    :config
+    :bind ("C-x D" . 'fanyi-dwim2))
+#+end_src
+
 ** Wrap paragraphs automatically
 
 =AutoFillMode= automatically wraps paragraphs, kinda like hitting =M-q=. I wrap
@@ -2500,48 +2537,6 @@ Use the [[https://elpa.gnu.org/packages/orgalist.html][=orgalist=]] package for 
     (add-hook 'git-commit-mode-hook 'orgalist-mode)
     (add-hook 'markdown-mode-hook 'orgalist-mode)
     (add-hook 'message-mode-hook 'orgalist-mode))
-#+end_src
-
-** COMMENT Linting prose
-
-I use [[http://proselint.com/][proselint]] to check my prose for common errors. This creates a flycheck
-checker that runs proselint in text buffers and displays my errors.
-
-#+begin_src emacs-lisp
-  (use-package flycheck
-    :config
-    (flycheck-def-executable-var proselint "proselint")
-    (flycheck-define-command-checker 'proselint
-                                     "A linter for prose."
-                                     :command '("proselint" source-inplace)
-                                     :error-patterns
-                                     '((warning line-start (file-name) ":" line ":" column ": "
-                                                (id (one-or-more (not (any " "))))
-                                                (message (one-or-more not-newline)
-                                                         (zero-or-more "\n" (any " ") (one-or-more not-newline)))
-                                                line-end))
-                                     :modes prose-modes
-                                     :next-checkers 'nil
-                                     :standard-input 'nil
-                                     :working-directory 'nil)
-    (add-to-list 'flycheck-checkers 'proselint))
-#+end_src
-
-Use flycheck in the appropriate buffers:
-
-#+begin_src emacs-lisp
-  (dolist (hook prose-mode-hooks)
-    (add-hook hook 'flycheck-mode))
-#+end_src
-
-** COMMENT Look up words in a thesaurus
-
-Hitting =C-c s= searches for synonyms for the word at point.
-
-#+begin_src emacs-lisp
-  (use-package powerthesaurus
-    :bind
-    ("C-c s" . powerthesaurus-lookup-word-dwim))
 #+end_src
 
 ** Editing with Markdown
