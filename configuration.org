@@ -2882,16 +2882,6 @@ consult-buffer and a Swiper-like search command consult-line.
     )
 #+end_src
 
-consult-dir: insert paths into minibuffer prompts in Emacs
-
-#+begin_src emacs-lisp
-  (use-package consult-dir
-    :bind (("C-x C-d" . consult-dir)
-           :map vertico-map
-           ("C-x C-d" . consult-dir)
-           ("C-x C-j" . consult-dir-jump-file)))
-#+end_src
-
 *** embark
 
 #+begin_src emacs-lisp
@@ -3421,14 +3411,7 @@ Hydra ediff, more function with less key bindings
 
 ** =dired=
 
-Use =c-x d= to enter current folder.
-
-#+begin_src emacs-lisp
-  (defun my/dired ()
-    (interactive)
-    (dired nil))
-  (global-set-key (kbd "C-x d") 'my/dired)
-#+end_src
+Use =c-x c-j= to enter current folder.
 
  These are the switches that get passed to =ls= when =dired= gets a list of
  files. We're using:
