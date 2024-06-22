@@ -2485,7 +2485,7 @@ English to Chinese and Chinese to English.
           (progn
             (bing-dict-brief word))
         (call-interactively #'bing-dict-brief)))
-    :bind ("C-x d" . 'bing-dict-dwim))
+    :bind ("C-c d" . 'bing-dict-dwim))
 #+end_src
 
 fanyi.el is a simple yet powerful multi-dictionaries interface for Emacs,
@@ -2498,7 +2498,7 @@ Longman.
 #+begin_src emacs-lisp
   (use-package fanyi
     :config
-    :bind ("C-x D" . 'fanyi-dwim2))
+    :bind ("C-c D" . 'fanyi-dwim2))
 #+end_src
 
 ** Wrap paragraphs automatically
@@ -3048,10 +3048,11 @@ useful interactive commands to enhance your overall Emacs experience.
 #+begin_src emacs-lisp
   (use-package crux
     :bind
-    (([remap kill-whole-line] . crux-kill-whole-line)
-     ("C-c d" . crux-duplicate-current-line-or-region)
+    (("C-x d" . crux-duplicate-current-line-or-region)
      ("C-c r" . crux-rename-file-and-buffer)
      ("C-k" . crux-kill-and-join-forward)
+     ("C-K" . crux-kill-whole-line)
+     ("C-S-k" . crux-kill-whole-line)
      ("C-x M-c" . crux-capitalize-region)))
 #+end_src
 
