@@ -3051,9 +3051,12 @@ useful interactive commands to enhance your overall Emacs experience.
     (("C-x d" . crux-duplicate-current-line-or-region)
      ("C-x x r" . crux-rename-file-and-buffer)
      ("C-k" . crux-kill-and-join-forward)
-     ("C-K" . crux-kill-whole-line)
      ("C-S-k" . crux-kill-whole-line)
-     ("C-x M-c" . crux-capitalize-region)))
+     ("C-<S-k>" . crux-kill-whole-line)
+     ("C-x M-c" . crux-capitalize-region))
+    :init
+    ;; 75 is the ASCII code for 'K', and 6 indicates Ctrl+Shift modifier.
+    (define-key input-decode-map "\e[75;6~" [C-S-k]))
 #+end_src
 
 ** Switch and rebalance windows when splitting
