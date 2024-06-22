@@ -3049,7 +3049,7 @@ useful interactive commands to enhance your overall Emacs experience.
   (use-package crux
     :bind
     (("C-x d" . crux-duplicate-current-line-or-region)
-     ("C-c r" . crux-rename-file-and-buffer)
+     ("C-x x r" . crux-rename-file-and-buffer)
      ("C-k" . crux-kill-and-join-forward)
      ("C-K" . crux-kill-whole-line)
      ("C-S-k" . crux-kill-whole-line)
