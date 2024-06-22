@@ -3047,6 +3047,7 @@ useful interactive commands to enhance your overall Emacs experience.
 
 #+begin_src emacs-lisp
   (use-package crux
+    :after xterm ;; xterm will redefine input-decode-map
     :bind
     (("C-x d" . crux-duplicate-current-line-or-region)
      ("C-x x r" . crux-rename-file-and-buffer)
@@ -3662,12 +3663,6 @@ Just a few handy functions.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-/") 'hippie-expand)
-#+END_SRC
-
-Remap when working in terminal Emacs.
-
-#+BEGIN_SRC emacs-lisp
-  (define-key input-decode-map "\e[1;2A" [S-up])
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
