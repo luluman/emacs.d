@@ -561,7 +561,8 @@ Install and configure [[https://github.com/Wilfred/deadgrep][deadgrep]] as an in
 #+begin_src emacs-lisp
   (use-package deadgrep
     :bind
-    ("C-c s" . deadgrep))
+    ("C-c s" . deadgrep)
+    ("C-x s" . deadgrep))
 
   (use-package wgrep-deadgrep)
 #+end_src
@@ -3348,14 +3349,16 @@ Hydra short-keys
 #+begin_src emacs-lisp
   (use-package back-button
     :bind (:map back-button-mode-map
-                ("C-x <right>" . hydra-back-and-forth/back-button-local-forward)
-                ("C-x <left>" . hydra-back-and-forth/back-button-local-backward)
+                ("C-x <C-right>" . hydra-back-and-forth/back-button-local-forward)
+                ("C-x <C-left>" . hydra-back-and-forth/back-button-local-backward)
                 ("C-x <up>" . hydra-back-and-forth/back-button-global-backward)
                 ("C-x <down>" . hydra-back-and-forth/back-button-global-forward))
     :init
     (back-button-mode 1)
     (define-key back-button-mode-map (kbd "C-x <C-left>") nil)
     (define-key back-button-mode-map (kbd "C-x <C-right>") nil)
+    (define-key back-button-mode-map (kbd "C-x <left>") nil)
+    (define-key back-button-mode-map (kbd "C-x <right>") nil)
     (define-key back-button-mode-map (kbd "C-x C-SPC") nil)
     (define-key back-button-mode-map (kbd "C-x SPC") nil))
 #+end_src
