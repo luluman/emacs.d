@@ -1075,15 +1075,15 @@ using tree-sitter to manage Parser
     ;; disable checking the ‘-*-’ line, this will disable loading .dir-locals.el
     ;; (enable-local-variables nil)
     :config
-    (add-to-list 'major-mode-remap-alist
-          '((sh-mode . bash-ts-mode)
-            (javascript-mode . js-ts-mode)
-            (js-json-mode . json-ts-mode)
-            (python-mode . python-ts-mode)
-            (c-or-c++-mode . c++-ts-mode)
-            (c-mode . c-ts-mode)
-            (c++-mode . c++-ts-mode))
-          )
+    (setq major-mode-remap-alist
+          (append major-mode-remap-alist
+                  '((sh-mode . bash-ts-mode)
+                    (javascript-mode . js-ts-mode)
+                    (js-json-mode . json-ts-mode)
+                    (python-mode . python-ts-mode)
+                    (c-or-c++-mode . c++-ts-mode)
+                    (c-mode . c-ts-mode)
+                    (c++-mode . c++-ts-mode))))
     (mapcar #'require '(cmake-ts-mode
                         dockerfile-ts-mode
                         rust-ts-mode
@@ -2458,13 +2458,19 @@ words in the text of the visible portion of the buffer.
     :if (eq system-type 'gnu/linux)
     :hook (emacs-startup . global-jinx-mode)
     :config
+    ;; (length (jinx--get-overlays (window-start) (window-end) nil))
+    ;; (length (jinx--get-overlays (point-min) (point-max) nil))
+    ;; (length (jinx--get-overlays (point-min) (point-max) t))
+    ;; (length (jinx--force-overlays (point-min) (point-max) :check t))
+    (setq jinx-camel-modes
+          (append jinx-camel-modes
+                  '(cc-ts-mode c-mode c-or-c++-mode c++-mode c++-ts-mode c-ts-mode)))
     :bind (:map jinx-mode-map
                 ("M-$" . jinx-correct)
                 ("C-M-c" . jinx-correct)
                 ("C-M-p" . jinx-previous)
                 ("C-M-n" . jinx-next)))
 #+end_src
-
 
 *** define-word
 
