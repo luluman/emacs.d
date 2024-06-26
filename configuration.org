@@ -923,7 +923,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c e s" . consult-eglot-symbols)
                 ("C-c e i" . eglot-inlay-hints-mode))
     :custom
-    (eglot-autoshutdown t)
+    ;; (eglot-autoshutdown t)
     (eglot-events-buffer-size 0)
     :config
     (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
@@ -2472,12 +2472,15 @@ words in the text of the visible portion of the buffer.
     (setq jinx-camel-modes
           (append jinx-camel-modes
                   '(cc-ts-mode c-mode c-or-c++-mode c++-mode c++-ts-mode c-ts-mode)))
+
+    (defun jinx--mode-line-format ()
+      "updata the spelling check error informatin."
+      (format "J{%d}" (length (jinx--get-overlays (window-start) (window-end) nil))))
+
     (add-to-list 'mode-line-misc-info
                  '(jinx-mode
-                   (:eval (format "J{%d}" (length
-                                            (jinx--get-overlays
-                                             (window-start)
-                                             (window-end) nil))))) t)
+                   (:eval (jinx--mode-line-format))) t)
+
     :bind (:map jinx-mode-map
                 ("M-$" . jinx-correct)
                 ("C-M-c" . jinx-correct)
