@@ -1003,6 +1003,7 @@ outputs.
     (put 'vterm-environment 'safe-local-variable #'listp)
     :bind ("C-c t" . vterm) ;; terminal
     :custom
+    (vterm-max-scrollback 10000)
     (vterm-kill-buffer-on-exit nil)
     (vterm-always-compile-module t)
     (term-copy-exclude-prompt t)
@@ -3345,7 +3346,7 @@ maximum memory allotted to Emacs.
     :config
     (setq too-long-lines-threshold 5000)
     (set 'too-long-lines-special-buffer-modes
-         '(shell-mode ag-mode inferior-python-mode comint-mode))
+         '(shell-mode ag-mode inferior-python-mode comint-mode compilation-mode))
     (too-long-lines-mode))
 #+END_SRC
 
