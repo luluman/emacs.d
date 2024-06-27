@@ -1202,6 +1202,8 @@ Set ipython as interpreter
 
   (use-package python-black
     :if (executable-find "black")
+    :config
+    (put 'python-black-extra-args 'safe-local-variable #'listp)
     :after python
     :hook
     (python-mode . my/python-format-key)
