@@ -608,13 +608,9 @@ doesn't require any additional setup. bounding as official recommendation.
 
 #+BEGIN_SRC emacs-lisp
   (use-package flymake
-    :config
-    (defun flymake--transform-mode-line-format (ret)
-      "Change the output of `flymake--mode-line-format'."
-      (setcar (cdr ret) " Φ")
-      ret)
-    (advice-add #'flymake--mode-line-title
-                :filter-return #'flymake--transform-mode-line-format))
+    :custom
+    (flymake-mode-line-lighter "Φ")
+    (flymake-autoresize-margins nil))
 #+END_SRC
 
 ** =magit=
@@ -1202,7 +1198,7 @@ Set ipython as interpreter
 
   (use-package python-black
     :if (executable-find "black")
-    :config
+    :init
     (put 'python-black-extra-args 'safe-local-variable #'listp)
     :after python
     :hook
