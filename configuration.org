@@ -233,12 +233,6 @@ Why not?
 Those themes are what I like most.
 
 #+begin_src emacs-lisp
-  (use-package solarized-theme
-    :no-require t)
-  (use-package nord-theme
-    :no-require t)
-  (use-package doom-themes
-    :no-require t)
   (use-package modus-themes
     :no-require t
     :custom
@@ -264,15 +258,9 @@ Theme loading symbols.
       ef-dark
       ef-day
       ef-night
-      ;; doom-xcode
-      ;; doom-monokai-pro
-      ;; doom-one
-      ;; solarized-light
-      ;; solarized-dark
-      ;; nord
       ))
 
-  (defvar my/choosing-theme 'modus-vivendi)
+  (defvar my/choosing-theme 'ef-day)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -298,18 +286,17 @@ Theme loading symbols.
       (message "change theme to `%s'" my/choosing-theme)))
 #+end_src
 
-Using solarized theme on MacOS.
+Using light theme on MacOS.
 
 #+BEGIN_SRC emacs-lisp
-  (defun my/apply-solarized-theme ()
-    (setq solarized-scale-org-headlines nil)
+  (defun my/apply-light-theme ()
     (transparency 98)
-    (load-theme 'modus-operandi t))
+    (load-theme 'ef-day t))
 #+END_SRC
 
 #+begin_src emacs-lisp
   (if (display-graphic-p)
-      (my/apply-solarized-theme)
+      (my/apply-light-theme)
     (my/load-theme my/choosing-theme))
 #+end_src
 
