@@ -449,9 +449,9 @@ programming.
     (git-gutter:window-width 1)
     (git-gutter:update-interval 0.3)
     (git-gutter:always-show-separator t)
-    (git-gutter:added-sign "▐")
-    (git-gutter:deleted-sign "▐")
-    (git-gutter:modified-sign "▐")
+    (git-gutter:added-sign "┃")
+    (git-gutter:deleted-sign "┃")
+    (git-gutter:modified-sign "┃")
     :custom-face
     (git-gutter:added ((t (:foreground "#438340" :background nil))))
     (git-gutter:deleted ((t (:foreground "#815EDD" :background nil))))
@@ -1095,13 +1095,22 @@ using tree-sitter to manage Parser
     :custom
     (indent-bars-treesit-support t)
     (indent-bars-no-descend-string t)
-    (indent-bars-highlight-current-depth '(:color "white"))
-    (indent-bars-display-on-blank-lines nil)
+    (indent-bars-treesit-scope '((python function_definition class_definition for_statement
+                                         if_statement with_statement while_statement)))
     (indent-bars-treesit-ignore-blank-lines-types '("module"))
-    (indent-bars-treesit-wrap '((python argument_list parameters ; for python, as an example
-                        list list_comprehension
-                        dictionary dictionary_comprehension
-                        parenthesized_expression subscript)))
+    :config
+    (defun my/set-indent-bars-bg-fg ()
+      (setq
+       indent-bars-unspecified-fg-color (face-attribute 'default :foreground)
+       indent-bars-unspecified-bg-color (face-attribute 'default :background)
+       indent-bars-color '(highlight :face-bg t :blend 0.15)
+       indent-bars-highlight-current-depth '(:blend 0.5) ;; pump up the BG blend on current
+       ;; blend=1: blend with BG only
+       indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 1))
+      (indent-bars-reset))
+
+    (my/set-indent-bars-bg-fg)
+
     :hook ((python-base-mode c-ts-base-mode) . indent-bars-mode))
 #+end_src
 
