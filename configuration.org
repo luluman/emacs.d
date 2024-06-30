@@ -610,7 +610,8 @@ doesn't require any additional setup. bounding as official recommendation.
   (use-package flymake
     :custom
     (flymake-mode-line-lighter "Φ")
-    (flymake-autoresize-margins nil))
+    (flymake-margin-indicator-position 'right-margin)
+    (flymake-autoresize-margins t))
 #+END_SRC
 
 ** =magit=
