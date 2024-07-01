@@ -260,7 +260,7 @@ Theme loading symbols.
       ef-night
       ))
 
-  (defvar my/choosing-theme 'ef-day)
+  (defvar my/choosing-theme 'modus-vivendi)
 #+end_src
 
 #+begin_src emacs-lisp
