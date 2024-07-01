@@ -1527,7 +1527,7 @@ sed,awk,grep, and friends for JSON data.
 #+begin_src emacs-lisp
   (defun my/internet-up-p (&optional host)
     (= 0 (call-process "ping" nil nil nil "-c" "1" "-W" "1"
-                       (if host host "www.google.com"))))
+                       (if host host "www.wikipedia.org"))))
 #+end_src
 
 #+begin_src emacs-lisp
