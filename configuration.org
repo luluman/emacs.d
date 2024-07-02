@@ -449,9 +449,9 @@ programming.
     (git-gutter:window-width 1)
     (git-gutter:update-interval 0.3)
     (git-gutter:always-show-separator t)
-    (git-gutter:added-sign "┃")
-    (git-gutter:deleted-sign "┃")
-    (git-gutter:modified-sign "┃")
+    (git-gutter:added-sign "▐")
+    (git-gutter:deleted-sign "▐")
+    (git-gutter:modified-sign "▐")
     :custom-face
     (git-gutter:added ((t (:foreground "#438340" :background nil))))
     (git-gutter:deleted ((t (:foreground "#815EDD" :background nil))))
