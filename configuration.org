@@ -1268,21 +1268,11 @@ For running Google Tests from a given buffer
 ** Rust
 
 #+begin_src emacs-lisp
-  (defun my/project-try-cargo-toml (dir)
-    (when-let* ((output
-                 (let ((default-directory dir))
-                   (shell-command-to-string "cargo metadata --no-deps --format-version 1")))
-                (js (ignore-errors (json-read-from-string output)))
-                (found (cdr (assq 'workspace_root js))))
-      (cons 'transient found)))
-  (add-hook 'project-find-functions 'my/project-try-cargo-toml nil nil)
-#+end_src
-
-#+begin_src emacs-lisp
   (use-package rust-playground
     :bind
     ("C-x r p" . rust-playground)
     :config
+    (add-to-list 'project-vc-extra-root-markers "Cargo.toml")
     (defun rust-playground ()
       "Run playground for Rust language in a new buffer."
       (interactive)
