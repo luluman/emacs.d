@@ -1383,7 +1383,7 @@ documentation.
   (use-package eldoc
     :config
     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-    (setq eldoc-idle-delay 1))
+    (setq eldoc-idle-delay 3))
 #+END_SRC
 
 ** scheme
