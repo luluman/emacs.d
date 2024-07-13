@@ -896,8 +896,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (use-package consult-eglot)
     :commands
     (eglot eglot-ensure)
-    ;; :hook
-    ;; (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
+    :hook
+    (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
     :bind (:map eglot-mode-map
                 ("C-M-\\" . eglot-format)
                 ("C-c e r" . eglot-rename)
@@ -994,6 +994,10 @@ outputs.
     (vterm-buffer-name-string "*vterm %s*")
     (vterm-keymap-exceptions
      '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" "M-s")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package eat)
 #+end_src
 
 *** Fold and unfold code blocks
@@ -1381,9 +1385,11 @@ documentation.
 
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc
+    :custom
+    (eldoc-echo-area-use-multiline-p nil)
     :config
     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-    (setq eldoc-idle-delay 3))
+    (setq eldoc-idle-delay 10))
 #+END_SRC
 
 ** scheme
