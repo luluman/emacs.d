@@ -595,6 +595,9 @@ doesn't require any additional setup. bounding as official recommendation.
 
 #+BEGIN_SRC emacs-lisp
   (use-package flymake
+    :pin gnu
+    :init
+    (package-install 'flymake t) ;; install the latest gnu-flymake
     :custom
     (flymake-mode-line-lighter "Φ")
     (flymake-margin-indicator-position 'right-margin)
@@ -892,7 +895,9 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
+    :pin gnu
     :init
+    (package-install 'eglot t) ;; install the latest gnu-eglot
     (use-package consult-eglot)
     :commands
     (eglot eglot-ensure)
@@ -1385,8 +1390,6 @@ documentation.
 
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc
-    :custom
-    (eldoc-echo-area-use-multiline-p nil)
     :config
     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
     (setq eldoc-idle-delay 10))

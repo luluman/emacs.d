@@ -6,6 +6,7 @@
         ("gnu-dev"   . "https://elpa.gnu.org/devel/")
         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
         ))
+(setq package-install-upgrade-built-in t)
 (package-initialize)
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
