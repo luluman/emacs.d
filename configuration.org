@@ -1563,6 +1563,7 @@ sed,awk,grep, and friends for JSON data.
     (setq-default gptel-backend gptel--gemini
                   gptel-model "gemini-1.5-pro-latest")
     :custom
+    (gptel-curl-file-size-threshold 2000000)
     (gptel-use-curl t)
     (gptel-playback t))
 #+end_src
