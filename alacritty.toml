@@ -5,6 +5,8 @@ text = "CellBackground"
 [colors.primary]
 background = "#000000"
 foreground = "#eaeaea"
+# background = "#fff5ea"
+# foreground = "#584141"
 
 [cursor.style]
 blinking = "Always"
@@ -15,16 +17,22 @@ size = 15
 
 # https://github.com/protesilaos/iosevka-comfy
 [font.bold]
-family = "Iosevka Comfy Fixed"
-style = "Bold"
+family = "Zed Mono"
+# family = "Iosevka Comfy Fixed"
+style = "Semibold"
+# style = "Bold"
 
 [font.italic]
-family = "Iosevka Comfy Fixed"
-style = "Italic"
+family = "Zed Mono"
+# family = "Iosevka Comfy Fixed"
+style = "Light Italic"
+# style = "Italic"
 
 [font.normal]
-family = "Iosevka Comfy Fixed"
-style = "Regular"
+family = "Zed Mono"
+# family = "Iosevka Comfy Fixed"
+# style = "Regular"
+style = "Light"
 
 [font.offset]
 x = 1
@@ -45,6 +53,7 @@ bindings = [
   {action = "ResetFontSize", key = "Equals", mods = "Command"},
   {action = "IncreaseFontSize", key = "Plus", mods = "Command|Shift"},
   {action = "DecreaseFontSize", key = "Minus", mods = "Command"},
+  {chars = "\u001B[27;5;39~", key = "'", mods = "Control"},
   {chars = "\u001B[27;5;9~", key = "Tab", mods = "Control"},
   {chars = "\u001B[27;5;13~", key = "Return", mods = "Control"},
   {chars = "\u001B[27;5;47~", key = "Slash", mods = "Control"},
@@ -55,7 +64,9 @@ bindings = [
   {chars = "\u001B[27;5;46~", key = "Period", mods = "Control"},
   {chars = "\u001B[27;5;59~", key = "Semicolon", mods = "Control"},
   {chars = "\u001B[27;5;61~", key = "Equals", mods = "Control"},
-  {chars = "\u001B[75;6~", key = "K",  mods= "Control|Shift"}
+  {chars = "\u001B[75;6~", key = "K",  mods= "Control|Shift"},
+  {chars = "\u001B[27;6;60~", key = "<",  mods= "Control|Shift"},
+  {chars = "\u001B[27;6;62~", key = ">",  mods= "Control|Shift"},
 ]
 
 [scrolling]
