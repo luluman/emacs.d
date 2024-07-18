@@ -3502,6 +3502,7 @@ Use =c-x c-j= to enter current folder.
      ("z" diredp-compress-this-file)
      ("Z" dired-do-compress)
      ("q" nil)
+     ("C-g" nil :color blue)
      ("." nil :color blue))
  #+end_src
 
