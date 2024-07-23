@@ -825,6 +825,14 @@ read elf symbols
      'org-src-lang-modes '("plantuml" . plantuml)))
 #+end_src
 
+** Tramp
+
+#+begin_src emacs-lisp
+  (setq tramp-remote-shell "/bin/bash")
+  (setq explicit-shell-file-name "/bin/bash")  ;; using bash by default.
+  (setq shell-file-name "/bin/bash")  ;; using bash by default.
+#+end_src
+
 * Programming customization
 ** Look for executables in =/usr/local/bin=.
 
