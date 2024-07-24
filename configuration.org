@@ -508,6 +508,7 @@ programming.
 
 #+BEGIN_SRC emacs-lisp
   (use-package symon
+    :load-path "~/.emacs.d/symon/"
     :config
     (symon-mode)
     (advice-add 'symon--display-update

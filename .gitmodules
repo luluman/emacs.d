@@ -7,3 +7,6 @@
 [submodule "indent-bars"]
 	path = indent-bars
 	url = git@github.com:jdtsmith/indent-bars
+[submodule "symon"]
+	path = symon
+	url = git@github.com:zk-phi/symon.git
