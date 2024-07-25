@@ -883,7 +883,6 @@ Use =smartparens=
 
 *** eglot LSP and more
 
-elogt
 Emacs Polyglot: an Emacs LSP client that stays out of your way.
 
 #+begin_src emacs-lisp
@@ -910,8 +909,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (use-package consult-eglot)
     :commands
     (eglot eglot-ensure)
-    :hook
-    (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
+    ;; :hook
+    ;; (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
     :bind (:map eglot-mode-map
                 ("C-M-\\" . eglot-format)
                 ("C-c e r" . eglot-rename)
@@ -3103,8 +3102,9 @@ makes that automatic.
   (defun my/split-window-right-and-switch ()
     "Split the window vertically, then switch to the new pane."
     (interactive)
-    (split-window-right)
-    (balance-windows)
+    (let ((total-width (window-total-width)))
+      (split-window-right (floor (* 0.6 total-width))))
+    ;; (balance-windows)
     (other-window 1))
 
   (global-set-key (kbd "C-x 2") 'my/split-window-below-and-switch)
