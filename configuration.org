@@ -800,7 +800,9 @@ read elf symbols
 
 #+begin_src emacs-lisp
   (use-package elf-mode
-    :mode "\\.\\([ao]\\|so\\)$")
+    :demand
+    :config
+    (elf-setup-default))
 #+end_src
 
 #+begin_src emacs-lisp
