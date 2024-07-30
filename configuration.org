@@ -1000,7 +1000,7 @@ outputs.
   (use-package vterm
     :init
     (put 'vterm-environment 'safe-local-variable #'listp)
-    :bind ("C-c t" . vterm) ;; terminal
+    :bind ("C-c v" . vterm) ;; terminal
     :custom
     (vterm-max-scrollback 10000)
     (vterm-kill-buffer-on-exit nil)
@@ -1011,8 +1011,24 @@ outputs.
      '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" "M-s")))
 #+end_src
 
+Eat: Emulate A Terminal
+
 #+begin_src emacs-lisp
-  (use-package eat)
+  (use-package eat
+    :bind ("C-c t" . eat-new-term)
+    :config
+    (defun eat-new-term ()
+      "Create a new Eat terminal buffer."
+      (interactive)
+      (eat-other-window nil '(4)))
+    :hook
+    ;; https://codeberg.org/akib/emacs-eat/issues/129
+    (eat-exec . (lambda (&rest _) (eat-line-mode)))
+    :custom
+    (eat-enable-auto-line-mode t)
+    (eat-shell-prompt-annotation-failure-margin-indicator "✘")
+    (eat-shell-prompt-annotation-running-margin-indicator "-")
+    (eat-shell-prompt-annotation-success-margin-indicator "✔"))
 #+end_src
 
 *** Fold and unfold code blocks
@@ -3314,6 +3330,7 @@ while still keeping them within arm’s reach.
             "^\\*socks5-proxy-.*\\*$"
             "\\*Async Shell Command\\*"
             "^\\*vterm.*\\*$"   vterm-mode   ;vterm as a popup
+            "^\\*eat*.*$"  eat-mode
             "^\\*TeX Help.*\\*$"  tex-mode
             "^\\*tex-shell.*\\*$"  tex-mode
             compilation-mode))
