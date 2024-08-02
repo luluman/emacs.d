@@ -1021,13 +1021,20 @@ Eat: Emulate A Terminal
       "Create a new Eat terminal buffer."
       (interactive)
       (eat-other-window nil '(4)))
+
+    (defun my/eat-add-compilation-environment ()
+      (hack-dir-local-variables-non-file-buffer)
+      (setq-local process-environment
+                  (append compilation-environment process-environment)))
     :hook
     ;; https://codeberg.org/akib/emacs-eat/issues/129
     (eat-exec . (lambda (&rest _) (eat-line-mode)))
+    (eat-mode . my/eat-add-compilation-environment)
+
     :custom
     (eat-enable-auto-line-mode t)
     (eat-shell-prompt-annotation-failure-margin-indicator "✘")
-    (eat-shell-prompt-annotation-running-margin-indicator "-")
+    (eat-shell-prompt-annotation-running-margin-indicator "◯ ")
     (eat-shell-prompt-annotation-success-margin-indicator "✔"))
 #+end_src
 
@@ -3041,6 +3048,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
   ;; Add extensions
   (use-package cape
     :init
+    (global-corfu-mode)
     ;; Add `completion-at-point-functions', used by `completion-at-point'.
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
