@@ -1,6 +1,7 @@
 # git ignore file
 
 /*
+*.elc
 !configuration.org
 !init.el
 !sensible-defaults.el
