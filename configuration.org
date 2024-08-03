@@ -1055,9 +1055,9 @@ Eat: Emulate A Terminal
 
     :custom
     (eat-enable-auto-line-mode t)
-    (eat-shell-prompt-annotation-failure-margin-indicator "✘")
-    (eat-shell-prompt-annotation-running-margin-indicator "◯ ")
-    (eat-shell-prompt-annotation-success-margin-indicator "✔"))
+    (eat-shell-prompt-annotation-failure-margin-indicator "✘ ")
+    (eat-shell-prompt-annotation-running-margin-indicator "⏳")
+    (eat-shell-prompt-annotation-success-margin-indicator "✔ "))
 #+end_src
 
 *** Fold and unfold code blocks
