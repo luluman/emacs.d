@@ -1587,6 +1587,7 @@ sed,awk,grep, and friends for JSON data.
 #+begin_src emacs-lisp
   (use-package gptel
     :bind (("C-c RET" . gptel-send)
+           ("C-c g" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
            ("C-c <return>" . gptel-send)
            ("C-c C-<return>" . gptel-menu)
            :map gptel-mode-map
@@ -1750,7 +1751,7 @@ Hit =C-c g= to quickly open up my todo list.
     (find-file org-gtd-file)
     (end-of-buffer))
 
-  (global-set-key (kbd "C-c g") 'open-gtd-file)
+  ;; (global-set-key (kbd "C-c g") 'open-gtd-file)
 #+END_SRC
 
 
@@ -1960,7 +1961,7 @@ auto save org file
 
 #+BEGIN_SRC emacs-lisp
   ;; Set headlines to STRT when clocking in
-  (add-hook 'org-clock-in-hook (lambda() (org-todo "STRT")))
+  (add-hook 'org-clock-in-hook (lambda () (org-todo "STRT")))
   ;; (setq org-agenda-diary-file "/home/guerry/org/rdv.org")
   (setq org-agenda-dim-blocked-tasks nil)
   (setq org-log-into-drawer "LOGBOOK")
