@@ -946,6 +946,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     :custom
     ;; (eglot-autoshutdown t)
     (eglot-events-buffer-size 0)
+    (eglot-extend-to-xref t)
+    (eglot-sync-connect nil)
     :config
     (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
     (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
@@ -1618,6 +1620,16 @@ sed,awk,grep, and friends for JSON data.
 
     (setq-default gptel-backend gptel--gemini
                   gptel-model "gemini-1.5-pro-latest")
+
+    (defun my/ediff-cleanup ()
+      (ediff-kill-buffer-carefully "*Ediff Control Panel*")
+      (ediff-kill-buffer-carefully "*ediff-errors*")
+      (ediff-kill-buffer-carefully "*ediff-diff*")
+      (ediff-kill-buffer-carefully "*Ediff Registry*")
+      (ediff-kill-buffer-carefully "*ediff-fine-diff*"))
+
+    (add-hook 'ediff-quit-hook #'my/ediff-cleanup)
+
     :custom
     (gptel-curl-file-size-threshold 2000000)
     (gptel-use-curl t)
