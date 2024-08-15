@@ -1588,6 +1588,8 @@ sed,awk,grep, and friends for JSON data.
 
 #+begin_src emacs-lisp
   (use-package gptel
+    :load-path "~/.emacs.d/gptel"
+    :commands (gptel gptel-make-gemini gptel-make-anthropic)
     :bind (("C-c RET" . gptel-send)
            ("C-c g" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
            ("C-c <return>" . gptel-send)
