@@ -844,6 +844,7 @@ read elf symbols
     (gerrit-use-ssl nil)
     (gerrit-host "gerrit.houmo.ai") ;; is needed for REST API calls
     :config
+    (put 'gerrit-project-to-local-workspace-alist 'safe-local-variable #'listp)
     (setq gerrit-dashboard-query-alist
           '(("Has draft comments" . "has:draft")
             ("Work in progress" . "is:open owner:self is:wip")
@@ -1058,7 +1059,7 @@ Eat: Emulate A Terminal
     :custom
     (eat-enable-auto-line-mode t)
     (eat-shell-prompt-annotation-failure-margin-indicator "✘ ")
-    (eat-shell-prompt-annotation-running-margin-indicator "⏳")
+    (eat-shell-prompt-annotation-running-margin-indicator "⧗ ")
     (eat-shell-prompt-annotation-success-margin-indicator "✔ "))
 #+end_src
 
@@ -1223,7 +1224,6 @@ Set ipython as interpreter
     (python-shell-completion-native-enable nil)
     (python-shell-interpreter "ipython")
     (python-shell-interpreter-args "--simple-prompt -i")
-    (py-ipython-command-args "--simple-prompt -i")
     (python-indent-offset 4)
     :hook
     (python-mode . (lambda ()
