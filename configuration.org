@@ -3121,7 +3121,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (corfu-terminal-position-right-margin 1))
 #+end_src
 
-*** COMMENT show diagnose information
+*** show diagnose information
 
 #+begin_src emacs-lisp
   (use-package flymake-popon
