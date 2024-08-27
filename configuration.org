@@ -1588,10 +1588,7 @@ sed,awk,grep, and friends for JSON data.
 
 #+begin_src emacs-lisp
   (use-package gptel
-    :init
-    (use-package gptel) ;; trigger download gptel
-    ;; Use local patch until upstream includes it.
-    :load-path "~/.emacs.d/gptel"
+    :defer nil
     :bind (("C-c RET" . gptel-send)
            ("C-c g" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
            ("C-c <return>" . gptel-send)
@@ -1605,16 +1602,17 @@ sed,awk,grep, and friends for JSON data.
       (setq-default gptel-proxy
                     (format "socks5h://%s" my/socks-proxy)))
 
-    (gptel-make-openai "ChatGPT"
-      :key 'gptel-api-key
-      :stream t
-      :models '("gpt-4o"))
+    (setq gptel--openai
+          (gptel-make-openai "ChatGPT"
+            :key 'gptel-api-key
+            :stream t
+            :models '("gpt-4o-2024-08-06")))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '("gemini-1.5-pro-latest")))
+        :models '("gemini-1.5-pro-exp-0801")))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
@@ -1622,8 +1620,7 @@ sed,awk,grep, and friends for JSON data.
         :stream t
         :models '("claude-3-5-sonnet-20240620")))
 
-    (setq-default gptel-backend gptel--gemini
-                  gptel-model "gemini-1.5-pro-latest")
+    (setq-default gptel-backend gptel--gemini)
 
     (defun my/ediff-cleanup ()
       (ediff-kill-buffer-carefully "*Ediff Control Panel*")
@@ -1638,6 +1635,76 @@ sed,awk,grep, and friends for JSON data.
     (gptel-curl-file-size-threshold 2000000)
     (gptel-use-curl t)
     (gptel-playback t))
+#+end_src
+
+This defines a code refactor function for Embark.
+The default gptel Ediff is incompatible with Eglot due to bugs in Eglot's
+track-changes feature. We need to use the original buffer as the source of the
+diff, not the cloned one.
+#+begin_src emacs-lisp
+  (defvar my/gptel--ediff-restore nil
+    "Function to restore window configuration after ediff.")
+
+  (defvar my/gptel--ediff-restore-cwc nil
+    "Variable to record window configuration before ediff.")
+
+  (defun my/get-full-line-region (buffer)
+    ;; enlarge the region to hold full lines
+    (with-current-buffer buffer
+      (save-excursion
+        (let* ((reg-beg  (region-beginning))
+               (reg-end  (region-end))
+               (full-beg (progn (goto-char reg-beg)
+                                (line-beginning-position)))
+               (full-end (if (eq (char-before reg-end) ?\n)
+                             reg-end
+                           (goto-char reg-end)
+                           (line-beginning-position 2)))) ; include the newline char
+          (cons full-beg full-end)))))
+
+  (defun my/gpt-refacotr (gpt-backend rewrite-message prompt)
+    (let ((gptel-backend gpt-backend)
+          (gptel-model (car (gptel-backend-models gpt-backend))))
+
+      (setq my/gptel--ediff-restore-cwc (current-window-configuration))
+      (setq my/gptel--ediff-restore
+            (lambda ()
+              (when (window-configuration-p my/gptel--ediff-restore-cwc)
+                (set-window-configuration my/gptel--ediff-restore-cwc))
+              (ediff-kill-buffer-carefully "*gptel-rewrite-Region.B-*")
+              (remove-hook 'ediff-quit-hook my/gptel--ediff-restore)))
+      (message "Waiting for %s response..." gptel-model)
+      (gptel-request
+          prompt
+        :system rewrite-message
+        :context (my/get-full-line-region (current-buffer))
+        :callback
+        (lambda (response info)
+          (if (not response)
+              (message "ChatGPT response error: %s" (plist-get info :status))
+            (let* ((gptel-buffer (plist-get info :buffer))
+                   (gptel-bounds (plist-get info :context))
+                   (buffer-mode
+                    (buffer-local-value 'major-mode gptel-buffer)))
+              (pcase-let ((`(,new-buf ,new-beg ,new-end)
+                           (with-current-buffer (get-buffer-create "*gptel-rewrite-Region.B-*")
+                             (let ((inhibit-read-only t))
+                               (erase-buffer)
+                               (funcall buffer-mode)
+                               (insert response)
+                               (goto-char (point-min))
+                               (list (current-buffer) (point-min) (point-max))))))
+                (require 'ediff)
+                (add-hook 'ediff-quit-hook my/gptel--ediff-restore)
+                (apply
+                 #'ediff-regions-internal
+                 gptel-buffer
+                 (car gptel-bounds) (cdr gptel-bounds)
+                 new-buf new-beg new-end
+                 nil
+                 ;; (list 'ediff-regions-wordwise 'word-wise nil)
+                 (list 'ediff-regions-wordwise nil nil)
+                 ))))))))
 #+end_src
 
 ** BuildBot
@@ -2819,19 +2886,19 @@ at the correct indentation for Python).
 
 #+begin_src emacs-lisp
   (defun my/quit-all ()
-      (interactive)
-      (if (eq last-command 'my/quit-all)
-           (cond ((region-active-p)
-                  (deactivate-mark))
-                 ((> (minibuffer-depth) 0)
-                  (abort-recursive-edit))
-                 (current-prefix-arg
-                  nil)
-                 ((> (recursion-depth) 0)
-                  (exit-recursive-edit))
-                 (buffer-quit-function
-                  (funcall buffer-quit-function)))
-          (keyboard-quit)))
+    (interactive)
+    (if (eq last-command 'my/quit-all)
+        (cond ((region-active-p)
+               (deactivate-mark))
+              ((> (minibuffer-depth) 0)
+               (abort-recursive-edit))
+              (current-prefix-arg
+               nil)
+              ((> (recursion-depth) 0)
+               (exit-recursive-edit))
+              (buffer-quit-function
+               (funcall buffer-quit-function)))
+      (keyboard-quit)))
   (setq enable-recursive-minibuffers t)
   (global-set-key (kbd "C-g") 'my/quit-all)
 #+end_src
@@ -3038,9 +3105,17 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 #+begin_src emacs-lisp
   (use-package embark
     :config
+    (defmacro my/embark-gpt-refacotr (gpt-backend rewrite-message)
+      `(defun ,(intern (format "%s-Refactor" (eval `(gptel-backend-name ,gpt-backend)))) (prompt)
+         (my/gpt-refacotr ,gpt-backend ,rewrite-message prompt)))
+
     (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
     (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
     (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
+    (setq my/gpt-refacotr-prompt "You are a professional programmer. Refactor the following code. Generate only code, no explanation, no code fences. Also rephrase the comment and rename the variable if needed.")
+    (keymap-set embark-region-map "g" (my/embark-gpt-refacotr gptel--gemini my/gpt-refacotr-prompt))
+    (keymap-set embark-region-map "o" (my/embark-gpt-refacotr gptel--openai my/gpt-refacotr-prompt))
+    (keymap-set embark-region-map "a" (my/embark-gpt-refacotr gptel--anthropic my/gpt-refacotr-prompt))
     (define-key embark-file-map  (kbd "s") 'my/scp-file)
     :bind
     ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'

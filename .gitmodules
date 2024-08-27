@@ -10,6 +10,3 @@
 [submodule "symon"]
 	path = symon
 	url = git@github.com:zk-phi/symon.git
-[submodule "gptel"]
-	path = gptel
-	url = git@github.com:luluman/gptel.git
