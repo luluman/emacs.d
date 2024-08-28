@@ -1612,7 +1612,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '("gemini-1.5-pro-exp-0801")))
+        :models '("gemini-1.5-pro-exp-0827")))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
@@ -3112,7 +3112,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
     (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
     (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
-    (setq my/gpt-refacotr-prompt "You are Chris Lattner. Refactor the following code. Generate only code, no explanation, no code fences. Also rephrase the comment and rename the variable if needed.")
+    (setq my/gpt-refacotr-prompt "You are Chris Lattner. Refactor the following code. Generate only code, no explanation, no code fences. Additionally, revise the comment and consider renaming variables if appropriate.")
     (keymap-set embark-region-map "g" (my/embark-gpt-refacotr gptel--gemini my/gpt-refacotr-prompt))
     (keymap-set embark-region-map "o" (my/embark-gpt-refacotr gptel--openai my/gpt-refacotr-prompt))
     (keymap-set embark-region-map "a" (my/embark-gpt-refacotr gptel--anthropic my/gpt-refacotr-prompt))
