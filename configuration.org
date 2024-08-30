@@ -1633,6 +1633,7 @@ sed,awk,grep, and friends for JSON data.
 
     :custom
     (gptel-curl-file-size-threshold 2000000)
+    (gptel-model "gemini-1.5-pro-exp-0827")
     (gptel-use-curl t)
     (gptel-playback t))
 #+end_src
@@ -3150,6 +3151,8 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
     (global-corfu-modes '((not shell-mode) t))
+    ;; https://github.com/minad/corfu/discussions/457
+    (text-mode-ispell-word-completion nil) ;; disable ispell
     :bind
     (:map corfu-map
           ("TAB" . corfu-next)
@@ -3162,7 +3165,6 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
   ;; Add extensions
   (use-package cape
     :init
-    (global-corfu-mode)
     ;; Add `completion-at-point-functions', used by `completion-at-point'.
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
@@ -3174,7 +3176,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     :init
     ;; TAB cycle if there are only few candidates
     (setq completion-cycle-threshold 3)
-
+    (setq warning-minimum-level :error)
     ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
     ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
     (setq read-extended-command-predicate
