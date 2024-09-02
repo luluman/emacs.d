@@ -508,7 +508,7 @@ programming.
 
 #+BEGIN_SRC emacs-lisp
   (use-package symon
-    :load-path "~/.emacs.d/symon/"
+    :load-path "~/.emacs.d/third_party/symon/"
     :config
     (symon-mode)
     (advice-add 'symon--display-update
@@ -534,7 +534,7 @@ project is to be configured, built and tested using CMake and CTest.
 #+begin_src emacs-lisp
   (use-package project-cmake
     :if (eq system-type 'gnu/linux)
-    :load-path "~/.emacs.d/project-cmake/"
+    :load-path "~/.emacs.d/third_party/project-cmake/"
     :custom
     (project-vc-merge-submodules nil)
     (project-vc-extra-root-markers '(".dir-locals.el"))
@@ -1156,7 +1156,7 @@ using tree-sitter to manage Parser
 
 #+begin_src emacs-lisp
   (use-package indent-bars
-    :load-path "~/.emacs.d/indent-bars"
+    :load-path "~/.emacs.d/third_party/indent-bars"
     :config
     (require 'indent-bars-ts)
     :custom
@@ -1448,8 +1448,7 @@ documentation.
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc
     :config
-    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-    (setq eldoc-idle-delay 10))
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
 #+END_SRC
 
 ** scheme
@@ -3168,7 +3167,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     ;; Add `completion-at-point-functions', used by `completion-at-point'.
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-    (add-to-list 'completion-at-point-functions #'cape-history)
+    ;; (add-to-list 'completion-at-point-functions #'cape-history)
     (add-to-list 'completion-at-point-functions #'cape-keyword))
 
   ;; A few more useful configurations...
@@ -3486,7 +3485,7 @@ maximum memory allotted to Emacs.
 #+BEGIN_SRC emacs-lisp
   (use-package too-long-lines-mode
     ;; using use-package PATH
-    :load-path "~/.emacs.d/too-long-lines-mode"
+    :load-path "~/.emacs.d/third_party/too-long-lines-mode"
     ;; using quelpa URL
     ;; :quelpa
     ;; ((too-long-lines-mode
