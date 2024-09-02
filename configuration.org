@@ -1534,6 +1534,12 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 #+end_src
 
 #+begin_src emacs-lisp
+  (use-package llvm-mir-mode
+    :mode "\\.mir$"
+    :load-path "~/.emacs.d/third_party/llvm-mode+")
+#+end_src
+
+#+begin_src emacs-lisp
   (use-package mlir-mode
     :mode "\\.pdll$" "\\.mlir$"
     :load-path "~/.emacs.d/third_party/llvm-mode+")
