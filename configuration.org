@@ -790,7 +790,13 @@ read elf symbols
 #+begin_src emacs-lisp
   (use-package demangle-mode
     :config
-    (advice-add 'elf-mode :after 'demangle-mode))
+    (advice-add 'elf-mode :after 'demangle-mode)
+    (add-to-list 'demangle-languages
+                 '("LLVM-IR"
+                   "\\(?:_Z\\|\\(?:_GLOBAL_[._$][DI]_\\)\\)[_$[:alnum:]]+"
+                   ("llvm-cxxfilt" "--no-strip-underscore")))
+    :hook
+    (llvm-mode . demangle-mode))
 #+end_src
 
 ** UML
