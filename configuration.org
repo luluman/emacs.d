@@ -1601,7 +1601,7 @@ sed,awk,grep, and friends for JSON data.
           (gptel-make-openai "ChatGPT"
             :key 'gptel-api-key
             :stream t
-            :models '("gpt-4o-2024-08-06" "chatgpt-4o-latest")))
+            :models '("chatgpt-4o-latest" "gpt-4o")))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
