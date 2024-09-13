@@ -2901,12 +2901,14 @@ at the correct indentation for Python).
                (abort-recursive-edit))
               (current-prefix-arg
                nil)
-              ((bound-and-true-p ts-movement-mode) (tsm/clear-overlays (point)))
               ((> (recursion-depth) 0)
                (exit-recursive-edit))
               (buffer-quit-function
                (funcall buffer-quit-function)))
-      (keyboard-quit)))
+      (when (bound-and-true-p ts-movement-mode) (tsm/clear-overlays (point)))
+      (keyboard-quit)
+      ))
+
   (setq enable-recursive-minibuffers t)
   (global-set-key (kbd "C-g") 'my/quit-all)
 #+end_src
