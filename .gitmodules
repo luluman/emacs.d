@@ -10,3 +10,6 @@
 [submodule "symon"]
 	path = third_party/symon
 	url = git@github.com:zk-phi/symon.git
+[submodule "third_party/ts-movement"]
+	path = third_party/ts-movement
+	url = https://github.com/haritkapadia/ts-movement

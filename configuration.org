@@ -2901,6 +2901,7 @@ at the correct indentation for Python).
                (abort-recursive-edit))
               (current-prefix-arg
                nil)
+              ((bound-and-true-p ts-movement-mode) (tsm/clear-overlays (point)))
               ((> (recursion-depth) 0)
                (exit-recursive-edit))
               (buffer-quit-function
@@ -3809,6 +3810,50 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
 #+begin_src emacs-lisp
   (use-package repeat-help
     :hook (repeat-mode . repeat-help-mode))
+#+end_src
+
+**  TS-movement
+
+#+begin_src emacs-lisp
+  (use-package ts-movement
+    :load-path "~/.emacs.d/third_party/ts-movement"
+    :ensure multiple-cursors
+    :ensure hydra
+    :config
+    (defhydra tsm/hydra ()
+      "TS Movement"
+      ("d" #'tsm/delete-overlay-at-point)
+      ("D" #'tsm/clear-overlays-of-type)
+      ("C-b" #'tsm/backward-overlay)
+      ("C-f" #'tsm/forward-overlay)
+      ("b" #'tsm/node-prev)
+      ("f" #'tsm/node-next)
+      ("u" #'tsm/node-parent)
+      ("d" #'tsm/node-child)
+      ("N" #'tsm/node-children)
+      ("s" #'tsm/node-children-of-type)
+      ("a" #'tsm/node-start)
+      ("e" #'tsm/node-end)
+      ("m" #'tsm/node-mark)
+      ("c" #'tsm/mc/mark-all-overlays))
+    (push 'tsm/hydra/tsm/mc/mark-all-overlays mc--default-cmds-to-run-once)
+
+    :bind (:map ts-movement-map
+                ("C-M-f" . tsm/node-next)
+                ("C-M-b" . tsm/node-prev)
+                ("C-M-u" . tsm/node-parent)
+                ("C-M-d" . tsm/node-child)
+                ("C-M-m" . tsm/node-mark)
+                ("M-C" . (lambda ()
+                           (interactive)
+                           (symbol-overlay-remove-all)
+                           (tsm/clear-overlays (point))))
+                ("C-c ." . tsm/hydra/body))
+
+    :hook
+    ((bash-ts-mode c++-ts-mode c-ts-mode cmake-ts-mode dockerfile-ts-mode json-ts-mode
+                   python-ts-mode rust-ts-mode toml-ts-mode typescript-ts-mode yaml-ts-mode)
+     . ts-movement-mode))
 #+end_src
 
 * Set custom keybindings
