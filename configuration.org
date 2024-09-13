@@ -1169,6 +1169,17 @@ using tree-sitter to manage Parser
     :hook ((python-base-mode c-ts-base-mode) . indent-bars-mode))
 #+end_src
 
+*** Visual-regexp
+
+#+begin_src emacs-lisp
+  (use-package visual-regexp
+    :bind
+    ("C-c r" . vr/replace)
+    ("C-c q" . vr/query-replace)
+    ;; if you use multiple-cursors, this is for you:
+    ("C-c m" . vr/mc-mark))
+#+end_src
+
 ** Python
 
 Pip can install binary file.
