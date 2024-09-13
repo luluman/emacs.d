@@ -2956,7 +2956,7 @@ minibuffer for your completion candidates.
 #+begin_src emacs-lisp
   (use-package marginalia
     :custom
-    (marginalia-field-width 200)
+    (marginalia-field-width 120)
     :init
     ;; Must be in the :init section of use-package such that the mode gets
     ;; enabled right away. Note that this forces loading the package.
