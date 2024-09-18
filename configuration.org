@@ -1105,8 +1105,7 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
             ("M-p" . symbol-overlay-jump-prev)
             ("M-N" . symbol-overlay-switch-forward)
             ("M-P" . symbol-overlay-switch-backward)
-            ("M-C" . symbol-overlay-remove-all))
-     :hook (prog-mode . symbol-overlay-mode))
+            ("M-C" . symbol-overlay-remove-all)))
  #+END_SRC
 
 *** Tree-sitter
@@ -3842,6 +3841,7 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
       ("m" #'tsm/node-mark)
       ("c" #'tsm/mc/mark-all-overlays))
     (push 'tsm/hydra/tsm/mc/mark-all-overlays mc--default-cmds-to-run-once)
+    (advice-add 'symbol-overlay-remove-all :after (lambda () (tsm/clear-overlays (point))))
 
     :bind (:map ts-movement-map
                 ("C-M-f" . tsm/node-next)
@@ -3849,10 +3849,6 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
                 ("C-M-u" . tsm/node-parent)
                 ("C-M-d" . tsm/node-child)
                 ("C-M-m" . tsm/node-mark)
-                ("M-C" . (lambda ()
-                           (interactive)
-                           (symbol-overlay-remove-all)
-                           (tsm/clear-overlays (point))))
                 ("C-c ." . tsm/hydra/body))
 
     :hook
