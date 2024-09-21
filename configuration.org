@@ -1144,7 +1144,6 @@ using tree-sitter to manage Parser
 
 #+begin_src emacs-lisp
   (use-package indent-bars
-    :load-path "~/.emacs.d/third_party/indent-bars"
     :config
     (require 'indent-bars-ts)
     :custom

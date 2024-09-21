@@ -4,9 +4,6 @@
 [submodule "project-cmake"]
 	path = third_party/project-cmake
 	url = git@github.com:luluman/project-cmake.git
-[submodule "indent-bars"]
-	path = third_party/indent-bars
-	url = git@github.com:jdtsmith/indent-bars
 [submodule "symon"]
 	path = third_party/symon
 	url = git@github.com:zk-phi/symon.git
