@@ -3842,12 +3842,37 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
     (push 'tsm/hydra/tsm/mc/mark-all-overlays mc--default-cmds-to-run-once)
     (advice-add 'symbol-overlay-remove-all :after (lambda () (tsm/clear-overlays (point))))
 
+    (defun my/treesit-backward-up-list ()
+      (interactive)
+      (let* ((start-point (point))
+             (node (treesit-node-on start-point start-point)))
+        (while (and node
+                    (= (point) start-point))
+          (setq node (treesit-node-parent node))
+          (when node
+            (goto-char (treesit-node-start node))))
+        (when (= (point) start-point)
+          (message "No parent node found or already at root"))))
+
+    (defun my/down-list ()
+      (interactive)
+      (let* ((start-point (point))
+             (next-sibling (treesit-node-on start-point start-point))
+             found-node)
+        (while (and next-sibling (not found-node))
+          (if (> (treesit-node-child-count next-sibling) 0)
+              (setq found-node next-sibling)
+            (setq next-sibling (treesit-node-next-sibling next-sibling))))
+        (if found-node
+            (progn
+              (goto-char (treesit-node-start found-node))
+              (message "Moved to next non-leaf sibling"))
+          (message "No next non-leaf sibling found"))))
+
     :bind (:map ts-movement-map
-                ("C-M-f" . tsm/node-next)
-                ("C-M-b" . tsm/node-prev)
-                ("C-M-u" . tsm/node-parent)
-                ("C-M-d" . tsm/node-child)
-                ("C-M-m" . tsm/node-mark)
+                ("C-M-u" . my/treesit-backward-up-list)
+                ("C-M-d" . my/down-list)
+                ("C-M-m" . mc/mark-all-like-this)
                 ("C-c ." . tsm/hydra/body))
 
     :hook
