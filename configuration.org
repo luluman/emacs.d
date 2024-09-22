@@ -2904,9 +2904,7 @@ at the correct indentation for Python).
                (exit-recursive-edit))
               (buffer-quit-function
                (funcall buffer-quit-function)))
-      (when (bound-and-true-p ts-movement-mode) (tsm/clear-overlays (point)))
-      (keyboard-quit)
-      ))
+      (keyboard-quit)))
 
   (setq enable-recursive-minibuffers t)
   (global-set-key (kbd "C-g") 'my/quit-all)
