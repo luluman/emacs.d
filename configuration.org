@@ -3869,9 +3869,37 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
               (message "Moved to next non-leaf sibling"))
           (message "No next non-leaf sibling found"))))
 
+    (defun my/backward-node ()
+      "Move backward to the previous node in the tree, following a pre-order traversal."
+      (interactive)
+      (when-let ((node (treesit-node-at (point))))
+        (let ((target-node nil))
+          (while (and node (not target-node))
+            (if-let ((prev-sibling (treesit-node-prev-sibling node)))
+                (progn
+                  (setq node prev-sibling)
+                  (while (treesit-node-child node -1)
+                    (setq node (treesit-node-child node -1)))
+                  (setq target-node node))
+              (setq node (treesit-node-parent node))))
+          (when target-node
+            (goto-char (treesit-node-start target-node))))))
+
+    (defun my/forward-node ()
+      (interactive)
+      (let ((node (treesit-node-at (point))))
+        (while node
+          (if-let ((next-sibling (treesit-node-next-sibling node)))
+              (progn
+                (goto-char (treesit-node-start next-sibling))
+                (setq node nil))  ; Exit the loop after moving
+            (setq node (treesit-node-parent node))))))  ; Move to parent if no prev sibling
+
     :bind (:map ts-movement-map
                 ("C-M-u" . my/treesit-backward-up-list)
                 ("C-M-d" . my/down-list)
+                ("M-f" . my/forward-node)
+                ("M-b" . my/backward-node)
                 ("C-M-m" . mc/mark-all-like-this)
                 ("C-c ." . tsm/hydra/body))
 
