@@ -3336,10 +3336,11 @@ Use ace-jump-mode to quick jump to words or char
 #+BEGIN_SRC emacs-lisp
   (use-package avy
     :bind
-    ("C-c j" . avy-goto-word-or-subword-1)
+    ("C-j" . avy-goto-char-2)
+    ("C-c j" . avy-resume)
     ("C-'"   . avy-goto-char-timer)
     :config
-    (setq avy-background t)
+    (setq avy-background nil)
     (setq avy-timeout-seconds 0.3)
     (unbind-key "C-'" org-mode-map)) ;; jump in current frame
 #+END_SRC
