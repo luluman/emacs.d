@@ -1043,6 +1043,7 @@ Eat: Emulate A Terminal
     ;; https://codeberg.org/akib/emacs-eat/issues/129
     (eat-exec . (lambda (&rest _) (eat-line-mode)))
     (eat-mode . my/eat-add-compilation-environment)
+    (eat-mode . ffap-bindings) ;; Enable file-finding at point in eat-mode
 
     :custom
     (eat-enable-auto-line-mode t)
@@ -3304,7 +3305,7 @@ Set multiple cursors for better marker words
     :bind
     ("C->" . mc/mark-next-like-this)
     ("C-<" . mc/mark-previous-like-this)
-    ("C-c C-<" . mc/mark-all-like-this)
+    ("C-M-m" . mc/mark-all-like-this)
     :init
     (multiple-cursors-mode))
 #+END_SRC
@@ -3903,7 +3904,6 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
                 ("C-M-d" . my/down-list)
                 ("M-f" . my/forward-node)
                 ("M-b" . my/backward-node)
-                ("C-M-m" . mc/mark-all-like-this)
                 ("C-c ." . tsm/hydra/body))
 
     :hook
