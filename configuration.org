@@ -2624,6 +2624,8 @@ words in the text of the visible portion of the buffer.
 
     :bind (:map jinx-mode-map
                 ("M-$" . jinx-correct)
+                ("M-p" . nil)
+                ("M-n" . nil)
                 ("C-M-c" . jinx-correct)
                 ("C-M-p" . jinx-previous)
                 ("C-M-n" . jinx-next)))
