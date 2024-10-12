@@ -642,16 +642,6 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
     (undo-tree-visualizer-timestamps t))
 #+end_src
 
-** =GDB=
-
-using Realgud to debug source code
-
-#+BEGIN_SRC emacs-lisp
-  (use-package realgud
-    :custom
-    (realgud:pdb-command-name "python -m pdb"))
-#+END_SRC
-
 ** Shell config
 
 Indent with 2 spaces.
@@ -973,6 +963,7 @@ Dape is a debug adapter client for Emacs.
     (dape-buffer-window-arrangement 'right) ;; Info buffers to the right
     (dape-breakpoint-margin-string "●") ;; ◯
     :config
+    ;; (setq dape-debug t)
     (put 'dape--overlay-arrow-position
          'overlay-arrow-string   ;; ▶ →
          (propertize "▶" 'face 'dape-stack-trace-face)))
@@ -1028,7 +1019,8 @@ Eat: Emulate A Terminal
 
 #+begin_src emacs-lisp
   (use-package eat
-    :bind ("C-c t" . eat-new-term)
+    :bind (("C-c t" . eat-new-term)
+           (:map eat-line-mode-map ("C-x C-f" . find-file-at-point)))
     :config
     (defun eat-new-term ()
       "Create a new Eat terminal buffer."
@@ -1043,7 +1035,6 @@ Eat: Emulate A Terminal
     ;; https://codeberg.org/akib/emacs-eat/issues/129
     (eat-exec . (lambda (&rest _) (eat-line-mode)))
     (eat-mode . my/eat-add-compilation-environment)
-    (eat-mode . ffap-bindings) ;; Enable file-finding at point in eat-mode
 
     :custom
     (eat-enable-auto-line-mode t)
