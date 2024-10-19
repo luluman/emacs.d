@@ -964,6 +964,8 @@ Dape is a debug adapter client for Emacs.
     (dape-breakpoint-margin-string "●") ;; ◯
     :config
     ;; (setq dape-debug t)
+    (put 'dape-command 'safe-local-variable #'listp)
+    (put 'dape-adapter-dir 'safe-local-variable #'stringp)
     (put 'dape--overlay-arrow-position
          'overlay-arrow-string   ;; ▶ →
          (propertize "▶" 'face 'dape-stack-trace-face)))
@@ -1562,7 +1564,7 @@ sed,awk,grep, and friends for JSON data.
 
 #+begin_src emacs-lisp
   (use-package jq-mode
-    :bind ("C-c C-j" . jq-interactively)
+    :bind ("C-c j" . jq-interactively)
     :mode
     ("\\.jq$" . jq-mode))
 #+end_src
@@ -1737,6 +1739,8 @@ Including org-tempo restores the <s-style easy-templates that were deprecated in
                                  ox-latex
                                  ox-odt
                                  org-gnus))))
+    (define-key org-mode-map (kbd "C-j") nil)
+    (define-key org-mode-map (kbd "C-c C-j") nil)
     (bind-keys*
      ("C-c l" . org-store-link)
      ("C-c C-l" .  org-insert-link)))
@@ -3330,13 +3334,12 @@ Use ace-jump-mode to quick jump to words or char
 #+BEGIN_SRC emacs-lisp
   (use-package avy
     :bind
-    ("C-j" . avy-goto-char-2)
-    ("C-c j" . avy-resume)
-    ("C-'"   . avy-goto-char-timer)
+    ("C-j" . avy-goto-char-timer)
+    ("C-c C-j" . avy-resume)
+
     :config
     (setq avy-background nil)
-    (setq avy-timeout-seconds 0.3)
-    (unbind-key "C-'" org-mode-map)) ;; jump in current frame
+    (setq avy-timeout-seconds 0.3))
 #+END_SRC
 
 ** Scrolling one line
