@@ -254,7 +254,7 @@ Theme loading symbols.
       modus-vivendi-deuteranopia
       modus-operandi-tritanopia
       modus-vivendi-tritanopia
-      ef-light
+      ef-melissa-light
       ef-dark
       ef-day
       ef-night
@@ -1611,7 +1611,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '("gemini-1.5-pro-exp-0827" "gemini-1.5-pro-latest")))
+        :models '("gemini-1.5-pro-latest")))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
@@ -1632,7 +1632,7 @@ sed,awk,grep, and friends for JSON data.
 
     :custom
     (gptel-curl-file-size-threshold 2000000)
-    (gptel-model "gemini-1.5-pro-exp-0827")
+    (gptel-model "gemini-1.5-pro-latest")
     (gptel-use-curl t)
     (gptel-playback t))
 #+end_src
