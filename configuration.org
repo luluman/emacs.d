@@ -260,15 +260,29 @@ Theme loading symbols.
       ef-night
       ))
 
-  (defvar my/choosing-theme 'modus-vivendi)
+  (defvar my/choosing-theme 'ef-melissa-light)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun my/ef-themes-custom-faces ()
+    (ef-themes-with-colors
+      (if (equal "ef-melissa-light" (symbol-name (car custom-enabled-themes)))
+          (custom-set-faces
+           `(font-lock-comment-face ((,c :inherit italic :foreground "grey"))))
+        (custom-set-faces
+         `(font-lock-comment-face ((,c :inherit italic :foreground ,fg-dim)))))
+      ))
+
+  ;; Using the hook lets our changes persist when we use the commands
+  ;; `ef-themes-toggle', `ef-themes-select', and `ef-themes-load-random'.
+  (add-hook 'ef-themes-post-load-hook #'my/ef-themes-custom-faces)
 #+end_src
 
 #+begin_src emacs-lisp
   (defun my/load-theme (theme)
     (face-remap-add-relative 'vertical-border '(:inherit default))
     (load-theme theme t)
-    (when (cl-search "doom" (symbol-name  theme))
-      (set-face-background 'vertical-border "bg")))
+    (my/ef-themes-custom-faces))
 #+end_src
 
 #+begin_src emacs-lisp
