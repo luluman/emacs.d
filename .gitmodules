@@ -10,3 +10,6 @@
 [submodule "third_party/ts-movement"]
 	path = third_party/ts-movement
 	url = https://github.com/haritkapadia/ts-movement
+[submodule "third_party/beardbolt"]
+	path = third_party/beardbolt
+	url = https://github.com/joaotavora/beardbolt

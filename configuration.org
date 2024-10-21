@@ -1646,7 +1646,7 @@ sed,awk,grep, and friends for JSON data.
 
     :custom
     (gptel-curl-file-size-threshold 2000000)
-    (gptel-model "gemini-1.5-pro-latest")
+    (gptel-model 'gpt-4o-mini)
     (gptel-use-curl t)
     (gptel-playback t))
 #+end_src
@@ -1733,6 +1733,36 @@ diff, not the cloned one.
   (use-package graphviz-dot-mode
     :config
     (setq graphviz-dot-indent-width 4))
+#+end_src
+
+** Compiler Explorer
+
+There are numerous plugins available that function similarly to Godbolt, each
+ with its own unique features and differences. You can explore Godbolt itself at
+ the following link:
+ [https://godbolt.org](https://godbolt.org).
+
+#+begin_src emacs-lisp
+  (use-package compiler-explorer)
+#+end_src
+
+
+A supercharged implementation of the godbolt compiler-explorer for Emacs.
+
+#+begin_src emacs-lisp
+  (use-package rmsbolt)
+#+end_src
+
+
+Beardbolt shows assembly output for given source code file, making it easy to
+see what the compiler is doing.
+
+#+begin_src emacs-lisp
+  (use-package beardbolt
+    :if (eq system-type 'gnu/linux)
+    :load-path "~/.emacs.d/third_party/beardbolt/"
+    :config
+    (add-to-list 'beardbolt-languages '(c++-ts-mode beardbolt--c/c++-setup :base-cmd "g++" :language "c++")))
 #+end_src
 
 * Org
