@@ -1631,7 +1631,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-anthropic "Claude"
         :key 'gptel-api-key
         :stream t
-        :models '("claude-3-5-sonnet-20240620")))
+        :models '("claude-3-5-sonnet-latest")))
 
     (setq-default gptel-backend gptel--gemini)
 
