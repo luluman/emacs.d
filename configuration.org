@@ -706,10 +706,14 @@ Get environment variable in Shell and set them to Emacs
 
 ** Workgroups another way to organize workspace
 
+*** Winner-mode
+
 #+BEGIN_SRC emacs-lisp
   (when (fboundp 'winner-mode)
     (winner-mode 1))
 #+END_SRC
+
+*** COMMENT WorkGroups
 
 #+BEGIN_SRC emacs-lisp
   (use-package workgroups2
