@@ -246,18 +246,18 @@ Theme loading symbols.
 
 #+begin_src emacs-lisp
   (defvar theme-pool
-    '(modus-operandi
-      modus-vivendi
-      modus-operandi-tinted
-      modus-vivendi-tinted
-      modus-operandi-deuteranopia
-      modus-vivendi-deuteranopia
-      modus-operandi-tritanopia
-      modus-vivendi-tritanopia
+    '(modus-vivendi
+      ;; modus-operandi
+      ;; modus-operandi-tinted
+      ;; modus-vivendi-tinted
+      ;; modus-operandi-deuteranopia
+      ;; modus-vivendi-deuteranopia
+      ;; modus-operandi-tritanopia
+      ;; modus-vivendi-tritanopia
       ef-melissa-light
-      ef-dark
-      ef-day
-      ef-night
+      ;; ef-dark
+      ;; ef-day
+      ;; ef-night
       ))
 
   (defvar my/choosing-theme 'ef-melissa-light)
