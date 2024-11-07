@@ -1044,6 +1044,8 @@ Eat: Emulate A Terminal
     :bind (("C-c t" . eat-new-term)
            (:map eat-line-mode-map ("C-x C-f" . find-file-at-point)))
     :config
+    (define-key eat-line-mode-map [xterm-paste] #'xterm-paste)
+
     (defun eat-new-term ()
       "Create a new Eat terminal buffer."
       (interactive)
@@ -1059,6 +1061,7 @@ Eat: Emulate A Terminal
     (eat-mode . my/eat-add-compilation-environment)
 
     :custom
+    (xterm-store-paste-on-kill-ring nil)
     (eat-enable-auto-line-mode t)
     (eat-shell-prompt-annotation-failure-margin-indicator "✘ ")
     (eat-shell-prompt-annotation-running-margin-indicator "⧗ ")
