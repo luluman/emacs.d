@@ -536,6 +536,8 @@ project is to be configured, built and tested using CMake and CTest.
     (project-vc-extra-root-markers '(".dir-locals.el"))
     (project-cmake-build-directory-name "build")
     :config
+    ;; Rebind C-x C-p to `project-prefix` to prevent mistyping and improve project navigation
+    (define-key global-map (kbd "C-x C-p") project-prefix-map)
     (put 'compilation-environment 'safe-local-variable #'listp)
     (put 'project-cmake-configuration-arguments 'safe-local-variable #'listp)
     (put 'project-cmake-build-type 'safe-local-variable #'stringp)
