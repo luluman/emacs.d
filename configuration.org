@@ -2974,8 +2974,13 @@ at the correct indentation for Python).
         :config
         (load fuz-core-bin nil t))
       (setq fussy-score-fn 'fussy-fuz-score))
+
+    (add-hook 'minibuffer-setup-hook
+              (lambda ()
+                (setq-local fussy-use-cache nil)))
+
     :custom
-    (fussy-use-cache nil)
+    (fussy-use-cache t)
     (fussy-compare-same-score-fn 'fussy-histlen->strlen<)
     (fussy-filter-fn 'fussy-filter-default)
     (fussy-default-regex-fn 'fussy-pattern-flex-1)
