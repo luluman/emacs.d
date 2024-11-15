@@ -3395,9 +3395,10 @@ Use ace-jump-mode to quick jump to words or char
     ("C-j" . avy-goto-char-timer)
     ("C-c C-j" . avy-resume)
 
-    :config
-    (setq avy-background nil)
-    (setq avy-timeout-seconds 0.3))
+    :custom
+    (avy-single-candidate-jump nil)
+    (avy-background nil)
+    (avy-timeout-seconds 0.3))
 #+END_SRC
 
 ** Scrolling one line
