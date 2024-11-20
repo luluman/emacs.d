@@ -1054,6 +1054,37 @@ Add shell completion
     (bash-completion-process-timeout 0.1))
 #+END_SRC
 
+#+begin_src emacs-lisp
+  (use-package term
+    :config
+    (defun my/term ()
+      (interactive)
+      (let* ((title (generate-new-buffer-name "*terminal*"))
+             (buffer (get-buffer-create title)))
+        (cond ((not (term-check-proc buffer))
+               (with-current-buffer buffer
+                 (term-mode)) ; Install local vars, mode, keymap, ...
+               (term-exec buffer title explicit-shell-file-name nil nil)))
+        (set-buffer buffer)
+        (term-line-mode)
+        (pop-to-buffer-same-window buffer)))
+
+    (defun my/add-compilation-environment ()
+      (hack-dir-local-variables-non-file-buffer)
+      (hl-line-mode -1)
+      (setq-local global-hl-line-mode nil)
+      (setq-local process-environment
+                  (append compilation-environment process-environment)))
+
+    :bind (("C-c t" . my/term)
+           (:map term-mode-map
+                 ("C-x C-f" . find-file-at-point)
+                 ("TAB" . complete-symbol)
+                 ("M-s". nil)))
+    :hook
+    (term-mode . my/add-compilation-environment))
+#+end_src
+
 **** COMMENT user define
 
 Get environment variable in Shell and set them to Emacs
