@@ -674,38 +674,6 @@ Force open shell in the current buffer
   (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
 #+END_SRC
 
-#+begin_src emacs-lisp
-  (setq comint-buffer-maximum-size 20000)
-  (setq comint-prompt-read-only nil) ;; If non-nil, the comint prompt is read only.
-  (setq read-process-output-max (* 1024 1024))
-  (setq process-adaptive-read-buffering nil)
-#+end_src
-
-*** bash-completion
-
-Add shell completion
-#+BEGIN_SRC emacs-lisp
-  (use-package bash-completion
-    :config (bash-completion-setup)
-    :custom
-    (bash-completion-process-timeout 0.1))
-#+END_SRC
-
-*** user define
-
-Get environment variable in Shell and set them to Emacs
-#+begin_src emacs-lisp
-  (defun my/get-shell-env-value-and-set-emacs ()
-  ; get environment variable form shell and set to emacs
-    (interactive)
-    (let ((env-var '("PATH" "LD_LIBRARY_PATH" "PYTHONPATH")))
-      (mapcar #'shell-copy-environment-variable env-var)
-      (setq python-shell-process-environment
-            (mapcar (lambda (x) (format "%s=%s" x (getenv x)))
-                    env-var))))
-  (define-key shell-mode-map (kbd "C-c x") 'my/get-shell-env-value-and-set-emacs)
-#+end_src
-
 ** Workgroups another way to organize workspace
 
 *** Winner-mode
@@ -1057,7 +1025,7 @@ Eat: Emulate A Terminal
                   (append compilation-environment process-environment)))
     :hook
     ;; https://codeberg.org/akib/emacs-eat/issues/129
-    (eat-exec . (lambda (&rest _) (eat-line-mode)))
+    (eat-exec . (lambda (&rest _) (eat-line-mode) (font-lock-update)))
     (eat-mode . my/eat-add-compilation-environment)
 
     :custom
@@ -1067,6 +1035,42 @@ Eat: Emulate A Terminal
     (eat-shell-prompt-annotation-running-margin-indicator "⧗ ")
     (eat-shell-prompt-annotation-success-margin-indicator "✔ "))
 #+end_src
+
+configure =comint-mode=
+
+#+begin_src emacs-lisp
+  (setq comint-buffer-maximum-size 8192)
+  (setq comint-prompt-read-only nil) ;; If non-nil, the comint prompt is read only.
+  (setq read-process-output-max (* 1024 1024))
+  (add-hook 'comint-output-filter-functions #'comint-osc-process-output)
+  (setq process-adaptive-read-buffering nil)
+#+end_src
+
+Add shell completion
+#+BEGIN_SRC emacs-lisp
+  (use-package bash-completion
+    :config (bash-completion-setup)
+    :custom
+    (bash-completion-process-timeout 0.1))
+#+END_SRC
+
+**** COMMENT user define
+
+Get environment variable in Shell and set them to Emacs
+#+begin_src emacs-lisp
+  (defun my/get-shell-env-value-and-set-emacs ()
+  ; get environment variable form shell and set to emacs
+    (interactive)
+    (let ((env-var '("PATH" "LD_LIBRARY_PATH" "PYTHONPATH")))
+      (mapcar #'shell-copy-environment-variable env-var)
+      (setq python-shell-process-environment
+            (mapcar (lambda (x) (format "%s=%s" x (getenv x)))
+                    env-var))))
+  (define-key shell-mode-map (kbd "C-c x") 'my/get-shell-env-value-and-set-emacs)
+#+end_src
+
+
+
 
 *** Fold and unfold code blocks
 
@@ -1628,7 +1632,7 @@ sed,awk,grep, and friends for JSON data.
           (gptel-make-openai "ChatGPT"
             :key 'gptel-api-key
             :stream t
-            :models '("chatgpt-4o-latest" "gpt-4o")))
+            :models '("o1-mini" "chatgpt-4o-latest" "gpt-4o")))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
@@ -3214,7 +3218,8 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (corfu-auto-delay 0.1)
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
-    (global-corfu-modes '((not shell-mode) t))
+    ;; (global-corfu-modes '((not shell-mode) t))
+    (global-corfu-modes t)
     ;; https://github.com/minad/corfu/discussions/457
     (text-mode-ispell-word-completion nil) ;; disable ispell
     :bind
