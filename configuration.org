@@ -1688,7 +1688,9 @@ diff, not the cloned one.
                            (goto-char reg-end)
                            (line-beginning-position 2)))) ; include the newline char
           (cons full-beg full-end)))))
+#+end_src
 
+#+begin_src emacs-lisp
   (defun my/gpt-refacotr (gpt-backend rewrite-message prompt)
     (let ((gptel-backend gpt-backend)
           (gptel-model (car (gptel-backend-models gpt-backend))))
@@ -1702,36 +1704,37 @@ diff, not the cloned one.
               (remove-hook 'ediff-quit-hook my/gptel--ediff-restore)))
       (message "Waiting for %s response..." gptel-model)
       (gptel-request
-          prompt
-        :system rewrite-message
-        :context (my/get-full-line-region (current-buffer))
-        :callback
-        (lambda (response info)
-          (if (not response)
-              (message "ChatGPT response error: %s" (plist-get info :status))
-            (let* ((gptel-buffer (plist-get info :buffer))
-                   (gptel-bounds (plist-get info :context))
-                   (buffer-mode
-                    (buffer-local-value 'major-mode gptel-buffer)))
-              (pcase-let ((`(,new-buf ,new-beg ,new-end)
-                           (with-current-buffer (get-buffer-create "*gptel-rewrite-Region.B-*")
-                             (let ((inhibit-read-only t))
-                               (erase-buffer)
-                               (funcall buffer-mode)
-                               (insert response)
-                               (goto-char (point-min))
-                               (list (current-buffer) (point-min) (point-max))))))
-                (require 'ediff)
-                (add-hook 'ediff-quit-hook my/gptel--ediff-restore)
-                (apply
-                 #'ediff-regions-internal
-                 gptel-buffer
-                 (car gptel-bounds) (cdr gptel-bounds)
-                 new-buf new-beg new-end
-                 nil
-                 ;; (list 'ediff-regions-wordwise 'word-wise nil)
-                 (list 'ediff-regions-wordwise nil nil)
-                 ))))))))
+          ;; o1 model does not support system message, but we can embeded it into the prompt.
+          (format "%s\n%s" rewrite-message prompt)
+          :system rewrite-message
+          :context (my/get-full-line-region (current-buffer))
+          :callback
+          (lambda (response info)
+            (if (not response)
+                (message "ChatGPT response error: %s" (plist-get info :status))
+              (let* ((gptel-buffer (plist-get info :buffer))
+                     (gptel-bounds (plist-get info :context))
+                     (buffer-mode
+                      (buffer-local-value 'major-mode gptel-buffer)))
+                (pcase-let ((`(,new-buf ,new-beg ,new-end)
+                             (with-current-buffer (get-buffer-create "*gptel-rewrite-Region.B-*")
+                               (let ((inhibit-read-only t))
+                                 (erase-buffer)
+                                 (funcall buffer-mode)
+                                 (insert response)
+                                 (goto-char (point-min))
+                                 (list (current-buffer) (point-min) (point-max))))))
+                  (require 'ediff)
+                  (add-hook 'ediff-quit-hook my/gptel--ediff-restore)
+                  (apply
+                   #'ediff-regions-internal
+                   gptel-buffer
+                   (car gptel-bounds) (cdr gptel-bounds)
+                   new-buf new-beg new-end
+                   nil
+                   ;; (list 'ediff-regions-wordwise 'word-wise nil)
+                   (list 'ediff-regions-wordwise nil nil)
+                   ))))))))
 #+end_src
 
 ** BuildBot
