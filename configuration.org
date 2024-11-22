@@ -1076,10 +1076,10 @@ Add shell completion
       (setq-local process-environment
                   (append compilation-environment process-environment)))
 
-    :bind (("C-c t" . my/term)
+    :bind (;; ("C-c t" . my/term)
            (:map term-mode-map
                  ("C-x C-f" . find-file-at-point)
-                 ("TAB" . complete-symbol)
+                 ("TAB" . completion-at-point)
                  ("M-s". nil)))
     :hook
     (term-mode . my/add-compilation-environment))
@@ -1669,7 +1669,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '("gemini-exp-1114" "gemini-1.5-pro-latest")))
+        :models '("gemini-exp-1121" "gemini-1.5-pro-latest")))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
