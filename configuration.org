@@ -1021,11 +1021,12 @@ Eat: Emulate A Terminal
 
     (defun my/eat-add-compilation-environment ()
       (hack-dir-local-variables-non-file-buffer)
+      (setq-local font-lock-defaults '(nil t))
       (setq-local process-environment
                   (append compilation-environment process-environment)))
     :hook
     ;; https://codeberg.org/akib/emacs-eat/issues/129
-    (eat-exec . (lambda (&rest _) (eat-line-mode) (font-lock-update)))
+    (eat-exec . (lambda (&rest _) (eat-line-mode)))
     (eat-mode . my/eat-add-compilation-environment)
 
     :custom
