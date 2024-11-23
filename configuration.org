@@ -1000,9 +1000,7 @@ outputs.
     (vterm-kill-buffer-on-exit nil)
     (vterm-always-compile-module t)
     (term-copy-exclude-prompt t)
-    (vterm-buffer-name-string "*vterm %s*")
-    (vterm-keymap-exceptions
-     '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" "M-s")))
+    (vterm-buffer-name-string "*vterm %s*"))
 #+end_src
 
 Eat: Emulate A Terminal
@@ -3296,13 +3294,13 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 #+begin_src emacs-lisp
   (use-package corfu-terminal
     :init
-    (unless (display-graphic-p)
+    (unless (corfu--popup-support-p)
       (corfu-terminal-mode +1))
     :custom
     (corfu-terminal-position-right-margin 1))
 #+end_src
 
-*** show diagnose information
+*** COMMENT show diagnose information
 
 #+begin_src emacs-lisp
   (use-package flymake-popon
@@ -3412,10 +3410,13 @@ Just keep pressing the key until it selects what you want.
 
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region
+    :config
+    ;; Replace the original org-mode excursion function to avoid performance overhead
+    (defun er/save-org-mode-excursion (action)
+      (funcall action))
+
     :bind
-    ("C-c q" . er/expand-region)
-    ;; ("C-=" . mark-sexp)
-    )
+    ("C-c q" . er/expand-region))
 #+END_SRC
 
 #+begin_src emacs-lisp
