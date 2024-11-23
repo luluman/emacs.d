@@ -3271,22 +3271,23 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
     ;; (add-to-list 'completion-at-point-functions #'cape-history)
-    (add-to-list 'completion-at-point-functions #'cape-keyword))
+    (add-to-list 'completion-at-point-functions #'cape-keyword)
+    :config
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
   ;; A few more useful configurations...
   (use-package emacs
-    :init
+    :custom
     ;; TAB cycle if there are only few candidates
-    (setq completion-cycle-threshold 3)
-    (setq warning-minimum-level :error)
+    (completion-cycle-threshold 3)
+    (warning-minimum-level :error)
     ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
     ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
-    (setq read-extended-command-predicate
-          #'command-completion-default-include-p)
+    (read-extended-command-predicate #'command-completion-default-include-p)
 
     ;; Enable indentation+completion using the TAB key.
     ;; `completion-at-point' is often bound to M-TAB.
-    (setq tab-always-indent 'complete))
+    (tab-always-indent 'complete))
 #+end_src
 
 *** terminal popup
@@ -3522,11 +3523,18 @@ while still keeping them within arm’s reach.
            ("C-M-<return>" . popper-toggle-type)
            ("C-M-k" . popper-kill-latest-popup))
     :custom
-    ;; (popper-window-height 12)
     (popper-mode-line nil)
     :config
     (bind-keys* ("C-<tab>" . popper-toggle))
     (setq popper-group-function #'popper-group-by-project)
+
+    (defun popper--fit-window-height (win)
+      "Determine the height of popup window WIN by fitting it to the buffer's content."
+      (fit-window-to-buffer
+       win
+       (floor (frame-height) 3)
+       (floor (frame-height) 4)))
+
     :init
     (setq popper-reference-buffers
           '(;;("Output\\*$" . hide)
