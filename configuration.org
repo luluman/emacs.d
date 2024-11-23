@@ -2730,9 +2730,9 @@ English to Chinese and Chinese to English.
   No prompt if the region is active or `thing-at-point' returns
   non-nil."
       (interactive)
-      (if-let ((word (if (use-region-p)
-                         (buffer-substring-no-properties (region-beginning) (region-end))
-                       (thing-at-point 'word t))))
+      (if-let* ((word (if (use-region-p)
+                          (buffer-substring-no-properties (region-beginning) (region-end))
+                        (thing-at-point 'word t))))
           (progn
             (bing-dict-brief word))
         (call-interactively #'bing-dict-brief)))
@@ -3255,6 +3255,30 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (global-corfu-modes t)
     ;; https://github.com/minad/corfu/discussions/457
     (text-mode-ispell-word-completion nil) ;; disable ispell
+
+    :config
+    (when (featurep 'tty-child-frames)
+      (setq corfu--frame-parameters
+            '((no-accept-focus . t)
+              (no-focus-on-map . t)
+              (min-width . t)
+              (min-height . t)
+              (border-width . 0)
+              (outer-border-width . 0)
+              (internal-border-width . 0)
+              (child-frame-border-width . 1)
+              (vertical-scroll-bars . nil)
+              (horizontal-scroll-bars . nil)
+              (menu-bar-lines . 0)
+              (tool-bar-lines . 0)
+              (tab-bar-lines . 0)
+              (no-other-frame . t)
+              (unsplittable . t)
+              (undecorated . t)
+              (cursor-type . nil)
+              (no-special-glyphs . t)
+              (desktop-dont-save . t))))
+
     :bind
     (:map corfu-map
           ("TAB" . corfu-next)
@@ -3350,7 +3374,7 @@ makes that automatic.
     (split-window-right)
     (balance-windows)
     ;; (let ((total-width (window-total-width)))
-      ;; (split-window-right (floor (* 0.6 total-width))))
+    ;; (split-window-right (floor (* 0.6 total-width))))
     (other-window 1))
 
   (global-set-key (kbd "C-x 2") 'my/split-window-below-and-switch)
@@ -3366,11 +3390,11 @@ results and =C-c C-c= to stop, just like in =dired=.
 #+BEGIN_SRC emacs-lisp
   (eval-after-load 'grep
     '(define-key grep-mode-map
-      (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode))
+                 (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode))
 
   (eval-after-load 'wgrep
     '(define-key grep-mode-map
-      (kbd "C-c C-c") 'wgrep-finish-edit))
+                 (kbd "C-c C-c") 'wgrep-finish-edit))
 
   (setq wgrep-auto-save-buffer t)
 #+END_SRC
@@ -3602,7 +3626,7 @@ Hydra short-keys
     ("q" nil "exit" :exit t))
 #+end_src
 
- back-button offers local and global jumping
+back-button offers local and global jumping
 
 #+begin_src emacs-lisp
   (use-package back-button
@@ -3977,10 +4001,10 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
       "Move backward to the previous node in the tree, following a pre-order traversal."
       (interactive)
       ;; (message "node at: %s" (treesit-node-string (treesit-node-at (point))))
-      (when-let ((node (treesit-node-at (point))))
+      (when-let* ((node (treesit-node-at (point))))
         (let ((target-node nil))
           (while (and node (not target-node))
-            (if-let ((prev-sibling (treesit-node-prev-sibling node)))
+            (if-let* ((prev-sibling (treesit-node-prev-sibling node)))
                 (progn
                   (setq node prev-sibling)
                   (while (treesit-node-child node -1)
@@ -3996,7 +4020,7 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
       (interactive)
       (let ((node (treesit-node-at (point))))
         (while node
-          (if-let ((next-sibling (treesit-node-next-sibling node)))
+          (if-let* ((next-sibling (treesit-node-next-sibling node)))
               (if (treesit-node-check next-sibling 'missing)
                   (setq node next-sibling) ; Skip invalid node, continue loop
                 (goto-char (treesit-node-start next-sibling))
