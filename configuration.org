@@ -3279,6 +3279,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
               (no-special-glyphs . t)
               (desktop-dont-save . t))))
 
+    ;; https://github.com/minad/corfu/issues/330
+    (advice-add 'python-shell-completion-at-point :around
+                (lambda (fun &optional arg)
+                  (cape-wrap-noninterruptible (lambda () (funcall fun arg)))))
+
     :bind
     (:map corfu-map
           ("TAB" . corfu-next)
