@@ -916,6 +916,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (eglot-extend-to-xref t)
     (eglot-sync-connect nil)
     :config
+    (add-to-list 'eglot-stay-out-of 'eldoc)
+
     (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
     (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
     (my/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
