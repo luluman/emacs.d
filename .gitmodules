@@ -1,12 +1,12 @@
 [submodule "too-long-lines-mode"]
 	path = third_party/too-long-lines-mode
-	url = git@github.com:rakete/too-long-lines-mode
+	url = https://github.com/rakete/too-long-lines-mode
 [submodule "project-cmake"]
 	path = third_party/project-cmake
-	url = git@github.com:luluman/project-cmake.git
+	url = https://github.com/luluman/project-cmake
 [submodule "symon"]
 	path = third_party/symon
-	url = git@github.com:zk-phi/symon.git
+	url = https://github.com/zk-phi/symon
 [submodule "third_party/ts-movement"]
 	path = third_party/ts-movement
 	url = https://github.com/haritkapadia/ts-movement
