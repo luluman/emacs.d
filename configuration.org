@@ -1047,14 +1047,6 @@ configure =comint-mode=
   (setq process-adaptive-read-buffering nil)
 #+end_src
 
-Add shell completion
-#+BEGIN_SRC emacs-lisp
-  (use-package bash-completion
-    :config (bash-completion-setup)
-    :custom
-    (bash-completion-process-timeout 0.1))
-#+END_SRC
-
 #+begin_src emacs-lisp
   (use-package term
     :config
@@ -1085,6 +1077,15 @@ Add shell completion
     :hook
     (term-mode . my/add-compilation-environment))
 #+end_src
+
+**** COMMENT Add shell completion
+
+#+BEGIN_SRC emacs-lisp
+  (use-package bash-completion
+    :config (bash-completion-setup)
+    :custom
+    (bash-completion-process-timeout 0.1))
+#+END_SRC
 
 **** COMMENT user define
 
@@ -3912,7 +3913,7 @@ https://youtu.be/51eSeqcaikM
     (monkeytype-most-mistyped-amount 10))
 #+end_src
 
-** Add Pinyin
+** COMMENT Add Pinyin
 
 #+begin_src emacs-lisp
   (use-package pyim
