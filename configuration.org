@@ -811,7 +811,7 @@ read elf symbols
 #+begin_src emacs-lisp
   (let ((my/shell (if (eq system-type 'darwin)
                       "/bin/zsh"
-                    "bin/bash")))
+                    "/bin/bash")))
     (setq tramp-remote-shell my/shell)
     (setq explicit-shell-file-name my/shell)  ;; using bash by default.
     (setq shell-file-name my/shell))  ;; using bash by default.
