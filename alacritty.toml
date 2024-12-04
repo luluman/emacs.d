@@ -17,20 +17,20 @@ size = 15
 
 # https://github.com/protesilaos/iosevka-comfy
 [font.bold]
-family = "Zed Mono"
-# family = "Iosevka Comfy Fixed"
-style = "Semibold"
+family = "Iosevka Fixed SS09"
+# family = "Iosevka Term SS09"
+style = "Medium"
 # style = "Bold"
 
 [font.italic]
-family = "Zed Mono"
-# family = "Iosevka Comfy Fixed"
-style = "Light Italic"
+family = "Iosevka Fixed SS09"
+# family = "Iosevka Term SS09"
+style = "Light Obligque"
 # style = "Italic"
 
 [font.normal]
-family = "Zed Mono"
-# family = "Iosevka Comfy Fixed"
+family = "Iosevka Fixed SS09"
+# family = "Iosevka Term SS09"
 # style = "Regular"
 style = "Light"
 
@@ -75,7 +75,7 @@ multiplier = 3
 
 [window]
 dynamic_title = true
-opacity = 0.95
+opacity = 1.0
 option_as_alt = "Both"
 
 [window.dimensions]
