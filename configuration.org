@@ -396,9 +396,9 @@ Note that this overrides the default font-related keybindings from
 #+BEGIN_SRC emacs-lisp
   (if (eq system-type 'gnu/linux)
       (setq my/default-font "Ubuntu Mono")
-    (setq my/default-font "Source Code Pro"))
+    (setq my/default-font "Iosevka SS09"))
 
-  (setq my/default-font-size 14)
+  (setq my/default-font-size 15)
   (setq my/current-font-size my/default-font-size)
 
   (setq my/font-change-increment 1.1)
@@ -522,6 +522,19 @@ I use a few packages in virtually every programming or writing environment to
 manage the project, handle auto-completion, search for terms, and deal with
 version control. That's all in here.
 
+
+** exec-path-from-shell
+
+A GNU Emacs library to ensure environment variables inside Emacs look the same
+as in the user's shell.
+
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :if (eq system-type 'darwin)
+    :init
+    (exec-path-from-shell-initialize))
+#+end_src
+
 ** project-cmake
 
 The package project-cmake incorporates the required logic to understand that a
@@ -529,7 +542,6 @@ project is to be configured, built and tested using CMake and CTest.
 
 #+begin_src emacs-lisp
   (use-package project-cmake
-    :if (eq system-type 'gnu/linux)
     :load-path "~/.emacs.d/third_party/project-cmake/"
     :custom
     (project-vc-merge-submodules nil)
@@ -797,9 +809,12 @@ read elf symbols
 ** Tramp
 
 #+begin_src emacs-lisp
-  (setq tramp-remote-shell "/bin/bash")
-  (setq explicit-shell-file-name "/bin/bash")  ;; using bash by default.
-  (setq shell-file-name "/bin/bash")  ;; using bash by default.
+  (let ((my/shell (if (eq system-type 'darwin)
+                      "/bin/zsh"
+                    "bin/bash")))
+    (setq tramp-remote-shell my/shell)
+    (setq explicit-shell-file-name my/shell)  ;; using bash by default.
+    (setq shell-file-name my/shell))  ;; using bash by default.
 #+end_src
 
 ** Gerrit
