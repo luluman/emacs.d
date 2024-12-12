@@ -461,7 +461,7 @@ programming.
     :custom
     ;; │┃▕▐
     (git-gutter:window-width 1)
-    (git-gutter:update-interval 0.3)
+    (git-gutter:update-interval 2)
     (git-gutter:always-show-separator t)
     (git-gutter:added-sign "▐")
     (git-gutter:deleted-sign "▐")
@@ -3271,6 +3271,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (corfu-auto t)                 ;; Enable auto completion
     ;; (global-corfu-modes '((not shell-mode) t))
     (global-corfu-modes t)
+    (corfu-preview-current nil)
     ;; https://github.com/minad/corfu/discussions/457
     (text-mode-ispell-word-completion nil) ;; disable ispell
 
