@@ -3321,7 +3321,9 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     ;; (add-to-list 'completion-at-point-functions #'cape-history)
     (add-to-list 'completion-at-point-functions #'cape-keyword)
     :config
-    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+    :custom
+    (dabbrev-check-all-buffers nil))
 
   ;; A few more useful configurations...
   (use-package emacs
