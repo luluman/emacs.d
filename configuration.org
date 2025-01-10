@@ -1174,7 +1174,9 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
             ("M-p" . symbol-overlay-jump-prev)
             ("M-N" . symbol-overlay-switch-forward)
             ("M-P" . symbol-overlay-switch-backward)
-            ("M-C" . symbol-overlay-remove-all)))
+            ("M-C" . symbol-overlay-remove-all))
+     :custom
+     (symbol-overlay-priority 100))
  #+END_SRC
 
 *** Tree-sitter
