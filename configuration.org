@@ -1117,11 +1117,17 @@ Get environment variable in Shell and set them to Emacs
   (define-key shell-mode-map (kbd "C-c x") 'my/get-shell-env-value-and-set-emacs)
 #+end_src
 
-** Copy from Emacs to the OS's clipboard
+*** Copy from Emacs to the OS's clipboard
 
 #+begin_src emacs-lisp
   (use-package clipetty
     :hook (after-init . global-clipetty-mode))
+#+end_src
+
+Enable mouse-mode in terminal
+
+#+begin_src emacs-lisp
+  (xterm-mouse-mode +1)
 #+end_src
 
 *** Fold and unfold code blocks
