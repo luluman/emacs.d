@@ -1121,20 +1121,6 @@ Get environment variable in Shell and set them to Emacs
 
 #+begin_src emacs-lisp
   (use-package clipetty
-    :config
-    ;; https://github.com/spudlyo/clipetty/pull/33
-    (defun clipetty--tty (ssh-tty tmux)
-      "Return which TTY we should send our OSC payload to.
-       Both the SSH-TTY and TMUX arguments should come from the selected
-       frame's environment."
-      (let ((terminal-name "/dev/tty"))
-        (if (not ssh-tty)
-            (terminal-name)
-          (if tmux
-              (let ((tmux-ssh-tty (clipetty--get-tmux-ssh-tty)))
-                (if tmux-ssh-tty tmux-ssh-tty terminal-name))
-            terminal-name))))
-
     :hook (after-init . global-clipetty-mode))
 #+end_src
 
