@@ -1186,7 +1186,8 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
             ("M-P" . symbol-overlay-switch-backward)
             ("M-C" . symbol-overlay-remove-all))
      :custom
-     (symbol-overlay-priority 100))
+     ;; Set priority just below region highlight (nil . 100) for proper layering
+     (symbol-overlay-priority -1))
  #+END_SRC
 
 *** Tree-sitter
@@ -2744,6 +2745,8 @@ words in the text of the visible portion of the buffer.
     (add-to-list 'mode-line-misc-info
                  '(jinx-mode
                    (:eval (jinx--mode-line-format))) t)
+
+    (put 'jinx-overlay 'priority -2) ;; Ensure jinx-overlay is below symbol-overlay in priority
 
     :bind (:map jinx-mode-map
                 ("M-$" . jinx-correct)
