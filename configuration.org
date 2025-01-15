@@ -1619,6 +1619,8 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 
 #+begin_src emacs-lisp
   (use-package mlir-mode
+    :custom
+    (mlir-opt "hmcc-opt")
     :mode "\\.pdll$" "\\.mlir$"
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
@@ -4016,33 +4018,6 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
     (push 'tsm/hydra/tsm/mc/mark-all-overlays mc--default-cmds-to-run-once)
     (advice-add 'symbol-overlay-remove-all :after (lambda () (tsm/clear-overlays (point))))
 
-    (defun my/treesit-backward-up-list ()
-      (interactive)
-      (let* ((start-point (point))
-             (node (treesit-node-on start-point start-point)))
-        (while (and node
-                    (= (point) start-point))
-          (setq node (treesit-node-parent node))
-          (when node
-            (goto-char (treesit-node-start node))))
-        (when (= (point) start-point)
-          (message "No parent node found or already at root"))))
-
-    (defun my/down-list ()
-      (interactive)
-      (let* ((start-point (point))
-             (next-sibling (treesit-node-on start-point start-point))
-             found-node)
-        (while (and next-sibling (not found-node))
-          (if (> (treesit-node-child-count next-sibling) 0)
-              (setq found-node next-sibling)
-            (setq next-sibling (treesit-node-next-sibling next-sibling))))
-        (if found-node
-            (progn
-              (goto-char (treesit-node-start found-node))
-              (message "Moved to next non-leaf sibling"))
-          (message "No next non-leaf sibling found"))))
-
     (defun my/backward-node ()
       "Move backward to the previous node in the tree, following a pre-order traversal."
       (interactive)
@@ -4074,8 +4049,6 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
             (setq node (treesit-node-parent node))))))  ; Move to parent if no next sibling
 
     :bind (:map ts-movement-map
-                ("C-M-u" . my/treesit-backward-up-list)
-                ("C-M-d" . my/down-list)
                 ("M-f" . my/forward-node)
                 ("M-b" . my/backward-node)
                 ("C-c ." . tsm/hydra/body))
