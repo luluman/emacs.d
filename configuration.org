@@ -1608,10 +1608,6 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 #+begin_src emacs-lisp
   (use-package tablegen-mode
     :mode "\\.td$"
-    :hook
-    (tablegen-mode . turn-on-font-lock)
-    (tablegen-mode . git-gutter--turn-on)
-    (tablegen-mode . display-line-numbers--turn-on)
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
