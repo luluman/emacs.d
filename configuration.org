@@ -1120,8 +1120,12 @@ Get environment variable in Shell and set them to Emacs
 *** Copy from Emacs to the OS's clipboard
 
 #+begin_src emacs-lisp
-  (use-package clipetty
-    :hook (after-init . global-clipetty-mode))
+  ;; using cliptty
+  ;; (use-package clipetty
+  ;;   :hook (after-init . global-clipetty-mode))
+
+  ;; the builtin solution also works for alacrietty
+  (setq xterm-extra-capabilities '(modifyOtherKeys reportBackground setSelection))
 #+end_src
 
 Enable mouse-mode in terminal
@@ -1177,18 +1181,18 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
 
 *** Highlight variables
 
- #+BEGIN_SRC emacs-lisp
-   (use-package symbol-overlay
-     :bind (("M-i" . symbol-overlay-put)
-            ("M-n" . symbol-overlay-jump-next)
-            ("M-p" . symbol-overlay-jump-prev)
-            ("M-N" . symbol-overlay-switch-forward)
-            ("M-P" . symbol-overlay-switch-backward)
-            ("M-C" . symbol-overlay-remove-all))
-     :custom
-     ;; Set priority just below region highlight (nil . 100) for proper layering
-     (symbol-overlay-priority -1))
- #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (use-package symbol-overlay
+    :bind (("M-i" . symbol-overlay-put)
+           ("M-n" . symbol-overlay-jump-next)
+           ("M-p" . symbol-overlay-jump-prev)
+           ("M-N" . symbol-overlay-switch-forward)
+           ("M-P" . symbol-overlay-switch-backward)
+           ("M-C" . symbol-overlay-remove-all))
+    :custom
+    ;; Set priority just below region highlight (nil . 100) for proper layering
+    (symbol-overlay-priority -1))
+#+END_SRC
 
 *** Tree-sitter
 
