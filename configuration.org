@@ -1701,21 +1701,21 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '("gemini-2.0-flash-thinking-exp" "gemini-2.0-flash-exp" "gemini-exp-1206")))
+        :models '(gemini-exp-1206 gemini-2.0-flash-thinking-exp gemini-2.0-flash-exp)))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
         :key 'gptel-api-key
         :stream t
-        :models '("claude-3-5-sonnet-latest")))
+        :models '(claude-3-5-sonnet-latest)))
 
     (defvar gptel--deepseek
       (gptel-make-openai "DeepSeek"
-        :stream t
-        :key 'gptel-api-key
         :host "api.deepseek.com"
         :endpoint "/chat/completions"
-        :models '("deepseek-coder" "deepseek-chat")))
+        :stream t
+        :key 'gptel-api-key
+        :models '(deepseek-reasoner deepseek-chat)))
 
     (setq-default gptel-backend gptel--gemini)
 
