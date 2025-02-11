@@ -1858,6 +1858,7 @@ Including org-tempo restores the <s-style easy-templates that were deprecated in
 
 #+BEGIN_SRC emacs-lisp
   (use-package org
+    :pin manual
     :ensure org-contrib
     :config
     (put 'narrow-to-region 'disabled nil)
