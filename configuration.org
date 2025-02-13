@@ -1687,8 +1687,10 @@ sed,awk,grep, and friends for JSON data.
     :config
     ;; (setq gptel--debug t)
     (setq gptel-default-mode 'org-mode)
-    (setq-default gptel-proxy
-                  (format "socks5h://%s" "vps-us:1055"))
+
+    (setq-default gptel-proxy (if (member user-login-name '("man.lu" "mattlu"))
+                                  "socks5h://vps-us:1055"
+                                (format "socks5h://%s" my/socks-proxy)))
 
     (setq gptel--openai
           (gptel-make-openai "ChatGPT"
@@ -1700,7 +1702,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-2.0-pro-exp gemini-2.0-flash-thinking-exp gemini-2.0-flash-exp)))
+        :models '(gemini-2.0-pro-exp gemini-2.0-flash-thinking-exp)))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
