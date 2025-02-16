@@ -1685,7 +1685,7 @@ sed,awk,grep, and friends for JSON data.
            :map gptel-mode-map
            ("C-c C-x t" . gptel-set-topic))
     :config
-    ;; (setq gptel--debug t)
+    ;; (setq gptel-log-level 'debug)
     (setq gptel-default-mode 'org-mode)
 
     (setq-default gptel-proxy (if (member user-login-name '("man.lu" "mattlu"))
@@ -1711,12 +1711,12 @@ sed,awk,grep, and friends for JSON data.
         :models '(claude-3-5-sonnet-latest)))
 
     (defvar gptel--deepseek
-      (gptel-make-openai "DeepSeek"
-        :host "api.deepseek.com"
-        :endpoint "/chat/completions"
+      (gptel-make-openai "NVIDIA"
+        :host "integrate.api.nvidia.com"
+        :endpoint "/v1/chat/completions"
         :stream t
         :key 'gptel-api-key
-        :models '(deepseek-reasoner deepseek-chat)))
+        :models '(deepseek-ai/deepseek-r1)))
 
     (setq-default gptel-backend gptel--gemini)
 
