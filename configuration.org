@@ -1718,6 +1718,16 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models '(deepseek-ai/deepseek-r1)))
 
+    (defvar gptel--openrouter
+      (gptel-make-openai "OpenRouter"
+        :host "openrouter.ai"
+        :endpoint "/api/v1/chat/completions"
+        :stream t
+        :key 'gptel-api-key
+        :models '(openai/o3-mini-high
+                  deepseek/deepseek-r1
+                  deepseek/deepseek-r1:free)))
+
     (setq-default gptel-backend gptel--gemini)
 
     (defun my/ediff-cleanup ()
@@ -3270,6 +3280,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (keymap-set embark-region-map "o" (my/embark-gpt-refacotr gptel--openai my/gpt-refacotr-prompt))
     (keymap-set embark-region-map "a" (my/embark-gpt-refacotr gptel--anthropic my/gpt-refacotr-prompt))
     (keymap-set embark-region-map "d" (my/embark-gpt-refacotr gptel--deepseek my/gpt-refacotr-prompt))
+    (keymap-set embark-region-map "r" (my/embark-gpt-refacotr gptel--openrouter my/gpt-refacotr-prompt))
     (define-key embark-file-map  (kbd "s") 'my/scp-file)
     :bind
     ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
