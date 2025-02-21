@@ -1725,6 +1725,7 @@ sed,awk,grep, and friends for JSON data.
         :stream t
         :key 'gptel-api-key
         :models '(openai/o3-mini-high
+                  perplexity/r1-1776
                   deepseek/deepseek-r1
                   deepseek/deepseek-r1:free)))
 
