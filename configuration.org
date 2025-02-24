@@ -477,7 +477,7 @@ programming.
     :init
     (global-git-gutter-mode t)
     :bind
-    ("C-x C-g" . git-gutter))
+    ("C-x C-g" . git-gutter:popup-hunk))
 #+END_SRC
 
 ** Display line number
