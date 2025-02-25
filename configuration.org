@@ -1708,9 +1708,17 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-anthropic "Claude"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-3-5-sonnet-latest)))
+        :models '(claude-3-7-sonnet-latest claude-3-5-sonnet-latest)))
 
     (defvar gptel--deepseek
+      (gptel-make-openai "DeepSeek"
+        :host "api.deepseek.com"
+        :endpoint "/chat/completions"
+        :stream t
+        :key 'gptel-api-key
+        :models '(deepseek-reasoner deepseek-chat)))
+
+    (defvar gptel--nvidia
       (gptel-make-openai "NVIDIA"
         :host "integrate.api.nvidia.com"
         :endpoint "/v1/chat/completions"
@@ -1725,9 +1733,9 @@ sed,awk,grep, and friends for JSON data.
         :stream t
         :key 'gptel-api-key
         :models '(openai/o3-mini-high
-                  perplexity/r1-1776
                   deepseek/deepseek-r1
-                  deepseek/deepseek-r1:free)))
+                  deepseek/deepseek-r1:free
+                  perplexity/r1-1776)))
 
     (setq-default gptel-backend gptel--gemini)
 
