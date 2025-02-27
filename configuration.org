@@ -1713,6 +1713,7 @@ sed,awk,grep, and friends for JSON data.
                              ("anthropic-version" . "2023-06-01")
                              ("anthropic-beta" . "pdfs-2024-09-25")
                              ("anthropic-beta" . "output-128k-2025-02-19")
+                             ("anthropic-beta" . "token-efficient-tools-2025-02-19")
                              ("anthropic-beta" . "prompt-caching-2024-07-31"))))
       :request-params '(:thinking (:type "enabled" :budget_tokens 4096)
                                   :max_tokens 8192))
