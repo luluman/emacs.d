@@ -1702,21 +1702,22 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-2.0-pro-exp gemini-2.0-flash-thinking-exp)))
+        :models '(gemini-2.0-flash-thinking-exp gemini-2.0-pro-exp)))
 
-    (gptel-make-anthropic "Claude-thinking"
-      :key 'gptel-api-key
-      :stream t
-      :models '(claude-3-7-sonnet-latest)
-      :header (lambda () (when-let* ((key (gptel--get-api-key)))
-                           `(("x-api-key" . ,key)
-                             ("anthropic-version" . "2023-06-01")
-                             ("anthropic-beta" . "pdfs-2024-09-25")
-                             ("anthropic-beta" . "output-128k-2025-02-19")
-                             ("anthropic-beta" . "token-efficient-tools-2025-02-19")
-                             ("anthropic-beta" . "prompt-caching-2024-07-31"))))
-      :request-params '(:thinking (:type "enabled" :budget_tokens 4096)
-                                  :max_tokens 8192))
+    (defvar gptel--anthropic-thinking
+      (gptel-make-anthropic "Claude-thinking"
+        :key 'gptel-api-key
+        :stream t
+        :models '(claude-3-7-sonnet-latest)
+        :header (lambda () (when-let* ((key (gptel--get-api-key)))
+                             `(("x-api-key" . ,key)
+                               ("anthropic-version" . "2023-06-01")
+                               ("anthropic-beta" . "pdfs-2024-09-25")
+                               ("anthropic-beta" . "output-128k-2025-02-19")
+                               ("anthropic-beta" . "token-efficient-tools-2025-02-19")
+                               ("anthropic-beta" . "prompt-caching-2024-07-31"))))
+        :request-params '(:thinking (:type "enabled" :budget_tokens 4096)
+                                    :max_tokens 8192)))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
@@ -3301,7 +3302,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
                   ))
     (keymap-set embark-region-map "g" (my/embark-gpt-refacotr gptel--gemini my/gpt-refacotr-prompt))
     (keymap-set embark-region-map "o" (my/embark-gpt-refacotr gptel--openai my/gpt-refacotr-prompt))
-    (keymap-set embark-region-map "a" (my/embark-gpt-refacotr gptel--anthropic my/gpt-refacotr-prompt))
+    (keymap-set embark-region-map "a" (my/embark-gpt-refacotr gptel--anthropic-thinking my/gpt-refacotr-prompt))
     (keymap-set embark-region-map "d" (my/embark-gpt-refacotr gptel--deepseek my/gpt-refacotr-prompt))
     (keymap-set embark-region-map "n" (my/embark-gpt-refacotr gptel--nvidia my/gpt-refacotr-prompt))
     (keymap-set embark-region-map "r" (my/embark-gpt-refacotr gptel--openrouter my/gpt-refacotr-prompt))
