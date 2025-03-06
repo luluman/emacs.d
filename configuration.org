@@ -1748,8 +1748,7 @@ sed,awk,grep, and friends for JSON data.
         :stream t
         :key 'gptel-api-key
         :models '(openai/o3-mini-high
-                  deepseek/deepseek-r1
-                  deepseek/deepseek-r1:free
+                  qwen/qwq-32b
                   perplexity/r1-1776)))
 
     (setq-default gptel-backend gptel--gemini)
