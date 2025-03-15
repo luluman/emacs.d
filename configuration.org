@@ -1726,9 +1726,7 @@ sed,awk,grep, and friends for JSON data.
         :models '(claude-3-7-sonnet-latest)))
 
     (defvar gptel--deepseek
-      (gptel-make-openai "DeepSeek"
-        :host "api.deepseek.com"
-        :endpoint "/chat/completions"
+      (gptel-make-deepseek "DeepSeek"
         :stream t
         :key 'gptel-api-key
         :models '(deepseek-reasoner deepseek-chat)))
