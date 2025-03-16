@@ -969,6 +969,7 @@ Dape is a debug adapter client for Emacs.
     (dape-breakpoint-margin-string "●") ;; ◯
     :config
     ;; (setq dape-debug t)
+    (setq dape-inlay-hints t)
     (put 'dape-command 'safe-local-variable #'listp)
     (put 'dape-adapter-dir 'safe-local-variable #'stringp)
     (put 'dape--overlay-arrow-position
