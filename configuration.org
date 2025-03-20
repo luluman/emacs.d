@@ -1808,7 +1808,7 @@ diff, not the cloned one.
         :callback
         (lambda (response info)
           (if (not (stringp response))
-              (message "ChatGPT response error: %s" (plist-get info :status))
+              (message "Invalid ChatGPT response (not a string). Status: %s" (plist-get info :status))
             (let* ((gptel-buffer (plist-get info :buffer))
                    (gptel-bounds (plist-get info :context))
                    (buffer-mode
