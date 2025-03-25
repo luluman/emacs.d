@@ -965,7 +965,7 @@ Dape is a debug adapter client for Emacs.
 #+begin_src emacs-lisp
   (use-package dape ;; should use gnu-dev:version
     :custom
-    (dape-buffer-window-arrangement 'right) ;; Info buffers to the right
+    (dape-buffer-window-arrangement 'left) ;; Info buffers to the left
     (dape-breakpoint-margin-string "●") ;; ◯
     :config
     ;; (setq dape-debug t)
@@ -1703,7 +1703,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-2.0-flash-thinking-exp gemini-2.0-pro-exp)))
+        :models '(gemini-2.5-pro-exp-03-25)))
 
     (defvar gptel--anthropic-thinking
       (gptel-make-anthropic "Claude-thinking"
