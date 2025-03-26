@@ -1754,7 +1754,7 @@ sed,awk,grep, and friends for JSON data.
     (add-hook 'ediff-quit-hook #'my/ediff-cleanup)
 
     :custom
-    (gptel-max-tokens 8192)
+    ;; (gptel-max-tokens 8192)
     (gptel-model 'gpt-4o-mini)
     (gptel-use-curl t)
     (gptel-playback t))
