@@ -974,7 +974,15 @@ Dape is a debug adapter client for Emacs.
     (put 'dape-adapter-dir 'safe-local-variable #'stringp)
     (put 'dape--overlay-arrow-position
          'overlay-arrow-string   ;; ▶ →
-         (propertize "▶" 'face 'dape-stack-trace-face)))
+         (propertize "▶" 'face 'dape-stack-trace-face))
+
+    (defun my/dape-add-compilation-environment ()
+      (hack-dir-local-variables-non-file-buffer)
+      (setq-local process-environment
+                  (append compilation-environment process-environment)))
+
+    :hook
+    (dape-start-hook . my/dape-add-compilation-environment))
 #+end_src
 
 *** Xref jump
