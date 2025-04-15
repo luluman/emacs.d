@@ -13,3 +13,6 @@
 [submodule "third_party/beardbolt"]
 	path = third_party/beardbolt
 	url = https://github.com/joaotavora/beardbolt
+[submodule "third_party/mojo-hl"]
+	path = third_party/mojo-hl
+	url = https://github.com/andcarnivorous/mojo-hl

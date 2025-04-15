@@ -943,6 +943,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (my/test-then-add-eglot '(dockerfile-ts-mode) "docker-langserver" "--stdio")
     ;; (my/test-then-add-eglot '(json-ts-mode) "vscode-json-language-server" "--stdio")
     (my/test-then-add-eglot '(mlir-mode) "mlir-lsp-server")
+    (my/test-then-add-eglot '(mojo-mode) "mojo-lsp-server")
 
     (defun eglot-tblgen-command-args (interactive-p)
       (let* ((build-directory (project-cmake-build-directory))
@@ -1368,6 +1369,15 @@ Set ipython as interpreter
     :hook
     (python-mode . my/python-format-key)
     (python-ts-mode . my/python-format-key))
+#+end_src
+
+** Mojo
+
+#+begin_src emacs-lisp
+  (use-package mojo
+    :commands mojo-mode
+    :load-path "~/.emacs.d/third_party/mojo-hl/"
+    :mode "\\.mojo$")
 #+end_src
 
 ** C++
