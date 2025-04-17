@@ -1764,8 +1764,8 @@ sed,awk,grep, and friends for JSON data.
         :endpoint "/api/v1/chat/completions"
         :stream t
         :key 'gptel-api-key
-        :models '(x-ai/grok-3-beta
-                  openai/o3-mini-high
+        :models '(openai/o4-mini-high
+                  x-ai/grok-3-beta
                   perplexity/r1-1776)))
 
     (setq-default gptel-backend gptel--gemini)
