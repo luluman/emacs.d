@@ -255,12 +255,13 @@ Theme loading symbols.
       ;; modus-operandi-tritanopia
       ;; modus-vivendi-tritanopia
       ef-melissa-light
+      ef-maris-dark
       ;; ef-dark
       ;; ef-day
       ;; ef-night
       ))
 
-  (defvar my/choosing-theme 'ef-melissa-light)
+  (defvar my/choosing-theme 'ef-maris-dark)
 #+end_src
 
 #+begin_src emacs-lisp
