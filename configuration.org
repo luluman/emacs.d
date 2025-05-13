@@ -1729,7 +1729,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-2.5-pro-exp-03-25 gemini-2.5-pro-preview-03-25)))
+        :models '(gemini-2.5-pro-preview-05-06)))
 
     (defvar gptel--anthropic-thinking
       (gptel-make-anthropic "Claude-thinking"
@@ -4055,7 +4055,7 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
     :hook (repeat-mode . repeat-help-mode))
 #+end_src
 
-**  TS-movement
+** TS-movement
 
 #+begin_src emacs-lisp
   (use-package ts-movement
@@ -4147,3 +4147,13 @@ get current buffer's name
                     (message buffer-file-name)
                     (kill-new buffer-file-name)))
 #+END_SRC
+
+** Resole Windows terminal bug
+
+binding C-Space. more information:
+https://github.com/wezterm/wezterm/issues/4055
+https://github.com/microsoft/terminal/issues/2865#issuecomment-929522127
+
+#+begin_src emacs-lisp
+  (global-set-key "\e[9~" 'set-mark-command)
+#+end_src
