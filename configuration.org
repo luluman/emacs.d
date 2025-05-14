@@ -3656,7 +3656,7 @@ while still keeping them within arm’s reach.
 #+begin_src emacs-lisp
   (use-package popper
     :bind (("C-<tab>" . popper-toggle)
-           ("C-M-<tab>" . popper-cycle)
+           ("C-S-<tab>" . popper-cycle) ;; compatible with Windows
            ("C-M-<return>" . popper-toggle-type)
            ("C-M-k" . popper-kill-latest-popup))
     :custom
