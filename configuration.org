@@ -1633,7 +1633,7 @@ add Google protocol buffer support
 These are syntax highlighting files for the Emacs and XEmacs editors.
 #+begin_src emacs-lisp
   (use-package llvm-mode
-    :mode "\\.ll$" "\\.llir"
+    :mode "\\.ll$" "\\.llir$"
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
@@ -1653,7 +1653,7 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
   (use-package mlir-mode
     :custom
     (mlir-opt "hmcc-opt")
-    :mode "\\.pdll$" "\\.mlir$" "\\.ttsir" "\\.ttir"
+    :mode "\\.pdll$" "\\.mlir$" "\\.ttsir$" "\\.ttir$"
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
