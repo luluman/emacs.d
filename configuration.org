@@ -1716,7 +1716,8 @@ sed,awk,grep, and friends for JSON data.
     ;; (setq gptel-log-level 'debug)
     (setq gptel-default-mode 'org-mode)
 
-    (setq-default gptel-proxy (if (member user-login-name '("man.lu" "mattlu"))
+    (setq-default gptel-proxy (if (member user-login-name
+                                          '("man.lu" "mattlu" "luman" "mzwqe"))
                                   "socks5h://vps-us:1055"
                                 (format "socks5h://%s" my/socks-proxy)))
 
