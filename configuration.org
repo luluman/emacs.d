@@ -1336,6 +1336,17 @@ Set ipython as interpreter
 #+END_SRC
 
 #+begin_src emacs-lisp
+  (defun my/append-compilation-env-to-python (orig-fun &rest args)
+    "Append `compilation-environment` dir-local var to `python-shell-process-environment'."
+    (hack-dir-local-variables-non-file-buffer)
+    (let ((python-shell-process-environment
+           (append compilation-environment python-shell-process-environment)))
+      (apply orig-fun args)))
+
+  (advice-add 'run-python :around #'my/append-compilation-env-to-python)
+#+end_src
+
+#+begin_src emacs-lisp
   (use-package cython-mode)
 #+end_src
 
