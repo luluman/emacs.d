@@ -1366,17 +1366,15 @@ Set ipython as interpreter
   (defun my/python-format ()
     (interactive)
     (if (region-active-p)
-        (python-black-partial-dwim)
-      (python-black-buffer)))
+        (ruff-format-region)
+      (ruff-format-buffer)))
 
   (defun my/python-format-key ()
     (define-key (current-local-map) [remap eglot-format] 'my/python-format)
     (local-set-key (kbd "C-M-\\") 'my/python-format))
 
-  (use-package python-black
-    :if (executable-find "black")
-    :init
-    (put 'python-black-extra-args 'safe-local-variable #'listp)
+  (use-package ruff-format
+    :if (executable-find "ruff")
     :after python
     :hook
     (python-mode . my/python-format-key)

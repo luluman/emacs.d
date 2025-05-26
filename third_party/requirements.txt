@@ -4,8 +4,7 @@ wheel
 proselint
 cmake-language-server
 cmakelang
-black
-black-macchiato
+ruff
 ipython
 requests
 pyyaml
