@@ -346,7 +346,7 @@ Custom face when running in 256-color terminal
   (use-package minions
     :custom
     (minions-mode-line-delimiters (cons "" ""))
-    (minions-prominent-modes '(flymake-mode))
+    (minions-prominent-modes '(flymake-mode dired-async--modeline-mode))
 
     :config
     (defun +set-minions-mode-line-lighter ()
@@ -3945,6 +3945,12 @@ Use =c-x c-j= to enter current folder.
      :config
      (bind-key "C-c C-r" 'dired-rsync dired-mode-map))
  #+end_src
+
+#+begin_src emacs-lisp
+  (use-package async
+    :config
+    (dired-async-mode 1))
+#+end_src
 
 ** COMMENT LanguageTool
 
