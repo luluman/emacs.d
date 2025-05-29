@@ -1288,33 +1288,23 @@ using tree-sitter to manage Parser
 
 Pip can install binary file.
 
-#+begin_src emacs-lisp
-  (defun my/get-first-valid-path (path-list)
-    ;; get build path
-    ;; this dirctiry should contain the excutable server and config file.
-    ;; check path validation and return list.
-    (let ((path (cl-remove-if-not
-                 (lambda (x)
-                   (file-directory-p (eval x)))
-                 path-list)))
-      (if path
-          (eval (car path))
-        nil)))
-#+end_src
-
 #+BEGIN_SRC emacs-lisp
   (use-package virtualenvwrapper
     :config
     (venv-initialize-interactive-shells) ;; if you want interactive shell support
     (venv-initialize-eshell) ;; if you want eshell support
-    (setq venv-location '("~/py3/"
-                          "~/py3.10/"))
-    (let ((venv-py (my/get-first-valid-path venv-location)))
+    (setq venv-location "~/")
+    (let ((venv-py (venv-get-candidates)))
       (when venv-py
-        (venv-workon (car (last (split-string venv-py "\/") 2)))))
-    (my/test-then-add-eglot '(cmake-ts-mode) "cmake-language-server")
-    ;; (my/test-then-add-eglot '(python-mode python-ts-mode) "pylsp")
-    )
+        (venv-workon (car venv-py))))
+
+    (put 'eval 'safe-local-variable
+         (lambda (val)
+           (and (listp val)
+                (eq (car val) 'venv-workon)
+                (stringp (cadr val)))))
+
+    (my/test-then-add-eglot '(cmake-ts-mode) "cmake-language-server"))
 #+END_SRC
 
 Set ipython as interpreter
