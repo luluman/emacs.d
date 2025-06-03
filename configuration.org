@@ -1652,7 +1652,7 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
   (use-package mlir-mode
     :custom
     (mlir-opt "hmcc-opt")
-    :mode "\\.pdll$" "\\.mlir$" "\\.ttsir$" "\\.ttir$"
+    :mode "\\.pdll$" "\\.mlir$" "\\.ttsir$" "\\.ttir$" "\\.ttcir$" "\\.tttcir$" "\\.ttgir$"
     :load-path "~/.emacs.d/third_party/llvm-mode+")
 #+end_src
 
