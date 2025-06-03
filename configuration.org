@@ -557,6 +557,7 @@ project is to be configured, built and tested using CMake and CTest.
     (put 'project-cmake-kit 'safe-local-variable #'symbolp)
     (put 'project-cmake-generator 'safe-local-variable #'stringp)
     (put 'project-cmake-source-directory-name 'safe-local-variable #'stringp)
+    (put 'project-cmake-build-directory-name 'safe-local-variable #'stringp)
     (project-cmake-scan-kits))
 #+end_src
 
