@@ -1731,7 +1731,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-2.5-pro-preview-05-06)))
+        :models '(gemini-2.5-pro-preview-06-05)))
 
     (defvar gptel--anthropic-thinking
       (gptel-make-anthropic "Claude-thinking"
