@@ -3949,6 +3949,8 @@ Use =c-x c-j= to enter current folder.
 
 #+begin_src emacs-lisp
   (use-package async
+    :custom
+    (dired-async-skip-fast t)
     :config
     (dired-async-mode 1))
 #+end_src
