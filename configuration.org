@@ -3658,6 +3658,7 @@ while still keeping them within arm’s reach.
   (use-package popper
     :bind (("C-<tab>" . popper-toggle)
            ("C-S-<tab>" . popper-cycle) ;; compatible with Windows
+           ("C-M-<tab>" . popper-cycle) ;; for MacOS
            ("C-M-<return>" . popper-toggle-type)
            ("C-M-k" . popper-kill-latest-popup))
     :custom
