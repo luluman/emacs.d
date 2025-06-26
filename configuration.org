@@ -1294,7 +1294,7 @@ Pip can install binary file.
     :config
     (venv-initialize-interactive-shells) ;; if you want interactive shell support
     (venv-initialize-eshell) ;; if you want eshell support
-    (setq venv-location "~/")
+    (setq venv-location '("~/" "/tmpfs"))
     (let ((venv-py (venv-get-candidates)))
       (when venv-py
         (venv-workon (car venv-py))))
@@ -1305,7 +1305,39 @@ Pip can install binary file.
                 (eq (car val) 'venv-workon)
                 (stringp (cadr val)))))
 
-    (my/test-then-add-eglot '(cmake-ts-mode) "cmake-language-server"))
+    (my/test-then-add-eglot '(cmake-ts-mode) "cmake-language-server")
+
+    ;; With this patch, venv-py only supports being assigned to the parent directory of the venv,
+    ;; not to the venv's real path.
+    (defun venv-valid-p (path)
+      "Check if PATH is a valid virtualenv directory."
+      (file-exists-p (concat (file-name-as-directory path) venv-executables-dir)))
+
+    (defun venv-find-in-location (name location)
+      "Find virtualenv NAME in LOCATION."
+      (let* ((loc (expand-file-name location))
+             (as-subdir (concat (file-name-as-directory loc) name)))
+        (cond ((venv-valid-p as-subdir) (file-name-as-directory as-subdir))
+              ((and (venv-valid-p loc) (string= name (venv-dir-to-name loc)))
+               (file-name-as-directory loc)))))
+
+    (defun venv-name-to-dir (name)
+      "Given the name of a virtualenv, translate it to the directory."
+      (or (cl-some (lambda (loc) (venv-find-in-location name loc))
+                   (if (listp venv-location) venv-location (list venv-location)))
+          (error "No such virtualenv: %s" name)))
+
+    (defun venv-get-candidates ()
+      "Wrapper to call get-candidates-list or get-candidates-string depending on which
+       is appropriate for how venv-location is specified."
+      (let ((candidates
+             (if (stringp venv-location)
+                 (-mapcat venv-get-candidates-dir (list venv-location))
+               (-mapcat 'venv-get-candidates-dir venv-location))))
+        (when (not (eq (length (-distinct candidates))
+                       (length candidates)))
+          (error "Some virtualenvs have the same name!"))
+        candidates)))
 #+END_SRC
 
 Set ipython as interpreter
@@ -1366,7 +1398,6 @@ Set ipython as interpreter
 
   (use-package ruff-format
     :if (executable-find "ruff")
-    :after python
     :hook
     (python-mode . my/python-format-key)
     (python-ts-mode . my/python-format-key))
@@ -1731,7 +1762,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-2.5-pro-preview-06-05)))
+        :models '(gemini-2.5-pro)))
 
     (defvar gptel--anthropic-thinking
       (gptel-make-anthropic "Claude-thinking"
