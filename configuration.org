@@ -1238,7 +1238,6 @@ using tree-sitter to manage Parser
                     (c++-mode . c++-ts-mode))))
     (mapcar #'require '(cmake-ts-mode
                         dockerfile-ts-mode
-                        rust-ts-mode
                         yaml-ts-mode))
     :mode
     ("\\.h\\.inc\\'" . c++-ts-mode)
@@ -1250,15 +1249,28 @@ using tree-sitter to manage Parser
 
 #+begin_src emacs-lisp
   (use-package indent-bars
-    :config
-    (require 'indent-bars-ts)
     :custom
+    (indent-bars-no-descend-lists t) ; no extra bars in continued func arg lists
     (indent-bars-treesit-support t)
-    (indent-bars-no-descend-string t)
+    (indent-bars-treesit-ignore-blank-lines-types '("module"))
     (indent-bars-treesit-scope '((python function_definition class_definition for_statement
                                          if_statement with_statement while_statement)))
-    (indent-bars-treesit-ignore-blank-lines-types '("module"))
     :config
+
+    (defun indent-bars--window-font-space-width (&optional win)
+      "Return the space width of the font in window WIN.
+  If WIN is not provided, the selected window is used. Works for
+  both variable pitch and fixed pitch fonts. Returns 1 in terminal."
+      (let ((win (or win (selected-window))))
+        (with-selected-window win
+          (or (and (fboundp 'font-info)  ; Check if function exists
+                   (when-let* ((ff (face-font 'default))
+                               (fi (ignore-errors (font-info ff)))  ; Safe execution
+                               (space-width (aref fi 10)))
+                     (and (natnump space-width) (> space-width 0) space-width)))
+              (window-font-width)
+              1))))
+
     (defun my/set-indent-bars-bg-fg ()
       (setq
        indent-bars-unspecified-fg-color (face-attribute 'default :foreground)
@@ -1397,7 +1409,6 @@ Set ipython as interpreter
     (local-set-key (kbd "C-M-\\") 'my/python-format))
 
   (use-package ruff-format
-    :if (executable-find "ruff")
     :hook
     (python-mode . my/python-format-key)
     (python-ts-mode . my/python-format-key))
