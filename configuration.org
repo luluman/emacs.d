@@ -613,6 +613,7 @@ doesn't require any additional setup. bounding as official recommendation.
     (package-install 'flymake t) ;; install the latest gnu-flymake
     :custom
     (flymake-mode-line-lighter "Φ")
+    (flymake-show-diagnostics-at-end-of-line 'short)
     (flymake-margin-indicator-position 'right-margin)
     (flymake-autoresize-margins t))
 #+END_SRC
