@@ -1767,7 +1767,7 @@ sed,awk,grep, and friends for JSON data.
           (gptel-make-openai "ChatGPT"
             :key 'gptel-api-key
             :stream t
-            :models '(gpt-4.1 gpt-4o)))
+            :models '(gpt-4.1)))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
@@ -1779,7 +1779,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-anthropic "Claude-thinking"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-sonnet-4-20250514)
+        :models '(claude-sonnet-4-0)
         :header (lambda () (when-let* ((key (gptel--get-api-key)))
                              `(("x-api-key" . ,key)
                                ("anthropic-version" . "2023-06-01")
@@ -1794,7 +1794,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-anthropic "Claude"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-sonnet-4-20250514 claude-opus-4-20250514)))
+        :models '(claude-sonnet-4-0 claude-opus-4-0)))
 
     (defvar gptel--deepseek
       (gptel-make-deepseek "DeepSeek"
@@ -1809,7 +1809,7 @@ sed,awk,grep, and friends for JSON data.
         :stream t
         :key 'gptel-api-key
         :models '(openai/o4-mini-high
-                  x-ai/grok-3-beta
+                  x-ai/grok-4
                   perplexity/r1-1776)))
 
     (setq-default gptel-backend gptel--gemini)
