@@ -1768,7 +1768,7 @@ sed,awk,grep, and friends for JSON data.
           (gptel-make-openai "ChatGPT"
             :key 'gptel-api-key
             :stream t
-            :models '(gpt-4.1)))
+            :models '(gpt-4.1 gpt-4o)))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
@@ -1809,9 +1809,9 @@ sed,awk,grep, and friends for JSON data.
         :endpoint "/api/v1/chat/completions"
         :stream t
         :key 'gptel-api-key
-        :models '(openai/o4-mini-high
-                  x-ai/grok-4
-                  perplexity/r1-1776)))
+        :models '(x-ai/grok-4
+                  openai/o4-mini-high
+                  moonshotai/kimi-k2)))
 
     (setq-default gptel-backend gptel--gemini)
 
