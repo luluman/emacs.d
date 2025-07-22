@@ -3,7 +3,7 @@
       '(("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/")
         ("melpa-stable" . "https://www.mirrorservice.org/sites/stable.melpa.org/packages/")
         ("gnu"   . "https://elpa.gnu.org/packages/")
-        ("gnu-dev"   . "https://elpa.gnu.org/devel/")
+        ;; ("gnu-devel"   . "https://elpa.gnu.org/devel/")
         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
         ))
 (setq package-install-upgrade-built-in t)

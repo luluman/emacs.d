@@ -967,7 +967,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 Dape is a debug adapter client for Emacs.
 
 #+begin_src emacs-lisp
-  (use-package dape ;; should use gnu-dev:version
+  (use-package dape
     :defer nil
     :custom
     (dape-buffer-window-arrangement 'left) ;; Info buffers to the left
@@ -1811,6 +1811,7 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models '(x-ai/grok-4
                   openai/o4-mini-high
+                  qwen/qwen3-235b-a22b-07-25
                   moonshotai/kimi-k2)))
 
     (setq-default gptel-backend gptel--gemini)
