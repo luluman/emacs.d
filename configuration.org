@@ -1811,7 +1811,8 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models '(x-ai/grok-4
                   openai/o4-mini-high
-                  qwen/qwen3-235b-a22b-07-25
+                  deepseek/deepseek-r1-0528
+                  qwen/qwen3-235b-a22b-thinking-2507
                   moonshotai/kimi-k2)))
 
     (setq-default gptel-backend gptel--gemini)
