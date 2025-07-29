@@ -927,7 +927,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c e c" . eglot-reconnect)
                 ("C-c e k" . eglot-shutdown)
                 ("C-c e s" . consult-eglot-symbols)
-                ("C-c e i" . eglot-inlay-hints-mode))
+                ("C-c e i" . eglot-inlay-hints-mode)
+                ("C-c e e" . my/flymake-toggle-diagnostics-at-end-of-line))
     :custom
     ;; (eglot-autoshutdown t)
     (eglot-events-buffer-size 0)
@@ -959,6 +960,29 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
       (add-to-list 'eglot-server-programs
                    '((tablegen-mode) . eglot-tblgen-command-args))
       (add-hook 'tablegen-mode-hook 'eglot-ensure))
+
+    (defun my/flymake-toggle-diagnostics-at-end-of-line ()
+      "Toggle flymake diagnostics display at end of line through different modes.
+  Cycles through: nil -> short -> all -> fancy -> nil..."
+      (interactive)
+      (setq flymake-show-diagnostics-at-end-of-line
+            (pcase flymake-show-diagnostics-at-end-of-line
+              ;; ('nil 'short)
+              ;; ('short t)
+              ;; ('t 'fancy)
+              ('nil 'fancy)
+              ('fancy nil)))
+      ;; Toggle flymake mode to apply changes
+      (when (bound-and-true-p flymake-mode)
+        (flymake-mode -1)
+        (flymake-mode 1))
+      (message "Flymake end-of-line diagnostics: %s"
+               (pcase flymake-show-diagnostics-at-end-of-line
+                 ('nil "disabled")
+                 ('short "short (most severe only)")
+                 ('t "all diagnostics")
+                 ('fancy "all diagnostics (fancy Unicode)"))))
+
     (setq completion-category-defaults nil))
 #+END_SRC
 
@@ -1809,7 +1833,8 @@ sed,awk,grep, and friends for JSON data.
         :endpoint "/api/v1/chat/completions"
         :stream t
         :key 'gptel-api-key
-        :models '(x-ai/grok-4
+        :models '(qwen/qwen3-coder
+                  x-ai/grok-4
                   openai/o4-mini-high
                   deepseek/deepseek-r1-0528
                   qwen/qwen3-235b-a22b-thinking-2507
