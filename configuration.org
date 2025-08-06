@@ -1819,7 +1819,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-anthropic "Claude"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-sonnet-4-0 claude-opus-4-0)))
+        :models '(claude-sonnet-4-0 claude-opus-4-1)))
 
     (defvar gptel--deepseek
       (gptel-make-deepseek "DeepSeek"
@@ -1833,9 +1833,9 @@ sed,awk,grep, and friends for JSON data.
         :endpoint "/api/v1/chat/completions"
         :stream t
         :key 'gptel-api-key
-        :models '(qwen/qwen3-coder
+        :models '(openai/gpt-oss-120b
+                  qwen/qwen3-coder
                   x-ai/grok-4
-                  openai/o4-mini-high
                   deepseek/deepseek-r1-0528
                   qwen/qwen3-235b-a22b-thinking-2507
                   moonshotai/kimi-k2)))
