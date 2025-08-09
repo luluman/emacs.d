@@ -1792,7 +1792,7 @@ sed,awk,grep, and friends for JSON data.
           (gptel-make-openai "ChatGPT"
             :key 'gptel-api-key
             :stream t
-            :models '(gpt-4.1 gpt-4o)))
+            :models '(gpt-4.1 gpt-5-chat-latest)))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
@@ -1831,8 +1831,7 @@ sed,awk,grep, and friends for JSON data.
         :endpoint "/api/v1/chat/completions"
         :stream t
         :key 'gptel-api-key
-        :models '(openai/gpt-oss-120b
-                  qwen/qwen3-coder
+        :models '(qwen/qwen3-coder
                   x-ai/grok-4
                   deepseek/deepseek-r1-0528
                   qwen/qwen3-235b-a22b-thinking-2507
