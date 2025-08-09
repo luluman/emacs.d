@@ -1804,16 +1804,14 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-anthropic "Claude-thinking"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-sonnet-4-0)
+        :models '(claude-opus-4-1)
         :header (lambda () (when-let* ((key (gptel--get-api-key)))
                              `(("x-api-key" . ,key)
                                ("anthropic-version" . "2023-06-01")
-                               ("anthropic-beta" . "pdfs-2024-09-25")
-                               ("anthropic-beta" . "output-128k-2025-02-19")
-                               ("anthropic-beta" . "token-efficient-tools-2025-02-19")
-                               ("anthropic-beta" . "prompt-caching-2024-07-31"))))
+                               ("anthropic-beta" . "extended-cache-ttl-2025-04-11")
+                               ("anthropic-beta" . "interleaved-thinking-2025-05-14"))))
         :request-params '(:thinking (:type "enabled" :budget_tokens 32000)
-                                    :max_tokens 64000)))
+                                    :max_tokens 32000)))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
