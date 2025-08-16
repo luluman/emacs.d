@@ -1800,8 +1800,8 @@ sed,awk,grep, and friends for JSON data.
         :stream t
         :models '(gemini-2.5-pro)))
 
-    (defvar gptel--anthropic-thinking
-      (gptel-make-anthropic "Claude-thinking"
+    (defvar gptel--opus-thinking
+      (gptel-make-anthropic "Claude-opus-thinking"
         :key 'gptel-api-key
         :stream t
         :models '(claude-opus-4-1)
@@ -1812,6 +1812,21 @@ sed,awk,grep, and friends for JSON data.
                                ("anthropic-beta" . "interleaved-thinking-2025-05-14"))))
         :request-params '(:thinking (:type "enabled" :budget_tokens 32000)
                                     :max_tokens 32000)))
+
+
+    (defvar gptel--sonnet-thinking
+      (gptel-make-anthropic "Claude-sonnet-thinking"
+        :key 'gptel-api-key
+        :stream t
+        :models '(claude-sonnet-4-0)
+        :header (lambda () (when-let* ((key (gptel--get-api-key)))
+                             `(("x-api-key" . ,key)
+                               ("anthropic-version" . "2023-06-01")
+                               ("anthropic-beta" . "extended-cache-ttl-2025-04-11")
+                               ("anthropic-beta" . "context-1m-2025-08-07"))))
+        :request-params '(:thinking (:type "enabled" :budget_tokens 32000)
+                                    :max_tokens 64000)))
+
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
@@ -3372,24 +3387,34 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 #+begin_src emacs-lisp
   (use-package embark
     :config
-    (defmacro my/embark-gpt-refacotr (gpt-backend rewrite-message)
-      `(defun ,(intern (format "%s-Refactor" (eval `(gptel-backend-name ,gpt-backend)))) (prompt)
-         (my/gpt-refacotr ,gpt-backend ,rewrite-message prompt)))
-
-    (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
-    (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
-    (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
     (setq my/gpt-refacotr-prompt
           (concat "You are Chris Lattner. "
                   "Refactor the following code.\n"
                   "- Generate ONLY code as output, without any explanation or markdown code fences.\n"
                   "- Additionally, revise the comment and consider renaming variables if appropriate."
                   ))
-    (keymap-set embark-region-map "g" (my/embark-gpt-refacotr gptel--gemini my/gpt-refacotr-prompt))
-    (keymap-set embark-region-map "o" (my/embark-gpt-refacotr gptel--openai my/gpt-refacotr-prompt))
-    (keymap-set embark-region-map "a" (my/embark-gpt-refacotr gptel--anthropic-thinking my/gpt-refacotr-prompt))
-    (keymap-set embark-region-map "d" (my/embark-gpt-refacotr gptel--deepseek my/gpt-refacotr-prompt))
-    (keymap-set embark-region-map "r" (my/embark-gpt-refacotr gptel--openrouter my/gpt-refacotr-prompt))
+
+    (defmacro my/embark-gpt-refacotr (gpt-backend)
+      `(defun ,(intern (format "%s-Refactor" (eval `(gptel-backend-name ,gpt-backend)))) (prompt)
+         (my/gpt-refacotr ,gpt-backend ,my/gpt-refacotr-prompt prompt)))
+
+    (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
+    (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
+    (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
+
+
+    (defvar-keymap gptel--anthropic-thinking
+      :doc "Keymap for AI-powered code refactoring using Anthropic models"
+      "s" (my/embark-gpt-refacotr gptel--sonnet-thinking)
+      "o" (my/embark-gpt-refacotr gptel--opus-thinking))
+
+    (fset 'gptel--anthropic-thinking gptel--anthropic-thinking)
+
+    (keymap-set embark-region-map "g" (my/embark-gpt-refacotr gptel--gemini))
+    (keymap-set embark-region-map "o" (my/embark-gpt-refacotr gptel--openai))
+    (keymap-set embark-region-map "a" 'gptel--anthropic-thinking)
+    (keymap-set embark-region-map "d" (my/embark-gpt-refacotr gptel--deepseek))
+    (keymap-set embark-region-map "r" (my/embark-gpt-refacotr gptel--openrouter))
     (define-key embark-file-map  (kbd "s") 'my/scp-file)
     :bind
     ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
