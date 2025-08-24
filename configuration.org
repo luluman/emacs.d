@@ -1846,7 +1846,7 @@ sed,awk,grep, and friends for JSON data.
         :endpoint "/api/v1/chat/completions"
         :stream t
         :key 'gptel-api-key
-        :models '(qwen/qwen3-coder
+        :models '(openai/gpt-5
                   x-ai/grok-4
                   deepseek/deepseek-r1-0528
                   qwen/qwen3-235b-a22b-thinking-2507
@@ -1865,6 +1865,7 @@ sed,awk,grep, and friends for JSON data.
 
     :custom
     ;; (gptel-max-tokens 8192)
+    (gptel-include-reasoning 'ignore)
     (gptel-model 'gpt-4o-mini)
     (gptel-use-curl t)
     (gptel-playback t))
