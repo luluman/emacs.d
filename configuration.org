@@ -541,6 +541,26 @@ as in the user's shell.
 The package project-cmake incorporates the required logic to understand that a
 project is to be configured, built and tested using CMake and CTest.
 
+.dir_locals configure snippet.
+#+begin_src .dir_locals
+((nil . ((compilation-environment
+          .
+          ("PATH=/usr/local/cuda/bin"))
+          ;; CMake build configuration
+          (project-cmake-build-type . "Release")
+          (project-cmake-kit . unix)
+          (project-cmake-generator . "Ninja")
+          (project-cmake-configuration-arguments
+           .
+           ( "-DCMAKE_C_COMPILER=clang"
+             "-DCMAKE_CXX_COMPILER=clang++"))
+         ;; Activate Python virtual environment for project dependencies
+         (eval . (venv-workon "py"))
+         ))
+ (python-mode . ((tab-width . 4)
+                 (python-indent-offset . 4))))
+#+end_src
+
 #+begin_src emacs-lisp
   (use-package project-cmake
     :load-path "~/.emacs.d/third_party/project-cmake/"
