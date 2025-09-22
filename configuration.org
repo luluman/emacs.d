@@ -1351,7 +1351,7 @@ Pip can install binary file.
     :config
     (venv-initialize-interactive-shells) ;; if you want interactive shell support
     (venv-initialize-eshell) ;; if you want eshell support
-    (setq venv-location '("~/" "/tmpfs"))
+    (setq venv-location '("~/"))
     (let ((venv-py (venv-get-candidates)))
       (when venv-py
         (venv-workon (car venv-py))))
@@ -3199,20 +3199,18 @@ at the correct indentation for Python).
 *** fussy
 
 #+begin_src emacs-lisp
-  (if (eq system-type 'darwin)
-      (setq fuz-core-bin "/usr/local/lib/libfuz_core.dylib")
-    (setq fuz-core-bin "/usr/local/lib/libfuz_core.so"))
+  (use-package fzf-native
+    :load-path "~/.emacs.d/third_party/fzf-native"
+    :init
+    (setq fzf-native-always-compile-module t)
+    :config
+    (fzf-native-load-own-build-dyn)
+    (setq fussy-score-fn 'fussy-fzf-native-score))
+
   (use-package fussy
     :config
-    (when (file-exists-p fuz-core-bin)
-      (use-package fuz
-        :config
-        (load fuz-core-bin nil t))
-      (setq fussy-score-fn 'fussy-fuz-score))
-
-    (add-hook 'minibuffer-setup-hook
-              (lambda ()
-                (setq-local fussy-use-cache nil)))
+    (fussy-setup)
+    (fussy-eglot-setup)
 
     :custom
     (fussy-use-cache t)

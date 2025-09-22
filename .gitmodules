@@ -16,3 +16,6 @@
 [submodule "third_party/mojo-hl"]
 	path = third_party/mojo-hl
 	url = https://github.com/andcarnivorous/mojo-hl
+[submodule "third_party/fzf-native"]
+	path = third_party/fzf-native
+	url = https://github.com/dangduc/fzf-native
