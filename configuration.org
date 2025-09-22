@@ -459,6 +459,7 @@ programming.
 
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
+    :demand
     :custom
     ;; │┃▕▐
     (git-gutter:window-width 1)
@@ -467,16 +468,22 @@ programming.
     (git-gutter:added-sign "┃")
     (git-gutter:deleted-sign "┃")
     (git-gutter:modified-sign "┃")
-    :custom-face
-    (git-gutter:added ((t (:foreground "#438340" :background nil))))
-    (git-gutter:deleted ((t (:foreground "#815EDD" :background nil))))
-    (git-gutter:modified ((t (:foreground "#3471E3" :background nil))))
-    ;; :hook
-    ;; (git-gutter-mode
-    ;; . (lambda ()
-    ;;     (git-gutter:set-window-margin (git-gutter:window-margin))))
-    :init
+
+    :config
+
+    (defun my/git-gutter-theme (&rest _)
+      (set-face-attribute 'git-gutter:added    nil :foreground "#438340" :background 'unspecified)
+      (set-face-attribute 'git-gutter:deleted  nil :foreground "#815EDD" :background 'unspecified)
+      (set-face-attribute 'git-gutter:modified nil :foreground "#3471E3" :background 'unspecified))
+
+    ;; Apply now, after themes, and for new frames (daemon)
+    (my/git-gutter-theme)
+    (add-hook 'enable-theme-functions #'my/git-gutter-theme)
+    (add-hook 'after-make-frame-functions
+              (lambda (f) (with-selected-frame f (my/git-gutter-theme))))
+
     (global-git-gutter-mode t)
+
     :bind
     ("C-x C-g" . git-gutter:popup-hunk))
 #+END_SRC
