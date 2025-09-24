@@ -189,6 +189,15 @@ proxy settings
       (proxy-socks-enable)))
 #+end_src
 
+Using Tailscale’s networking mode as a proxy server
+https://tailscale.com/kb/1112/userspace-networking
+
+#+begin_src bash
+ALL_PROXY=socks5://localhost:1055/
+HTTP_PROXY=http://localhost:1055/
+http_proxy=http://localhost:1055/
+#+end_src
+
 * UI preferences
 ** Tweak window chrome
 
