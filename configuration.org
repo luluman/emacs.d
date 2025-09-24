@@ -627,7 +627,7 @@ doesn't require any additional setup. bounding as official recommendation.
     :init
     (package-install 'flymake t) ;; install the latest gnu-flymake
     :custom
-    (flymake-mode-line-lighter "Φ")
+    (flymake-mode-line-lighter "")
     (flymake-show-diagnostics-at-end-of-line 'short)
     (flymake-margin-indicator-position 'right-margin)
     (flymake-autoresize-margins t))
@@ -949,6 +949,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (eglot-events-buffer-size 0)
     (eglot-extend-to-xref t)
     (eglot-sync-connect nil)
+    (eglot-menu-string "")
     :config
     (add-to-list 'eglot-stay-out-of 'eldoc)
 
