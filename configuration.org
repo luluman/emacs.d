@@ -365,7 +365,7 @@ Custom face when running in 256-color terminal
   (setq mode-line-frame-identification " "
         mode-line-end-spaces ""
         mode-line-collapse-minor-modes '(not flymake-mode dired-async--modeline-mode)
-        mode-line-collapse-minor-modes-to " ≡"
+        mode-line-collapse-minor-modes-to ""
         mode-line-compact 'long)
 #+END_SRC
 
@@ -1801,7 +1801,7 @@ sed,awk,grep, and friends for JSON data.
           (gptel-make-openai "ChatGPT"
             :key 'gptel-api-key
             :stream t
-            :models '(gpt-4.1 gpt-5-chat-latest)))
+            :models '(gpt-5-chat-latest)))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
@@ -1855,7 +1855,6 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models '(openai/gpt-5-codex
                   openai/gpt-5
-                  qwen/qwen3-max
                   x-ai/grok-4
                   deepseek/deepseek-r1-0528)))
 
