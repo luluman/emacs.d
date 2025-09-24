@@ -343,21 +343,6 @@ Custom face when running in 256-color terminal
 ** Mode-Line
 
 #+begin_src emacs-lisp
-  (use-package minions
-    :custom
-    (minions-mode-line-delimiters (cons "" ""))
-    (minions-prominent-modes '(flymake-mode dired-async--modeline-mode))
-
-    :config
-    (defun +set-minions-mode-line-lighter ()
-      (setq minions-mode-line-lighter
-            (if (display-graphic-p) "⚙" "#")))
-
-    (add-hook 'server-after-make-frame-hook #'+set-minions-mode-line-lighter)
-    (minions-mode 1))
-#+end_src
-
-#+begin_src emacs-lisp
   (use-package time
     :config
     (display-time)
@@ -368,8 +353,11 @@ Custom face when running in 256-color terminal
 #+BEGIN_SRC emacs-lisp
   (size-indication-mode)
   (column-number-mode)
-  (setq mode-line-frame-identification " ")
-  (setq mode-line-end-spaces "")
+  (setq mode-line-frame-identification " "
+        mode-line-end-spaces ""
+        mode-line-collapse-minor-modes '(not flymake-mode dired-async--modeline-mode)
+        mode-line-collapse-minor-modes-to " ≡"
+        mode-line-compact 'long)
 #+END_SRC
 
 ** COMMENT Scroll conservatively
@@ -1056,22 +1044,6 @@ Emacs-libvterm (vterm) is fully-fledged terminal emulator inside GNU Emacs based
 on libvterm, a C library. As a result of using compiled code (instead of elisp),
 emacs-libvterm is fully capable, fast, and it can seamlessly handle large
 outputs.
-
-#+begin_src emacs-lisp
-  (defun my/vterm-env ()
-    (interactive)
-    (setq vterm-environment (cdr (assq 'vterm-env dir-local-variables-alist))) ;; FixMe
-    (vterm))
-
-  (define-derived-mode my/vterm-mode fundamental-mode "my/VTerm"
-    "Major mode for vterm buffer."
-    (hack-dir-local-variables)
-    (let ((vterm-env (cdr (assq 'vterm-environment dir-local-variables-alist))))
-      (when vterm-env
-        (make-local-variable 'vterm-environment)
-        (setq vterm-environment vterm-env)))
-    )
-#+end_src
 
 #+begin_src emacs-lisp
   (use-package vterm
@@ -1871,7 +1843,8 @@ sed,awk,grep, and friends for JSON data.
         :endpoint "/api/v1/chat/completions"
         :stream t
         :key 'gptel-api-key
-        :models '(openai/gpt-5
+        :models '(openai/gpt-5-codex
+                  openai/gpt-5
                   qwen/qwen3-max
                   x-ai/grok-4
                   deepseek/deepseek-r1-0528)))
