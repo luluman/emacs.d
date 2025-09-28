@@ -1267,10 +1267,14 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
                     'face '(:background "#ff0066" :foreground "#000000")))))
 
   (use-package hideshow
-    :hook (prog-mode . hs-minor-mode)
+    :hook (prog-mode . my/enable-hs)
     :bind (:map hs-minor-mode-map
                 ("C-c @" . hydra-hs/body))
     :config
+    (defun my/enable-hs ()
+      (unless (derived-mode-p 'asm-mode)
+        (hs-minor-mode t)))
+
     (setq hs-set-up-overlay 'my/display-code-line-counts))
 #+END_SRC
 
@@ -3994,7 +3998,8 @@ files. We're using:
      ("[" . dired-up-directory)
      ("]" . dired-view-file)
      ("K" . dired-kill-subdir)
-     ("C-d" . my/dired-disassble)))
+     ("C-d" . my/dired-disassble)
+     ("." . hydra-dired/body)))
 
   (use-package view
     :ensure nil
