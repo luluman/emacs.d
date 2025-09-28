@@ -362,6 +362,11 @@ Custom face when running in 256-color terminal
 #+BEGIN_SRC emacs-lisp
   (size-indication-mode)
   (column-number-mode)
+  ;; https://github.com/bbatsov/solarized-emacs/issues/113#issuecomment-774019131
+  (custom-set-faces
+   '(mode-line ((t (:underline nil))))
+   '(mode-line-inactive ((t (:underline nil)))))
+
   (setq mode-line-frame-identification " "
         mode-line-end-spaces ""
         mode-line-collapse-minor-modes '(not flymake-mode dired-async--modeline-mode)
