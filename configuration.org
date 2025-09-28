@@ -816,6 +816,42 @@ read elf symbols
     (llvm-mode . demangle-mode))
 #+end_src
 
+*** objdump
+
+#+begin_src emacs-lisp
+  (defcustom my/llvm-objdump-program "/workspace/sdk_latest/bin/nds64le-elf-newlib-v5d/bin/llvm-objdump"
+    "Path to the llvm-objdump executable used for disassembly."
+    :type 'file
+    :group 'tools)
+
+  (defcustom my/llvm-objdump-args '("--mattr=+m,+c,+f,+a,+xsiorigin" "-zCDS")
+    "Default arguments passed to llvm-objdump."
+    :type '(repeat string)
+    :group 'tools)
+
+  (defun my/objdump (file)
+    "Disassemble FILE with llvm-objdump and display the result in asm-mode."
+    (interactive "fObject file: ")
+    (let* ((program my/llvm-objdump-program)
+           (target (expand-file-name file))
+           (buf (get-buffer-create (format "*objdump: %s*" (file-name-nondirectory target))))
+           (args (append my/llvm-objdump-args (list target))))
+      (unless (and (stringp program) (file-executable-p program))
+        (user-error "Invalid llvm-objdump program: %s" program))
+      (unless (file-readable-p target)
+        (user-error "File not readable: %s" target))
+      (with-current-buffer buf
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (apply #'call-process program nil (current-buffer) nil
+               (append my/llvm-objdump-args (list target)))
+        (asm-mode)
+        (setq-local objdump-file-name target)
+        (goto-char (point-min))   ; jump to beginning
+        (read-only-mode t))
+      (pop-to-buffer buf))))
+#+end_src
+
 ** UML
 
 #+begin_src emacs-lisp
@@ -3915,135 +3951,124 @@ Hydra ediff, more function with less key bindings
 
 Use =c-x c-j= to enter current folder.
 
- These are the switches that get passed to =ls= when =dired= gets a list of
- files. We're using:
+These are the switches that get passed to =ls= when =dired= gets a list of
+files. We're using:
 
- - =l=: Use the long listing format.
- - =h=: Use human-readable sizes.
- - =v=: Sort numbers naturally.
- - =A=: Almost all. Doesn't include "=.=" or "=..=".
+- =l=: Use the long listing format.
+- =h=: Use human-readable sizes.
+- =v=: Sort numbers naturally.
+- =A=: Almost all. Doesn't include "=.=" or "=..=".
 
- #+BEGIN_SRC emacs-lisp
-   (setq-default dired-listing-switches "-lhvA")
- #+END_SRC
+  Use “[” and “]” to jump out and in dired.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dired
+    :ensure nil
+    :config
+    (defun my/dired-disassble ()
+      (interactive nil dired-mode)
+      (if-let* ((file (dired-grep-read-files)))
+          (my/objdump file)
+        (message "Not a file.")))
+    ;; reuse dired buffer
+    ;; (put 'dired-find-alternate-file 'disabled nil)
+
+    :custom
+    (dired-listing-switches "-lhvA")
+    ;; fast copy and past
+    (dired-dwim-target t)
+    ;; Kill buffers of files/directories that are deleted in =dired=.
+    (dired-clean-up-buffers-too t)
+    ;; Always copy directories recursively instead of asking every time.
+    (dired-recursive-copies 'always)
+    ;; Ask before recursively /deleting/ a directory, though.
+    (dired-recursive-deletes 'top)
+
+    :bind
+    ((:map dired-mode-map)
+     ("[" . dired-up-directory)
+     ("]" . dired-view-file)
+     ("K" . dired-kill-subdir)
+     ("C-d" . my/dired-disassble)))
+
+  (use-package view
+    :ensure nil
+    :bind
+    ((:map view-mode-map
+           ("[" . View-quit))))
+#+END_SRC
 
  Hydra Dired
  till a work in progress but this has helped me navigate and use dired.
- #+begin_src emacs-lisp
-   (defhydra hydra-dired (:hint nil :color pink)
-     "
-   _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
-   _C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
-   _D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
-   _R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
-   _Y_ rel symlink    _G_ chgrp        _E_xtension mark   _s_ort             _=_ pdiff
-   _S_ymlink          ^ ^              _F_ind marked      _._ toggle hydra   \\ flyspell
-   _r_sync            ^ ^              ^ ^                ^ ^                _?_ summary
-   _z_ compress-file  _A_ find regexp
-   _Z_ compress       _Q_ repl regexp
+#+begin_src emacs-lisp
+  (defhydra hydra-dired (:hint nil :color pink)
+    "
+  _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
+  _C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
+  _D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
+  _R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
+  _Y_ rel symlink    _G_ chgrp        _E_xtension mark   _s_ort             _=_ pdiff
+  _S_ymlink          ^ ^              _F_ind marked      _._ toggle hydra   \\ flyspell
+  _r_sync            ^ ^              ^ ^                ^ ^                _?_ summary
+  _z_ compress-file  _A_ find regexp
+  _Z_ compress       _Q_ repl regexp
 
-   T - tag prefix
-   "
-     ("\\" dired-do-ispell)
-     ("(" dired-hide-details-mode)
-     (")" dired-omit-mode)
-     ("+" dired-create-directory)
-     ("=" diredp-ediff)         ;; smart diff
-     ("?" dired-summary)
-     ("$" diredp-hide-subdir-nomove)
-     ("A" dired-do-find-regexp)
-     ("C" dired-do-copy)        ;; Copy all marked files
-     ("D" dired-do-delete)
-     ("E" dired-mark-extension)
-     ("e" dired-ediff-files)
-     ("F" dired-do-find-marked-files)
-     ("G" dired-do-chgrp)
-     ("g" revert-buffer)        ;; read all directories again (refresh)
-     ("i" dired-maybe-insert-subdir)
-     ("l" dired-do-redisplay)   ;; relist the marked or singel directory
-     ("M" dired-do-chmod)
-     ("m" dired-mark)
-     ("O" dired-display-file)
-     ("o" dired-find-file-other-window)
-     ("Q" dired-do-find-regexp-and-replace)
-     ("R" dired-do-rename)
-     ("r" dired-do-rsynch)
-     ("S" dired-do-symlink)
-     ("s" dired-sort-toggle-or-edit)
-     ("t" dired-toggle-marks)
-     ("U" dired-unmark-all-marks)
-     ("u" dired-unmark)
-     ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
-     ("w" dired-kill-subdir)
-     ("Y" dired-do-relsymlink)
-     ("z" diredp-compress-this-file)
-     ("Z" dired-do-compress)
-     ("q" nil)
-     ("C-g" nil :color blue)
-     ("." nil :color blue))
- #+end_src
-
- Use “[” and “]” to jump out and in dired.
-
- #+BEGIN_SRC emacs-lisp
-   (eval-after-load "dired"
-     '(progn
-        (define-key dired-mode-map (kbd "[") 'dired-up-directory)
-        (define-key dired-mode-map (kbd "]") 'dired-view-file)
-        (define-key dired-mode-map (kbd "K") 'dired-kill-subdir)
-        (define-key dired-mode-map "." 'hydra-dired/body)))
-   (eval-after-load "view"
-     '(define-key view-mode-map (kbd "[") 'View-quit))
- #+END_SRC
-
- fast copy and past
-
- #+BEGIN_SRC emacs-lisp
-   (setq dired-dwim-target t)
- #+END_SRC
-
- Kill buffers of files/directories that are deleted in =dired=.
-
- #+BEGIN_SRC emacs-lisp
-   (setq dired-clean-up-buffers-too t)
- #+END_SRC
-
- Always copy directories recursively instead of asking every time.
-
- #+BEGIN_SRC emacs-lisp
-   (setq dired-recursive-copies 'always)
- #+END_SRC
-
- Ask before recursively /deleting/ a directory, though.
-
- #+BEGIN_SRC emacs-lisp
-   (setq dired-recursive-deletes 'top)
- #+END_SRC
-
- Files are normally moved and copied synchronously.
- This is fine for small or local files,
- but copying a large file or moving a file across a mounted
- network drive blocks Emacs until the process is completed. Unacceptable!
-
- reuse dired buffer
- #+begin_src emacs-lisp
-   (put 'dired-find-alternate-file 'disabled nil)
- #+end_src
+  T - tag prefix
+  "
+    ("\\" dired-do-ispell)
+    ("(" dired-hide-details-mode)
+    (")" dired-omit-mode)
+    ("+" dired-create-directory)
+    ("=" diredp-ediff)         ;; smart diff
+    ("?" dired-summary)
+    ("$" diredp-hide-subdir-nomove)
+    ("A" dired-do-find-regexp)
+    ("C" dired-do-copy)        ;; Copy all marked files
+    ("D" dired-do-delete)
+    ("E" dired-mark-extension)
+    ("e" dired-ediff-files)
+    ("F" dired-do-find-marked-files)
+    ("G" dired-do-chgrp)
+    ("g" revert-buffer)        ;; read all directories again (refresh)
+    ("i" dired-maybe-insert-subdir)
+    ("l" dired-do-redisplay)   ;; relist the marked or singel directory
+    ("M" dired-do-chmod)
+    ("m" dired-mark)
+    ("O" dired-display-file)
+    ("o" dired-find-file-other-window)
+    ("Q" dired-do-find-regexp-and-replace)
+    ("R" dired-do-rename)
+    ("r" dired-do-rsynch)
+    ("S" dired-do-symlink)
+    ("s" dired-sort-toggle-or-edit)
+    ("t" dired-toggle-marks)
+    ("U" dired-unmark-all-marks)
+    ("u" dired-unmark)
+    ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
+    ("w" dired-kill-subdir)
+    ("Y" dired-do-relsymlink)
+    ("z" diredp-compress-this-file)
+    ("Z" dired-do-compress)
+    ("q" nil)
+    ("C-g" nil :color blue)
+    ("." nil :color blue))
+#+end_src
 
  narrow dired to match filter
- #+begin_src emacs-lisp
+
+#+begin_src emacs-lisp
    (use-package dired-narrow
      :bind (:map dired-mode-map
                  ("/" . dired-narrow)))
- #+end_src
+#+end_src
 
  dired-rsync – asynchronous rsync from dired
 
- #+begin_src emacs-lisp
+#+begin_src emacs-lisp
    (use-package dired-rsync
      :config
      (bind-key "C-c C-r" 'dired-rsync dired-mode-map))
- #+end_src
+#+end_src
 
 #+begin_src emacs-lisp
   (use-package async
