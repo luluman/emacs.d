@@ -839,7 +839,7 @@ read elf symbols
     (interactive "fObject file: ")
     (let* ((program my/llvm-objdump-program)
            (target (expand-file-name file))
-           (buf (get-buffer-create (format "*objdump: %s*" (file-name-nondirectory target))))
+           (buf (generate-new-buffer (format "*objdump: %s*" (file-name-nondirectory target))))
            (args (append my/llvm-objdump-args (list target))))
       (unless (and (stringp program) (file-executable-p program))
         (user-error "Invalid llvm-objdump program: %s" program))
