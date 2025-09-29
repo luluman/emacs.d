@@ -1130,6 +1130,7 @@ Eat: Emulate A Terminal
 
     (defun my/eat-add-compilation-environment ()
       (hack-dir-local-variables-non-file-buffer)
+      (corfu-mode t)
       (setq-local font-lock-defaults '(nil t))
       (setq-local process-environment
                   (append compilation-environment process-environment)))
@@ -3504,7 +3505,6 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
     ;; (global-corfu-modes '((not shell-mode) t))
-    (global-corfu-modes t)
     (corfu-preview-current nil)
     ;; https://github.com/minad/corfu/discussions/457
     (text-mode-ispell-word-completion nil) ;; disable ispell
