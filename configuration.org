@@ -857,6 +857,11 @@ read elf symbols
       (pop-to-buffer buf))))
 #+end_src
 
+Generate device-only LLIR for the specified kernel source.
+#+begin_src makefile
+$(CC) -x sipu -std=c++20 ${CFLAGS} ${INC_PATHS} --offload-device-only -emit-llvm -S $$< -o out.ll
+#+end_src
+
 ** UML
 
 #+begin_src emacs-lisp
