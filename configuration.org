@@ -1903,7 +1903,7 @@ sed,awk,grep, and friends for JSON data.
                   x-ai/grok-4
                   deepseek/deepseek-r1-0528)))
 
-    (setq-default gptel-backend gptel--gemini)
+    (setq-default gptel-backend gptel--openai)
 
     (defun my/ediff-cleanup ()
       (ediff-kill-buffer-carefully "*Ediff Control Panel*")
@@ -1917,7 +1917,7 @@ sed,awk,grep, and friends for JSON data.
     :custom
     ;; (gptel-max-tokens 8192)
     (gptel-include-reasoning 'ignore)
-    (gptel-model 'gpt-4o-mini)
+    (gptel-model 'gpt-5-chat-latest)
     (gptel-use-curl t)
     (gptel-playback t))
 #+end_src
