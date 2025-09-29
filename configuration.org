@@ -1877,7 +1877,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-anthropic "Claude-sonnet-thinking"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-sonnet-4-0)
+        :models '(claude-sonnet-4-5)
         :header (lambda () (when-let* ((key (gptel--get-api-key)))
                              `(("x-api-key" . ,key)
                                ("anthropic-version" . "2023-06-01")
@@ -1890,7 +1890,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-anthropic "Claude"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-sonnet-4-0 claude-opus-4-1)))
+        :models '(claude-sonnet-4-5 claude-opus-4-1)))
 
     (defvar gptel--deepseek
       (gptel-make-deepseek "DeepSeek"
