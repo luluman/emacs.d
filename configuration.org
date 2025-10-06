@@ -1906,6 +1906,7 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models '(openai/gpt-5
                   openai/gpt-5-codex
+                  z-ai/glm-4.6
                   x-ai/grok-4
                   deepseek/deepseek-r1-0528)))
 
@@ -1955,9 +1956,9 @@ diff, not the cloned one.
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun my/gpt-refacotr (gpt-backend rewrite-message prompt)
+  (defun my/gpt-refactor (gpt-backend gpt-model rewrite-message prompt)
     (let ((gptel-backend gpt-backend)
-          (gptel-model (car (gptel-backend-models gpt-backend))))
+          (gptel-model gpt-model))
 
       (setq my/gptel--ediff-restore-cwc (current-window-configuration))
       (setq my/gptel--ediff-restore
@@ -3443,37 +3444,53 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 #+begin_src emacs-lisp
   (use-package embark
     :config
-    (setq my/gpt-refacotr-prompt
+    (setq my/gpt-refactor-prompt
           (concat "You are Chris Lattner. "
                   "Refactor the following code.\n"
                   "- Generate ONLY code as output, without any explanation or markdown code fences.\n"
                   "- Additionally, revise the comment and consider renaming variables if appropriate."
                   ))
 
-    (defmacro my/embark-gpt-refacotr (gpt-backend)
-      `(defun ,(intern (format "%s-Refactor" (eval `(gptel-backend-name ,gpt-backend)))) (prompt)
-         (my/gpt-refacotr ,gpt-backend ,my/gpt-refacotr-prompt prompt)))
+    (defmacro my/define-embark-gpt-refactor (backend-sym &optional model-sym)
+      "Create a refactoring command for BACKEND-SYM with optional MODEL-SYM.
+       Defaults to the backend's first available model when MODEL-SYM is nil."
+      (let* ((backend (eval backend-sym))
+             (backend-name (gptel-backend-name backend))
+             (model (or model-sym (car (gptel-backend-models backend))))
+             (fn (intern (format "%s-%s-refactor" backend-name (symbol-name model)))))
+        `(defun ,fn (prompt)
+           (let ((refactor-model ',model))
+             (my/gpt-refactor ,backend-sym refactor-model my/gpt-refactor-prompt prompt)))))
 
     (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
     (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
     (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
 
+    (defvar-keymap gptel-anthropic-model-map
+      :doc "Prefix: refactor code via Anthropic models"
+      "s" (my/define-embark-gpt-refactor gptel--sonnet-thinking)
+      "o" (my/define-embark-gpt-refactor gptel--opus-thinking))
 
-    (defvar-keymap gptel--anthropic-thinking
-      :doc "Keymap for AI-powered code refactoring using Anthropic models"
-      "s" (my/embark-gpt-refacotr gptel--sonnet-thinking)
-      "o" (my/embark-gpt-refacotr gptel--opus-thinking))
+    (defvar-keymap gptel-openrouter-model-map
+      :doc "Prefix: select an OpenRouter model for refactoring"
+      "o" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5)
+      "z" (my/define-embark-gpt-refactor gptel--openrouter z-ai/glm-4.6)
+      "c" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5-codex)
+      "d" (my/define-embark-gpt-refactor gptel--openrouter deepseek/deepseek-r1-0528)
+      "x" (my/define-embark-gpt-refactor gptel--openrouter x-ai/grok-4))
 
-    (fset 'gptel--anthropic-thinking gptel--anthropic-thinking)
+    (fset 'gptel-anthropic-model-map gptel-anthropic-model-map)
+    (fset 'gptel-openrouter-model-map gptel-openrouter-model-map)
 
-    (keymap-set embark-region-map "g" (my/embark-gpt-refacotr gptel--gemini))
-    (keymap-set embark-region-map "o" (my/embark-gpt-refacotr gptel--openai))
-    (keymap-set embark-region-map "a" 'gptel--anthropic-thinking)
-    (keymap-set embark-region-map "d" (my/embark-gpt-refacotr gptel--deepseek))
-    (keymap-set embark-region-map "r" (my/embark-gpt-refacotr gptel--openrouter))
+    (keymap-set embark-region-map "g" (my/define-embark-gpt-refactor gptel--gemini))
+    (keymap-set embark-region-map "a" 'gptel-anthropic-model-map)
+    (keymap-set embark-region-map "d" (my/define-embark-gpt-refactor gptel--deepseek))
+    (keymap-set embark-region-map "o" 'gptel-openrouter-model-map)
     (define-key embark-file-map  (kbd "s") 'my/scp-file)
+
     :bind
     ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
+
     :init
     ;; Optionally replace the key help with a completing-read interface
     (setq prefix-help-command #'embark-prefix-help-command)
