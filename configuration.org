@@ -256,18 +256,8 @@ Theme loading symbols.
 #+begin_src emacs-lisp
   (defvar theme-pool
     '(modus-vivendi
-      ;; modus-operandi
-      ;; modus-operandi-tinted
-      ;; modus-vivendi-tinted
-      ;; modus-operandi-deuteranopia
-      ;; modus-vivendi-deuteranopia
-      ;; modus-operandi-tritanopia
-      ;; modus-vivendi-tritanopia
       ef-melissa-light
       ef-maris-dark
-      ;; ef-dark
-      ;; ef-day
-      ;; ef-night
       ))
 
   (defvar my/choosing-theme 'ef-maris-dark)
@@ -315,7 +305,7 @@ Using light theme on MacOS.
 #+BEGIN_SRC emacs-lisp
   (defun my/apply-light-theme ()
     (transparency 98)
-    (load-theme 'ef-day t))
+    (load-theme 'ef-melissa-light t))
 #+END_SRC
 
 #+begin_src emacs-lisp
@@ -1305,7 +1295,8 @@ using tree-sitter to manage Parser
 #+begin_src emacs-lisp
   (use-package treesit
     :ensure nil
-    :if (and (fboundp 'treesit-available-p) (treesit-available-p))
+    :if (and (fboundp 'treesit-available-p) (treesit-available-p)
+             (eq system-type 'gnu/linux))
     :custom
     ;; (treesit-extra-load-path `(,treesit-langs-folder))
     (treesit-max-buffer-size (* 100 1024 1024))
@@ -2887,38 +2878,6 @@ prose-related mode, so I store those in a list:
 I want to make sure that I've enabled spell-checking if I'm editing text,
 composing an email, or authoring a Git commit.
 
-*** flyspell
-
-https://github.com/accelbread/dotfiles/blob/a6061976a51c3335543c02d0aef3e222509e2a59/emacs/init.el#L295
-#+BEGIN_SRC emacs-lisp
-  (use-package flyspell
-    :if (eq system-type 'darwin)
-    :config
-    ;; (use-package flyspell-lazy)
-    ;; (flyspell-lazy-mode 1)
-    :config
-    (setq ispell-dictionary "en_US"
-          ispell-program-name "aspell"
-          ispell-extra-args '("--camel-case" "--sug-mode=ultra")
-          flyspell-issue-message-flag nil
-          flyspell-mode-line-string nil
-          flyspell-duplicate-distance 0)
-
-    (add-to-list 'flyspell-delayed-commands 'scroll-down-command)
-    (add-to-list 'flyspell-delayed-commands 'scroll-up-command)
-    (add-to-list 'flyspell-delayed-commands 'previous-line)
-    (add-to-list 'flyspell-delayed-commands 'next-line)
-    (add-to-list 'flyspell-delayed-commands 'line-move)
-    (add-to-list 'flyspell-delayed-commands 'compilation-read-command)
-    (add-to-list 'flyspell-delayed-commands 'completion-at-point-functions)
-
-    :hook
-    (prog-mode . (lambda ()
-                   (unless (derived-mode-p 'json-ts-mode)
-                     (flyspell-prog-mode))))
-    (text-mode . flyspell-mode))
-#+END_SRC
-
 *** jinx
 
 Jinx is a fast just-in-time spell-checker for Emacs. Jinx highlights misspelled
@@ -2926,7 +2885,6 @@ words in the text of the visible portion of the buffer.
 
 #+begin_src emacs-lisp
   (use-package jinx
-    :if (eq system-type 'gnu/linux)
     :hook (emacs-startup . global-jinx-mode)
     :config
     ;; (length (jinx--get-overlays (point-min) (point-max) nil))
