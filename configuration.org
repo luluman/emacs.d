@@ -2887,6 +2887,9 @@ words in the text of the visible portion of the buffer.
   (use-package jinx
     :hook (emacs-startup . global-jinx-mode)
     :config
+    ;; On macOS, install pkg-config and Enchant so Jinx works properly.
+    (setq jinx-languages "en")
+
     ;; (length (jinx--get-overlays (point-min) (point-max) nil))
     ;; (length (jinx--get-overlays (point-min) (point-max) t))
     ;; (length (jinx--force-overlays (point-min) (point-max) :check t))
