@@ -1496,7 +1496,7 @@ Set ipython as interpreter
   (use-package mojo
     :commands mojo-mode
     :load-path "~/.emacs.d/third_party/mojo-hl/"
-    :mode "\\.mojo$")
+    :mode ("\\.mojo\\'" . mojo-mode))
 #+end_src
 
 ** C++
