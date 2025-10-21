@@ -814,7 +814,7 @@ read elf symbols
 *** objdump
 
 #+begin_src emacs-lisp
-  (defcustom my/llvm-objdump-program "/workspace/sdk_latest/bin/nds64le-elf-newlib-v5d/bin/llvm-objdump"
+  (defcustom my/llvm-objdump-program "/workspace/sipu_sdk_latest/sipu_sdk_rel/bin/nds64le-elf-newlib-v5d/bin/llvm-objdump"
     "Path to the llvm-objdump executable used for disassembly."
     :type 'file
     :group 'tools)
