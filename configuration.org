@@ -880,7 +880,7 @@ $(CC) -x sipu -std=c++20 ${CFLAGS} ${INC_PATHS} --offload-device-only -emit-llvm
     (setq shell-file-name my/shell))  ;; using bash by default.
 #+end_src
 
-** Gerrit
+** COMMENT Gerrit
 
 #+begin_src emacs-lisp
   (use-package gerrit
@@ -3491,26 +3491,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
     :config
     (when (featurep 'tty-child-frames)
-      (setq corfu--frame-parameters
-            '((no-accept-focus . t)
-              (no-focus-on-map . t)
-              (min-width . t)
-              (min-height . t)
-              (border-width . 0)
-              (outer-border-width . 0)
-              (internal-border-width . 0)
-              (child-frame-border-width . 1)
-              (vertical-scroll-bars . nil)
-              (horizontal-scroll-bars . nil)
-              (menu-bar-lines . 0)
-              (tool-bar-lines . 0)
-              (tab-bar-lines . 0)
-              (no-other-frame . t)
-              (unsplittable . t)
-              (undecorated . t)
-              (cursor-type . nil)
-              (no-special-glyphs . t)
-              (desktop-dont-save . t))))
+      (setf (alist-get 'internal-border-width corfu--frame-parameters) 0))
 
     ;; https://github.com/minad/corfu/issues/330
     (advice-add 'python-shell-completion-at-point :around
