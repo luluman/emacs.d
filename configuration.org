@@ -814,7 +814,7 @@ read elf symbols
 *** objdump
 
 #+begin_src emacs-lisp
-  (defcustom my/llvm-objdump-program "/workspace/sipu_sdk_latest/sipu_sdk_rel/bin/nds64le-elf-newlib-v5d/bin/llvm-objdump"
+  (defcustom my/llvm-objdump-program "sipu-llvm-objdump"
     "Path to the llvm-objdump executable used for disassembly."
     :type 'file
     :group 'tools)
@@ -827,24 +827,23 @@ read elf symbols
   (defun my/objdump (file)
     "Disassemble FILE with llvm-objdump and display the result in asm-mode."
     (interactive "fObject file: ")
-    (let* ((program my/llvm-objdump-program)
+    (let* ((program (or (executable-find my/llvm-objdump-program)
+                        (user-error "Cannot find %s in exec-path" my/llvm-objdump-program)))
            (target (expand-file-name file))
            (buf (generate-new-buffer (format "*objdump: %s*" (file-name-nondirectory target))))
            (args (append my/llvm-objdump-args (list target))))
-      (unless (and (stringp program) (file-executable-p program))
-        (user-error "Invalid llvm-objdump program: %s" program))
       (unless (file-readable-p target)
         (user-error "File not readable: %s" target))
       (with-current-buffer buf
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (apply #'call-process program nil (current-buffer) nil
-               (append my/llvm-objdump-args (list target)))
-        (asm-mode)
-        (setq-local objdump-file-name target)
-        (goto-char (point-min))   ; jump to beginning
-        (read-only-mode t))
-      (pop-to-buffer buf))))
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (apply #'call-process program nil (current-buffer) nil
+                 (append my/llvm-objdump-args (list target)))
+          (asm-mode)
+          (setq-local objdump-file-name target)
+          (goto-char (point-min))   ; jump to beginning
+          (read-only-mode t))
+        (pop-to-buffer buf))))
 #+end_src
 
 Generate device-only LLIR for the specified kernel source.
@@ -1915,7 +1914,7 @@ sed,awk,grep, and friends for JSON data.
 
     :custom
     ;; (gptel-max-tokens 8192)
-    (gptel-include-reasoning 'ignore)
+    (gptel-include-reasoning t)
     (gptel-model 'gpt-5-chat-latest)
     (gptel-use-curl t)
     (gptel-playback t))
