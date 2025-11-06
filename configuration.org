@@ -1560,6 +1560,15 @@ For running Google Tests from a given buffer
     :after cc-mode)
 #+END_SRC
 
+#+begin_src emacs-lisp
+  (defun my/insert-boxed-comment (title)
+    "Insert a boxed comment with TITLE like LLVM style."
+    (interactive "sTitle: ")
+    (let* ((bar "//===----------------------------------------------------------------------===//")
+           (line (format "// %-70s" title)))
+      (insert bar "\n" line "\n" bar "\n")))
+#+end_src
+
 ** Rust
 
 #+begin_src emacs-lisp
@@ -1596,6 +1605,12 @@ For running Google Tests from a given buffer
           (backward-char 27)
           (insert-tab))
         (rust-playground-mode))))
+#+end_src
+
+** Zig
+
+#+begin_src emacs-lisp
+  (use-package zig-mode)
 #+end_src
 
 ** COMMENT Coq
