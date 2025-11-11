@@ -1094,6 +1094,8 @@ outputs.
   (use-package vterm
     :init
     (put 'vterm-environment 'safe-local-variable #'listp)
+    (add-to-list 'safe-local-eval-forms
+                 '(setq vterm-environment compilation-environment))
     :bind ("C-c v" . vterm) ;; terminal
     :custom
     (vterm-max-scrollback 10000)
