@@ -242,11 +242,6 @@ Why not?
 Those themes are what I like most.
 
 #+begin_src emacs-lisp
-  (use-package modus-themes
-    :no-require t
-    :custom
-    (modus-themes-italic-constructs t)
-    (modus-themes-bold-constructs nil))
   (use-package ef-themes
     :no-require t)
 #+end_src
@@ -255,8 +250,7 @@ Theme loading symbols.
 
 #+begin_src emacs-lisp
   (defvar theme-pool
-    '(modus-vivendi
-      ef-melissa-light
+    '(ef-melissa-light
       ef-maris-dark
       ))
 
@@ -352,10 +346,9 @@ Custom face when running in 256-color terminal
 #+BEGIN_SRC emacs-lisp
   (size-indication-mode)
   (column-number-mode)
-  ;; https://github.com/bbatsov/solarized-emacs/issues/113#issuecomment-774019131
-  (custom-set-faces
-   '(mode-line ((t (:underline nil))))
-   '(mode-line-inactive ((t (:underline nil)))))
+  ;; Keep the mode line neat by removing underline styling.
+  (set-face-underline 'mode-line-active nil)
+  (set-face-underline 'mode-line-inactive nil)
 
   (setq mode-line-frame-identification " "
         mode-line-end-spaces ""
@@ -3328,22 +3321,20 @@ consult-buffer and a Swiper-like search command consult-line.
     ;; The :init configuration is always executed (Not lazy)
     :init
 
-    ;; Optionally configure the register formatting. This improves the register
-    ;; preview for `consult-register', `consult-register-load',
-    ;; `consult-register-store' and the Emacs built-ins.
-    (setq register-preview-delay 0.5
-          register-preview-function #'consult-register-format)
-
-    ;; Optionally tweak the register preview window.
-    ;; This adds thin lines, sorting and hides the mode line of the window.
+    ;; Tweak the register preview for `consult-register-load',
+    ;; `consult-register-store' and the built-in commands.  This improves the
+    ;; register formatting, adds thin separator lines, register sorting and hides
+    ;; the window mode line.
     (advice-add #'register-preview :override #'consult-register-window)
-
-    ;; Optionally replace `completing-read-multiple' with an enhanced version.
-    (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
+    (setq register-preview-delay 0.5)
 
     ;; Use Consult to select xref locations with preview
     (setq xref-show-xrefs-function #'consult-xref
           xref-show-definitions-function #'consult-xref)
+
+    ;; Configure other variables and modes in the :config section,
+    ;; after lazily loading the package.
+
     :config
     (consult-customize
      consult-theme
