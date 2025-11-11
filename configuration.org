@@ -313,8 +313,10 @@ Using light theme on MacOS.
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
                   (with-selected-frame frame
-                    (my/load-theme my/choosing-theme)))))
-
+                    (my/load-theme my/choosing-theme)
+                    ;; Keep the mode line neat by removing underline styling.
+                    (set-face-underline 'mode-line-active nil)
+                    (set-face-underline 'mode-line-inactive nil)))))
 #+END_SRC
 
 Custom face when running in 256-color terminal
