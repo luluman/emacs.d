@@ -3449,9 +3449,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (defvar-keymap gptel-openrouter-model-map
       :doc "Prefix: select an OpenRouter model for refactoring"
       "o" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5)
+      "p" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.1)
       "z" (my/define-embark-gpt-refactor gptel--openrouter z-ai/glm-4.6)
       "k" (my/define-embark-gpt-refactor gptel--openrouter moonshotai/kimi-k2-thinking)
       "c" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5-codex)
+      "v" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.1-codex)
       "q" (my/define-embark-gpt-refactor gptel--openrouter qwen/qwen3-coder-plus)
       "d" (my/define-embark-gpt-refactor gptel--openrouter deepseek/deepseek-r1-0528)
       "x" (my/define-embark-gpt-refactor gptel--openrouter x-ai/grok-4))
