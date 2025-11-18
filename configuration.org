@@ -470,6 +470,8 @@ programming.
               (lambda (f) (with-selected-frame f (my/git-gutter-theme))))
 
     (global-git-gutter-mode t)
+    :hook
+    (git-gutter-mode . (lambda () (setq-local left-margin-width 1)))
 
     :bind
     ("C-x C-g" . git-gutter:popup-hunk))
@@ -625,11 +627,17 @@ doesn't require any additional setup. bounding as official recommendation.
     :pin gnu
     :init
     (package-install 'flymake t) ;; install the latest gnu-flymake
+    :hook
+    ;; reserve margin for indicator
+    (flymake-mode . (lambda ()
+                      (setq-local right-margin-width 1)
+                      (flymake--resize-margins)))
     :custom
     (flymake-mode-line-lighter "")
     (flymake-show-diagnostics-at-end-of-line 'short)
     (flymake-margin-indicator-position 'right-margin)
-    (flymake-autoresize-margins t))
+    ;; keep the window layout stable when buffers resize.
+    (flymake-autoresize-margins nil))
 #+END_SRC
 
 ** =magit=
@@ -1932,7 +1940,7 @@ sed,awk,grep, and friends for JSON data.
     :custom
     ;; (gptel-max-tokens 8192)
     (gptel-include-reasoning t)
-    (gptel-model 'gpt-5-chat-latest)
+    (gptel-model 'gpt-5.1)
     (gptel-use-curl t)
     (gptel-playback t))
 #+end_src
@@ -3550,27 +3558,6 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     ;; Enable indentation+completion using the TAB key.
     ;; `completion-at-point' is often bound to M-TAB.
     (tab-always-indent 'complete))
-#+end_src
-
-*** terminal popup
-
-#+begin_src emacs-lisp
-  (use-package corfu-terminal
-    :init
-    (unless (corfu--popup-support-p)
-      (corfu-terminal-mode +1))
-    :custom
-    (corfu-terminal-position-right-margin 1))
-#+end_src
-
-*** COMMENT show diagnose information
-
-#+begin_src emacs-lisp
-  (use-package flymake-popon
-    :custom-face
-    (flymake-popon ((t (:inherit corfu-default))))
-    :hook
-    (flymake-mode . flymake-popon-mode))
 #+end_src
 
 ** crux
