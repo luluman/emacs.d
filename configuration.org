@@ -1920,10 +1920,6 @@ sed,awk,grep, and friends for JSON data.
                   openai/gpt-5.1
                   openai/gpt-5-codex
                   openai/gpt-5.1-codex
-                  z-ai/glm-4.6
-                  moonshotai/kimi-k2-thinking
-                  qwen/qwen3-coder-plus
-                  x-ai/grok-4
                   deepseek/deepseek-r1-0528)))
 
     (setq-default gptel-backend gptel--openai)
@@ -3458,13 +3454,9 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       :doc "Prefix: select an OpenRouter model for refactoring"
       "o" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5)
       "p" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.1)
-      "z" (my/define-embark-gpt-refactor gptel--openrouter z-ai/glm-4.6)
-      "k" (my/define-embark-gpt-refactor gptel--openrouter moonshotai/kimi-k2-thinking)
       "c" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5-codex)
       "v" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.1-codex)
-      "q" (my/define-embark-gpt-refactor gptel--openrouter qwen/qwen3-coder-plus)
-      "d" (my/define-embark-gpt-refactor gptel--openrouter deepseek/deepseek-r1-0528)
-      "x" (my/define-embark-gpt-refactor gptel--openrouter x-ai/grok-4))
+      "d" (my/define-embark-gpt-refactor gptel--openrouter deepseek/deepseek-r1-0528))
 
     (fset 'gptel-anthropic-model-map gptel-anthropic-model-map)
     (fset 'gptel-openrouter-model-map gptel-openrouter-model-map)
