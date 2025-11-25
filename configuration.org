@@ -243,7 +243,7 @@ Those themes are what I like most.
 
 #+begin_src emacs-lisp
   (use-package ef-themes
-    :no-require t)
+    :ensure t)
 #+end_src
 
 Theme loading symbols.
@@ -1876,14 +1876,14 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-anthropic "Claude-opus-thinking"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-opus-4-1)
+        :models '(claude-opus-4-5)
         :header (lambda () (when-let* ((key (gptel--get-api-key)))
                              `(("x-api-key" . ,key)
                                ("anthropic-version" . "2023-06-01")
                                ("anthropic-beta" . "extended-cache-ttl-2025-04-11")
                                ("anthropic-beta" . "interleaved-thinking-2025-05-14"))))
         :request-params '(:thinking (:type "enabled" :budget_tokens 32000)
-                                    :max_tokens 32000)))
+                                    :max_tokens 64000)))
 
     (defvar gptel--sonnet-thinking
       (gptel-make-anthropic "Claude-sonnet-thinking"
@@ -3531,8 +3531,6 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
     ;; (add-to-list 'completion-at-point-functions #'cape-history)
     (add-to-list 'completion-at-point-functions #'cape-keyword)
-    :config
-    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
     :custom
     (dabbrev-check-all-buffers nil))
 
