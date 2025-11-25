@@ -3212,6 +3212,7 @@ at the correct indentation for Python).
                (exit-recursive-edit))
               (buffer-quit-function
                (funcall buffer-quit-function)))
+      (corfu--popup-hide)
       (keyboard-quit)))
 
   (setq enable-recursive-minibuffers t)
@@ -3514,6 +3515,9 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
                 (lambda (fun &optional arg)
                   (cape-wrap-noninterruptible (lambda () (funcall fun arg)))))
 
+    ;; Explicitly hide the Corfu popup after quitting, as it can occasionally linger when switching buffers.
+    (advice-add 'corfu-quit :after (lambda () (corfu--popup-hide)))
+
     :bind
     (:map corfu-map
           ("TAB" . corfu-next)
@@ -3521,7 +3525,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
           ("S-TAB" . corfu-previous)
           ([backtab] . corfu-previous))
     :init
-    (global-corfu-mode))
+    (global-corfu-mode)
+
+    :hook
+    (window-selection-change-functions . corfu--window-change)
+    (window-buffer-change-functions . corfu--window-change))
 
   ;; Add extensions
   (use-package cape
