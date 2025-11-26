@@ -1920,7 +1920,10 @@ sed,awk,grep, and friends for JSON data.
                   openai/gpt-5.1
                   openai/gpt-5-codex
                   openai/gpt-5.1-codex
-                  deepseek/deepseek-r1-0528)))
+                  anthropic/claude-sonnet-4.5
+                  anthropic/claude-opus-4.5
+                  deepseek/deepseek-r1-0528)
+        :request-params '(:reasoning (:effort "high"))))
 
     (setq-default gptel-backend gptel--openai)
 
