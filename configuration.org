@@ -2010,6 +2010,10 @@ diff, not the cloned one.
                  ))))))))
 #+end_src
 
+#+begin_src emacs-lisp
+  (use-package gptel-agent)
+#+end_src
+
 ** BuildBot
 
 #+begin_src emacs-lisp
