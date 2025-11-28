@@ -1913,8 +1913,7 @@ sed,awk,grep, and friends for JSON data.
         :models '(openai/gpt-5.1
                   openai/gpt-5.1-codex
                   anthropic/claude-sonnet-4.5
-                  anthropic/claude-opus-4.5
-                  deepseek/deepseek-r1-0528)
+                  anthropic/claude-opus-4.5)
         :request-params '(:reasoning (:effort "medium"))))
 
     (setq-default gptel-backend gptel--openai)
@@ -3454,8 +3453,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "o" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.1)
       "c" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.1-codex)
       "s" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.5)
-      "p" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.5)
-      "d" (my/define-embark-gpt-refactor gptel--openrouter deepseek/deepseek-r1-0528))
+      "p" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.5))
 
     (fset 'gptel-anthropic-model-map gptel-anthropic-model-map)
     (fset 'gptel-openrouter-model-map gptel-openrouter-model-map)
