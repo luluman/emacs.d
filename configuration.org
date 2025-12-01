@@ -1904,6 +1904,13 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models '(deepseek-reasoner deepseek-chat)))
 
+    (defvar gptel--deepseek-speciale
+      (gptel-make-deepseek "DeepSeek-Speciale"
+        :stream t
+        :endpoint "/v3.2_speciale_expires_on_20251215/chat/completions"
+        :key 'gptel-api-key
+        :models '(deepseek-reasoner)))
+
     (defvar gptel--openrouter
       (gptel-make-openai "OpenRouter"
         :host "openrouter.ai"
@@ -3460,7 +3467,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
     (keymap-set embark-region-map "g" (my/define-embark-gpt-refactor gptel--gemini))
     (keymap-set embark-region-map "a" 'gptel-anthropic-model-map)
-    (keymap-set embark-region-map "d" (my/define-embark-gpt-refactor gptel--deepseek))
+    (keymap-set embark-region-map "d" (my/define-embark-gpt-refactor gptel--deepseek-speciale))
     (keymap-set embark-region-map "o" 'gptel-openrouter-model-map)
     (define-key embark-file-map  (kbd "s") 'my/scp-file)
 
