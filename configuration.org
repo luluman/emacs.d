@@ -1893,6 +1893,8 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models '(openai/gpt-5.1
                   openai/gpt-5.1-codex
+                  openai/gpt-5
+                  openai/gpt-5-codex
                   anthropic/claude-sonnet-4.5
                   anthropic/claude-opus-4.5)
         :request-params '(:reasoning (:effort "medium"))))
@@ -3427,9 +3429,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (defvar-keymap gptel-openrouter-model-map
       :doc "Prefix: select an OpenRouter model for refactoring"
       "o" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.1)
+      "i" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5)
+      "p" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.5)
       "c" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.1-codex)
-      "s" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.5)
-      "p" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.5))
+      "x" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5-codex)
+      "s" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.5))
 
     (fset 'gptel-openrouter-model-map gptel-openrouter-model-map)
 
@@ -3478,9 +3482,6 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (text-mode-ispell-word-completion nil) ;; disable ispell
 
     :config
-    (when (featurep 'tty-child-frames)
-      (setf (alist-get 'internal-border-width corfu--frame-parameters) 0))
-
     ;; https://github.com/minad/corfu/issues/330
     (advice-add 'python-shell-completion-at-point :around
                 (lambda (fun &optional arg)
