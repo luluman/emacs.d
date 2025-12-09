@@ -262,9 +262,11 @@ Theme loading symbols.
     (ef-themes-with-colors
       (if (equal "ef-melissa-light" (symbol-name (car custom-enabled-themes)))
           (custom-set-faces
-           `(font-lock-comment-face ((,c :inherit italic :foreground "grey"))))
+           `(font-lock-comment-face ((,c :inherit italic :foreground "grey")))
+           `(font-lock-comment-delimiter-face ((,c :inherit italic :foreground "grey"))))
         (custom-set-faces
-         `(font-lock-comment-face ((,c :inherit italic :foreground ,fg-dim)))))
+         `(font-lock-comment-face ((,c :inherit italic :foreground ,fg-dim)))
+         `(font-lock-comment-delimiter-face ((,c :inherit italic :foreground ,fg-dim)))))
       ))
 
   ;; Using the hook lets our changes persist when we use the commands
