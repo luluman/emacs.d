@@ -1008,6 +1008,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (add-to-list 'eglot-stay-out-of 'eldoc)
 
     (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
+    (my/test-then-add-eglot '(python-mode python-ts-mode) "ty" "server")
     (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
     (my/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
     (my/test-then-add-eglot '(javascript-mode js-ts-mode) "typescript-language-server" "--stdio")
@@ -1862,6 +1863,9 @@ sed,awk,grep, and friends for JSON data.
     ;; (setq gptel-log-level 'debug)
     (setq gptel-default-mode 'org-mode)
 
+    ;; ALL_PROXY=socks5://localhost:1055/
+    ;; HTTP_PROXY=http://localhost:1055/
+    ;; http_proxy=http://localhost:1055/
     (setq-default gptel-proxy (if (member user-login-name
                                           '("man.lu" "mattlu" "luman" "mzwqe"))
                                   "socks5h://vps-us:1055"
