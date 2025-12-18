@@ -1881,7 +1881,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-3-pro-preview)))
+        :models '(gemini-3-pro-preview gemini-3-flash-preview)))
 
     (defvar gptel--deepseek
       (gptel-make-deepseek "DeepSeek"
@@ -3435,19 +3435,19 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
     (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
 
-    (defvar-keymap gptel-openrouter-model-map
-      :doc "Prefix: select an OpenRouter model for refactoring"
+    (defvar-keymap gptel-model-map
+      :doc "Prefix: select an model for refactoring"
       "o" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.2)
       "p" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.5)
       "c" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.1-codex-max)
-      "s" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.5))
+      "s" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.5)
+      "g" (my/define-embark-gpt-refactor gptel--gemini gemini-3-pro-preview)
+      "f" (my/define-embark-gpt-refactor gptel--gemini gemini-3-flash-preview)
+      "r" (my/define-embark-gpt-refactor gptel--deepseek deepseek-reasoner)
+      "d" (my/define-embark-gpt-refactor gptel--deepseek-speciale deepseek-reasoner))
 
-    (fset 'gptel-openrouter-model-map gptel-openrouter-model-map)
-
-    (keymap-set embark-region-map "g" (my/define-embark-gpt-refactor gptel--gemini))
-    (keymap-set embark-region-map "a" 'gptel-anthropic-model-map)
-    (keymap-set embark-region-map "d" (my/define-embark-gpt-refactor gptel--deepseek-speciale))
-    (keymap-set embark-region-map "o" 'gptel-openrouter-model-map)
+    (fset 'gptel-model-map gptel-model-map)
+    (keymap-set embark-region-map "g" 'gptel-model-map)
     (define-key embark-file-map  (kbd "s") 'my/scp-file)
 
     :bind
