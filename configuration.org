@@ -632,8 +632,6 @@ doesn't require any additional setup. bounding as official recommendation.
 #+BEGIN_SRC emacs-lisp
   (use-package flymake
     :pin gnu
-    :init
-    (package-install 'flymake t) ;; install the latest gnu-flymake
     :hook
     ;; reserve margin for indicator
     (flymake-mode . (lambda ()
@@ -982,9 +980,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
     :pin gnu
-    :init
-    (package-install 'eglot t) ;; install the latest gnu-eglot
-    (use-package consult-eglot)
+    :defer nil
     :commands
     (eglot eglot-ensure)
     ;; :hook
@@ -1007,7 +1003,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     :config
     (add-to-list 'eglot-stay-out-of 'eldoc)
 
-    (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c++-ts-mode c-ts-mode) "clangd")
+    (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c-or-c++-ts-mode c++-ts-mode c-ts-mode) "clangd")
     (my/test-then-add-eglot '(python-mode python-ts-mode) "ty" "server")
     (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
     (my/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
@@ -3483,11 +3479,6 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (advice-add 'python-shell-completion-at-point :around
                 (lambda (fun &optional arg)
                   (cape-wrap-noninterruptible (lambda () (funcall fun arg)))))
-
-    ;; Explicitly delete the Corfu popup after quitting,
-    ;; as it can occasionally linger when switching buffers.
-    (advice-add 'corfu-quit :after
-                (lambda () (when corfu--frame (delete-frame corfu--frame))))
 
     :bind
     (:map corfu-map
