@@ -1879,6 +1879,23 @@ sed,awk,grep, and friends for JSON data.
         :stream t
         :models '(gemini-3-pro-preview gemini-3-flash-preview)))
 
+    (defvar gptel--anthropic
+      (gptel-make-anthropic "Claude"
+        :host "cc.siorigin.com"
+        :protocol "http"
+        :endpoint "/api/v1/messages"
+        :key 'gptel-api-key
+        :stream t
+        :models '(claude-opus-4-5-20251101 claude-sonnet-4-5-20250929)
+        :header (lambda () (when-let* ((key (gptel--get-api-key)))
+                             `(("x-api-key" . ,key)
+                               ("anthropic-version" . "2023-06-01")
+                               ("anthropic-beta" . "extended-cache-ttl-2025-04-11")
+                               ("anthropic-beta" . "interleaved-thinking-2025-05-14")
+                               ("anthropic-beta" . "effort-2025-11-24"))))
+        :request-params '(:thinking (:type "enabled" :budget_tokens 32000)
+                                    :max_tokens 64000)))
+
     (defvar gptel--deepseek
       (gptel-make-deepseek "DeepSeek"
         :stream t
@@ -1942,9 +1959,10 @@ diff, not the cloned one.
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun my/gpt-refactor (gpt-backend gpt-model rewrite-message prompt)
+  (defun my/gpt-refactor (gpt-backend gpt-model rewrite-message prompt proxy)
     (let ((gptel-backend gpt-backend)
-          (gptel-model gpt-model))
+          (gptel-model gpt-model)
+          (gptel-proxy proxy))
 
       (setq my/gptel--ediff-restore-cwc (current-window-configuration))
       (setq my/gptel--ediff-restore
@@ -3408,16 +3426,17 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
                   "- Additionally, revise the comment and consider renaming variables if appropriate."
                   ))
 
-    (defmacro my/define-embark-gpt-refactor (backend-sym &optional model-sym)
+    (defmacro my/define-embark-gpt-refactor (backend-sym &optional model-sym proxy-url)
       "Create a refactoring command for BACKEND-SYM with optional MODEL-SYM.
-       Defaults to the backend's first available model when MODEL-SYM is nil."
+       Defaults to the backend's first available model when MODEL-SYM is nil.
+       PROXY-URL overrides `gptel-proxy' when specified."
       (let* ((backend (eval backend-sym))
              (backend-name (gptel-backend-name backend))
              (model (or model-sym (car (gptel-backend-models backend))))
+             (proxy (or proxy-url gptel-proxy))
              (fn (intern (format "%s-%s-refactor" backend-name (symbol-name model)))))
         `(defun ,fn (prompt)
-           (let ((refactor-model ',model))
-             (my/gpt-refactor ,backend-sym refactor-model my/gpt-refactor-prompt prompt)))))
+           (my/gpt-refactor ,backend-sym ',model my/gpt-refactor-prompt prompt ,proxy))))
 
     (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
     (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
@@ -3425,12 +3444,14 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
     (defvar-keymap gptel-model-map
       :doc "Prefix: select an model for refactoring"
-      "o" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.2)
-      "p" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.5)
-      "s" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.5)
+      "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-5-20251101 "")
+      "s" (my/define-embark-gpt-refactor gptel--anthropic claude-sonnet-4-5-20250929 "")
+      "p" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.2)
+      "i" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.5)
+      "a" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.5)
       "g" (my/define-embark-gpt-refactor gptel--gemini gemini-3-pro-preview)
       "f" (my/define-embark-gpt-refactor gptel--gemini gemini-3-flash-preview)
-      "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-reasoner))
+      "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-reasoner ""))
 
     (fset 'gptel-model-map gptel-model-map)
     (keymap-set embark-region-map "g" 'gptel-model-map)
