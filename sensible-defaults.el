@@ -1,4 +1,4 @@
-;;; sensible-defaults.el --- Reasonable settings for getting started.
+;;; sensible-defaults.el --- Reasonable settings for getting started. -*- lexical-binding: t; -*-
 
 ;; Author: Harry R. Schwartz <hello@harryrschwartz.com>
 ;; Version: 1.0.0
