@@ -827,7 +827,7 @@ read elf symbols
     :type 'file
     :group 'tools)
 
-  (defcustom my/llvm-objdump-args '("--mattr=+m,+c,+f,+a,+xsiorigin" "-zCDS")
+  (defcustom my/llvm-objdump-args '("--mattr=+m,+c,+f,+a,+xsiorigin" "-zldCS")
     "Default arguments passed to llvm-objdump."
     :type '(repeat string)
     :group 'tools)
@@ -3459,11 +3459,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
     (defvar-keymap gptel-model-map
       :doc "Prefix: select an model for refactoring"
-      "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-5-20251101 "")
-      "s" (my/define-embark-gpt-refactor gptel--anthropic claude-sonnet-4-5-20250929 "")
+      "o" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.5)
+      "s" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.5)
+      "i" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-5-20251101 "")
+      "a" (my/define-embark-gpt-refactor gptel--anthropic claude-sonnet-4-5-20250929 "")
       "p" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.2)
-      "i" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.5)
-      "a" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.5)
       "g" (my/define-embark-gpt-refactor gptel--gemini gemini-3-pro-preview)
       "f" (my/define-embark-gpt-refactor gptel--gemini gemini-3-flash-preview)
       "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-reasoner ""))
