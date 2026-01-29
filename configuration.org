@@ -361,7 +361,7 @@ Custom face when running in 256-color terminal
 
   (setq mode-line-frame-identification " "
         mode-line-end-spaces ""
-        mode-line-collapse-minor-modes '(not flymake-mode dired-async--modeline-mode)
+        mode-line-collapse-minor-modes '(not flymake-mode)
         mode-line-collapse-minor-modes-to ""
         mode-line-compact 'long)
 #+END_SRC
@@ -4046,17 +4046,11 @@ files. We're using:
  dired-rsync – asynchronous rsync from dired
 
 #+begin_src emacs-lisp
-   (use-package dired-rsync
-     :config
-     (bind-key "C-c C-r" 'dired-rsync dired-mode-map))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package async
-    :custom
-    (dired-async-skip-fast t)
+  (use-package dired-rsync
     :config
-    (dired-async-mode 1))
+    (add-to-list 'mode-line-misc-info 'dired-rsync-modeline-status t)
+    :bind
+    (:map  dired-mode-map ("C-c C-r" . dired-rsync)))
 #+end_src
 
 ** COMMENT LanguageTool
