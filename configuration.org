@@ -1881,18 +1881,11 @@ sed,awk,grep, and friends for JSON data.
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
-        :host "cc.siorigin.com"
         :protocol "http"
-        :endpoint "/v1/messages"
+        :host "cc.siorigin.com"
         :key 'gptel-api-key
         :stream t
         :models '(claude-opus-4-5-20251101 claude-sonnet-4-5-20250929)
-        :header (lambda () (when-let* ((key (gptel--get-api-key)))
-                             `(("x-api-key" . ,key)
-                               ("anthropic-version" . "2023-06-01")
-                               ("anthropic-beta" . "extended-cache-ttl-2025-04-11")
-                               ("anthropic-beta" . "interleaved-thinking-2025-05-14")
-                               ("anthropic-beta" . "effort-2025-11-24"))))
         :request-params '(:thinking (:type "enabled" :budget_tokens 32000)
                                     :max_tokens 64000)))
 
