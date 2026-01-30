@@ -4050,7 +4050,9 @@ files. We're using:
     :config
     (add-to-list 'mode-line-misc-info 'dired-rsync-modeline-status t)
     :bind
-    (:map  dired-mode-map ("C-c C-r" . dired-rsync)))
+    (:map  dired-mode-map
+           ("C-c C-r" . dired-rsync)
+           ("C-c C-x" . dired-rsync-transient)))
 #+end_src
 
 ** COMMENT LanguageTool
