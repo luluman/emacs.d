@@ -1859,9 +1859,9 @@ sed,awk,grep, and friends for JSON data.
     ;; (setq gptel-log-level 'debug)
     (setq gptel-default-mode 'org-mode)
 
-    ;; ALL_PROXY=socks5://localhost:1055/
-    ;; HTTP_PROXY=http://localhost:1055/
-    ;; http_proxy=http://localhost:1055/
+    ;; ALL_PROXY=socks5://vps-us:1055/
+    ;; HTTP_PROXY=http://vps-us:1055/
+    ;; http_proxy=http://vps-us:1055/
     (setq-default gptel-proxy (if (member user-login-name
                                           '("man.lu" "mattlu" "luman" "mzwqe"))
                                   "socks5h://vps-us:1055"
