@@ -6,7 +6,7 @@
 	url = https://github.com/luluman/project-cmake
 [submodule "symon"]
 	path = third_party/symon
-	url = https://github.com/zk-phi/symon
+	url = https://github.com/luluman/symon
 [submodule "third_party/ts-movement"]
 	path = third_party/ts-movement
 	url = https://github.com/haritkapadia/ts-movement

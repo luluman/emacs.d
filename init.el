@@ -1,4 +1,4 @@
-;; lexical-binding: t
+;;; init.el --- -*- lexical-binding: t; -*-
 
 (require 'package)
 (setq package-archives

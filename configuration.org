@@ -4,6 +4,10 @@
 #+STARTUP: overview
 * Configure =use-package=
 
+#+begin_src elisp
+;;; configuration.el --- -*- lexical-binding: t; -*-
+#+end_src
+
 #+BEGIN_SRC emacs-lisp
   (require 'use-package-ensure)
   (setq use-package-verbose t)
