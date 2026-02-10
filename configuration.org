@@ -1892,7 +1892,11 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :stream t
         :models '(claude-opus-4-6 claude-sonnet-4-5-20250929)
-        :request-params '(:thinking (:type "enabled" :budget_tokens 32000)
+        :header (lambda () (when-let* ((key (gptel--get-api-key)))
+                             `(("x-api-key" . ,key)
+                               ("anthropic-version" . "2023-06-01")
+                               ("anthropic-beta" . "context-1m-2025-08-07"))))
+        :request-params '(:thinking (:type "enabled" :budget_tokens 64000)
                                     :max_tokens 64000)))
 
     (defvar gptel--deepseek
