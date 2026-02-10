@@ -2006,21 +2006,6 @@ diff, not the cloned one.
   (use-package gptel-agent)
 #+end_src
 
-** AI agent
-
-#+begin_src emacs-lisp
-  (use-package agent-shell
-    :config
-    (setq agent-shell-google-gemini-environment
-          (agent-shell-make-environment-variables
-           "HTTPS_PROXY" "http://vps-us:1055"
-           "HTTP_PROXY" "http://vps-us:1055"
-           "ALL_PROXY" "http://vps-us:1055"))
-
-    (setq agent-shell-google-authentication
-          (agent-shell-google-make-authentication :login t)))
-#+end_src
-
 ** BuildBot
 
 #+begin_src emacs-lisp
