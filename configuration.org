@@ -1008,8 +1008,8 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (add-to-list 'eglot-stay-out-of 'eldoc)
 
     (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c-or-c++-ts-mode c++-ts-mode c-ts-mode) "clangd")
+    ;; (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
     (my/test-then-add-eglot '(python-mode python-ts-mode) "ty" "server")
-    (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
     (my/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
     (my/test-then-add-eglot '(javascript-mode js-ts-mode) "typescript-language-server" "--stdio")
     (my/test-then-add-eglot '(sh-mode bash-ts-mode) "bash-language-server" "start")
