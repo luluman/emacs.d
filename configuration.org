@@ -1871,6 +1871,8 @@ sed,awk,grep, and friends for JSON data.
                                   "socks5h://vps-us:1055"
                                 (format "socks5h://%s" my/socks-proxy)))
 
+    ;; (setq gptel-proxy "")
+
     (setq gptel--openai
           (gptel-make-openai "ChatGPT"
             :key 'gptel-api-key
