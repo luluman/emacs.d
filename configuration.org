@@ -197,9 +197,9 @@ Using Tailscale’s networking mode as a proxy server
 https://tailscale.com/kb/1112/userspace-networking
 
 #+begin_src bash
-ALL_PROXY=socks5://localhost:1055/
-HTTP_PROXY=http://localhost:1055/
-http_proxy=http://localhost:1055/
+ALL_PROXY=socks5://vps-us:1055/
+HTTP_PROXY=http://vps-us:1055/
+http_proxy=http://vps-us:1055/
 #+end_src
 
 * UI preferences
@@ -1846,7 +1846,7 @@ sed,awk,grep, and friends for JSON data.
 
 #+begin_src emacs-lisp
   (defun my/internet-up-p (&optional host)
-    (= 0 (call-process "ping" nil nil nil "-c" "1" "-W" "1"
+    (zerop (call-process "ping" nil nil nil "-c" "1" "-W" "1"
                        (if host host "www.wikipedia.org"))))
 #+end_src
 
@@ -1866,10 +1866,12 @@ sed,awk,grep, and friends for JSON data.
     ;; ALL_PROXY=socks5://vps-us:1055/
     ;; HTTP_PROXY=http://vps-us:1055/
     ;; http_proxy=http://vps-us:1055/
-    (setq-default gptel-proxy (if (member user-login-name
-                                          '("man.lu" "mattlu" "luman" "mzwqe"))
-                                  "socks5h://vps-us:1055"
-                                (format "socks5h://%s" my/socks-proxy)))
+    (unless (my/internet-up-p)
+      (let* ((corporate-users '("man.lu" "mattlu" "luman" "mzwqe"))
+             (proxy-url (if (member user-login-name corporate-users)
+                            "socks5h://vps-us:1055"
+                          (format "socks5h://%s" my/socks-proxy))))
+        (setq-default gptel-proxy proxy-url)))
 
     ;; (setq gptel-proxy "")
 
