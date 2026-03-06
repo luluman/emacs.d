@@ -1881,6 +1881,18 @@ sed,awk,grep, and friends for JSON data.
             :stream t
             :models '(gpt-5.4)))
 
+    (defun my/cc-api-key (&optional host user)
+      (gptel-api-key-from-auth-source "cc.siorigin.com" "openai"))
+
+    (setq gptel--openai--cc
+          (gptel-make-openai "ChatGPT-CC"
+            :protocol "http"
+            :host "cc.siorigin.com:8317"
+            :key 'my/cc-api-key
+            :stream t
+            :models '(gpt-5.4)
+            :request-params '(:reasoning (:effort "high"))))
+
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
