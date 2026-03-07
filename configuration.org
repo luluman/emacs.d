@@ -1879,19 +1879,18 @@ sed,awk,grep, and friends for JSON data.
           (gptel-make-openai "ChatGPT"
             :key 'gptel-api-key
             :stream t
-            :models '(gpt-5.4)))
-
-    (defun my/cc-api-key (&optional host user)
-      (gptel-api-key-from-auth-source "cc.siorigin.com" "openai"))
+            :models '(gpt-5.4)
+            :request-params '(:reasoning_effort  "high" :verbosity "low")))
 
     (setq gptel--openai--cc
           (gptel-make-openai "ChatGPT-CC"
             :protocol "http"
             :host "cc.siorigin.com:8317"
-            :key 'my/cc-api-key
+            :key (lambda (&optional host user)
+                   (gptel-api-key-from-auth-source "cc.siorigin.com" "openai"))
             :stream t
             :models '(gpt-5.4)
-            :request-params '(:reasoning (:effort "high"))))
+            :request-params '(:reasoning_effort  "xhigh" :verbosity "low")))
 
     (defvar gptel--gemini
       (gptel-make-gemini "Gemini"
@@ -3477,7 +3476,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "a" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.6)
       "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-6 "")
       "s" (my/define-embark-gpt-refactor gptel--anthropic claude-sonnet-4-6 "")
-      "p" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.4)
+      "p" (my/define-embark-gpt-refactor gptel--openai--cc gpt-5.4 "")
       "g" (my/define-embark-gpt-refactor gptel--gemini gemini-3.1-pro-preview)
       "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-reasoner ""))
 
