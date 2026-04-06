@@ -1880,7 +1880,7 @@ sed,awk,grep, and friends for JSON data.
             :key 'gptel-api-key
             :stream t
             :models '(gpt-5.4)
-            :request-params '(:reasoning_effort  "high" :verbosity "low")))
+            :request-params '(:reasoning (:effort "high") :text (:verbosity "low"))))
 
     (setq gptel--openai--cc
           (gptel-make-openai "ChatGPT-CC"
