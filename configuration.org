@@ -1904,18 +1904,18 @@ sed,awk,grep, and friends for JSON data.
         :host "cc.siorigin.com"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-opus-4-6 claude-sonnet-4-6)
+        :models '(claude-opus-4-7)
         :header (lambda () (when-let* ((key (gptel--get-api-key)))
                              `(("x-api-key" . ,key)
                                ("anthropic-version" . "2023-06-01")
                                ("anthropic-beta" . "context-1m-2025-08-07"))))
-        :request-params '(:max_tokens 64000 :thinking (:type "adaptive") :output_config (:effort "high"))))
+        :request-params '(:max_tokens 64000 :thinking (:type "adaptive") :output_config (:effort "xhigh"))))
 
     (defvar gptel--deepseek
       (gptel-make-deepseek "DeepSeek"
         :stream t
         :key 'gptel-api-key
-        :models '(deepseek-reasoner deepseek-chat)))
+        :models '(deepseek-reasoner)))
 
     (defvar gptel--openrouter
       (gptel-make-openai "OpenRouter"
@@ -1927,7 +1927,7 @@ sed,awk,grep, and friends for JSON data.
                   z-ai/glm-5.1
                   google/gemini-3.1-pro-preview
                   anthropic/claude-sonnet-4.6
-                  anthropic/claude-opus-4.6)
+                  anthropic/claude-opus-4.7)
         :request-params '(:reasoning (:effort "xhigh"))))
 
     (setq-default gptel-backend gptel--openai)
@@ -3473,10 +3473,9 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
     (defvar-keymap gptel-model-map
       :doc "Prefix: select an model for refactoring"
-      "i" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.6)
+      "i" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.7)
       "a" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-sonnet-4.6)
-      "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-6 "")
-      "s" (my/define-embark-gpt-refactor gptel--anthropic claude-sonnet-4-6 "")
+      "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-7 "")
       "p" (my/define-embark-gpt-refactor gptel--openai--cc gpt-5.4 "")
       "g" (my/define-embark-gpt-refactor gptel--gemini gemini-3.1-pro-preview)
       "z" (my/define-embark-gpt-refactor gptel--openrouter z-ai/glm-5.1)
