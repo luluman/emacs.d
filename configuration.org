@@ -1909,7 +1909,7 @@ sed,awk,grep, and friends for JSON data.
                              `(("x-api-key" . ,key)
                                ("anthropic-version" . "2023-06-01")
                                ("anthropic-beta" . "context-1m-2025-08-07"))))
-        :request-params '(:max_tokens 64000 :thinking (:type "adaptive") :output_config (:effort "xhigh"))))
+        :request-params '(:max_tokens 128000 :thinking (:type "adaptive") :output_config (:effort "max"))))
 
     (defvar gptel--deepseek
       (gptel-make-deepseek "DeepSeek"
