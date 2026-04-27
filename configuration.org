@@ -1889,7 +1889,7 @@ sed,awk,grep, and friends for JSON data.
             :key (lambda (&optional host user)
                    (gptel-api-key-from-auth-source "cc.siorigin.com" "openai"))
             :stream t
-            :models '(gpt-5.4)
+            :models '(gpt-5.5)
             :request-params '(:reasoning_effort  "xhigh" :verbosity "low")))
 
     (defvar gptel--gemini
@@ -1945,7 +1945,7 @@ sed,awk,grep, and friends for JSON data.
     :custom
     ;; (gptel-max-tokens 8192)
     (gptel-include-reasoning t)
-    (gptel-model 'gpt-5.4)
+    (gptel-model 'gpt-5.5)
     (gptel-use-curl t)
     (gptel-playback t))
 #+end_src
@@ -3475,7 +3475,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       :doc "Prefix: select an model for refactoring"
       "i" (my/define-embark-gpt-refactor gptel--openrouter anthropic/claude-opus-4.7)
       "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-7 "")
-      "p" (my/define-embark-gpt-refactor gptel--openai--cc gpt-5.4 "")
+      "p" (my/define-embark-gpt-refactor gptel--openai--cc gpt-5.5 "")
       "g" (my/define-embark-gpt-refactor gptel--gemini gemini-3.1-pro-preview)
       "z" (my/define-embark-gpt-refactor gptel--openrouter z-ai/glm-5.1)
       "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-v4-pro ""))
