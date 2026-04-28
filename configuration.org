@@ -3242,16 +3242,25 @@ at the correct indentation for Python).
     :config
     (fzf-native-load-dyn))
 
+  (use-package fuz
+    :if (executable-find "rustc")
+    :load-path "~/.emacs.d/third_party/fuz.el/"
+    :config
+    (setq fussy-score-fn 'fussy-fuz-score-all)
+    (unless (require 'fuz-core nil t)
+      (fuz-build-and-load-dymod)))
+
   (use-package fussy
     :config
-    (fussy-setup-fzf)
     (fussy-eglot-setup)
+    (if (executable-find "rustc")
+        (fussy-setup-fuz)
+      (fussy-setup-fzf))
 
     :custom
     (fussy-use-cache t)
     (fussy-compare-same-score-fn 'fussy-histlen->strlen<)
-    (fussy-filter-fn 'fussy-filter-default)
-    (fussy-default-regex-fn 'fussy-pattern-flex-1)
+    ;; (fussy-default-regex-fn 'fussy-pattern-flex-1)
     (completion-styles '(fussy))
     (completion-category-defaults nil)
     (completion-category-overrides nil))

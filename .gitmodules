@@ -19,3 +19,6 @@
 [submodule "third_party/fzf-native"]
 	path = third_party/fzf-native
 	url = https://github.com/dangduc/fzf-native
+[submodule "third_party/fuz.el"]
+	path = third_party/fuz.el
+	url = https://github.com/jojojames/fuz.el
