@@ -1915,7 +1915,8 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-deepseek "DeepSeek"
         :stream t
         :key 'gptel-api-key
-        :models '(deepseek-v4-pro)))
+        :models '(deepseek-v4-pro)
+        :request-params '(:reasoning_effort "max" :output_config (:effort "max"))))
 
     (defvar gptel--openrouter
       (gptel-make-openai "OpenRouter"
@@ -1925,7 +1926,7 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models '(deepseek/deepseek-v4-pro
                   z-ai/glm-5.1
-                  moonshotai/kimi-k2.6
+                  ~moonshotai/kimi-latest
                   ~anthropic/claude-opus-latest
                   ~openai/gpt-latest
                   ~google/gemini-pro-latest)
