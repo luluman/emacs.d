@@ -1932,6 +1932,14 @@ sed,awk,grep, and friends for JSON data.
                   ~google/gemini-pro-latest)
         :request-params '(:reasoning (:effort "xhigh"))))
 
+    (defvar gptel--tenstorrent
+      (gptel-make-openai "Tenstorrent"
+        :host "console.tenstorrent.com"
+        :endpoint "/v1/chat/completions"
+        :stream t
+        :key 'gptel-api-key
+        :models '(deepseek-ai/DeepSeek-R1-0528)))
+
     (setq-default gptel-backend gptel--openai)
 
     (defun my/ediff-cleanup ()
@@ -4059,6 +4067,7 @@ files. We're using:
 
 #+begin_src emacs-lisp
   (use-package dired-rsync
+    :defer nil
     :config
     (add-to-list 'mode-line-misc-info 'dired-rsync-modeline-status t)
     :bind
