@@ -214,6 +214,19 @@ I don't usually use the menu or scroll bar, and they take up useful space.
     (menu-bar-mode -1))
 #+END_SRC
 
+Only split horizontally when each resulting window can fit 80 columns of code
+plus 10 columns reserved for line numbers, fringes, and padding.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :if (>= emacs-major-version 31)
+    :custom
+    (split-width-threshold
+     (let ((code-width 80)
+           (chrome-width 10))
+       (* 2 (+ code-width chrome-width)))))
+#+end_src
+
 ** Use fancy lambdas
 
 Why not?
