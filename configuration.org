@@ -3548,7 +3548,9 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
     (corfu-auto t)                 ;; Enable auto completion
     ;; (global-corfu-modes '((not shell-mode) t))
+    (corfu-quit-no-match t)      ;; Quit if there is no match.
     (corfu-preview-current nil)
+    (corfu-on-exact-match 'insert) ;; Configure handling of exact matches
     ;; https://github.com/minad/corfu/discussions/457
     (text-mode-ispell-word-completion nil) ;; disable ispell
 
