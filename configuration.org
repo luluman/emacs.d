@@ -565,8 +565,12 @@ project is to be configured, built and tested using CMake and CTest.
 #+begin_src .dir_locals
 ((nil . ((compilation-environment
           .
-          ("PATH=/usr/local/cuda/bin"))
-          ;; CMake build configuration
+          ("PATH=/usr/local/cuda/bin"
+           ;; Installing libgccjit-13-dev may pull in gcc-14, which pollutes the GCC
+           ;; toolchain that Clang auto-discovers. Pin Clang to the GCC 13 install dir.
+           "CFLAGS=--gcc-install-dir=/usr/lib/gcc/x86_64-linux-gnu/13"
+           "CXXFLAGS=--gcc-install-dir=/usr/lib/gcc/x86_64-linux-gnu/13"))
+           ;; CMake build configuration
           (project-cmake-build-type . "Release")
           (project-cmake-kit . unix)
           (project-cmake-generator . "Ninja")
