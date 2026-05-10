@@ -3255,7 +3255,6 @@ at the correct indentation for Python).
     :if (executable-find "rustc")
     :load-path "~/.emacs.d/third_party/fuz.el/"
     :config
-    (setq fussy-score-fn 'fussy-fuz-score-all)
     (unless (require 'fuz-core nil t)
       (fuz-build-and-load-dymod)))
 
