@@ -3508,10 +3508,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (defvar-keymap gptel-model-map
       :doc "Prefix: select an model for refactoring"
       "i" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
+      "u" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
+      "y" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
       "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-7 "")
       "p" (my/define-embark-gpt-refactor gptel--openai--cc gpt-5.5 "")
-      "g" (my/define-embark-gpt-refactor gptel--gemini ~google/gemini-pro-latest)
-      "z" (my/define-embark-gpt-refactor gptel--openrouter z-ai/glm-5.1)
+      "g" (my/define-embark-gpt-refactor gptel--gemini gemini-3.1-pro-preview)
       "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-v4-pro ""))
 
     (fset 'gptel-model-map gptel-model-map)
