@@ -1913,7 +1913,8 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-3.1-pro-preview)))
+        :models '(gemini-3.1-pro-preview gemini-3.5-flash)
+        :request-params '(:generationConfig (:thinkingConfig (:thinkingLevel "HIGH" :includeThoughts t)))))
 
     (defvar gptel--anthropic
       (gptel-make-anthropic "Claude"
@@ -1946,6 +1947,7 @@ sed,awk,grep, and friends for JSON data.
                   ~moonshotai/kimi-latest
                   ~anthropic/claude-opus-latest
                   ~openai/gpt-latest
+                  ~google/gemini-flash-latest
                   ~google/gemini-pro-latest)
         :request-params '(:reasoning (:effort "xhigh"))))
 
@@ -3513,6 +3515,8 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-7 "")
       "p" (my/define-embark-gpt-refactor gptel--openai--cc gpt-5.5 "")
       "g" (my/define-embark-gpt-refactor gptel--gemini gemini-3.1-pro-preview)
+      "f" (my/define-embark-gpt-refactor gptel--gemini gemini-3.5-flash)
+      "D" (my/define-embark-gpt-refactor gptel--tenstorrent deepseek-ai/DeepSeek-R1-0528)
       "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-v4-pro ""))
 
     (fset 'gptel-model-map gptel-model-map)
