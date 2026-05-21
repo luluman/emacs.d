@@ -3511,11 +3511,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       :doc "Prefix: select an model for refactoring"
       "i" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
       "u" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
-      "y" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
+      "k" (my/define-embark-gpt-refactor gptel--openrouter ~moonshotai/kimi-latest)
+      "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
+      "f" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
       "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-7 "")
       "p" (my/define-embark-gpt-refactor gptel--openai--cc gpt-5.5 "")
-      "g" (my/define-embark-gpt-refactor gptel--gemini gemini-3.1-pro-preview)
-      "f" (my/define-embark-gpt-refactor gptel--gemini gemini-3.5-flash)
       "D" (my/define-embark-gpt-refactor gptel--tenstorrent deepseek-ai/DeepSeek-R1-0528)
       "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-v4-pro ""))
 
