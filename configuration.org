@@ -36,7 +36,7 @@ use-package supports git repository
 
 #+begin_src emacs-lisp
   (use-package quelpa-use-package
-    :disabled t
+    :disabled
     :config
     (setq use-package-ensure-function 'quelpa))
 #+end_src
@@ -78,7 +78,7 @@ Define a big ol' bunch of handy utility functions.
       (if filename
           (progn
             (when (buffer-modified-p)
-               (save-buffer))
+              (save-buffer))
             (rename-file filename new-name t)
             (kill-buffer (current-buffer))
             (find-file new-name)
@@ -3268,9 +3268,12 @@ at the correct indentation for Python).
     :init
     (setq fzf-native-always-compile-module t)
     :config
-    (fzf-native-load-dyn))
+    (fzf-native-load-own-build-dyn))
 
+  ;; NOTE: fuz is known to conflict with fzf-native, causing crashes.
+  ;; Therefore, fuz is disabled and fzf-native is used as the backend for fussy.
   (use-package fuz
+    :disabled
     :if (executable-find "rustc")
     :load-path "~/.emacs.d/third_party/fuz.el/"
     :config
@@ -3280,9 +3283,8 @@ at the correct indentation for Python).
   (use-package fussy
     :config
     (fussy-eglot-setup)
-    (if (executable-find "rustc")
-        (fussy-setup-fuz)
-      (fussy-setup-fzf))
+    (fussy-setup-fzf)                     ; uses fzf-native as the matching engine
+    ;; (fussy-setup-fuz)                  ; alternative if fuz were enabled
 
     :custom
     (fussy-use-cache t)
