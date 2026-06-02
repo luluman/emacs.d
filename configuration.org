@@ -1922,7 +1922,7 @@ sed,awk,grep, and friends for JSON data.
         :host "cc.siorigin.com"
         :key 'gptel-api-key
         :stream t
-        :models '(claude-opus-4-7)
+        :models '(claude-opus-4-8)
         :header (lambda () (when-let* ((key (gptel--get-api-key)))
                              `(("x-api-key" . ,key)
                                ("anthropic-version" . "2023-06-01")
@@ -3516,7 +3516,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "k" (my/define-embark-gpt-refactor gptel--openrouter ~moonshotai/kimi-latest)
       "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
       "f" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
-      "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-7 "")
+      "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-8 "")
       "p" (my/define-embark-gpt-refactor gptel--openai--cc gpt-5.5 "")
       "D" (my/define-embark-gpt-refactor gptel--tenstorrent deepseek-ai/DeepSeek-R1-0528)
       "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-v4-pro ""))
