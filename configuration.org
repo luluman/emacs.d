@@ -1022,6 +1022,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (eglot-sync-connect nil)
     (eglot-menu-string "")
     :config
+    (put 'eglot-server-programs 'safe-local-variable #'listp)
     (add-to-list 'eglot-stay-out-of 'eldoc)
 
     (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c-or-c++-ts-mode c++-ts-mode c-ts-mode) "clangd")
