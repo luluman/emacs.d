@@ -3254,7 +3254,6 @@ at the correct indentation for Python).
 
 #+begin_src emacs-lisp
   (use-package fzf-native
-    :load-path "~/.emacs.d/third_party/fzf-native"
     :init
     (setq fzf-native-always-compile-module t)
     :config
