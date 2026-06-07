@@ -2,8 +2,8 @@
 
 (require 'package)
 (setq package-archives
-      '(("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/")
-        ("melpa-stable" . "https://www.mirrorservice.org/sites/stable.melpa.org/packages/")
+      '(("melpa" . "https://melpa.org/packages/")
+        ("melpa-stable" . "https://stable.melpa.org/packages/")
         ("gnu"   . "https://elpa.gnu.org/packages/")
         ;; ("gnu-devel"   . "https://elpa.gnu.org/devel/")
         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
