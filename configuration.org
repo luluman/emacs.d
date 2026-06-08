@@ -1012,7 +1012,6 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c e a" . eglot-code-actions)
                 ("C-c e c" . eglot-reconnect)
                 ("C-c e k" . eglot-shutdown)
-                ("C-c e s" . consult-eglot-symbols)
                 ("C-c e i" . eglot-inlay-hints-mode)
                 ("C-c e e" . my/flymake-toggle-diagnostics-at-end-of-line))
     :custom
@@ -1074,6 +1073,13 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
 
     (setq completion-category-defaults nil))
 #+END_SRC
+
+Displays ElDoc documentations in a childframe.
+
+#+begin_src emacs-lisp
+  (use-package eldoc-box
+    :hook (eldoc-mode . eldoc-box-hover-at-point-mode))
+#+end_src
 
 *** DAP mode
 
