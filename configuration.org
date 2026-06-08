@@ -708,17 +708,18 @@ Some project is managed by git-lfs, we need to extent magit
     :after (magit))
 #+end_src
 
-** =undo-tree=
+** =visual-undo=
 
-I like tree-based undo management. I only rarely need it, but when I do, oh boy.
+Vundo (visual undo) displays the undo history as a tree and lets you
+move in the tree to go back to previous buffer states.
 
 #+begin_src emacs-lisp
-  (use-package undo-tree
+  (use-package vundo
     :custom
-    (global-undo-tree-mode t)
-    (undo-tree-auto-save-history nil)
-    (undo-tree-visualizer-relative-timestamps t)
-    (undo-tree-visualizer-timestamps t))
+    (undo-limit 80000000)
+    (undo-strong-limit 120000000)
+    (undo-outer-limit 360000000)
+    (vundo-glyph-alist vundo-unicode-symbols))
 #+end_src
 
 ** Shell config
