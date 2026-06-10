@@ -1943,10 +1943,11 @@ sed,awk,grep, and friends for JSON data.
         :models '(deepseek/deepseek-v4-pro
                   ~moonshotai/kimi-latest
                   ~anthropic/claude-opus-latest
+                  ~anthropic/claude-fable-latest
                   ~openai/gpt-latest
                   ~google/gemini-flash-latest
                   ~google/gemini-pro-latest)
-        :request-params '(:reasoning (:effort "xhigh"))))
+        :request-params '(:reasoning (:enabled t :effort "xhigh") :verbosity "max")))
 
     (defvar gptel--tenstorrent
       (gptel-make-openai "Tenstorrent"
@@ -3508,7 +3509,8 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (defvar-keymap gptel-model-map
       :doc "Prefix: select an model for refactoring"
       "i" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
-      "u" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
+      "u" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-fable-latest)
+      "y" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
       "k" (my/define-embark-gpt-refactor gptel--openrouter ~moonshotai/kimi-latest)
       "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
       "f" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
