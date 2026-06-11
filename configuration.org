@@ -1938,19 +1938,6 @@ sed,awk,grep, and friends for JSON data.
         :models '(gemini-3.1-pro-preview gemini-3.5-flash)
         :request-params '(:generationConfig (:thinkingConfig (:thinkingLevel "HIGH" :includeThoughts t)))))
 
-    (defvar gptel--anthropic
-      (gptel-make-anthropic "Claude"
-        :protocol "http"
-        :host "cc.siorigin.com"
-        :key 'gptel-api-key
-        :stream t
-        :models '(claude-opus-4-8)
-        :header (lambda () (when-let* ((key (gptel--get-api-key)))
-                             `(("x-api-key" . ,key)
-                               ("anthropic-version" . "2023-06-01")
-                               ("anthropic-beta" . "context-1m-2025-08-07"))))
-        :request-params '(:max_tokens 128000 :thinking (:type "adaptive") :output_config (:effort "max"))))
-
     (defvar gptel--deepseek
       (gptel-make-deepseek "DeepSeek"
         :stream t
@@ -3528,13 +3515,12 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
     (defvar-keymap gptel-model-map
       :doc "Prefix: select an model for refactoring"
-      "i" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
-      "u" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-fable-latest)
-      "y" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
+      "o" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
+      "i" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-fable-latest)
+      "p" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
       "k" (my/define-embark-gpt-refactor gptel--openrouter ~moonshotai/kimi-latest)
       "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
       "f" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
-      "o" (my/define-embark-gpt-refactor gptel--anthropic claude-opus-4-8 "")
       "D" (my/define-embark-gpt-refactor gptel--tenstorrent deepseek-ai/DeepSeek-R1-0528)
       "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-v4-pro ""))
 
