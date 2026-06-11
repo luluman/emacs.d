@@ -408,7 +408,7 @@ Note that this overrides the default font-related keybindings from
 #+BEGIN_SRC emacs-lisp
   (if (eq system-type 'gnu/linux)
       (setq my/default-font "Ubuntu Mono")
-    (setq my/default-font "Iosevka SS09"))
+    (setq my/default-font "JetBrains Mono"))
 
   (setq my/default-font-size 15)
   (setq my/current-font-size my/default-font-size)
