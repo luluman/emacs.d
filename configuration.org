@@ -1079,7 +1079,9 @@ Displays ElDoc documentations in a childframe.
 
 #+begin_src emacs-lisp
   (use-package eldoc-box
-    :hook (eldoc-mode . eldoc-box-hover-at-point-mode))
+    :hook (eldoc-mode . eldoc-box-hover-at-point-mode)
+    :custom
+    (eldoc-box-only-multi-line t))
 #+end_src
 
 *** DAP mode
@@ -1120,6 +1122,7 @@ Use minibuffer as the interface to select from xref candidates.
 #+END_SRC
 
 *** Terminal
+**** vterm
 
 Emacs-libvterm (vterm) is fully-fledged terminal emulator inside GNU Emacs based
 on libvterm, a C library. As a result of using compiled code (instead of elisp),
@@ -1142,6 +1145,8 @@ outputs.
     (term-copy-exclude-prompt t)
     (vterm-buffer-name-string "*vterm %s*"))
 #+end_src
+
+**** EAT
 
 Eat: Emulate A Terminal
 
@@ -1176,6 +1181,20 @@ Eat: Emulate A Terminal
     (eat-shell-prompt-annotation-success-margin-indicator "✔ "))
 #+end_src
 
+**** ghostty
+
+#+begin_src emacs-lisp
+  (use-package ghostel
+    :bind
+    ("C-c g" . (lambda () (interactive) (ghostel t)))
+    :config
+    (add-to-list 'ghostel-keymap-exceptions "M-o")
+    :custom
+    (ghostel-module-auto-install 'download))
+#+end_src
+
+**** shell
+
 configure =comint-mode=
 
 #+begin_src emacs-lisp
@@ -1191,6 +1210,8 @@ configure =comint-mode=
     :config
     (add-hook 'comint-output-filter-functions #'comint-osc-process-output))
 #+end_src
+
+**** term
 
 #+begin_src emacs-lisp
   (use-package term
@@ -1879,7 +1900,7 @@ sed,awk,grep, and friends for JSON data.
   (use-package gptel
     :defer nil
     :bind (("C-c RET" . gptel-send)
-           ("C-c g" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
+           ("C-c e" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
            ("C-c <return>" . gptel-send)
            ("C-c C-<return>" . gptel-menu)
            :map gptel-mode-map
@@ -3837,6 +3858,7 @@ while still keeping them within arm’s reach.
             "^\\*socks5-proxy-.*\\*$"
             "\\*Async Shell Command\\*"
             "^\\*vterm.*\\*$"   vterm-mode   ;vterm as a popup
+            "^\\*ghostel.*\\*$"  ghostel-mode
             "^\\*eat*.*$"  eat-mode
             "^\\*TeX Help.*\\*$"  tex-mode
             "^\\*tex-shell.*\\*$"  tex-mode
