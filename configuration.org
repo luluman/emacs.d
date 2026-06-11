@@ -1185,6 +1185,9 @@ Eat: Emulate A Terminal
 
 #+begin_src emacs-lisp
   (use-package ghostel
+    :init
+    (add-to-list 'safe-local-eval-forms
+                 '(setq ghostel-environment compilation-environment))
     :bind
     ("C-c g" . (lambda () (interactive) (ghostel t)))
     :config
@@ -1968,7 +1971,7 @@ sed,awk,grep, and friends for JSON data.
                   ~openai/gpt-latest
                   ~google/gemini-flash-latest
                   ~google/gemini-pro-latest)
-        :request-params '(:reasoning (:enabled t :effort "xhigh") :verbosity "max")))
+        :request-params '(:reasoning (:enabled t :effort "xhigh") :verbosity "xhigh")))
 
     (defvar gptel--tenstorrent
       (gptel-make-openai "Tenstorrent"
@@ -2070,10 +2073,6 @@ diff, not the cloned one.
                  ;; (list 'ediff-regions-wordwise 'word-wise nil)
                  (list 'ediff-regions-wordwise nil nil)
                  ))))))))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package gptel-agent)
 #+end_src
 
 ** BuildBot
