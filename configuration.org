@@ -1813,18 +1813,17 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 ** ProtoBuffer
 
 add Google protocol buffer support
-#+begin_src emacs-lisp
-  (defun my/prototxt-mode-hook ()
-    (when (and (stringp buffer-file-name)
-               (string-match "\\.prototxt\\'" buffer-file-name))
-      (setq-local comment-start "# ")
-      (setq-local comment-start-skip "#+\\s-*")
-      (font-lock-add-keywords nil
-                              '(("#.+" . font-lock-comment-face)))))
-#+end_src
 
 #+BEGIN_SRC emacs-lisp
   (use-package protobuf-mode
+    :preface
+    (defun my/prototxt-mode-hook ()
+  	(when (and (stringp buffer-file-name)
+                 (string-match "\\.prototxt\\'" buffer-file-name))
+        (setq-local comment-start "# ")
+        (setq-local comment-start-skip "#+\\s-*")
+        (font-lock-add-keywords nil
+                                '(("#.+" . font-lock-comment-face)))))
     :mode "\\.prototxt$"
     :hook
     (protobuf-mode . my/prototxt-mode-hook))
@@ -1906,12 +1905,6 @@ sed,awk,grep, and friends for JSON data.
 ** ChatGPT
 
 #+begin_src emacs-lisp
-  (defun my/internet-up-p (&optional host)
-    (zerop (call-process "ping" nil nil nil "-c" "1" "-W" "1"
-                       (if host host "www.wikipedia.org"))))
-#+end_src
-
-#+begin_src emacs-lisp
   (use-package gptel
     :defer nil
     :bind (("C-c RET" . gptel-send)
@@ -1924,6 +1917,9 @@ sed,awk,grep, and friends for JSON data.
     ;; (setq gptel-log-level 'debug)
     (setq gptel-default-mode 'org-mode)
 
+    (defun my/internet-up-p (&optional host)
+      (zerop (call-process "ping" nil nil nil "-c" "1" "-W" "1"
+                           (if host host "www.wikipedia.org"))))
     ;; ALL_PROXY=socks5://vps-us:1055/
     ;; HTTP_PROXY=http://vps-us:1055/
     ;; http_proxy=http://vps-us:1055/
