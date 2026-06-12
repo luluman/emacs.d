@@ -1185,15 +1185,27 @@ Eat: Emulate A Terminal
 
 #+begin_src emacs-lisp
   (use-package ghostel
+    :preface
+    (defun my/ghostel ()
+      "Open Ghostel, then enable line mode once the prompt has rendered."
+      (interactive)
+      (let ((buffer (ghostel t)))
+        ;; Enabling line mode immediately would race with prompt rendering,
+        ;; so defer it slightly to give Ghostel time to draw the shell prompt.
+        (run-at-time 0.1 nil
+                     (lambda (buf)
+                       (with-current-buffer buf
+                         (ghostel-line-mode)))
+                     buffer)))
     :init
     (add-to-list 'safe-local-eval-forms
                  '(setq ghostel-environment compilation-environment))
-    :bind
-    ("C-c g" . (lambda () (interactive) (ghostel t)))
-    :config
-    (add-to-list 'ghostel-keymap-exceptions "M-o")
     :custom
-    (ghostel-module-auto-install 'download))
+    (ghostel-module-auto-install 'download)
+    :bind
+    ("C-c g" . my/ghostel)
+    :config
+    (add-to-list 'ghostel-keymap-exceptions "M-o"))
 #+end_src
 
 **** shell
