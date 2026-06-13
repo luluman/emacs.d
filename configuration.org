@@ -1908,7 +1908,7 @@ sed,awk,grep, and friends for JSON data.
   (use-package gptel
     :defer nil
     :bind (("C-c RET" . gptel-send)
-           ("C-c e" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
+           ("C-c u" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
            ("C-c <return>" . gptel-send)
            ("C-c C-<return>" . gptel-menu)
            :map gptel-mode-map
