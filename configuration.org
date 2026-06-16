@@ -1081,7 +1081,8 @@ Displays ElDoc documentations in a childframe.
   (use-package eldoc-box
     :hook (eldoc-mode . eldoc-box-hover-at-point-mode)
     :custom
-    (eldoc-box-only-multi-line t))
+    (eldoc-box-only-multi-line t)
+    (eldoc-box-hover-display-frame-above-point t))
 #+end_src
 
 *** DAP mode
