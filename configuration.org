@@ -1961,6 +1961,7 @@ sed,awk,grep, and friends for JSON data.
         :stream t
         :key 'gptel-api-key
         :models '(deepseek/deepseek-v4-pro
+                  z-ai/glm-5.2
                   ~moonshotai/kimi-latest
                   ~anthropic/claude-opus-latest
                   ~anthropic/claude-fable-latest
@@ -3530,6 +3531,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "k" (my/define-embark-gpt-refactor gptel--openrouter ~moonshotai/kimi-latest)
       "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
       "f" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
+      "z" (my/define-embark-gpt-refactor gptel--openrouter z-ai/glm-5.2)
       "D" (my/define-embark-gpt-refactor gptel--tenstorrent deepseek-ai/DeepSeek-R1-0528)
       "d" (my/define-embark-gpt-refactor gptel--deepseek deepseek-v4-pro ""))
 
