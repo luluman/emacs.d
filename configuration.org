@@ -1188,16 +1188,16 @@ Eat: Emulate A Terminal
   (use-package ghostel
     :preface
     (defun my/ghostel ()
-      "Open Ghostel, then enable line mode once the prompt has rendered."
+      "Open Ghostel, then switch to line mode after the prompt renders."
       (interactive)
-      (let ((buffer (ghostel t)))
-        ;; Enabling line mode immediately would race with prompt rendering,
-        ;; so defer it slightly to give Ghostel time to draw the shell prompt.
+      (let ((ghostel-buffer (ghostel t)))
+        ;; Switching to line mode synchronously would race with prompt
+        ;; rendering, so defer briefly to let Ghostel draw the shell prompt.
         (run-at-time 0.1 nil
-                     (lambda (buf)
-                       (with-current-buffer buf
+                     (lambda (buffer)
+                       (with-current-buffer buffer
                          (ghostel-line-mode)))
-                     buffer)))
+                     ghostel-buffer)))
     :init
     (add-to-list 'safe-local-eval-forms
                  '(setq ghostel-environment compilation-environment))
