@@ -1075,6 +1075,17 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
     (setq completion-category-defaults nil))
 #+END_SRC
 
+*** =eldoc=
+
+If I'm writing in Emacs lisp I'd like to use =eldoc-mode= to display
+documentation.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eldoc
+    :config
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
+#+END_SRC
+
 Displays ElDoc documentations in a childframe.
 
 #+begin_src emacs-lisp
@@ -1378,19 +1389,8 @@ using tree-sitter to manage Parser
     (treesit-max-buffer-size (* 100 1024 1024))
     ;; disable checking the ‘-*-’ line, this will disable loading .dir-locals.el
     ;; (enable-local-variables nil)
-    :config
-    (setq major-mode-remap-alist
-          (append major-mode-remap-alist
-                  '((sh-mode . bash-ts-mode)
-                    (javascript-mode . js-ts-mode)
-                    (js-json-mode . json-ts-mode)
-                    (python-mode . python-ts-mode)
-                    (c-or-c++-mode . c++-ts-mode)
-                    (c-mode . c-ts-mode)
-                    (c++-mode . c++-ts-mode))))
-    (mapcar #'require '(cmake-ts-mode
-                        dockerfile-ts-mode
-                        yaml-ts-mode))
+    (treesit-enabled-modes t)
+    (treesit-auto-install-grammar t)
     :mode
     ("\\.h\\.inc\\'" . c++-ts-mode)
     ("\\.cpp\\.inc\\'" . c++-ts-mode)
@@ -1762,15 +1762,6 @@ Indent everything by 2 spaces.
   (use-package rainbow-delimiters
     :hook ((emacs-lisp-mode lisp-mode racket-mode) . rainbow-delimiters-mode))
 #+end_src
-
-If I'm writing in Emacs lisp I'd like to use =eldoc-mode= to display
-documentation.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package eldoc
-    :config
-    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
-#+END_SRC
 
 ** scheme
 
