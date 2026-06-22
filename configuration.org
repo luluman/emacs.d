@@ -3240,6 +3240,10 @@ at the correct indentation for Python).
     ;; ("TAB" . icomplete-force-complete)
     ;; ([tab] . icomplete-force-complete))
     :custom
+    (icomplete-vertical-in-buffer-adjust-list t)   ;; EMACS-31
+    (icomplete-vertical-render-prefix-indicator t) ;; EMACS-31
+    (completion-eager-update t)                    ;; EMACS-31
+    (completion-eager-display 'auto)               ;; EMACS-31
     (icomplete-tidy-shadowed-file-names t)
     (icomplete-show-matches-on-no-input t)
     (icomplete-compute-delay 0)
