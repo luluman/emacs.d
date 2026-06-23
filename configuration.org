@@ -946,6 +946,18 @@ Add system path to emacs.
 #+END_SRC
 
 ** common settings
+
+#+begin_src emacs-lisp
+  (defun my/add-compilation-environment ()
+    "Prepend `compilation-environment' to `process-environment'.
+  This lets shells and other modes that honor `process-environment'
+  pick up the same variables used during compilation.  Directory-local
+  variables are applied first so the buffer reflects its `.dir-locals'."
+    (hack-dir-local-variables-non-file-buffer)
+    (setq-local process-environment
+                (append compilation-environment process-environment)))
+#+end_src
+
 *** editing
 
 I like shallow indentation, but tabs are displayed as 8 characters by default.
@@ -1115,14 +1127,8 @@ Dape is a debug adapter client for Emacs.
     (put 'dape--overlay-arrow-position
          'overlay-arrow-string   ;; ▶ →
          (propertize "▶" 'face 'dape-stack-trace-face))
-
-    (defun my/dape-add-compilation-environment ()
-      (hack-dir-local-variables-non-file-buffer)
-      (setq-local process-environment
-                  (append compilation-environment process-environment)))
-
     :hook
-    (dape-start . my/dape-add-compilation-environment))
+    (dape-start . my/add-compilation-environment))
 #+end_src
 
 *** Xref jump
@@ -1150,6 +1156,8 @@ outputs.
     (add-to-list 'safe-local-eval-forms
                  '(setq vterm-environment compilation-environment))
     :bind ("C-c v" . vterm) ;; terminal
+    :hook
+    (vterm-mode . my/add-compilation-environment)
     :custom
     (vterm-max-scrollback 10000)
     (vterm-kill-buffer-on-exit nil)
@@ -1175,11 +1183,9 @@ Eat: Emulate A Terminal
       (eat-other-window nil '(4)))
 
     (defun my/eat-add-compilation-environment ()
-      (hack-dir-local-variables-non-file-buffer)
+      (my/add-compilation-environment)
       (corfu-mode t)
-      (setq-local font-lock-defaults '(nil t))
-      (setq-local process-environment
-                  (append compilation-environment process-environment)))
+      (setq-local font-lock-defaults '(nil t)))
     :hook
     ;; https://codeberg.org/akib/emacs-eat/issues/129
     (eat-exec . (lambda (&rest _) (eat-line-mode)))
@@ -1209,11 +1215,10 @@ Eat: Emulate A Terminal
                        (with-current-buffer buffer
                          (ghostel-line-mode)))
                      ghostel-buffer)))
-    :init
-    (add-to-list 'safe-local-eval-forms
-                 '(setq ghostel-environment compilation-environment))
     :custom
     (ghostel-module-auto-install 'download)
+    :hook
+    (ghostel-mode . my/add-compilation-environment)
     :bind
     ("C-c g" . my/ghostel)
     :config
