@@ -3263,8 +3263,7 @@ at the correct indentation for Python).
                (deactivate-mark))
               ((> (minibuffer-depth) 0)
                (abort-recursive-edit))
-              (current-prefix-arg
-               nil)
+              (current-prefix-arg nil)
               ((> (recursion-depth) 0)
                (exit-recursive-edit))
               (buffer-quit-function
