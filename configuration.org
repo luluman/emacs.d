@@ -1213,14 +1213,15 @@ Eat: Emulate A Terminal
         (run-at-time 0.1 nil
                      (lambda (buffer)
                        (with-current-buffer buffer
-                         (ghostel-line-mode)))
+                         (ghostel-line-mode)
+                         (corfu-mode t)))
                      ghostel-buffer)))
     :custom
     (ghostel-module-auto-install 'download)
     :hook
     (ghostel-mode . my/add-compilation-environment)
     :bind
-    ("C-c g" . my/ghostel)
+    ("C-x m" . my/ghostel)
     :config
     (add-to-list 'ghostel-keymap-exceptions "M-o"))
 #+end_src
@@ -1258,14 +1259,9 @@ configure =comint-mode=
                (term-exec buffer title explicit-shell-file-name nil nil)))
         (set-buffer buffer)
         (term-line-mode)
+        (hl-line-mode -1)
+        (setq-local global-hl-line-mode nil)
         (pop-to-buffer-same-window buffer)))
-
-    (defun my/add-compilation-environment ()
-      (hack-dir-local-variables-non-file-buffer)
-      (hl-line-mode -1)
-      (setq-local global-hl-line-mode nil)
-      (setq-local process-environment
-                  (append compilation-environment process-environment)))
 
     :bind (;; ("C-c t" . my/term)
            (:map term-mode-map
@@ -1905,7 +1901,7 @@ sed,awk,grep, and friends for JSON data.
   (use-package gptel
     :defer nil
     :bind (("C-c RET" . gptel-send)
-           ("C-c u" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
+           ("C-c g" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
            ("C-c <return>" . gptel-send)
            ("C-c C-<return>" . gptel-menu)
            :map gptel-mode-map
