@@ -2129,8 +2129,7 @@ Including org-tempo restores the <s-style easy-templates that were deprecated in
                                  ox-beamer
                                  org-capture
                                  ox-latex
-                                 ox-odt
-                                 org-gnus))))
+                                 ox-odt))))
     (define-key org-mode-map (kbd "C-j") nil)
     (define-key org-mode-map (kbd "C-c C-j") nil)
     (bind-keys*
