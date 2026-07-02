@@ -1961,7 +1961,7 @@ sed,awk,grep, and friends for JSON data.
                   ~openai/gpt-latest
                   ~google/gemini-flash-latest
                   ~google/gemini-pro-latest)
-        :request-params '(:reasoning (:enabled t :effort "max") :verbosity "max")))
+        :request-params '(:reasoning (:enabled t :effort "xhigh"))))
 
     (defvar gptel--tenstorrent
       (gptel-make-openai "Tenstorrent"
