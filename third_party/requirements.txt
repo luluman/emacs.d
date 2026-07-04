@@ -9,3 +9,5 @@ ipython
 requests
 pyyaml
 ty
+xonsh[full]
+marimo
