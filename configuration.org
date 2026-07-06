@@ -1149,16 +1149,25 @@ outputs.
 
 #+begin_src emacs-lisp
   (use-package vterm
-    :init
-    (put 'vterm-environment 'safe-local-variable #'listp)
-    ;; set .dir-locals
-    ;; (eval . (setq vterm-environment compilation-environment))
-    (add-to-list 'safe-local-eval-forms
-                 '(setq vterm-environment compilation-environment))
-    :bind ("C-c v" . vterm) ;; terminal
+    :preface
+    (defun my/vterm-pop-to-buffer-same-window (buffer)
+      (pop-to-buffer-same-window buffer)
+      (with-current-buffer buffer
+        (unless (derived-mode-p 'vterm-mode)
+          (hack-dir-local-variables-non-file-buffer)
+          (let ((process-environment
+                  (append compilation-environment process-environment)))
+            (vterm-mode)))))
+
+    (defun my/vterm ()
+      "Open Ghostel, then switch to line mode after the prompt renders."
+      (interactive)
+      (vterm--internal #'my/vterm-pop-to-buffer-same-window))
+
+    :commands (vterm--internal)
+    :bind ("C-c v" . my/vterm) ;; terminal
     :hook
     (vterm-mode . (lambda ()
-                    (my/add-compilation-environment)
                     (hl-line-mode -1)
                     (setq-local global-hl-line-mode nil)))
     :custom
