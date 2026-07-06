@@ -1157,7 +1157,10 @@ outputs.
                  '(setq vterm-environment compilation-environment))
     :bind ("C-c v" . vterm) ;; terminal
     :hook
-    (vterm-mode . my/add-compilation-environment)
+    (vterm-mode . (lambda ()
+                    (my/add-compilation-environment)
+                    (hl-line-mode -1)
+                    (setq-local global-hl-line-mode nil)))
     :custom
     (vterm-max-scrollback 10000)
     (vterm-kill-buffer-on-exit nil)
@@ -1185,6 +1188,8 @@ Eat: Emulate A Terminal
     (defun my/eat-add-compilation-environment ()
       (my/add-compilation-environment)
       (corfu-mode t)
+      (hl-line-mode -1)
+      (setq-local global-hl-line-mode nil)
       (setq-local font-lock-defaults '(nil t)))
     :hook
     ;; https://codeberg.org/akib/emacs-eat/issues/129
