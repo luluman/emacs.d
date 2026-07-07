@@ -1157,7 +1157,8 @@ outputs.
           (hack-dir-local-variables-non-file-buffer)
           (let ((process-environment
                   (append compilation-environment process-environment)))
-            (vterm-mode)))))
+            (vterm-mode)
+            (vterm-send-string "xonsh\n")))))
 
     (defun my/vterm ()
       "Open Ghostel, then switch to line mode after the prompt renders."
