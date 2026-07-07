@@ -1944,7 +1944,7 @@ sed,awk,grep, and friends for JSON data.
           (gptel-make-openai "ChatGPT"
             :key 'gptel-api-key
             :stream t
-            :models '(gpt-5.5)
+            :models '()
             :request-params '(:reasoning (:effort "high") :text (:verbosity "low"))))
 
     (defvar gptel--gemini
@@ -1986,7 +1986,7 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models '(deepseek-ai/DeepSeek-R1-0528)))
 
-    (setq-default gptel-backend gptel--openai)
+    (setq-default gptel-backend gptel--deepseek)
 
     (defun my/ediff-cleanup ()
       (ediff-kill-buffer-carefully "*Ediff Control Panel*")
@@ -2000,7 +2000,7 @@ sed,awk,grep, and friends for JSON data.
     :custom
     ;; (gptel-max-tokens 8192)
     (gptel-include-reasoning t)
-    (gptel-model 'gpt-5.5)
+    (gptel-model 'deepseek-v4-pro)
     (gptel-use-curl t)
     (gptel-playback t))
 #+end_src
