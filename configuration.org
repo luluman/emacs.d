@@ -1983,6 +1983,7 @@ sed,awk,grep, and friends for JSON data.
                   ~anthropic/claude-opus-latest
                   ~anthropic/claude-sonnet-latest
                   ~openai/gpt-latest
+                  ~x-ai/grok-latest
                   ~google/gemini-flash-latest
                   ~google/gemini-pro-latest)
         :request-params '(:reasoning (:enabled t :effort "xhigh"))))
@@ -3552,6 +3553,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "k" (my/define-embark-gpt-refactor gptel--openai kimi-k2.7-code)
       "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
       "f" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
+      "x" (my/define-embark-gpt-refactor gptel--openrouter ~x-ai/grok-latest)
       "z" (my/define-embark-gpt-refactor gptel--openai glm-5.2)
       "D" (my/define-embark-gpt-refactor gptel--tenstorrent deepseek-ai/DeepSeek-R1-0528)
       "d" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro ""))
