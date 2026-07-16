@@ -1102,7 +1102,14 @@ Displays ElDoc documentations in a childframe.
 
 #+begin_src emacs-lisp
   (use-package eldoc-box
-    :hook (eldoc-mode . eldoc-box-hover-at-point-mode)
+    :preface
+    (defun my/eldoc-box-reset-new-frame (frame)
+      "Reset Eldoc Box state in the newly created FRAME."
+      (with-selected-frame frame
+        (eldoc-box-reset-frame)))
+    :hook
+    ((eldoc-mode . eldoc-box-hover-at-point-mode)
+     (after-make-frame-functions . my/eldoc-box-reset-new-frame))
     :custom
     (eldoc-box-only-multi-line t)
     (eldoc-box-hover-display-frame-above-point t))
@@ -1210,9 +1217,9 @@ Eat: Emulate A Terminal
     :custom
     (xterm-store-paste-on-kill-ring nil)
     (eat-enable-auto-line-mode t)
-    (eat-shell-prompt-annotation-failure-margin-indicator "✘ ")
-    (eat-shell-prompt-annotation-running-margin-indicator "⧗ ")
-    (eat-shell-prompt-annotation-success-margin-indicator "✔ "))
+    (eat-shell-prompt-annotation-failure-margin-indicator "")
+    (eat-shell-prompt-annotation-running-margin-indicator "")
+    (eat-shell-prompt-annotation-success-margin-indicator ""))
 #+end_src
 
 **** ghostty
