@@ -1980,18 +1980,15 @@ sed,awk,grep, and friends for JSON data.
         :endpoint "/api/v1/chat/completions"
         :stream t
         :key 'gptel-api-key
-        :models '(deepseek/deepseek-v4-pro
-                  z-ai/glm-5.2
-                  openai/gpt-5.6-sol-pro
-                  openai/gpt-5.6-sol
-                  ~moonshotai/kimi-latest
-                  ~anthropic/claude-fable-latest
-                  ~anthropic/claude-opus-latest
-                  ~openai/gpt-latest
-                  ~x-ai/grok-latest
-                  ~google/gemini-flash-latest
-                  ~google/gemini-pro-latest)
-        :request-params '(:reasoning (:enabled t :effort "xhigh"))))
+        :models
+        '((openai/gpt-5.6-sol-pro :request-params (:reasoning (:effort "xhigh")))
+          (~moonshotai/kimi-latest :request-params (:reasoning (:effort "max")))
+          (~anthropic/claude-fable-latest :request-params (:reasoning (:effort "xhigh")))
+          (~anthropic/claude-opus-latest :request-params (:reasoning (:effort "xhigh")))
+          (~openai/gpt-latest :request-params (:reasoning (:effort "xhigh")))
+          (~x-ai/grok-latest :request-params (:reasoning (:effort "max")))
+          (~google/gemini-flash-latest :request-params (:reasoning (:effort "xhigh")))
+          (~google/gemini-pro-latest :request-params (:reasoning (:effort "xhigh"))))))
 
     (defvar gptel--tenstorrent
       (gptel-make-openai "Tenstorrent"
@@ -3552,13 +3549,13 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       :doc "Prefix: select an model for refactoring"
       "o" (my/define-embark-gpt-refactor gptel--openai claude-opus-4-8-thinking)
       "p" (my/define-embark-gpt-refactor gptel--openai gpt-5.6-sol)
-      "k" (my/define-embark-gpt-refactor gptel--openai kimi-k2.7-code)
       "z" (my/define-embark-gpt-refactor gptel--openai glm-5.2)
       "d" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro "")
 
       "i" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-fable-latest)
       "u" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
-      "c" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-5.6-sol)
+      "c" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
+      "k" (my/define-embark-gpt-refactor gptel--openai ~moonshotai/kimi-latest)
       "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
       "x" (my/define-embark-gpt-refactor gptel--openrouter ~x-ai/grok-latest)
 
