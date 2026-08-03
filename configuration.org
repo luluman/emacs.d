@@ -1971,7 +1971,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-deepseek "DeepSeek"
         :stream t
         :key 'gptel-api-key
-        :models '(deepseek-v4-pro)
+        :models '(deepseek-v4-pro deepseek-v4-flash)
         :request-params '(:reasoning_effort "max" :output_config (:effort "max"))))
 
     (defvar gptel--openrouter
