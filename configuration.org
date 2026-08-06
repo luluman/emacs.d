@@ -1108,8 +1108,7 @@ Displays ElDoc documentations in a childframe.
       (with-selected-frame frame
         (eldoc-box-reset-frame)))
     :hook
-    ((eldoc-mode . eldoc-box-hover-at-point-mode)
-     (after-make-frame-functions . my/eldoc-box-reset-new-frame))
+    (eldoc-mode . eldoc-box-hover-at-point-mode)
     :custom
     (eldoc-box-only-multi-line t)
     (eldoc-box-hover-display-frame-above-point t))
