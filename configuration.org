@@ -1102,11 +1102,17 @@ Displays ElDoc documentations in a childframe.
 
 #+begin_src emacs-lisp
   (use-package eldoc-box
-    :preface
-    (defun my/eldoc-box-reset-new-frame (frame)
-      "Reset Eldoc Box state in the newly created FRAME."
-      (with-selected-frame frame
-        (eldoc-box-reset-frame)))
+    :config
+    ;; Reset the Eldoc child frame when the selected parent frame changes.
+    (defun my/eldoc-box-reset-frame-on-parent-change (&rest _)
+      (when eldoc-box--frame
+        (unless (and (frame-live-p eldoc-box--frame)
+                     (eq (frame-parent eldoc-box--frame)
+                         (selected-frame)))
+          (eldoc-box-reset-frame))))
+
+    (advice-add #'eldoc-box--frame-visible-p
+                :before #'my/eldoc-box-reset-frame-on-parent-change)
     :hook
     (eldoc-mode . eldoc-box-hover-at-point-mode)
     :custom
