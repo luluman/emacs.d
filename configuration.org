@@ -1971,7 +1971,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-3.1-pro-preview gemini-3.6-flash)
+        :models '(gemini-3.1-pro-preview gemini-3.7-flash)
         :request-params '(:generationConfig (:thinkingConfig (:thinkingLevel "HIGH" :includeThoughts t)))))
 
     (defvar gptel--deepseek
@@ -3565,11 +3565,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "P" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
       "O" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
       "I" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-fable-latest)
-      "K" (my/define-embark-gpt-refactor gptel--openai ~moonshotai/kimi-latest)
+      "K" (my/define-embark-gpt-refactor gptel--openrouter ~moonshotai/kimi-latest)
       "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
       "x" (my/define-embark-gpt-refactor gptel--openrouter ~x-ai/grok-latest)
 
-      "D" (my/define-embark-gpt-refactor gptel--tenstorrent deepseek-ai/DeepSeek-R1-0528))
+      "D" (my/define-embark-gpt-refactor gptel--deepseek deepseek-v4-pro))
 
     (fset 'gptel-model-map gptel-model-map)
     (keymap-set embark-region-map "g" 'gptel-model-map)
