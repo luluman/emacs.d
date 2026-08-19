@@ -1959,8 +1959,7 @@ sed,awk,grep, and friends for JSON data.
             '((kimi-k3 :request-params (:reasoning_effort "high"))
               (qwen3.8-max :request-params (:reasoning_effort "high"))
               (glm-5.2 :request-params (:reasoning_effort "high"))
-              (deepseek-v4-pro :request-params (:reasoning_effort "max"))
-              (deepseek-v4-flash-0731 :request-params (:reasoning_effort "high"))
+              (deepseek-v4-pro-0813 :request-params (:reasoning_effort "high"))
               (gpt-5.6-sol :request-params (:reasoning_effort "high"))
               (claude-opus-5
                :request-params (:output_config (:effort "xhigh") :max_tokens 128000))
@@ -3558,7 +3557,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "o" (my/define-embark-gpt-refactor gptel--openai claude-opus-5 "")
       "i" (my/define-embark-gpt-refactor gptel--openai claude-fable-5 "")
       "z" (my/define-embark-gpt-refactor gptel--openai glm-5.2 "")
-      "d" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro "")
+      "d" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
       "k" (my/define-embark-gpt-refactor gptel--openai kimi-k3 "")
       "q" (my/define-embark-gpt-refactor gptel--openai qwen3.8-max "")
 
