@@ -1117,6 +1117,7 @@ Displays ElDoc documentations in a childframe.
     (eldoc-mode . eldoc-box-hover-at-point-mode)
     :custom
     (eldoc-box-only-multi-line t)
+    (eldoc-box-clear-with-C-g t)
     (eldoc-box-hover-display-frame-above-point t))
 #+end_src
 
