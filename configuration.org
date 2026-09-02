@@ -1113,6 +1113,18 @@ Displays ElDoc documentations in a childframe.
 
     (advice-add #'eldoc-box--frame-visible-p
                 :before #'my/eldoc-box-reset-frame-on-parent-change)
+
+    (defun my/eldoc-box-quit-on-window-change (_frame)
+      "Quit eldoc-box childframe when window selection changes."
+      ;; Don't quit if the user clicked into the childframe itself.
+      (unless (eq (selected-frame) eldoc-box--frame)
+        (eldoc-box-quit-frame)
+        (remove-hook 'window-selection-change-functions
+                     #'eldoc-box--quit-on-window-change)))
+
+    (add-hook 'window-selection-change-functions
+              #'my/eldoc-box-quit-on-window-change)
+
     :hook
     (eldoc-mode . eldoc-box-hover-at-point-mode)
     :custom
