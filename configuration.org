@@ -2004,7 +2004,7 @@ sed,awk,grep, and friends for JSON data.
           (openai/gpt-6-astra :request-params (:reasoning (:effort "high")))
           (~moonshotai/kimi-latest :request-params (:reasoning (:effort "max")))
           (~z-ai/glm-latest :request-params (:reasoning (:effort "max")))
-          (~anthropic/claude-fable-latest :request-params (:reasoning (:effort "xhigh")))
+          (~anthropic/claude-fable-latest :request-params (:reasoning (:effort "high")))
           (~anthropic/claude-opus-latest :request-params (:reasoning (:effort "xhigh")))
           (~openai/gpt-latest :request-params (:reasoning (:effort "xhigh")))
           (~x-ai/grok-latest :request-params (:reasoning (:effort "max")))
