@@ -1969,7 +1969,7 @@ sed,awk,grep, and friends for JSON data.
             :stream t
             :models
             '((kimi-k3 :request-params (:reasoning_effort "high"))
-              (qwen3.8-max :request-params (:reasoning_effort "high"))
+              (qwen3.8-max-0902 :request-params (:reasoning_effort "high"))
               (glm-5.3 :request-params (:reasoning_effort "high"))
               (deepseek-v4-pro-0813 :request-params (:reasoning_effort "high"))
               (gpt-5.6-sol :request-params (:reasoning_effort "high"))
@@ -1990,7 +1990,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-deepseek "DeepSeek"
         :stream t
         :key 'gptel-api-key
-        :models '(deepseek-v4-pro deepseek-v4-flash)
+        :models '(deepseek-v4-pro deepseek-flash)
         :request-params '(:reasoning_effort "max" :output_config (:effort "max"))))
 
     (defvar gptel--openrouter
@@ -3575,7 +3575,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "z" (my/define-embark-gpt-refactor gptel--openai glm-5.3 "")
       "d" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
       "k" (my/define-embark-gpt-refactor gptel--openai kimi-k3 "")
-      "q" (my/define-embark-gpt-refactor gptel--openai qwen3.8-max "")
+      "q" (my/define-embark-gpt-refactor gptel--openai qwen3.8-max-0902 "")
 
       "P" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
       "O" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
