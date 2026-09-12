@@ -3322,10 +3322,8 @@ at the correct indentation for Python).
 
 #+begin_src emacs-lisp
   (use-package fzf-native
-    :init
-    (setq fzf-native-always-compile-module t)
     :config
-    (fzf-native-load-own-build-dyn))
+    (fzf-native-load-dyn))
 
   ;; NOTE: fuz is known to conflict with fzf-native, causing crashes.
   ;; Therefore, fuz is disabled and fzf-native is used as the backend for fussy.
