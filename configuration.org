@@ -2021,7 +2021,13 @@ sed,awk,grep, and friends for JSON data.
             :key 'gptel-api-key
             :stream t
             :models
-            '((kimi-k3 :request-params (:reasoning_effort "high"))
+            '(;; ZJ
+              (Kimi-K3 :request-params (:reasoning_effort "max"))
+              (model-a :request-params (:reasoning_effort "max"))
+              (model-b :request-params (:reasoning_effort "max"))
+              ;; DMX
+              (deepseek-v4.1-flash :request-params (:reasoning_effort "max"))
+              (kimi-k3 :request-params (:reasoning_effort "high"))
               (qwen3.8-max-0902 :request-params (:reasoning_effort "high"))
               (glm-5.3 :request-params (:reasoning_effort "high"))
               (deepseek-v4-pro-0813 :request-params (:reasoning_effort "high"))
@@ -2054,7 +2060,7 @@ sed,awk,grep, and friends for JSON data.
         :key 'gptel-api-key
         :models
         '((openai/gpt-6-astra-pro :request-params (:reasoning (:effort "xhigh")))
-          (openai/gpt-6-astra :request-params (:reasoning (:effort "high")))
+          (~openai/gpt-astra-latest :request-params (:reasoning (:effort "high")))
           (~moonshotai/kimi-latest :request-params (:reasoning (:effort "max")))
           (~z-ai/glm-latest :request-params (:reasoning (:effort "max")))
           (~anthropic/claude-fable-latest :request-params (:reasoning (:effort "high")))
@@ -3626,13 +3632,16 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "u" (my/define-embark-gpt-refactor gptel--openai gpt-6-astra)
       "z" (my/define-embark-gpt-refactor gptel--openai glm-5.3 "")
       "d" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
-      "k" (my/define-embark-gpt-refactor gptel--openai kimi-k3 "")
       "q" (my/define-embark-gpt-refactor gptel--openai qwen3.8-max-0902 "")
+      ;; ZJ
+      "k" (my/define-embark-gpt-refactor gptel--openai Kimi-K3 "")
+      "a" (my/define-embark-gpt-refactor gptel--openai model-a "")
+      "b" (my/define-embark-gpt-refactor gptel--openai model-b "")
 
       "P" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
       "O" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
       "I" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-fable-latest)
-      "U" (my/define-embark-gpt-refactor gptel--openrouter openai/gpt-6-astra)
+      "U" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-astra-latest)
       "K" (my/define-embark-gpt-refactor gptel--openrouter ~moonshotai/kimi-latest)
       "Z" (my/define-embark-gpt-refactor gptel--openrouter ~z-ai/glm-latest)
       "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
