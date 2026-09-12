@@ -2,7 +2,6 @@ pip>20
 setuptools>50
 wheel
 proselint
-cmake-language-server
 cmakelang
 ruff
 ipython

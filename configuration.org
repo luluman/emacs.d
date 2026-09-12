@@ -995,29 +995,55 @@ Use =smartparens=
 Emacs Polyglot: an Emacs LSP client that stays out of your way.
 
 #+begin_src emacs-lisp
-  (defun my/test-then-add-eglot (mode-list program &optional command)
-    (when (executable-find program)
-      (if command
-          (add-to-list 'eglot-server-programs
-                       (list mode-list program command))
-        (add-to-list 'eglot-server-programs
-                     (list mode-list program)))
-      (mapcar
-       #'(lambda (sym)
-           (eval `(add-hook
-                   (quote ,(intern (concat (symbol-name sym) "-hook")))
-                   'eglot-ensure)))
-       mode-list)))
+  (defun my/eglot-register-server (modes contact &optional executable)
+    "Register CONTACT for MODES and enable Eglot when its server is available.
+      MODES is a major-mode symbol or a list of major-mode symbols. CONTACT is a
+      command list or a function accepted by `eglot-server-programs'.
+
+      EXECUTABLE names the program to check before starting Eglot. It
+      defaults to the first element of a command list and must be supplied
+      explicitly for a function-valued CONTACT."
+    (let ((program (or executable (car-safe contact))))
+      (unless (stringp program)
+        (error "Specify an executable for Eglot contact %S" contact))
+      (add-to-list 'eglot-server-programs (cons modes contact))
+      (dolist (mode (ensure-list modes))
+        (add-hook (derived-mode-hook-name mode)
+                  (lambda ()
+                    (when (executable-find program)
+                      (eglot-ensure)))))))
+
+  (defun my/eglot-tblgen-server-program (_interactive)
+    "Return the tblgen-lsp-server command line for the current project.
+      The compilation database is looked up in the project's CMake build
+      directory.  Suitable as a function entry in `eglot-server-programs'."
+    (let ((database (expand-file-name "tablegen_compile_commands.yml"
+                                      (project-cmake-build-directory))))
+      (list "tblgen-lsp-server"
+            (format "--tablegen-compilation-database=%s" database))))
+
+  (defun my/flymake-toggle-diagnostics-at-end-of-line ()
+    "Toggle Flymake end-of-line diagnostics between disabled and `fancy'.
+      Flymake is restarted in the current buffer so the change takes effect
+      immediately."
+    (interactive)
+    (setq flymake-show-diagnostics-at-end-of-line
+          (if flymake-show-diagnostics-at-end-of-line nil 'fancy))
+    (when (bound-and-true-p flymake-mode)
+      (flymake-mode -1)
+      (flymake-mode 1))
+    (message "Flymake end-of-line diagnostics: %s"
+             (if flymake-show-diagnostics-at-end-of-line
+                 "all diagnostics (fancy Unicode)"
+               "disabled")))
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
     :pin gnu
-    :defer nil
-    :commands
-    (eglot eglot-ensure)
-    ;; :hook
-    ;; (eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1)))
+    :after derived
+    :demand
+    :commands (eglot eglot-ensure)
     :bind (:map eglot-mode-map
                 ("C-M-\\" . eglot-format)
                 ("C-c e r" . eglot-rename)
@@ -1027,63 +1053,32 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                 ("C-c e i" . eglot-inlay-hints-mode)
                 ("C-c e e" . my/flymake-toggle-diagnostics-at-end-of-line))
     :custom
-    ;; (eglot-autoshutdown t)
     (eglot-events-buffer-size 0)
     (eglot-extend-to-xref t)
     (eglot-sync-connect nil)
     (eglot-menu-string "")
     :config
+    ;; Allow projects to override server programs via .dir-locals.el.
     (put 'eglot-server-programs 'safe-local-variable #'listp)
-    ;; (add-to-list 'eglot-stay-out-of 'eldoc)
 
-    (my/test-then-add-eglot '(c-or-c++-mode c-mode c++-mode c-or-c++-ts-mode c++-ts-mode c-ts-mode) "clangd")
-    ;; (my/test-then-add-eglot '(python-mode python-ts-mode) "pyright-langserver" "--stdio")
-    (my/test-then-add-eglot '(python-mode python-ts-mode) "ty" "server")
-    (my/test-then-add-eglot '(LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) "texlab")
-    (my/test-then-add-eglot '(javascript-mode js-ts-mode) "typescript-language-server" "--stdio")
-    (my/test-then-add-eglot '(sh-mode bash-ts-mode) "bash-language-server" "start")
-    (my/test-then-add-eglot '(rust-ts-mode) "rust-analyzer")
-    (my/test-then-add-eglot '(yaml-ts-mode) "yaml-language-server" "--stdio")
-    (my/test-then-add-eglot '(dockerfile-ts-mode) "docker-langserver" "--stdio")
-    ;; (my/test-then-add-eglot '(json-ts-mode) "vscode-json-language-server" "--stdio")
-    (my/test-then-add-eglot '(mlir-mode) "mlir-lsp-server")
-    (my/test-then-add-eglot '(mojo-mode) "mojo-lsp-server")
-
-    (defun eglot-tblgen-command-args (interactive-p)
-      (let* ((build-directory (project-cmake-build-directory))
-             (database (expand-file-name "tablegen_compile_commands.yml"
-                                         build-directory)))
-        (list "tblgen-lsp-server"
-              (format "--tablegen-compilation-database=%s" database))))
-
-    (when (executable-find "tblgen-lsp-server")
-      (add-to-list 'eglot-server-programs
-                   '((tablegen-mode) . eglot-tblgen-command-args))
-      (add-hook 'tablegen-mode-hook 'eglot-ensure))
-
-    (defun my/flymake-toggle-diagnostics-at-end-of-line ()
-      "Toggle flymake diagnostics display at end of line through different modes.
-  Cycles through: nil -> short -> all -> fancy -> nil..."
-      (interactive)
-      (setq flymake-show-diagnostics-at-end-of-line
-            (pcase flymake-show-diagnostics-at-end-of-line
-              ;; ('nil 'short)
-              ;; ('short t)
-              ;; ('t 'fancy)
-              ('nil 'fancy)
-              ('fancy nil)))
-      ;; Toggle flymake mode to apply changes
-      (when (bound-and-true-p flymake-mode)
-        (flymake-mode -1)
-        (flymake-mode 1))
-      (message "Flymake end-of-line diagnostics: %s"
-               (pcase flymake-show-diagnostics-at-end-of-line
-                 ('nil "disabled")
-                 ('short "short (most severe only)")
-                 ('t "all diagnostics")
-                 ('fancy "all diagnostics (fancy Unicode)"))))
-
-    (setq completion-category-defaults nil))
+    ;; Language servers
+    (dolist (server
+             '(((c-or-c++-mode c-mode c++-mode c-or-c++-ts-mode c++-ts-mode c-ts-mode) ("clangd"))
+               ((cmake-ts-mode) ("neocmakelsp" "stdio"))
+               ((python-mode python-ts-mode) ("ty" "server"))
+               ((LaTeX-mode tex-mode context-mode texinfo-mode bibtex-mode) ("texlab"))
+               ((javascript-mode js-ts-mode) ("typescript-language-server" "--stdio"))
+               ((sh-mode bash-ts-mode) ("bash-language-server" "start"))
+               ((rust-ts-mode) ("rust-analyzer"))
+               ((yaml-ts-mode) ("yaml-language-server" "--stdio"))
+               ((dockerfile-ts-mode) ("docker-langserver" "--stdio"))
+               ((mlir-mode) ("mlir-lsp-server"))
+               ((mojo-mode) ("mojo-lsp-server"))
+               ((mojo-mode) ("mojo-lsp-server"))
+               ;; TableGen needs a per-project command line, so it is registered as a
+               ;; function rather than a static program list.
+               ((tablegen-mode) my/eglot-tblgen-server-program "tblgen-lsp-server")))
+      (apply #'my/eglot-register-server server)))
 #+END_SRC
 
 *** =eldoc=
@@ -1492,22 +1487,10 @@ Pip can install binary file.
 
 #+BEGIN_SRC emacs-lisp
   (use-package virtualenvwrapper
+    :demand t
+    :custom
+    (venv-location '("~/"))
     :config
-    (venv-initialize-interactive-shells) ;; if you want interactive shell support
-    (venv-initialize-eshell) ;; if you want eshell support
-    (setq venv-location '("~/"))
-    (let ((venv-py (venv-get-candidates)))
-      (when venv-py
-        (venv-workon (car venv-py))))
-
-    (put 'eval 'safe-local-variable
-         (lambda (val)
-           (and (listp val)
-                (eq (car val) 'venv-workon)
-                (stringp (cadr val)))))
-
-    (my/test-then-add-eglot '(cmake-ts-mode) "cmake-language-server")
-
     ;; With this patch, venv-py only supports being assigned to the parent directory of the venv,
     ;; not to the venv's real path.
     (defun venv-valid-p (path)
@@ -1538,7 +1521,21 @@ Pip can install binary file.
         (when (not (eq (length (-distinct candidates))
                        (length candidates)))
           (error "Some virtualenvs have the same name!"))
-        candidates)))
+        candidates))
+
+    (venv-initialize-interactive-shells) ;; if you want interactive shell support
+    (venv-initialize-eshell) ;; if you want eshell support
+    (setq venv-location '("~/"))
+
+    (let ((venv-py (venv-get-candidates)))
+      (when venv-py
+        (venv-workon (car venv-py))))
+
+    (put 'eval 'safe-local-variable
+         (lambda (val)
+           (and (listp val)
+                (eq (car val) 'venv-workon)
+                (stringp (cadr val))))))
 #+END_SRC
 
 Set ipython as interpreter
@@ -3270,6 +3267,7 @@ at the correct indentation for Python).
     (setq minibuffer-prompt-properties
           '(read-only t cursor-intangible t face minibuffer-prompt))
     (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+    (setq completion-category-defaults nil)
     ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
     (setq read-extended-command-predicate
           #'command-completion-default-include-p))
