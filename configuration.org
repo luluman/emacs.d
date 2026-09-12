@@ -3824,6 +3824,9 @@ Set multiple cursors for better marker words
     ("C->" . mc/mark-next-like-this)
     ("C-<" . mc/mark-previous-like-this)
     ("C-M-m" . mc/mark-all-like-this)
+    :custom
+    (mc/always-run-for-all t)
+    (mc/always-repeat-command t)
     :init
     (multiple-cursors-mode))
 #+END_SRC
