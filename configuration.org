@@ -1411,22 +1411,78 @@ Emacs has a minor mode called hs-minor-mode that allows users to fold and hide b
 *** Tree-sitter
 
 using tree-sitter to manage Parser
+
+#+begin_src emacs-lisp
+  (defun my/treesit--last-leaf (node)
+    "Return the deepest last descendant of NODE, or NODE itself if it is a leaf."
+    (let (child)
+      (while (setq child (treesit-node-child node -1))
+        (setq node child)))
+    node)
+
+  (defun my/treesit--nearest-sibling (node step)
+    "Return the nearest real sibling of NODE, walking with STEP."
+    (let (found)
+      (while (and node (not found))
+        (let ((sibling (funcall step node)))
+          (cond ((null sibling)
+                 (setq node (treesit-node-parent node)))
+                ((treesit-node-check sibling 'missing)
+                 (setq node sibling))
+                (t
+                 (setq found sibling)))))
+      found))
+
+  (defun my/treesit-forward-node ()
+    "Move point to the start of the next node in pre-order."
+    (interactive)
+    (when-let* ((node (treesit-node-at (point)))
+                (target (my/treesit--nearest-sibling node #'treesit-node-next-sibling)))
+      (goto-char (treesit-node-start target))))
+
+  (defun my/treesit-backward-node ()
+    "Move point to the start of the previous node in pre-order.
+  The previous node is the last leaf of the preceding sibling subtree."
+    (interactive)
+    (when-let* ((node (treesit-node-at (point)))
+                (target (my/treesit--nearest-sibling node #'treesit-node-prev-sibling)))
+      (goto-char (treesit-node-start (my/treesit--last-leaf target)))))
+
+  (defvar-keymap my/treesit-nav-mode-map
+    :doc "Keymap for `my/treesit-nav-mode'."
+    "M-f" #'my/treesit-forward-node
+    "M-b" #'my/treesit-backward-node)
+
+  (define-minor-mode my/treesit-nav-mode
+    "Move over syntax nodes instead of words."
+    :lighter " ts-nav"
+    :keymap my/treesit-nav-mode-map)
+
+  (defun my/treesit-nav-mode-maybe ()
+    "Enable `my/treesit-nav-mode' when the buffer has a treesit."
+    (when (treesit-parser-list)
+      (my/treesit-nav-mode 1)))
+#+end_src
+
 #+begin_src emacs-lisp
   (use-package treesit
     :ensure nil
     :if (and (fboundp 'treesit-available-p) (treesit-available-p)
              (eq system-type 'gnu/linux))
     :custom
-    ;; (treesit-extra-load-path `(,treesit-langs-folder))
+    ;; Parse files up to 100 MiB; the default is too small for generated code.
     (treesit-max-buffer-size (* 100 1024 1024))
-    ;; disable checking the ‘-*-’ line, this will disable loading .dir-locals.el
-    ;; (enable-local-variables nil)
+    ;; Prefer the tree-sitter variant of every mode that has one.
     (treesit-enabled-modes t)
     (treesit-auto-install-grammar t)
+
     :mode
+    ;; TableGen/LLVM-style generated headers and CUDA headers are C++.
     ("\\.h\\.inc\\'" . c++-ts-mode)
     ("\\.cpp\\.inc\\'" . c++-ts-mode)
-    ("\\.hu$" . c++-ts-mode))
+    ("\\.su\\'" . c++-ts-mode)
+
+    :hook (prog-mode . my/treesit-nav-mode-maybe))
 #+end_src
 
 *** Indent Highlight
@@ -4303,45 +4359,10 @@ https://karthinks.com/software/persistent-prefix-keymaps-in-emacs/
     (push 'tsm/hydra/tsm/mc/mark-all-overlays mc--default-cmds-to-run-once)
     (advice-add 'symbol-overlay-remove-all :after (lambda () (tsm/clear-overlays (point))))
 
-    (defun my/backward-node ()
-      "Move backward to the previous node in the tree, following a pre-order traversal."
-      (interactive)
-      ;; (message "node at: %s" (treesit-node-string (treesit-node-at (point))))
-      (when-let* ((node (treesit-node-at (point))))
-        (let ((target-node nil))
-          (while (and node (not target-node))
-            (if-let* ((prev-sibling (treesit-node-prev-sibling node)))
-                (progn
-                  (setq node prev-sibling)
-                  (while (treesit-node-child node -1)
-                    (setq node (treesit-node-child node -1)))
-                  (unless (treesit-node-check node 'missing) ; Skip invalid node, continue loop
-                    (setq target-node node)))
-              (setq node (treesit-node-parent node))))
-          (when target-node
-            ;; (message "target-node: %s" (treesit-node-string target-node))
-            (goto-char (treesit-node-start target-node))))))
-
-    (defun my/forward-node ()
-      (interactive)
-      (let ((node (treesit-node-at (point))))
-        (while node
-          (if-let* ((next-sibling (treesit-node-next-sibling node)))
-              (if (treesit-node-check next-sibling 'missing)
-                  (setq node next-sibling) ; Skip invalid node, continue loop
-                (goto-char (treesit-node-start next-sibling))
-                (setq node nil))  ; Exit the loop after moving
-            (setq node (treesit-node-parent node))))))  ; Move to parent if no next sibling
-
     :bind (:map ts-movement-map
-                ("M-f" . my/forward-node)
-                ("M-b" . my/backward-node)
                 ("C-c ." . tsm/hydra/body))
 
-    :hook
-    ((bash-ts-mode c++-ts-mode c-ts-mode cmake-ts-mode dockerfile-ts-mode json-ts-mode
-                   python-ts-mode rust-ts-mode toml-ts-mode typescript-ts-mode yaml-ts-mode)
-     . ts-movement-mode))
+    :hook (my/treesit-nav-mode . ts-movement-mode))
 #+end_src
 
 * Set custom keybindings
