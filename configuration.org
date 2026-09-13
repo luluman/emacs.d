@@ -532,6 +532,20 @@ programming.
                 :around 'symon--display-update-modify))
 #+END_SRC
 
+** highlight cursor
+
+Never lose your cursor again.
+
+#+begin_src emacs-lisp
+  (use-package beacon
+    :init
+    (beacon-mode 1)
+    :custom
+    (beacon-blink-when-focused t)
+    (beacon-blink-duration 0.2)
+    (beacon-blink-delay 0.1))
+#+end_src
+
 * Hydra
 
 #+begin_src emacs-lisp
