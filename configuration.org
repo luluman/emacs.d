@@ -4320,17 +4320,18 @@ https://youtu.be/51eSeqcaikM
     (monkeytype-most-mistyped-amount 10))
 #+end_src
 
-** COMMENT Add Pinyin
+** Add Pinyin
 
 #+begin_src emacs-lisp
   (use-package pyim
     :custom
     (default-input-method "pyim")
-    (pyim-page-tooltip '(posframe popon))
+    (pyim-page-tooltip 'posframe)
     ;; (pyim-dcache-backend 'pyim-dregcache)
     (pyim-page-length 5)
     :config
     (use-package pyim-basedict)
+    (use-package posframe)
     (pyim-basedict-enable))
 #+end_src
 
