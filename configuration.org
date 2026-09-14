@@ -4326,8 +4326,10 @@ https://youtu.be/51eSeqcaikM
   (use-package pyim
     :custom
     (default-input-method "pyim")
+    (pyim-cloudim nil)
+    (pyim-candidates-search-buffer-p nil)
+    (pyim-indicator-modeline-string (list "PY/C " "PY/E "))
     (pyim-page-tooltip 'posframe)
-    ;; (pyim-dcache-backend 'pyim-dregcache)
     (pyim-page-length 5)
     :config
     (use-package pyim-basedict)
