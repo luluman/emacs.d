@@ -4345,7 +4345,7 @@ https://youtu.be/51eSeqcaikM
 ** performance tuning
 
 #+begin_src emacs-lisp
-  (setq gc-cons-threshold 100000000)
+  (setq gc-cons-threshold (* 1024 1024 1024))
   (setq read-process-output-max (* 8 1024 1024)) ;; 8mb
 #+end_src
 
