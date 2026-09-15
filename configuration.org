@@ -2036,7 +2036,6 @@ sed,awk,grep, and friends for JSON data.
             :stream t
             :models
             '(;; ZJ
-              (Kimi-K3 :request-params (:reasoning_effort "max"))
               (model-a :request-params (:reasoning_effort "max"))
               (model-b :request-params (:reasoning_effort "max"))
               ;; DMX
@@ -2075,11 +2074,11 @@ sed,awk,grep, and friends for JSON data.
         :models
         '((openai/gpt-6-astra-pro :request-params (:reasoning (:effort "xhigh")))
           (~openai/gpt-astra-latest :request-params (:reasoning (:effort "high")))
+          (~openai/gpt-sol-latest :request-params (:reasoning (:effort "xhigh")))
           (~moonshotai/kimi-latest :request-params (:reasoning (:effort "max")))
           (~z-ai/glm-latest :request-params (:reasoning (:effort "max")))
           (~anthropic/claude-fable-latest :request-params (:reasoning (:effort "high")))
           (~anthropic/claude-opus-latest :request-params (:reasoning (:effort "xhigh")))
-          (~openai/gpt-latest :request-params (:reasoning (:effort "xhigh")))
           (~x-ai/grok-latest :request-params (:reasoning (:effort "max")))
           (~google/gemini-flash-latest :request-params (:reasoning (:effort "xhigh")))
           (~google/gemini-pro-latest :request-params (:reasoning (:effort "xhigh"))))))
@@ -3648,11 +3647,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "d" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
       "q" (my/define-embark-gpt-refactor gptel--openai qwen3.8-max-0902 "")
       ;; ZJ
-      "k" (my/define-embark-gpt-refactor gptel--openai Kimi-K3 "")
+      "k" (my/define-embark-gpt-refactor gptel--openai kimi-k3 "")
       "a" (my/define-embark-gpt-refactor gptel--openai model-a "")
       "b" (my/define-embark-gpt-refactor gptel--openai model-b "")
 
-      "P" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-latest)
+      "P" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-sol-latest)
       "O" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
       "I" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-fable-latest)
       "U" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-astra-latest)
