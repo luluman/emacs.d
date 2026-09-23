@@ -2046,9 +2046,9 @@ sed,awk,grep, and friends for JSON data.
               (deepseek-v4-pro-0813 :request-params (:reasoning_effort "high"))
               (gpt-5.6-sol :request-params (:reasoning_effort "high"))
               (gpt-6-astra :request-params (:reasoning_effort "high"))
-              (claude-opus-5
+              (claude-opus-5-5
                :request-params (:output_config (:effort "xhigh") :max_tokens 128000))
-              (claude-fable-5
+              (claude-fable-5-1
                :request-params (:output_config (:effort "xhigh") :max_tokens 128000)))))
 
     (defvar gptel--gemini
@@ -2072,13 +2072,12 @@ sed,awk,grep, and friends for JSON data.
         :stream t
         :key 'gptel-api-key
         :models
-        '((openai/gpt-6-astra-pro :request-params (:reasoning (:effort "xhigh")))
-          (~openai/gpt-astra-latest :request-params (:reasoning (:effort "high")))
+        '((~openai/gpt-astra-latest :request-params (:reasoning (:effort "high")))
           (~openai/gpt-sol-latest :request-params (:reasoning (:effort "xhigh")))
           (~moonshotai/kimi-latest :request-params (:reasoning (:effort "max")))
           (~z-ai/glm-latest :request-params (:reasoning (:effort "max")))
           (~anthropic/claude-fable-latest :request-params (:reasoning (:effort "high")))
-          (~anthropic/claude-opus-latest :request-params (:reasoning (:effort "xhigh")))
+          (~anthropic/claude-opus-latest :request-params (:reasoning (:effort "high")))
           (~x-ai/grok-latest :request-params (:reasoning (:effort "max")))
           (~google/gemini-flash-latest :request-params (:reasoning (:effort "xhigh")))
           (~google/gemini-pro-latest :request-params (:reasoning (:effort "xhigh"))))))
@@ -3640,14 +3639,14 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
     (defvar-keymap gptel-model-map
       :doc "Prefix: select an model for refactoring"
       "p" (my/define-embark-gpt-refactor gptel--openai gpt-5.6-sol "")
-      "o" (my/define-embark-gpt-refactor gptel--openai claude-opus-5 "")
-      "i" (my/define-embark-gpt-refactor gptel--openai claude-fable-5 "")
+      "o" (my/define-embark-gpt-refactor gptel--openai claude-opus-5-5 "")
+      "i" (my/define-embark-gpt-refactor gptel--openai claude-fable-5-1 "")
       "u" (my/define-embark-gpt-refactor gptel--openai gpt-6-astra)
       "z" (my/define-embark-gpt-refactor gptel--openai glm-5.3 "")
       "d" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
       "q" (my/define-embark-gpt-refactor gptel--openai qwen3.8-max-0902 "")
-      ;; ZJ
       "k" (my/define-embark-gpt-refactor gptel--openai kimi-k3 "")
+      ;; ZJ
       "a" (my/define-embark-gpt-refactor gptel--openai model-a "")
       "b" (my/define-embark-gpt-refactor gptel--openai model-b "")
 
