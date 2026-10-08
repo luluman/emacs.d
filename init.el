@@ -16,6 +16,12 @@
 (set-keyboard-coding-system 'utf-8)
 (setq-default buffer-file-coding-system 'utf-8)
 (setq native-comp-async-report-warnings-errors nil) ;; suppress the native compile warning.
+
+;; Restrict native JIT compilation to GNU/Linux
+(unless (eq system-type 'gnu/linux)
+  (setq native-comp-jit-compilation nil
+        native-comp-enable-subr-trampolines nil))
+
 ;; Ensure that use-package is installed.
 ;;
 ;; If use-package isn't already installed, it's extremely likely that this is a
