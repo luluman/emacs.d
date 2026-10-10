@@ -1248,7 +1248,7 @@ Eat: Emulate A Terminal
     (eat-shell-prompt-annotation-success-margin-indicator ""))
 #+end_src
 
-**** ghostty
+**** COMMENT ghostty
 
 #+begin_src emacs-lisp
   (use-package ghostel
