@@ -2057,7 +2057,7 @@ sed,awk,grep, and friends for JSON data.
       (gptel-make-gemini "Gemini"
         :key 'gptel-api-key
         :stream t
-        :models '(gemini-3.1-pro-preview gemini-3.8-flash)
+        :models '(gemini-4-argon gemini-3.8-flash)
         :request-params '(:generationConfig (:thinkingConfig (:thinkingLevel "HIGH" :includeThoughts t)))))
 
     (defvar gptel--deepseek
@@ -2082,7 +2082,7 @@ sed,awk,grep, and friends for JSON data.
           (~anthropic/claude-opus-latest :request-params (:reasoning (:effort "high")))
           (~anthropic/claude-sonnet-latest :request-params (:reasoning (:effort "xhigh")))
           (~x-ai/grok-latest :request-params (:reasoning (:effort "max")))
-          (~google/gemini-flash-latest :request-params (:reasoning (:effort "xhigh")))
+          (meta/muse-wonder :request-params (:reasoning (:effort "xhigh")))
           (~google/gemini-pro-latest :request-params (:reasoning (:effort "xhigh"))))))
 
     (defvar gptel--tenstorrent
@@ -3648,6 +3648,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "s" (my/define-embark-gpt-refactor gptel--openai claude-sonnet-5-5 "")
       "z" (my/define-embark-gpt-refactor gptel--openai glm-5.3 "")
       "d" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
+      "f" (my/define-embark-gpt-refactor gptel--openai deepseek-v4.1-flash "")
       "q" (my/define-embark-gpt-refactor gptel--openai qwen3.8-max-0902 "")
       "k" (my/define-embark-gpt-refactor gptel--openai kimi-k3 "")
       ;; ZJ
@@ -3661,9 +3662,10 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "S" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-sonnet-latest)
       "K" (my/define-embark-gpt-refactor gptel--openrouter ~moonshotai/kimi-latest)
       "Z" (my/define-embark-gpt-refactor gptel--openrouter ~z-ai/glm-latest)
-      "g" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-flash-latest)
-      "x" (my/define-embark-gpt-refactor gptel--openrouter ~x-ai/grok-latest)
-
+      "G" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
+      "M" (my/define-embark-gpt-refactor gptel--openrouter meta/muse-wonder)
+      "X" (my/define-embark-gpt-refactor gptel--openrouter ~x-ai/grok-latest)
+      "F" (my/define-embark-gpt-refactor gptel--deepseek deepseek-flash "")
       "D" (my/define-embark-gpt-refactor gptel--deepseek deepseek-v4-pro))
 
     (fset 'gptel-model-map gptel-model-map)
