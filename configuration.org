@@ -17,11 +17,11 @@
 use auto-package-update to keep your packages updated automatically
 
 #+BEGIN_SRC emacs-lisp
-(use-package auto-package-update
-  :config
-  (setq auto-package-update-delete-old-versions t)
-  (setq auto-package-update-hide-results t)
-  (auto-package-update-maybe))
+  (use-package auto-package-update
+    :config
+    (setq auto-package-update-delete-old-versions t)
+    (setq auto-package-update-hide-results t)
+    (auto-package-update-maybe))
 #+END_SRC
 
 Always compile packages, and use the newest version available.
@@ -64,7 +64,7 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 
 * Utility functions
 
-Define a big ol' bunch of handy utility functions.
+** Define a big bunch of handy utility functions.
 
 #+BEGIN_SRC emacs-lisp
   (defun my/view-buffer-name ()
@@ -138,7 +138,29 @@ Define a big ol' bunch of handy utility functions.
     (add-to-list 'exec-path path))
 #+END_SRC
 
-proxy settings
+** Wezterm interactive
+
+#+begin_src emacs-lisp
+  (defun my/wezterm--set-user-var (name value)
+    "Send user variable NAME with string VALUE to WezTerm.
+  Encode VALUE as UTF-8 and Base64 without line breaks, then write
+  the OSC 1337 SetUserVar sequence directly to the terminal."
+    (let ((base64-value (base64-encode-string
+                         (encode-coding-string value 'utf-8) t)))
+      (send-string-to-terminal
+       (format "\e]1337;SetUserVar=%s=%s\a" name base64-value))))
+
+  (defun my/wezterm-open-url (url)
+    "Request that WezTerm open URL using the `open_url' user variable."
+    (my/wezterm--set-user-var "open_url" url))
+
+  (defun my/wezterm-notify (message)
+    "Request a WezTerm toast notification containing MESSAGE.
+  Send MESSAGE using the `wez_notify' user variable."
+    (my/wezterm--set-user-var "wez_notify" message))
+#+end_src
+
+** Proxy settings
 #+begin_src emacs-lisp
   ;; https://github.com/happyo/emacs.d/blob/main/lisp/init-proxy.el
   (setq my/socks-proxy "127.0.0.1:7891")    ; SOCKS proxy
@@ -2049,7 +2071,7 @@ sed,awk,grep, and friends for JSON data.
               (gpt-6.1-sol :request-params (:reasoning_effort "max"))
               (gpt-6-astra :request-params (:reasoning_effort "xhigh"))
               (claude-sonnet-5-5
-               :request-params (:output_config (:effort "xhigh") :max_tokens 128000))
+               :request-params (:output_config (:effort "max") :max_tokens 128000))
               (claude-opus-5-5-api
                :request-params (:output_config (:effort "xhigh") :max_tokens 128000))
               (claude-fable-5-1-api
@@ -3031,6 +3053,63 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
   (add-hook 'latex-mode-hook 'turn-on-reftex) ; with Emacs latex mode
   (setq reftex-plug-into-AUCTeX t)
 #+END_SRC
+
+** Typst
+
+#+begin_src emacs-lisp
+  (use-package typst-ts-mode
+    :custom
+    (typst-ts-mode-enable-raw-blocks-highlight t)
+    :bind (:map typst-ts-mode-map
+                ("C-c C-c" . typst-ts-tmenu)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package websocket)
+
+  (use-package typst-preview
+    :init
+    ;; start preview automatically when typst-preview-mode is activated
+    (setq typst-preview-autostart t)
+    ;; open browser automatically when typst-preview-start is run
+    (setq typst-preview-open-browser-automatically t)
+
+    :custom
+    (typst-preview-browser "wezterm-url")
+    (typst-preview-invert-colors "auto")
+    (typst-preview-partial-rendering t)
+
+    :bind (:map typst-preview-mode-map
+                ("C-c C-j" . typst-preview-send-position))
+
+    :config
+    (defun my/typst-preview--connect-wezterm (browser hostname)
+      "Handle the \"wezterm-url\" BROWSER for preview server HOSTNAME.
+      Return non-nil when handled, so the original connector is skipped."
+      (when (equal browser "wezterm-url")
+        (my/wezterm-open-url (concat "http://" hostname))
+        t))
+
+    (advice-add 'typst-preview--connect-browser
+                :before-until #'my/typst-preview--connect-wezterm)
+
+    (defun my/typst-preview-open-browser ()
+      "Open the current typst preview in `typst-preview-browser'."
+      (interactive)
+      (typst-preview--connect-browser typst-preview-browser
+                                      (typst-preview--master-static-host
+                                       typst-preview--local-master)))
+
+    (defun my/tailscale-ipv4 ()
+      "Return this machine's Tailscale IPv4 address, or nil if unavailable."
+      (when (executable-find "tailscale")
+        (car (ignore-errors (process-lines "tailscale" "ip" "-4")))))
+
+    ;; Bind the preview server to the Tailscale address so other devices on
+    ;; the tailnet can view it.  Port 0 lets the OS choose a free port.
+    (when-let* ((tailscale-ip (my/tailscale-ipv4)))
+      (setq typst-preview-host (format "%s:0" tailscale-ip))))
+#+end_src
 
 * Writing prose
 
