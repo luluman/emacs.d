@@ -224,6 +224,13 @@ HTTP_PROXY=http://vps-us:1055/
 http_proxy=http://vps-us:1055/
 #+end_src
 
+#+begin_src emacs-lisp
+  (defun my/tailscale-ipv4 ()
+    "Return this machine's Tailscale IPv4 address, or nil if unavailable."
+    (when (executable-find "tailscale")
+      (car (ignore-errors (process-lines "tailscale" "ip" "-4")))))
+#+end_src
+
 * UI preferences
 ** Tweak window chrome
 
@@ -3080,7 +3087,8 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
     (typst-preview-partial-rendering t)
 
     :bind (:map typst-preview-mode-map
-                ("C-c C-j" . typst-preview-send-position))
+                ("C-c C-j" . typst-preview-send-position)
+                ("C-c C-o" . my/typst-preview-open-browser))
 
     :config
     (defun my/typst-preview--connect-wezterm (browser hostname)
@@ -3099,11 +3107,6 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
       (typst-preview--connect-browser typst-preview-browser
                                       (typst-preview--master-static-host
                                        typst-preview--local-master)))
-
-    (defun my/tailscale-ipv4 ()
-      "Return this machine's Tailscale IPv4 address, or nil if unavailable."
-      (when (executable-find "tailscale")
-        (car (ignore-errors (process-lines "tailscale" "ip" "-4")))))
 
     ;; Bind the preview server to the Tailscale address so other devices on
     ;; the tailnet can view it.  Port 0 lets the OS choose a free port.
