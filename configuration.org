@@ -1118,6 +1118,7 @@ Emacs Polyglot: an Emacs LSP client that stays out of your way.
                ((mlir-mode) ("mlir-lsp-server"))
                ((mojo-mode) ("mojo-lsp-server"))
                ((mojo-mode) ("mojo-lsp-server"))
+               ((typst-ts-mode) ("tinymist"))
                ;; TableGen needs a per-project command line, so it is registered as a
                ;; function rather than a static program list.
                ((tablegen-mode) my/eglot-tblgen-server-program "tblgen-lsp-server")))
@@ -3079,12 +3080,14 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
     ;; start preview automatically when typst-preview-mode is activated
     (setq typst-preview-autostart t)
     ;; open browser automatically when typst-preview-start is run
-    (setq typst-preview-open-browser-automatically t)
+    (setq typst-preview-open-browser-automatically nil)
 
     :custom
     (typst-preview-browser "wezterm-url")
     (typst-preview-invert-colors "auto")
     (typst-preview-partial-rendering t)
+
+    :hook (typst-ts-mode . typst-preview-mode)
 
     :bind (:map typst-preview-mode-map
                 ("C-c C-j" . typst-preview-send-position)
