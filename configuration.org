@@ -730,7 +730,7 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     :hook
     (git-commit-mode . (lambda ()
                          "Set up the Git commit message buffer."
-                         (setq fill-column 72)))
+                         (setq-local fill-column 72)))
     :custom
     (magit-push-always-verify nil)
     (git-commit-summary-max-length 50)
@@ -2072,7 +2072,7 @@ sed,awk,grep, and friends for JSON data.
               (model-d :request-params (:reasoning_effort "max"))
               ;; DMX
               (deepseek-v4.1-flash :request-params (:reasoning_effort "max"))
-              (kimi-k3 :request-params (:reasoning_effort "max"))
+              (kimi-k3.1-pro :request-params (:reasoning_effort "max"))
               (qwen3.8-max-0902 :request-params (:reasoning_effort "max"))
               (glm-5.3 :request-params (:reasoning_effort "max"))
               (deepseek-v4-pro-0813 :request-params (:reasoning_effort "max"))
@@ -3068,8 +3068,20 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
   (use-package typst-ts-mode
     :custom
     (typst-ts-mode-enable-raw-blocks-highlight t)
+    :hook (typst-ts-mode . (lambda ()
+                             (setq-local fill-column 120)
+                             (auto-fill-mode 1)))
     :bind (:map typst-ts-mode-map
-                ("C-c C-c" . typst-ts-tmenu)))
+                ("C-c C-c" . typst-ts-tmenu))
+    :config
+    ;; The upstream `typst-ts-editing-auto-fill-function' is buggy, so we
+    ;; replace it.
+    (defun typst-ts-editing-auto-fill-function ()
+      "Auto Fill Function for `auto-fill-mode'."
+      (when (>= (current-column) (current-fill-column))
+        (let* ((fill-prefix (typst-ts-editing-calculate-fill-prefix))
+               (adaptive-fill-mode (null fill-prefix)))
+          (do-auto-fill)))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3737,7 +3749,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "e" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
       "f" (my/define-embark-gpt-refactor gptel--openai deepseek-v4.1-flash "")
       "q" (my/define-embark-gpt-refactor gptel--openai qwen3.8-max-0902 "")
-      "k" (my/define-embark-gpt-refactor gptel--openai kimi-k3 "")
+      "k" (my/define-embark-gpt-refactor gptel--openai kimi-k3.1-pro "")
       ;; ZJ
       "a" (my/define-embark-gpt-refactor gptel--openai model-a "")
       "b" (my/define-embark-gpt-refactor gptel--openai model-b "")
