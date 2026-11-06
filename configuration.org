@@ -1278,7 +1278,7 @@ Eat: Emulate A Terminal
     (eat-shell-prompt-annotation-success-margin-indicator ""))
 #+end_src
 
-**** COMMENT ghostty
+**** ghostty
 
 #+begin_src emacs-lisp
   (use-package ghostel
@@ -1291,14 +1291,15 @@ Eat: Emulate A Terminal
         (turn-on-visual-line-mode)))
 
     :custom
-    (ghostel-initial-input-mode 'line)
+    (ghostel-initial-input-mode 'semi-char)
     (ghostel-module-auto-install 'download)
     :hook
     (ghostel-mode . my/add-compilation-environment)
     :bind
     ("C-x m" . my/ghostel)
     :config
-    (add-to-list 'ghostel-keymap-exceptions "M-o"))
+    (add-to-list 'ghostel-keymap-exceptions "M-o")
+    (ghostel--rebuild-semi-char-keymap))
 #+end_src
 
 **** shell
@@ -2078,6 +2079,7 @@ sed,awk,grep, and friends for JSON data.
               (deepseek-v4-pro-0813 :request-params (:reasoning_effort "max"))
               (gpt-6.1-sol :request-params (:reasoning_effort "max"))
               (gpt-6-astra :request-params (:reasoning_effort "xhigh"))
+              (gemini-4-argon :request-params (:reasoning_effort "max"))
               (claude-sonnet-5-5
                :request-params (:output_config (:effort "max") :max_tokens 128000))
               (claude-opus-5-5-api
@@ -3745,6 +3747,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "i" (my/define-embark-gpt-refactor gptel--openai claude-fable-5-1-api "")
       "u" (my/define-embark-gpt-refactor gptel--openai gpt-6-astra "")
       "s" (my/define-embark-gpt-refactor gptel--openai claude-sonnet-5-5 "")
+      "g" (my/define-embark-gpt-refactor gptel--openai gemini-4-argon "")
       "z" (my/define-embark-gpt-refactor gptel--openai glm-5.3 "")
       "e" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
       "f" (my/define-embark-gpt-refactor gptel--openai deepseek-v4.1-flash "")
