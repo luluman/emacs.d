@@ -1985,10 +1985,13 @@ These are syntax highlighting files for the Emacs and XEmacs editors.
 
 #+begin_src emacs-lisp
   (use-package mlir-mode
+    :load-path "~/.emacs.d/third_party/llvm-mode+"
+    :mode
+    ;; Recognize MLIR, PDLL, and Triton IR files
+    ("\\.\\(?:llmlir\\|mlir\\|pdll\\|source\\|ttcir\\|ttgir\\|ttir\\|ttsir\\|tttcir\\)\\'"
+     . mlir-mode)
     :custom
-    (mlir-opt "hmcc-opt")
-    :mode "\\.pdll$" "\\.mlir$" "\\.ttsir$" "\\.ttir$" "\\.ttcir$" "\\.tttcir$" "\\.ttgir$"
-    :load-path "~/.emacs.d/third_party/llvm-mode+")
+    (mlir-opt "triton-opt"))
 #+end_src
 
 ** Groovy mode
@@ -3068,22 +3071,19 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
 
 #+begin_src emacs-lisp
   (use-package typst-ts-mode
-    :custom
-    (typst-ts-mode-enable-raw-blocks-highlight t)
-    :hook (typst-ts-mode . (lambda ()
-                             (setq-local fill-column 110)
-                             (auto-fill-mode 1)))
+    :preface
+    (defun my/typst-ts-mode-setup ()
+      "Configure visual line wrapping for Typst buffers."
+      ;; Avoid hard wrapping, which can introduce unwanted spaces in Chinese text.
+      (visual-line-mode 1)
+      (auto-fill-mode -1))
+
+    :hook (typst-ts-mode . my/typst-ts-mode-setup)
+
     :bind (:map typst-ts-mode-map
                 ("C-c C-c" . typst-ts-tmenu))
-    :config
-    ;; The upstream `typst-ts-editing-auto-fill-function' is buggy, so we
-    ;; replace it.
-    (defun typst-ts-editing-auto-fill-function ()
-      "Auto Fill Function for `auto-fill-mode'."
-      (when (>= (current-column) (current-fill-column))
-        (let* ((fill-prefix (typst-ts-editing-calculate-fill-prefix))
-               (adaptive-fill-mode (null fill-prefix)))
-          (do-auto-fill)))))
+    :custom
+    (typst-ts-mode-enable-raw-blocks-highlight t))
 #+end_src
 
 #+begin_src emacs-lisp
