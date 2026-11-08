@@ -3091,33 +3091,18 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
   (use-package websocket)
 
   (use-package typst-preview
-    :init
-    ;; start preview automatically when typst-preview-mode is activated
-    (setq typst-preview-autostart t)
-    ;; open browser automatically when typst-preview-start is run
-    (setq typst-preview-open-browser-automatically nil)
+    :preface
+    (defun my/typst-preview-enable-after-local-variables ()
+      "Enable `typst-preview-mode' after file-local variables are applied.
+  This ensures that the preview uses any file-local master file."
+      (add-hook 'hack-local-variables-hook #'typst-preview-mode nil t))
 
-    :custom
-    (typst-preview-browser "wezterm-url")
-    (typst-preview-invert-colors "auto")
-    (typst-preview-partial-rendering t)
-
-    :hook (typst-ts-mode . typst-preview-mode)
-
-    :bind (:map typst-preview-mode-map
-                ("C-c C-j" . typst-preview-send-position)
-                ("C-c C-o" . my/typst-preview-open-browser))
-
-    :config
     (defun my/typst-preview--connect-wezterm (browser hostname)
       "Handle the \"wezterm-url\" BROWSER for preview server HOSTNAME.
-      Return non-nil when handled, so the original connector is skipped."
+        Return non-nil when handled, so the original connector is skipped."
       (when (equal browser "wezterm-url")
         (my/wezterm-open-url (concat "http://" hostname))
         t))
-
-    (advice-add 'typst-preview--connect-browser
-                :before-until #'my/typst-preview--connect-wezterm)
 
     (defun my/typst-preview-open-browser ()
       "Open the current typst preview in `typst-preview-browser'."
@@ -3125,6 +3110,26 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
       (typst-preview--connect-browser typst-preview-browser
                                       (typst-preview--master-static-host
                                        typst-preview--local-master)))
+
+    :custom
+    (typst-preview-autostart t)
+    (typst-preview-open-browser-automatically nil)
+    (typst-preview-browser "wezterm-url")
+    (typst-preview-invert-colors "auto")
+    (typst-preview-partial-rendering t)
+
+    :hook (typst-ts-mode . my/typst-preview-enable-after-local-variables)
+
+    :bind (:map typst-preview-mode-map
+                ("C-c C-j" . typst-preview-send-position)
+                ("C-c C-o" . my/typst-preview-open-browser))
+
+    :init
+    (put 'typst-preview--master-file 'safe-local-variable #'stringp)
+
+    :config
+    (advice-add 'typst-preview--connect-browser
+                :before-until #'my/typst-preview--connect-wezterm)
 
     ;; Bind the preview server to the Tailscale address so other devices on
     ;; the tailnet can view it.  Port 0 lets the OS choose a free port.
