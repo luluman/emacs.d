@@ -3116,7 +3116,7 @@ Write raw LaTex document using [[https://www.gnu.org/software/auctex/][auctex]]
     (typst-preview-open-browser-automatically nil)
     (typst-preview-browser "wezterm-url")
     (typst-preview-invert-colors "auto")
-    (typst-preview-partial-rendering t)
+    (typst-preview-partial-rendering nil)
 
     :hook (typst-ts-mode . my/typst-preview-enable-after-local-variables)
 
