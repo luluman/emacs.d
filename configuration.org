@@ -2087,7 +2087,7 @@ sed,awk,grep, and friends for JSON data.
                :request-params (:output_config (:effort "max") :max_tokens 128000))
               (claude-opus-5-5-api
                :request-params (:output_config (:effort "xhigh") :max_tokens 128000))
-              (claude-fable-5-1-api
+              (claude-fable-5-2
                :request-params (:output_config (:effort "xhigh") :max_tokens 128000)))))
 
     (defvar gptel--gemini
@@ -3750,7 +3750,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       :doc "Prefix: select an model for refactoring"
       "p" (my/define-embark-gpt-refactor gptel--openai gpt-6.1-sol "")
       "o" (my/define-embark-gpt-refactor gptel--openai claude-opus-5-5-api "")
-      "i" (my/define-embark-gpt-refactor gptel--openai claude-fable-5-1-api "")
+      "i" (my/define-embark-gpt-refactor gptel--openai claude-fable-5-2 "")
       "u" (my/define-embark-gpt-refactor gptel--openai gpt-6-astra "")
       "s" (my/define-embark-gpt-refactor gptel--openai claude-sonnet-5-5 "")
       "g" (my/define-embark-gpt-refactor gptel--openai gemini-4-argon "")
