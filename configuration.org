@@ -2086,16 +2086,9 @@ sed,awk,grep, and friends for JSON data.
               (claude-sonnet-5-5
                :request-params (:output_config (:effort "max") :max_tokens 128000))
               (claude-opus-5-5-api
-               :request-params (:output_config (:effort "xhigh") :max_tokens 128000))
+               :request-params (:output_config (:effort "high") :max_tokens 128000))
               (claude-fable-5-2
-               :request-params (:output_config (:effort "xhigh") :max_tokens 128000)))))
-
-    (defvar gptel--gemini
-      (gptel-make-gemini "Gemini"
-        :key 'gptel-api-key
-        :stream t
-        :models '(gemini-4-argon gemini-3.8-flash)
-        :request-params '(:generationConfig (:thinkingConfig (:thinkingLevel "HIGH" :includeThoughts t)))))
+               :request-params (:output_config (:effort "high") :max_tokens 128000)))))
 
     (defvar gptel--deepseek
       (gptel-make-deepseek "DeepSeek"
@@ -2120,6 +2113,7 @@ sed,awk,grep, and friends for JSON data.
           (~anthropic/claude-sonnet-latest :request-params (:reasoning (:effort "xhigh")))
           (~x-ai/grok-latest :request-params (:reasoning (:effort "max")))
           (meta/muse-wonder :request-params (:reasoning (:effort "xhigh")))
+          (google/gemini-4-neon :request-params (:reasoning (:effort "xhigh")))
           (~google/gemini-pro-latest :request-params (:reasoning (:effort "xhigh"))))))
 
     (defvar gptel--tenstorrent
@@ -3773,6 +3767,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "K" (my/define-embark-gpt-refactor gptel--openrouter ~moonshotai/kimi-latest)
       "Z" (my/define-embark-gpt-refactor gptel--openrouter ~z-ai/glm-latest)
       "G" (my/define-embark-gpt-refactor gptel--openrouter ~google/gemini-pro-latest)
+      "N" (my/define-embark-gpt-refactor gptel--openrouter google/gemini-4-neon)
       "M" (my/define-embark-gpt-refactor gptel--openrouter meta/muse-wonder)
       "X" (my/define-embark-gpt-refactor gptel--openrouter ~x-ai/grok-latest)
       "F" (my/define-embark-gpt-refactor gptel--deepseek deepseek-flash "")
@@ -4059,12 +4054,19 @@ matches aw-dispatch-alist with a few extra
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
     :bind
-    ("M-o" . 'ace-window)
-    ("C-x w" . hydra-frame-window/body)
+    (("M-o" . 'ace-window)
+     ("C-x w" . hydra-frame-window/body))
     :config
     (setq aw-scope 'frame)   ; only the windows of the current frame
     (setq aw-background t)
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+  ;; `diff-mode' binds M-o to `diff-goto-source', which shadows the global
+  ;; binding above.  Rebind it in `diff-mode-map'.
+  (use-package diff-mode
+    :bind
+    (:map diff-mode-map
+          ("M-o" . ace-window)))
 #+END_SRC
 
 ** mange ephemeral windows
