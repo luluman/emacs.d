@@ -2082,7 +2082,8 @@ sed,awk,grep, and friends for JSON data.
               (deepseek-v4-pro-0813 :request-params (:reasoning_effort "max"))
               (gpt-6.1-sol :request-params (:reasoning_effort "max"))
               (gpt-6-astra :request-params (:reasoning_effort "xhigh"))
-              (gemini-4-argon :request-params (:reasoning_effort "max"))
+              (gemini-4-carbon :request-params (:reasoning_effort "max"))
+              (gemini-4-neon :request-params (:reasoning_effort "max"))
               (claude-sonnet-5-5
                :request-params (:output_config (:effort "max") :max_tokens 128000))
               (claude-opus-5-5-api
@@ -3747,7 +3748,8 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
       "i" (my/define-embark-gpt-refactor gptel--openai claude-fable-5-2 "")
       "u" (my/define-embark-gpt-refactor gptel--openai gpt-6-astra "")
       "s" (my/define-embark-gpt-refactor gptel--openai claude-sonnet-5-5 "")
-      "g" (my/define-embark-gpt-refactor gptel--openai gemini-4-argon "")
+      "g" (my/define-embark-gpt-refactor gptel--openai gemini-4-carbon "")
+      "n" (my/define-embark-gpt-refactor gptel--openrouter gemini-4-neon "")
       "z" (my/define-embark-gpt-refactor gptel--openai glm-5.3 "")
       "e" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
       "f" (my/define-embark-gpt-refactor gptel--openai deepseek-v4.1-flash "")
