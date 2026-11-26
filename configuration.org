@@ -2041,6 +2041,7 @@ sed,awk,grep, and friends for JSON data.
            ("C-c g" . (lambda () (interactive) (gptel "*GPT*" nil nil t)))
            ("C-c <return>" . gptel-send)
            ("C-c C-<return>" . gptel-menu)
+           ("C-c C-g" . gptel-abort)
            :map gptel-mode-map
            ("C-c C-x t" . gptel-set-topic))
     :config
@@ -2062,68 +2063,80 @@ sed,awk,grep, and friends for JSON data.
 
     ;; (setq gptel-proxy "")
 
-    (setq gptel--openai
-          (gptel-make-openai "CC"
-            :host "aiapi.siorigin.com"
-            :endpoint "/v1/chat/completions"
-            :key 'gptel-api-key
-            :stream t
+    ;; Start from a clean backend list (suppresses default OpenAI/ChatGPT models).
+    (setq gptel--known-backends nil)
+
+    (defun my/gptel-make-cc (name &rest args)
+      (declare (indent 1))
+      (apply #'gptel-make-openai name
+             :host "aiapi.siorigin.com"
+             :endpoint "/v1/chat/completions"
+             :key 'gptel-api-key
+             :stream t
+             args))
+
+    (setq gptel--cc
+          (my/gptel-make-cc "CC"
+            :request-params '(:reasoning_effort "max")
             :models
             '(;; ZJ
-              (model-a :request-params (:reasoning_effort "max"))
-              (model-b :request-params (:reasoning_effort "max"))
-              (model-c :request-params (:reasoning_effort "max"))
-              (model-d :request-params (:reasoning_effort "max"))
+              model-a
+              model-b
+              model-c
+              model-d
               ;; DMX
-              (deepseek-v4.1-flash :request-params (:reasoning_effort "max"))
-              (kimi-k3.1-pro :request-params (:reasoning_effort "max"))
-              (qwen3.8-max-0902 :request-params (:reasoning_effort "max"))
-              (glm-5.3 :request-params (:reasoning_effort "max"))
-              (deepseek-v4-pro-0813 :request-params (:reasoning_effort "max"))
-              (gpt-6.1-sol :request-params (:reasoning_effort "max"))
-              (gpt-6-astra :request-params (:reasoning_effort "xhigh"))
-              (gemini-4-carbon :request-params (:reasoning_effort "max"))
-              (gemini-4-neon :request-params (:reasoning_effort "max"))
-              (claude-sonnet-5-5
+              deepseek-v4.1-flash
+              kimi-k3.1-pro
+              qwen3.8-max-0902
+              glm-5.3
+              deepseek-v4-pro-0813
+              gpt-6.1-sol
+              gpt-6-astra
+              gemini-4-carbon
+              gemini-4-neon)))
+
+    (setq gptel--cc-claude
+          (my/gptel-make-cc "CC-Claude"
+            :models
+            '((claude-sonnet-5-5
                :request-params (:output_config (:effort "max") :max_tokens 128000))
               (claude-opus-5-5-api
                :request-params (:output_config (:effort "high") :max_tokens 128000))
               (claude-fable-5-2
                :request-params (:output_config (:effort "high") :max_tokens 128000)))))
 
-    (defvar gptel--deepseek
-      (gptel-make-deepseek "DeepSeek"
-        :stream t
-        :key 'gptel-api-key
-        :models '(deepseek-v4-pro deepseek-flash)
-        :request-params '(:reasoning_effort "max" :output_config (:effort "max"))))
+    (setq gptel--deepseek
+          (gptel-make-deepseek "DeepSeek"
+            :stream t
+            :key 'gptel-api-key
+            :models '(deepseek-v4-pro deepseek-flash)
+            :request-params '(:reasoning_effort "max")))
 
-    (defvar gptel--openrouter
-      (gptel-make-openai "OpenRouter"
-        :host "openrouter.ai"
-        :endpoint "/api/v1/chat/completions"
-        :stream t
-        :key 'gptel-api-key
-        :models
-        '((~openai/gpt-astra-latest :request-params (:reasoning (:effort "high")))
-          (~openai/gpt-sol-latest :request-params (:reasoning (:effort "xhigh")))
-          (~moonshotai/kimi-latest :request-params (:reasoning (:effort "max")))
-          (~z-ai/glm-latest :request-params (:reasoning (:effort "max")))
-          (~anthropic/claude-fable-latest :request-params (:reasoning (:effort "high")))
-          (~anthropic/claude-opus-latest :request-params (:reasoning (:effort "high")))
-          (~anthropic/claude-sonnet-latest :request-params (:reasoning (:effort "xhigh")))
-          (~x-ai/grok-latest :request-params (:reasoning (:effort "max")))
-          (meta/muse-wonder :request-params (:reasoning (:effort "xhigh")))
-          (google/gemini-4-neon :request-params (:reasoning (:effort "xhigh")))
-          (~google/gemini-pro-latest :request-params (:reasoning (:effort "xhigh"))))))
+    (setq gptel--gemini
+          (gptel-make-gemini "Gemini"
+            :key 'gptel-api-key
+            :stream t
+            :models '(gemini-4-carbon gemini-4-neon)
+            :request-params '(:generationConfig (:thinkingConfig (:thinkingLevel "high" :includeThoughts t)))))
 
-    (defvar gptel--tenstorrent
-      (gptel-make-openai "Tenstorrent"
-        :host "console.tenstorrent.com"
-        :endpoint "/v1/chat/completions"
-        :stream t
-        :key 'gptel-api-key
-        :models '(deepseek-ai/DeepSeek-R1-0528)))
+    (setq gptel--openrouter
+          (gptel-make-openai "OpenRouter"
+            :host "openrouter.ai"
+            :endpoint "/api/v1/chat/completions"
+            :stream t
+            :key 'gptel-api-key
+            :models
+            '((~openai/gpt-astra-latest :request-params (:reasoning (:effort "high")))
+              (~openai/gpt-sol-latest :request-params (:reasoning (:effort "xhigh")))
+              (~moonshotai/kimi-latest :request-params (:reasoning (:effort "max")))
+              (~z-ai/glm-latest :request-params (:reasoning (:effort "max")))
+              (~anthropic/claude-fable-latest :request-params (:reasoning (:effort "high")))
+              (~anthropic/claude-opus-latest :request-params (:reasoning (:effort "high")))
+              (~anthropic/claude-sonnet-latest :request-params (:reasoning (:effort "xhigh")))
+              (~x-ai/grok-latest :request-params (:reasoning (:effort "max")))
+              (meta/muse-wonder :request-params (:reasoning (:effort "xhigh")))
+              (google/gemini-4-neon :request-params (:reasoning (:effort "xhigh")))
+              (~google/gemini-pro-latest :request-params (:reasoning (:effort "xhigh"))))))
 
     (setq-default gptel-backend gptel--deepseek)
 
@@ -3743,23 +3756,24 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
     (defvar-keymap gptel-model-map
       :doc "Prefix: select an model for refactoring"
-      "p" (my/define-embark-gpt-refactor gptel--openai gpt-6.1-sol "")
-      "o" (my/define-embark-gpt-refactor gptel--openai claude-opus-5-5-api "")
-      "i" (my/define-embark-gpt-refactor gptel--openai claude-fable-5-2 "")
-      "u" (my/define-embark-gpt-refactor gptel--openai gpt-6-astra "")
-      "s" (my/define-embark-gpt-refactor gptel--openai claude-sonnet-5-5 "")
-      "g" (my/define-embark-gpt-refactor gptel--openai gemini-4-carbon "")
-      "n" (my/define-embark-gpt-refactor gptel--openrouter gemini-4-neon "")
-      "z" (my/define-embark-gpt-refactor gptel--openai glm-5.3 "")
-      "e" (my/define-embark-gpt-refactor gptel--openai deepseek-v4-pro-0813 "")
-      "f" (my/define-embark-gpt-refactor gptel--openai deepseek-v4.1-flash "")
-      "q" (my/define-embark-gpt-refactor gptel--openai qwen3.8-max-0902 "")
-      "k" (my/define-embark-gpt-refactor gptel--openai kimi-k3.1-pro "")
+      "o" (my/define-embark-gpt-refactor gptel--cc-claude claude-opus-5-5-api "")
+      "i" (my/define-embark-gpt-refactor gptel--cc-claude claude-fable-5-2 "")
+      "s" (my/define-embark-gpt-refactor gptel--cc-claude claude-sonnet-5-5 "")
+      ;;
+      "p" (my/define-embark-gpt-refactor gptel--cc gpt-6.1-sol "")
+      "u" (my/define-embark-gpt-refactor gptel--cc gpt-6-astra "")
+      "g" (my/define-embark-gpt-refactor gptel--cc gemini-4-carbon "")
+      "n" (my/define-embark-gpt-refactor gptel--cc gemini-4-neon "")
+      "z" (my/define-embark-gpt-refactor gptel--cc glm-5.3 "")
+      "e" (my/define-embark-gpt-refactor gptel--cc deepseek-v4-pro-0813 "")
+      "f" (my/define-embark-gpt-refactor gptel--cc deepseek-v4.1-flash "")
+      "q" (my/define-embark-gpt-refactor gptel--cc qwen3.8-max-0902 "")
+      "k" (my/define-embark-gpt-refactor gptel--cc kimi-k3.1-pro "")
       ;; ZJ
-      "a" (my/define-embark-gpt-refactor gptel--openai model-a "")
-      "b" (my/define-embark-gpt-refactor gptel--openai model-b "")
-      "c" (my/define-embark-gpt-refactor gptel--openai model-c "")
-      "d" (my/define-embark-gpt-refactor gptel--openai model-d "")
+      "a" (my/define-embark-gpt-refactor gptel--cc model-a "")
+      "b" (my/define-embark-gpt-refactor gptel--cc model-b "")
+      "c" (my/define-embark-gpt-refactor gptel--cc model-c "")
+      "d" (my/define-embark-gpt-refactor gptel--cc model-d "")
 
       "P" (my/define-embark-gpt-refactor gptel--openrouter ~openai/gpt-sol-latest)
       "O" (my/define-embark-gpt-refactor gptel--openrouter ~anthropic/claude-opus-latest)
